@@ -169,8 +169,10 @@ function setImgSrc (team, piece){
 
 var rules = {
   movements: {
-    rangedDiagonals: "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " ) || (((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
-    rangedOrthogonals: "(cP - nP) % 8 === 0 || ((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
+    rangedDiagonalsForwardSlash: "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
+    rangedDiagonalsBackSlash: "(((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
+    rangedVerticals: "(cP - nP) % 8 === 0",
+    rangedHorizontals: "((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
     nightMoves: // #segerJokes
       "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )",
     blackPawnTwoStep: "nP - cP === -16",
@@ -282,7 +284,7 @@ var rookCreator = (function (team, position){
     value: 5,
     team: team,
     possibleMoves: function(){
-      return rules.movements.rangedOrthogonals
+      return rules.movements.rangedHorizontals + " || " + rules.movements.rangedVerticals
     },
     isTurn: false
   };
@@ -299,7 +301,7 @@ var bishopCreator = (function (team, position){
     value: 3,
     team: team,
     possibleMoves: function(){
-      return rules.movements.rangedDiagonals
+      return rules.movements.rangedDiagonalsForwardSlash + " || " + rules.movements.rangedDiagonalsBackSlash
     },
     isTurn: false
   };
@@ -333,7 +335,7 @@ var queenCreator = (function (team, position){
     value: 9,
     team: team,
     possibleMoves: function(){
-      return rules.movements.rangedDiagonals + " || " + rules.movements.rangedOrthogonals
+      return rules.movements.rangedDiagonalsForwardSlash + " || " + rules.movements.rangedDiagonalsBackSlash + " || " + rules.movements.rangedHorizontals + " || " + rules.movements.rangedVerticals
     },
     isTurn: false
   };
