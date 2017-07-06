@@ -17,11 +17,19 @@ var board = {
   },
 
   twoSpacesDownIsEmpty: function(position){
-    return this.tiles[this.position - 16] === undefined
+    return this.tiles[position - 16] === undefined
   },
 
   oneSpaceDownIsEmpty: function(position){
-    return board.tiles[this.position - 8] === undefined
+    return this.tiles[position - 8] === undefined
+  },
+
+  stageRightPawnAttackOccupied: function(position){
+    return this.tiles[position - 7] !== undefined
+  },
+
+  stageLeftAttackOccupied: function(position){
+    return this.tiles[position - 9] !== undefined
   },
 
   outOfbounds: function(position){
@@ -402,19 +410,19 @@ var blackPawnCreator = (function (position){
     
     possibleMoves: function(){
       var possibilities = "";
-      if( board.positions.isSeventhRank(this.position) && board.twoSpacesDownIsEmpty( this.position) ){
+      if( board.positions.isSeventhRank(this.position) && board.twoSpacesDownIsEmpty(this.position) ){
         possibilities = this.addPossibleMoves( rules.movements.blackPawnTwoStep, possibilities )
       };
 
-      if( board.oneSpaceDownIsEmpty(position) ){
+      if( board.oneSpaceDownIsEmpty(this.position) ){
         possibilities = this.addPossibleMoves( rules.movements.blackPawnOneStep, possibilities )
       };
 
-      if( board.tiles[this.position - 7] !== undefined ){
+      if( board.stageRightPawnAttackOccupied(this.position) ){
         possibilities = this.addPossibleMoves( rules.movements.blackPawnCaptureStageRight, possibilities)
       };
 
-      if( board.tiles[this.position - 9] !== undefined ){
+      if( board.stageLeftAttackOccupied(this.position) ){
         possibilities = this.addPossibleMoves( rules.movements.blackPawnCaptureStageLeft, possibilities)
       };
       return possibilities
@@ -504,13 +512,16 @@ var game = {
 }
 
 game.createTeams()
-setTimeout( function( ){ rules.move(board.tiles[1], 18) }, 1000)
-setTimeout( function( ){ rules.move(board.tiles[50], 42) }, 2000)
-setTimeout( function( ){ rules.move(board.tiles[11], 27) }, 3000)
-setTimeout( function( ){ rules.move(board.tiles[59], 32) }, 4000)
-setTimeout( function( ){ rules.move(board.tiles[3], 19) }, 5000)
-setTimeout( function( ){ rules.move(board.tiles[42], 34) }, 6000)
-setTimeout( function( ){ rules.move(board.tiles[12], 20) }, 7000)
-setTimeout( function( ){ rules.move(board.tiles[34], 27) }, 8000)
-setTimeout( function( ){ rules.move(board.tiles[0], 1) }, 9000)
-setTimeout( function( ){ rules.move(board.tiles[27], 18) }, 10000)
+setTimeout( function(){ rules.move(board.tiles[1], 18) }, 500)
+setTimeout( function(){ rules.move(board.tiles[50], 42) }, 1000)
+setTimeout( function(){ rules.move(board.tiles[11], 27) }, 1500)
+setTimeout( function(){ rules.move(board.tiles[59], 32) }, 2000)
+setTimeout( function(){ rules.move(board.tiles[3], 19) }, 2500)
+setTimeout( function(){ rules.move(board.tiles[42], 34) }, 3000)
+setTimeout( function(){ rules.move(board.tiles[12], 20) }, 3500)
+setTimeout( function(){ rules.move(board.tiles[34], 27) }, 4000)
+setTimeout( function(){ rules.move(board.tiles[0], 1) }, 4500)
+setTimeout( function(){ rules.move(board.tiles[27], 18) }, 5000)
+setTimeout( function(){ rules.move(board.tiles[9], 18) }, 5500)
+setTimeout( function(){ rules.move(board.tiles[51], 35)}, 6000)
+
