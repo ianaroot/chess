@@ -10,6 +10,20 @@ var board = {
     horizontalNightMovementCheck: "(Math.abs(cP % 8 - nP % 8) === 2 )"
   },
 
+  positions: {
+    isSeventhRank: function(position){
+      return Math.floor(position / 8) === 6
+    }
+  },
+
+  twoSpacesDownIsEmpty: function(position){
+    return this.tiles[this.position - 16] === undefined
+  },
+
+  oneSpaceDownIsEmpty: function(position){
+    return board.tiles[this.position - 8] === undefined
+  },
+
   outOfbounds: function(position){
     position > this.boundaries.upperLimit || position < this.boundaries.lowerLimit
   },
@@ -141,7 +155,11 @@ var rules = {
     rangedDiagonals: "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " ) || (((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
     rangedOrthogonals: "(cP - nP) % 8 === 0 || ((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
     nightMoves: // #segerJokes
-      "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )"
+      "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )",
+    blackPawnTwoStep: "nP - cP === -16",
+    blackPawnOneStep: "nP - cP === -8",
+    blackPawnCaptureStageRight: "nP -cP === -7",
+    blackPawnCaptureStageLeft: "nP -cP === -9"
   },
 
   movementTypeVerifier: function(possibleMoves, currentPosition, newPosition, team){
@@ -384,21 +402,20 @@ var blackPawnCreator = (function (position){
     
     possibleMoves: function(){
       var possibilities = "";
-      // factor out logic for each movement type
-      if( Math.floor(this.position / 8) === 6 && board.tiles[this.position - 16] === undefined ){
-        possibilities = this.addPossibleMoves( "nP - cP === -16", possibilities )
+      if( board.positions.isSeventhRank(this.position) && board.twoSpacesDownIsEmpty( this.position) ){
+        possibilities = this.addPossibleMoves( rules.movements.blackPawnTwoStep, possibilities )
       };
 
-      if( board.tiles[this.position - 8] === undefined ){
-        possibilities = this.addPossibleMoves( "nP - cP === -8", possibilities )
+      if( board.oneSpaceDownIsEmpty(position) ){
+        possibilities = this.addPossibleMoves( rules.movements.blackPawnOneStep, possibilities )
       };
 
       if( board.tiles[this.position - 7] !== undefined ){
-        possibilities = this.addPossibleMoves( "nP -cP === -7", possibilities)
+        possibilities = this.addPossibleMoves( rules.movements.blackPawnCaptureStageRight, possibilities)
       };
 
       if( board.tiles[this.position - 9] !== undefined ){
-        possibilities = this.addPossibleMoves( "nP -cP === -9", possibilities)
+        possibilities = this.addPossibleMoves( rules.movements.blackPawnCaptureStageLeft, possibilities)
       };
       return possibilities
     },
@@ -487,8 +504,13 @@ var game = {
 }
 
 game.createTeams()
-rules.move(board.tiles[1], 18)
-rules.move(board.tiles[50], 42)
-rules.move(board.tiles[11], 27)
-rules.move(board.tiles[59], 32)
-rules.move(board.tiles[3], 19)
+setTimeout( function( ){ rules.move(board.tiles[1], 18) }, 1000)
+setTimeout( function( ){ rules.move(board.tiles[50], 42) }, 2000)
+setTimeout( function( ){ rules.move(board.tiles[11], 27) }, 3000)
+setTimeout( function( ){ rules.move(board.tiles[59], 32) }, 4000)
+setTimeout( function( ){ rules.move(board.tiles[3], 19) }, 5000)
+setTimeout( function( ){ rules.move(board.tiles[42], 34) }, 6000)
+setTimeout( function( ){ rules.move(board.tiles[12], 20) }, 7000)
+setTimeout( function( ){ rules.move(board.tiles[34], 27) }, 8000)
+setTimeout( function( ){ rules.move(board.tiles[0], 1) }, 9000)
+setTimeout( function( ){ rules.move(board.tiles[27], 18) }, 10000)
