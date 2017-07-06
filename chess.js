@@ -328,12 +328,12 @@ var queenCreator = (function (team, position){
   return queen
 });
 
-var pawnCreator = (function (team, position){
+var whitePawnCreator = (function (position){
   var pawn = {
     name: "pawn",
     position: position,
     value: 1,
-    team: team,
+    team: "white",
     addPossibleMoves: function(move, possibilities){
       if (possibilities === ""){
         possibilities = move
@@ -345,47 +345,71 @@ var pawnCreator = (function (team, position){
     },
     
     possibleMoves: function(){
-      // separate white and black pawn objects
       var possibilities = "";
-      if( this.team === "white" ){
-        // factor out logic for each movement type
-        if( Math.floor(this.position / 8) === 1 && board.tiles[this.position + 16] === undefined ){
-          possibilities = this.addPossibleMoves( "nP - cP === 16", possibilities )
-        };
-        if( board.tiles[this.position + 8] === undefined ){
-          possibilities = this.addPossibleMoves( "nP - cP === 8", possibilities )
-        };
-        if( board.tiles[this.position + 7] !== undefined ){
-          possibilities = this.addPossibleMoves( "nP -cP === 7", possibilities)
-        };
-        if( board.tiles[this.position + 9] !== undefined ){
-          possibilities = this.addPossibleMoves( "nP -cP === 9", possibilities)
-        };
-      } else{
-
-        if( Math.floor(this.position / 8) === 6 && board.tiles[this.position - 16] === undefined ){
-          possibilities = this.addPossibleMoves( "nP - cP === -16", possibilities )
-        };
-
-        if( board.tiles[this.position - 8] === undefined ){
-          possibilities = this.addPossibleMoves( "nP - cP === -8", possibilities )
-        };
-
-        if( board.tiles[this.position - 7] !== undefined ){
-          possibilities = this.addPossibleMoves( "nP -cP === -7", possibilities)
-        };
-
-        if( board.tiles[this.position - 9] !== undefined ){
-          possibilities = this.addPossibleMoves( "nP -cP === -9", possibilities)
-        };
-      }
+      // factor out logic for each movement type
+      if( Math.floor(this.position / 8) === 1 && board.tiles[this.position + 16] === undefined ){
+        possibilities = this.addPossibleMoves( "nP - cP === 16", possibilities )
+      };
+      if( board.tiles[this.position + 8] === undefined ){
+        possibilities = this.addPossibleMoves( "nP - cP === 8", possibilities )
+      };
+      if( board.tiles[this.position + 7] !== undefined ){
+        possibilities = this.addPossibleMoves( "nP -cP === 7", possibilities)
+      };
+      if( board.tiles[this.position + 9] !== undefined ){
+        possibilities = this.addPossibleMoves( "nP -cP === 9", possibilities)
+      };
       return possibilities
     },
     isTurn: false
   };
+  setImgSrc("white", pawn)
+  setStartPosition(position, pawn)
+  board.displayPiece(pawn)
+
+  return pawn
+});
 
 
-  setImgSrc(team, pawn)
+var blackPawnCreator = (function (position){
+  var pawn = {
+    name: "pawn",
+    position: position,
+    value: 1,
+    team: "black",
+    addPossibleMoves: function(move, possibilities){
+      if (possibilities === ""){
+        possibilities = move
+      } else{
+        possibilities = possibilities + " || " + move
+      }
+
+      return possibilities
+    },
+    
+    possibleMoves: function(){
+      var possibilities = "";
+      // factor out logic for each movement type
+      if( Math.floor(this.position / 8) === 6 && board.tiles[this.position - 16] === undefined ){
+        possibilities = this.addPossibleMoves( "nP - cP === -16", possibilities )
+      };
+
+      if( board.tiles[this.position - 8] === undefined ){
+        possibilities = this.addPossibleMoves( "nP - cP === -8", possibilities )
+      };
+
+      if( board.tiles[this.position - 7] !== undefined ){
+        possibilities = this.addPossibleMoves( "nP -cP === -7", possibilities)
+      };
+
+      if( board.tiles[this.position - 9] !== undefined ){
+        possibilities = this.addPossibleMoves( "nP -cP === -9", possibilities)
+      };
+      return possibilities
+    },
+    isTurn: false
+  };
+  setImgSrc("black", pawn)
   setStartPosition(position, pawn)
   board.displayPiece(pawn)
 
@@ -398,14 +422,14 @@ var game = {
     window.white = {
       king: kingCreator( "white", 4),
       pawns: [
-        pawnCreator(    "white", 8),
-        pawnCreator(    "white", 9),
-        pawnCreator(    "white", 10),
-        pawnCreator(    "white", 11),
-        pawnCreator(    "white", 12),
-        pawnCreator(    "white", 13),
-        pawnCreator(    "white", 14),
-        pawnCreator(    "white", 15)
+        whitePawnCreator(8),
+        whitePawnCreator(9),
+        whitePawnCreator(10),
+        whitePawnCreator(11),
+        whitePawnCreator(12),
+        whitePawnCreator(13),
+        whitePawnCreator(14),
+        whitePawnCreator(15)
       ],
       minors: [
         nightCreator(   "white", 1),
@@ -424,14 +448,14 @@ var game = {
 
       king: kingCreator(    "black", 60),
       pawns: [
-        pawnCreator(    "black", 48),
-        pawnCreator(    "black", 49),
-        pawnCreator(    "black", 50),
-        pawnCreator(    "black", 51),
-        pawnCreator(    "black", 52),
-        pawnCreator(    "black", 53),
-        pawnCreator(    "black", 54),
-        pawnCreator(    "black", 55),
+        blackPawnCreator(48),
+        blackPawnCreator(49),
+        blackPawnCreator(50),
+        blackPawnCreator(51),
+        blackPawnCreator(52),
+        blackPawnCreator(53),
+        blackPawnCreator(54),
+        blackPawnCreator(55),
       ],
       minors: [
         nightCreator(   "black", 57),
