@@ -84,9 +84,8 @@ var board = {
   },
 
   movementIncrement: function(position, newPosition){
-    // this function feels out of place
+    // this function feels out of place?
     var increment;
-    // refactor into functions like "movementIsVertical"
     if ( this.movementTypes.isVertical(position, newPosition) && position < newPosition ){
       increment = 8
     } else if ( this.movementTypes.isVertical(position, newPosition) && position > newPosition ){
@@ -112,7 +111,7 @@ var board = {
       delete board.tiles[piece.position];
       this.undisplayPiece(gridPosition)
       this.undisplayPiece(gridPosition)
-      // probably elsewhere, but track captures he, maybe even display on side of board
+      // probably elsewhere, but track captures, maybe even display on side of board
       this.undisplayPiece(newGridPosition);
   },
   placeNewStuff: function( piece, newPosition ){
@@ -142,7 +141,6 @@ var rules = {
     rangedDiagonals: "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " ) || (((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
     rangedOrthogonals: "(cP - nP) % 8 === 0 || ((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
     nightMoves: // #segerJokes
-    // factor out boarder info
       "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )"
   },
 
@@ -176,14 +174,8 @@ var rules = {
       alert("other team's turn")
       return
     }
-    if( piece.name === "pawn" ){
-// this is hideous, make them all functions or something
-// 
-// 
-      var possibleMoves = piece.possibleMoves()
-    } else {
-      var possibleMoves = piece.possibleMoves
-    }
+
+    var possibleMoves = piece.possibleMoves()
 
 // NOT IMPLEMENTED YET
 // 
@@ -239,7 +231,9 @@ var nightCreator = (function (team, position){
     value: 3,
     team: team,
     // make into function
-    possibleMoves: rules.movements.nightMoves,
+    possibleMoves: function(){
+      return rules.movements.nightMoves
+    },
     isTurn: false
   };
 
@@ -258,7 +252,9 @@ var rookCreator = (function (team, position){
     value: 5,
     team: team,
     // make into function
-    possibleMoves: rules.movements.rangedOrthogonals,
+    possibleMoves: function(){
+      return rules.movements.rangedOrthogonals
+    },
     isTurn: false
   };
 
@@ -277,7 +273,9 @@ var bishopCreator = (function (team, position){
     value: 3,
     team: team,
     // make into function
-    possibleMoves: rules.movements.rangedDiagonals,
+    possibleMoves: function(){
+      return rules.movements.rangedDiagonals
+    },
     isTurn: false
   };
 
@@ -295,7 +293,9 @@ var kingCreator = (function (team, position){
     value: 0,
     team: team,
     // make into function
-    possibleMoves: "(Math.abs(cP - nP) === 1 && " + board.boundaries.horizontalBorderCheck + " ) || (Math.abs(cP - nP) === 7 && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " ) || (Math.abs(cP - nP) === 8) || (Math.abs(cP - nP) === 9 && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
+    possibleMoves: function(){
+      return "(Math.abs(cP - nP) === 1 && " + board.boundaries.horizontalBorderCheck + " ) || (Math.abs(cP - nP) === 7 && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " ) || (Math.abs(cP - nP) === 8) || (Math.abs(cP - nP) === 9 && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )"
+    },
     isTurn: false
   };
 
@@ -314,7 +314,9 @@ var queenCreator = (function (team, position){
     value: 9,
     team: team,
     // make into function
-    possibleMoves: rules.movements.rangedDiagonals + " || " + rules.movements.rangedOrthogonals,
+    possibleMoves: function(){
+      return rules.movements.rangedDiagonals + " || " + rules.movements.rangedOrthogonals
+    },
     isTurn: false
   };
 
@@ -465,9 +467,9 @@ var game = {
   }
 }
 
-// game.createTeams()
-// rules.move(board.tiles[1], 18)
-// rules.move(board.tiles[50], 42)
-// rules.move(board.tiles[11], 27)
-// rules.move(board.tiles[59], 32)
-// rules.move(board.tiles[3], 19)
+game.createTeams()
+rules.move(board.tiles[1], 18)
+rules.move(board.tiles[50], 42)
+rules.move(board.tiles[11], 27)
+rules.move(board.tiles[59], 32)
+rules.move(board.tiles[3], 19)
