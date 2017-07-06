@@ -160,7 +160,7 @@ var board = {
 };
 function setImgSrc (team, piece){
   var pieceInitial = piece.name[0].toUpperCase()
-  if( team == "white" ){
+  if( team == white ){
     piece.imgSrc = "img/chesspieces/wikipedia/w" + pieceInitial + ".png"
   } else {
     piece.imgSrc = "img/chesspieces/wikipedia/b" + pieceInitial + ".png"
@@ -197,7 +197,11 @@ var rules = {
       // 
       // 
     };
+
     var king = team.king;
+    if( king.position.isAttacked ){
+
+    }
 // pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
 // maybe iterate across movements testing each individualy
   },
@@ -350,7 +354,7 @@ var whitePawnCreator = (function (position){
     name: "pawn",
     position: position,
     value: 1,
-    team: "white",
+    team: white,
     addPossibleMoves: function(move, possibilities){
       if (possibilities === ""){
         possibilities = move
@@ -377,7 +381,7 @@ var whitePawnCreator = (function (position){
     },
     isTurn: false
   };
-  setImgSrc("white", pawn)
+  setImgSrc(white, pawn)
   setStartPosition(position, pawn)
   board.displayPiece(pawn)
   return pawn
@@ -389,7 +393,7 @@ var blackPawnCreator = (function (position){
     name: "pawn",
     position: position,
     value: 1,
-    team: "black",
+    team: black,
     addPossibleMoves: function(move, possibilities){
       if (possibilities === ""){
         possibilities = move
@@ -419,77 +423,86 @@ var blackPawnCreator = (function (position){
     },
     isTurn: false
   };
-  setImgSrc("black", pawn)
+  setImgSrc(black, pawn)
   setStartPosition(position, pawn)
   board.displayPiece(pawn)
   return pawn
 });
 
 var game = {
-  allowedToMove: "white",
   createTeams: function(){
     window.white = {
-      king: kingCreator( "white", 4),
-      pawns: [
-        whitePawnCreator(8),
-        whitePawnCreator(9),
-        whitePawnCreator(10),
-        whitePawnCreator(11),
-        whitePawnCreator(12),
-        whitePawnCreator(13),
-        whitePawnCreator(14),
-        whitePawnCreator(15)
-      ],
-      minors: [
-        nightCreator(   "white", 1),
-        bishopCreator(  "white", 2),
-        bishopCreator(  "white", 5),
-        nightCreator(   "white", 6),
-      ],
-      majors: [
-        rookCreator(    "white", 0),
-        queenCreator(   "white", 3),
-        rookCreator(    "white", 7),
-      ]
+      name: "white"
     };
     window.black = {
-      king: kingCreator(    "black", 60),
-      pawns: [
-        blackPawnCreator(48),
-        blackPawnCreator(49),
-        blackPawnCreator(50),
-        blackPawnCreator(51),
-        blackPawnCreator(52),
-        blackPawnCreator(53),
-        blackPawnCreator(54),
-        blackPawnCreator(55),
-      ],
-      minors: [
-        nightCreator(   "black", 57),
-        bishopCreator(  "black", 58),
-        bishopCreator(  "black", 61),
-        nightCreator(   "black", 62),
-      ],
-      majors: [
-        rookCreator(    "black", 56),
-        queenCreator(   "black", 59),
-        rookCreator(    "black", 63)
-      ]
-    }
+      name: "black",
+    };
+    
+  },
+  begin: function(){
+    this.allowedToMove = white
+  },
+  addWhitePieces: function(){
+    white.king = kingCreator( white, 4);
+    white.pawns = [
+      whitePawnCreator(8),
+      whitePawnCreator(9),
+      whitePawnCreator(10),
+      whitePawnCreator(11),
+      whitePawnCreator(12),
+      whitePawnCreator(13),
+      whitePawnCreator(14),
+      whitePawnCreator(15)
+    ],
+    white.minors = [
+      nightCreator(   white, 1),
+      bishopCreator(  white, 2),
+      bishopCreator(  white, 5),
+      nightCreator(   white, 6),
+    ],
+    white.majors = [
+      rookCreator(    white, 0),
+      queenCreator(   white, 3),
+      rookCreator(    white, 7),
+    ]
+  },
+  addBlackPieces: function(){
+    black.king = kingCreator(    black, 60);
+    black.pawns = [
+      blackPawnCreator(48),
+      blackPawnCreator(49),
+      blackPawnCreator(50),
+      blackPawnCreator(51),
+      blackPawnCreator(52),
+      blackPawnCreator(53),
+      blackPawnCreator(54),
+      blackPawnCreator(55),
+    ],
+    black.minors = [
+      nightCreator(   black, 57),
+      bishopCreator(  black, 58),
+      bishopCreator(  black, 61),
+      nightCreator(   black, 62),
+    ],
+    black.majors = [
+      rookCreator(    black, 56),
+      queenCreator(   black, 59),
+      rookCreator(    black, 63)
+    ]
   },
   turn: function(turnNum){
     var turnNum = turnNum || 1
     if( turnNum % 2 === 0  ){
-      this.allowedToMove = "black"
+      this.allowedToMove = black
     } else{
-      this.allowedToMove = "white"
+      this.allowedToMove = white
     }
   },
   nextTurn: function(){
-    if( this.allowedToMove === "white" ){
-      this.allowedToMove = "black"
+    if( this.allowedToMove === white ){
+      this.allowedToMove = black
     } else{
-      this.allowedToMove = "white"
+      this.allowedToMove = white
     }
   },
   whiteMove: function(){
@@ -499,16 +512,21 @@ var game = {
 }
 
 game.createTeams()
-setTimeout( function(){ rules.move(board.tiles[1], 18) }, 500)
+game.addWhitePieces()
+game.addBlackPieces()
+game.begin()
+setTimeout( function(){ rules.move(board.tiles[1],  18) }, 500)
 setTimeout( function(){ rules.move(board.tiles[50], 42) }, 1000)
 setTimeout( function(){ rules.move(board.tiles[11], 27) }, 1500)
 setTimeout( function(){ rules.move(board.tiles[59], 32) }, 2000)
-setTimeout( function(){ rules.move(board.tiles[3], 19) }, 2500)
+setTimeout( function(){ rules.move(board.tiles[3],  19) }, 2500)
 setTimeout( function(){ rules.move(board.tiles[42], 34) }, 3000)
 setTimeout( function(){ rules.move(board.tiles[12], 20) }, 3500)
 setTimeout( function(){ rules.move(board.tiles[34], 27) }, 4000)
-setTimeout( function(){ rules.move(board.tiles[0], 1) }, 4500)
+setTimeout( function(){ rules.move(board.tiles[0],  1) },  4500)
 setTimeout( function(){ rules.move(board.tiles[27], 18) }, 5000)
-setTimeout( function(){ rules.move(board.tiles[9], 18) }, 5500)
-setTimeout( function(){ rules.move(board.tiles[51], 35)}, 6000)
+setTimeout( function(){ rules.move(board.tiles[9],  18) }, 5500)
+setTimeout( function(){ rules.move(board.tiles[51], 35)},  6000)
 
+king = black.king
+pos = king.pos
