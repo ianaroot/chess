@@ -80,7 +80,7 @@ var board = {
     elem.setAttribute("src", piece.imgSrc);
     elem.setAttribute("height", "49");
     elem.setAttribute("width", "49");
-    console.log(gridPosition)
+    // console.log(gridPosition)
     document.getElementsByClassName( gridPosition )[0].appendChild(elem)
   },
 
@@ -92,14 +92,14 @@ var board = {
     }
   },
 
-  positionBlocked: function(position, newPosition){
+  pathIsBlocked: function(position, newPosition){
     var movementIncrement = this.movementIncrement(position, newPosition),
       possibleBlocks = [],
       blocked = false;
     for( i = 1; ( i * movementIncrement + position) !== newPosition ; i++ ){
       possibleBlocks.push( i * movementIncrement + position )
     }
-    console.log(possibleBlocks)
+    // console.log(possibleBlocks)
     for( i = 0; i < possibleBlocks.length; i++ ){
       if ( board.tiles[possibleBlocks[i]] !== undefined ){
         blocked = true
@@ -107,6 +107,10 @@ var board = {
     }
     // console.log("blocked is " + blocked)
     return blocked
+  },
+
+  positionIsOccupiedByTeamMate: function(position, team){
+    return (this.tiles[position] !== undefined && this.tiles[position].team === team  )
   },
 
   movementTypes: {
@@ -193,15 +197,11 @@ var rules = {
     whitePawnCaptureStageRight: "nP -cP === 9"
   },
 
-  movementTypeVerifier: function(possibleMoves, currentPosition, newPosition, team){
+  movementTypeVerifier: function(possibleMoves, currentPosition, newPosition){
     // check self capture and emptiness in separate functions
-    if (board.tiles[newPosition] !== undefined && board.tiles[newPosition].team === team  ){
-      var acceptability = false
-    } else {
-      possibleMoves = possibleMoves.replace(/cP/g, currentPosition)
-      possibleMoves = possibleMoves.replace(/nP/g, newPosition)
-      var acceptability = eval(possibleMoves)
-    }
+    possibleMoves = possibleMoves.replace(/cP/g, currentPosition)
+    possibleMoves = possibleMoves.replace(/nP/g, newPosition)
+    var acceptability = eval(possibleMoves)
 
     return acceptability
   },
@@ -214,7 +214,8 @@ var rules = {
       // 
     };
     var king = team.king;
-
+// pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
+// maybe iterate across movements testing each individualy
   },
 
   move: function(piece, newPosition){
@@ -234,10 +235,10 @@ var rules = {
       return
     }
 // 
-    if ( board.outOfbounds(newPosition)  ||
-      // below function is about to become multiple functions, gon' be more conditions
-      !this.movementTypeVerifier(possibleMoves, piece.position, newPosition, piece.team)  ||
-      (board.positionBlocked(piece.position, newPosition) && piece.name !== "night" ) ){
+    if ( board.outOfbounds(newPosition)
+      || !this.movementTypeVerifier(possibleMoves, piece.position, newPosition, piece.team)
+      || board.positionIsOccupiedByTeamMate(newPosition, piece.team )
+      || (board.pathIsBlocked(piece.position, newPosition) && piece.name !== "night" ) ){
       // break out separate alerts for different conditions
       alert("not legal move")
       return
