@@ -143,7 +143,7 @@ var rules = {
     rangedOrthogonals: "(cP - nP) % 8 === 0 || ((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
     nightMoves: // #segerJokes
     // factor out boarder info
-      "(Math.abs(cP - nP) === 15 && " + verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + horizontalNightMovementCheck + " )"
+      "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )"
   },
 
   movementTypeVerifier: function(possibleMoves, currentPosition, newPosition, team){
@@ -465,3 +465,9 @@ var game = {
   }
 }
 
+// game.createTeams()
+// rules.move(board.tiles[1], 18)
+// rules.move(board.tiles[50], 42)
+// rules.move(board.tiles[11], 27)
+// rules.move(board.tiles[59], 32)
+// rules.move(board.tiles[3], 19)
