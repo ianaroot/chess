@@ -51,7 +51,7 @@ var board = {
     return board.tiles[position + 9] !== undefined
   },
 
-  outOfbounds: function(position){
+  inBounds: function(position){
     return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
   },
 
@@ -166,6 +166,7 @@ function setImgSrc (team, piece){
     piece.imgSrc = "img/chesspieces/wikipedia/b" + pieceInitial + ".png"
   }
 };
+
 var rules = {
   movements: {
     rangedDiagonals: "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " ) || (((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
@@ -199,21 +200,21 @@ var rules = {
 // maybe iterate across movements testing each individualy
   },
   moveIsIllegal: function(piece, newPosition){
-    legal = false
-    if ( board.outOfbounds(newPosition) ){
+    illegal = false
+    if ( !board.inBounds(newPosition) ){
       alert('stay on the board, fool')
-      legal = true
+      illegal = true
     } else if( !this.movementTypeVerifier(piece.possibleMoves(), piece.position, newPosition, piece.team) ){
       alert("that's not how that piece moves")
-      legal = true
+      illegal = true
     } else if( board.pathIsBlocked(piece.position, newPosition) && piece.name !== "night" ){
       alert("that position is blocked")
-      legal = true
+      illegal = true
     } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
       alert("what, are you trying to capture your own piece?")
-      legal = true
+      illegal = true
     }
-    return legal
+    return illegal
   },
   move: function(piece, newPosition){
     if( piece.team !== game.allowedToMove ){
