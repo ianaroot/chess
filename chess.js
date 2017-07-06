@@ -52,27 +52,25 @@ var board = {
   },
 
   outOfbounds: function(position){
-    position > this.boundaries.upperLimit || position < this.boundaries.lowerLimit
+    return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
   },
 
   gridCalculator: function(tile){
-    var x = Math.floor(tile % 8)
-    var y = Math.floor(tile / 8) + 1
-    var alphaNum = {
-      0: "a",
-      1: "b",
-      2: "c",
-      3: "d",
-      4: "e",
-      5: "f",
-      6: "g",
-      7: "h"
-    } 
-
-    var x = alphaNum[x]
+    var x = Math.floor(tile % 8),
+      y = Math.floor(tile / 8) + 1,
+      alphaNum = {
+        0: "a",
+        1: "b",
+        2: "c",
+        3: "d",
+        4: "e",
+        5: "f",
+        6: "g",
+        7: "h"
+      },
+      x = alphaNum[x];
     return "square-" + x + y
   },
-
   displayPiece: function(piece){
     var elem = document.createElement("img"),
       gridPosition = this.gridCalculator(piece.position);
@@ -83,19 +81,19 @@ var board = {
     // console.log(gridPosition)
     document.getElementsByClassName( gridPosition )[0].appendChild(elem)
   },
-
   undisplayPiece: function(gridPosition){
     var element = document.getElementsByClassName( gridPosition )[0],
       children = element.children;
+
     for( i = 0; i < children.length; i ++){
       children[i].remove()
     }
   },
-
   pathIsBlocked: function(position, newPosition){
     var movementIncrement = this.movementIncrement(position, newPosition),
       possibleBlocks = [],
       blocked = false;
+
     for( i = 1; ( i * movementIncrement + position) !== newPosition ; i++ ){
       possibleBlocks.push( i * movementIncrement + position )
     }
@@ -108,11 +106,9 @@ var board = {
     // console.log("blocked is " + blocked)
     return blocked
   },
-
   positionIsOccupiedByTeamMate: function(position, team){
     return (this.tiles[position] !== undefined && this.tiles[position].team === team  )
   },
-
   movementTypes: {
     isVertical: function(position, newPosition){
       return(position - newPosition) % 8 === 0
@@ -127,7 +123,6 @@ var board = {
       return (position - newPosition) % 1 === 0
     }
   },
-
   movementIncrement: function(position, newPosition){
     var increment;
     if ( this.movementTypes.isVertical(position, newPosition) && position < newPosition ){
@@ -150,7 +145,6 @@ var board = {
     // console.log("increment is " + increment)
     return increment
   },
-
   deleteOldStuff: function(gridPosition, newGridPosition, piece){ 
       delete board.tiles[piece.position];
       this.undisplayPiece(gridPosition)
@@ -163,12 +157,7 @@ var board = {
     piece.position = newPosition;
     this.displayPiece(piece);
   }
-
-
 };
- 
-
-
 function setImgSrc (team, piece){
   var pieceInitial = piece.name[0].toUpperCase()
   if( team == "white" ){
@@ -176,11 +165,8 @@ function setImgSrc (team, piece){
   } else {
     piece.imgSrc = "img/chesspieces/wikipedia/b" + pieceInitial + ".png"
   }
-  
 };
-
 var rules = {
-
   movements: {
     rangedDiagonals: "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " ) || (((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
     rangedOrthogonals: "(cP - nP) % 8 === 0 || ((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
@@ -195,15 +181,12 @@ var rules = {
     whitePawnCaptureStageLeft: "nP -cP === 7",
     whitePawnCaptureStageRight: "nP -cP === 9"
   },
-
   movementTypeVerifier: function(possibleMoves, currentPosition, newPosition){
     possibleMoves = possibleMoves.replace(/cP/g, currentPosition)
     possibleMoves = possibleMoves.replace(/nP/g, newPosition)
     var acceptability = eval(possibleMoves)
-
     return acceptability
   },
-
   kingIsInCheckChecker(team, oldPosition, newPosition){
     var tiles = board.tiles;
     if (oldPosition && newPosition){
@@ -270,11 +253,9 @@ var rules = {
   }
 };
 
-
 function setStartPosition(position, piece) {
   board.tiles[position] = piece
 };
-
 
 var nightCreator = (function (team, position){
   var night = {
@@ -287,14 +268,11 @@ var nightCreator = (function (team, position){
     },
     isTurn: false
   };
-
   setImgSrc(team, night)
   setStartPosition(position, night)
   board.displayPiece(night)
-
   return night
 });
-
 
 var rookCreator = (function (team, position){
   var rook = {
@@ -307,12 +285,9 @@ var rookCreator = (function (team, position){
     },
     isTurn: false
   };
-
-
   setImgSrc(team, rook)
   setStartPosition(position, rook)
   board.displayPiece(rook)
-
   return rook
 });
 
@@ -327,11 +302,9 @@ var bishopCreator = (function (team, position){
     },
     isTurn: false
   };
-
   setImgSrc(team, bishop)
   setStartPosition(position, bishop)
   board.displayPiece(bishop)
-
   return bishop
 });
 
@@ -346,12 +319,9 @@ var kingCreator = (function (team, position){
     },
     isTurn: false
   };
-
-
   setImgSrc(team, king)
   setStartPosition(position, king)
   board.displayPiece(king)
-
   return king
 });
 
@@ -366,12 +336,9 @@ var queenCreator = (function (team, position){
     },
     isTurn: false
   };
-
-
   setImgSrc(team, queen)
   setStartPosition(position, queen)
   board.displayPiece(queen)
-
   return queen
 });
 
@@ -410,7 +377,6 @@ var whitePawnCreator = (function (position){
   setImgSrc("white", pawn)
   setStartPosition(position, pawn)
   board.displayPiece(pawn)
-
   return pawn
 });
 
@@ -453,7 +419,6 @@ var blackPawnCreator = (function (position){
   setImgSrc("black", pawn)
   setStartPosition(position, pawn)
   board.displayPiece(pawn)
-
   return pawn
 });
 
@@ -484,9 +449,7 @@ var game = {
         rookCreator(    "white", 7),
       ]
     };
-
     window.black = {
-
       king: kingCreator(    "black", 60),
       pawns: [
         blackPawnCreator(48),
