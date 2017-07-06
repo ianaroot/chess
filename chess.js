@@ -3,11 +3,11 @@ var board = {
   boundaries: {
     upperLimit: 63,
     lowerLimit: 0,
-    diagonalForwardSlashMovementBorderCheck: "(( ((cP % 8) > (nP % 8)) && (cP > nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP < nP) ))",
-    diagonalBackSlashMovementBorderCheck: "( ((cP % 8) > (nP % 8)) && (cP < nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP > nP) )",
-    horizontalBorderCheck: "Math.floor(cP / 8) === Math.floor(nP / 8)",
-    verticalNightMovementBorderCheck: "(Math.abs(cP % 8 - nP % 8) === 1 )",
-    horizontalNightMovementCheck: "(Math.abs(cP % 8 - nP % 8) === 2 )"
+    diagonalForwardSlashMovementBorderCheck:  "(( ((cP % 8) > (nP % 8)) && (cP > nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP < nP) ))",
+    diagonalBackSlashMovementBorderCheck:     "( ((cP % 8) > (nP % 8)) && (cP < nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP > nP) )",
+    horizontalBorderCheck:                    "Math.floor(cP / 8) === Math.floor(nP / 8)",
+    verticalNightMovementBorderCheck:         "(Math.abs(cP % 8 - nP % 8) === 1 )",
+    horizontalNightMovementCheck:             "(Math.abs(cP % 8 - nP % 8) === 2 )"
   },
 
   positions: {
@@ -57,7 +57,7 @@ var board = {
 
   gridCalculator: function(tile){
     var x = Math.floor(tile % 8),
-      y = Math.floor(tile / 8) + 1,
+        y = Math.floor(tile / 8) + 1,
       alphaNum = {
         0: "a",
         1: "b",
@@ -83,7 +83,7 @@ var board = {
   },
   undisplayPiece: function(gridPosition){
     var element = document.getElementsByClassName( gridPosition )[0],
-      children = element.children;
+      children  = element.children;
 
     for( i = 0; i < children.length; i ++){
       children[i].remove()
@@ -91,8 +91,8 @@ var board = {
   },
   pathIsBlocked: function(position, newPosition){
     var movementIncrement = this.movementIncrement(position, newPosition),
-      possibleBlocks = [],
-      blocked = false;
+        possibleBlocks    = [],
+        blocked           = false;
 
     for( i = 1; ( i * movementIncrement + position) !== newPosition ; i++ ){
       possibleBlocks.push( i * movementIncrement + position )
@@ -169,25 +169,25 @@ function setImgSrc (team, piece){
 
 var rules = {
   movements: {
-    rangedDiagonalsForwardSlash: "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
-    rangedDiagonalsBackSlash: "(((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
-    rangedVerticals: "(cP - nP) % 8 === 0",
-    rangedHorizontals: "((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
-    nightMoves: // #segerJokes
-      "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )",
-    blackPawnTwoStep: "nP - cP === -16",
-    blackPawnOneStep: "nP - cP === -8",
-    blackPawnCaptureStageRight: "nP -cP === -7",
-    blackPawnCaptureStageLeft: "nP -cP === -9",
-    whitePawnTwoStep: "nP - cP === 16",
-    whitePawnOneStep: "nP - cP === 8",
-    whitePawnCaptureStageLeft: "nP -cP === 7",
-    whitePawnCaptureStageRight: "nP -cP === 9"
+    rangedDiagonalsForwardSlash:  "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
+    rangedDiagonalsBackSlash:     "(((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
+    rangedVerticals:              "(cP - nP) % 8 === 0",
+    rangedHorizontals:            "((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
+    nightMoves:                   "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )",
+    // #segerJokes
+    blackPawnTwoStep:             "nP - cP === -16",
+    blackPawnOneStep:             "nP - cP === -8",
+    blackPawnCaptureStageRight:   "nP -cP === -7",
+    blackPawnCaptureStageLeft:    "nP -cP === -9",
+    whitePawnTwoStep:             "nP - cP === 16",
+    whitePawnOneStep:             "nP - cP === 8",
+    whitePawnCaptureStageLeft:    "nP -cP === 7",
+    whitePawnCaptureStageRight:   "nP -cP === 9"
   },
   movementTypeVerifier: function(possibleMoves, currentPosition, newPosition){
-    possibleMoves = possibleMoves.replace(/cP/g, currentPosition)
-    possibleMoves = possibleMoves.replace(/nP/g, newPosition)
-    var acceptability = eval(possibleMoves)
+    var possibleMoves = possibleMoves.replace(/cP/g, currentPosition),
+      possibleMoves   = possibleMoves.replace(/nP/g, newPosition),
+      acceptability   = eval(possibleMoves);
     return acceptability
   },
   kingIsInCheckChecker: function(team, oldPosition, newPosition){
@@ -236,8 +236,8 @@ var rules = {
   if( this.moveIsIllegal(piece, newPosition) ){
     return
     } else if ( board.tiles[newPosition] === undefined ){
-      gridPosition = board.gridCalculator(piece.position)
-      newGridPosition = board.gridCalculator(newPosition);
+      var gridPosition    = board.gridCalculator(piece.position),
+          newGridPosition = board.gridCalculator(newPosition);
       board.deleteOldStuff(gridPosition, newGridPosition, piece)
       board.placeNewStuff(piece, newPosition)
       game.nextTurn()
@@ -246,8 +246,8 @@ var rules = {
 // track captured pieces
 // 
 // lots of duplication with the above function
-      gridPosition = board.gridCalculator(piece.position)
-      newGridPosition = board.gridCalculator(newPosition);
+      var gridPosition    = board.gridCalculator(piece.position),
+          newGridPosition = board.gridCalculator(newPosition);
       board.deleteOldStuff(gridPosition, newGridPosition, piece)
       board.placeNewStuff(piece, newPosition)
       game.nextTurn()
