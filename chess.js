@@ -31,28 +31,28 @@ var board = {
   },
 
   displayPiece: function(piece){
-    var elem = document.createElement("img");
+    var elem = document.createElement("img"),
+      gridPosition = this.gridCalculator(piece.position);
+
     elem.setAttribute("src", piece.imgSrc);
     elem.setAttribute("height", "49");
     elem.setAttribute("width", "49");
-    var gridPosition = this.gridCalculator(piece.position)
     console.log(gridPosition)
     document.getElementsByClassName( gridPosition )[0].appendChild(elem)
   },
 
   undisplayPiece: function(gridPosition){
-    var element = document.getElementsByClassName( gridPosition )[0]
-    // debugger
-    var children = element.children
+    var element = document.getElementsByClassName( gridPosition )[0],
+      children = element.children;
     for( i = 0; i < children.length; i ++){
       children[i].remove()
     }
   },
 
   positionBlocked: function(position, newPosition){
-    var movementIncrement = this.movementIncrement(position, newPosition)
-    var possibleBlocks = []
-    var blocked = false
+    var movementIncrement = this.movementIncrement(position, newPosition),
+      possibleBlocks = [],
+      blocked = false;
     for( i = 1; ( i * movementIncrement + position) !== newPosition ; i++ ){
       possibleBlocks.push( i * movementIncrement + position )
     }
@@ -62,13 +62,13 @@ var board = {
         blocked = true
       }
     }
-    console.log("blocked is " + blocked)
+    // console.log("blocked is " + blocked)
     return blocked
   },
 
   movementIncrement: function(position, newPosition){
     // this function feels out of place
-    var increment
+    var increment;
     // refactor into functions like "movementIsVertical"
     if ( (position - newPosition) % 8 === 0 && position < newPosition ){
       increment = 8
@@ -87,7 +87,7 @@ var board = {
     }else if ( (position - newPosition) % 1 === 0 && position > newPosition){
       increment = -1
     }
-    console.log("increment is " + increment)
+    // console.log("increment is " + increment)
     return increment
   },
 
@@ -95,6 +95,7 @@ var board = {
       delete board.tiles[piece.position];
       this.undisplayPiece(gridPosition)
       this.undisplayPiece(gridPosition)
+      // probably elsewhere, but track captures he, maybe even display on side of board
       this.undisplayPiece(newGridPosition);
   },
   placeNewStuff: function( piece, newPosition ){
@@ -124,10 +125,12 @@ var rules = {
     rangedDiagonals: "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorder + " ) || (((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorder + " )",
     rangedOrthogonals: "(cP - nP) % 8 === 0 || ((cP - nP) < 8 && " + board.boundaries.horizontalBorder + " )",
     nightMoves: // #segerJokes
+    // factor out boarder info
       "(Math.abs(cP - nP) === 15 && (Math.abs(cP % 8 - nP % 8) === 1 )) || (Math.abs(cP - nP) === 17 && (Math.abs(cP % 8 - nP % 8) === 1 )) || (Math.abs(cP - nP) === 10 && (Math.abs(cP % 8 - nP % 8) === 2 )) || (Math.abs(cP - nP) === 6 && (Math.abs(cP % 8 - nP % 8) === 2 ))"
   },
 
   movementTypeVerifier: function(possibleMoves, currentPosition, newPosition, team){
+    // check self capture and emptiness in separate functions
     if (board.tiles[newPosition] !== undefined && board.tiles[newPosition].team === team  ){
       var acceptability = false
     } else {
@@ -140,19 +143,20 @@ var rules = {
   },
 
   kingIsInCheckChecker(team, oldPosition, newPosition){
-    var tiles = board.tiles
+    var tiles = board.tiles;
     if (oldPosition && newPosition){
       // clone tiles, delete piece from old position, drop piece into new position
       // 
       // 
     };
-    var king = team.king
+    var king = team.king;
 
   },
 
   move: function(piece, newPosition){
+    // function is poorly named handles much other than actual movement, break it down to component parts
     if( piece.team !== game.allowedToMove ){
-      alert("hey man!")
+      alert("other team's turn")
       return
     }
     if( piece.name === "pawn" ){
@@ -168,25 +172,26 @@ var rules = {
 // 
 // 
     if ( rules.kingIsInCheckChecker(piece.team, piece.position, newPosition) ){
-      alert("hey man!")
+      alert("illegal move, check yo' king before you wreck yo' king")
       return
     }
 // 
     if ( board.outOfbounds(newPosition)  ||
+      // below function is about to become multiple functions, gon' be more conditions
       !this.movementTypeVerifier(possibleMoves, piece.position, newPosition, piece.team)  ||
       (board.positionBlocked(piece.position, newPosition) && piece.name !== "night" ) ){
-      alert("hey man!")
+      // break out separate alerts for different conditions
+      alert("not legal move")
       return
     } else if ( board.tiles[newPosition] === undefined ){
       gridPosition = board.gridCalculator(piece.position)
       newGridPosition = board.gridCalculator(newPosition);
       
       board.deleteOldStuff(gridPosition, newGridPosition, piece)
-      // stupid bug is making me repeat this
       board.placeNewStuff(piece, newPosition)
 
       game.nextTurn()
-      console.log("up here")
+      // console.log("up here")
 
     } else if ( board.tiles[newPosition].team !== piece.team ){
 // track captured pieces
@@ -196,11 +201,10 @@ var rules = {
       newGridPosition = board.gridCalculator(newPosition);
       
       board.deleteOldStuff(gridPosition, newGridPosition, piece)
-      // stupid bug is making me repeat this
       board.placeNewStuff(piece, newPosition)
 
       game.nextTurn()
-      console.log("down here")
+      // console.log("down here")
     }
   }
 };
@@ -217,6 +221,7 @@ var nightCreator = (function (team, position){
     position: position,
     value: 3,
     team: team,
+    // make into function
     possibleMoves: rules.movements.nightMoves,
     isTurn: false
   };
@@ -235,6 +240,7 @@ var rookCreator = (function (team, position){
     position: position,
     value: 5,
     team: team,
+    // make into function
     possibleMoves: rules.movements.rangedOrthogonals,
     isTurn: false
   };
@@ -253,6 +259,7 @@ var bishopCreator = (function (team, position){
     position: position,
     value: 3,
     team: team,
+    // make into function
     possibleMoves: rules.movements.rangedDiagonals,
     isTurn: false
   };
@@ -270,6 +277,7 @@ var kingCreator = (function (team, position){
     position: position,
     value: 0,
     team: team,
+    // make into function
     possibleMoves: "(Math.abs(cP - nP) === 1 && " + board.boundaries.horizontalBorder + " ) || (Math.abs(cP - nP) === 7 && " + board.boundaries.diagonalBackSlashMovementBorder + " ) || (Math.abs(cP - nP) === 8) || (Math.abs(cP - nP) === 9 && " + board.boundaries.diagonalForwardSlashMovementBorder + " )",
     isTurn: false
   };
@@ -288,6 +296,7 @@ var queenCreator = (function (team, position){
     position: position,
     value: 9,
     team: team,
+    // make into function
     possibleMoves: rules.movements.rangedDiagonals + " || " + rules.movements.rangedOrthogonals,
     isTurn: false
   };
@@ -317,9 +326,10 @@ var pawnCreator = (function (team, position){
     },
     
     possibleMoves: function(){
+      // separate white and black pawn objects
       var possibilities = "";
       if( this.team === "white" ){
-        // debugger
+        // factor out logic for each movement type
         if( Math.floor(this.position / 8) === 1 && board.tiles[this.position + 16] === undefined ){
           possibilities = this.addPossibleMoves( "nP - cP === 16", possibilities )
         };
