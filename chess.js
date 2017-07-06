@@ -68,25 +68,40 @@ var board = {
     return blocked
   },
 
+  movementTypes: {
+    isVertical: function(position, newPosition){
+      return(position - newPosition) % 8 === 0
+    },
+    isDiagonalForwardSlash: function(position, newPosition){
+      return (position - newPosition) % 9 === 0
+    },
+    isDiagonalBackSlash: function(position, newPosition){
+      return (position - newPosition) % 7 === 0
+    },
+    isHorizontal: function(position, newPosition){
+      return (position - newPosition) % 1 === 0
+    }
+  },
+
   movementIncrement: function(position, newPosition){
     // this function feels out of place
     var increment;
     // refactor into functions like "movementIsVertical"
-    if ( (position - newPosition) % 8 === 0 && position < newPosition ){
+    if ( this.movementTypes.isVertical(position, newPosition) && position < newPosition ){
       increment = 8
-    } else if ( (position - newPosition) % 8 === 0 && position > newPosition ){
+    } else if ( this.movementTypes.isVertical(position, newPosition) && position > newPosition ){
       increment = -8
-    }else if ( (position - newPosition) % 9 === 0 && position < newPosition ){
+    }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position < newPosition ){
       increment = 9
-    }else if ( (position - newPosition) % 9 === 0 && position > newPosition ){
+    }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position > newPosition ){
       increment = -9
-    }else if ( (position - newPosition) % 7 === 0 && position < newPosition ){
+    }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position < newPosition ){
       increment = 7
-    }else if ( (position - newPosition) % 7 === 0 && position > newPosition ){
+    }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position > newPosition ){
       increment = -7
-    }else if ( (position - newPosition) % 1 === 0 && position < newPosition){
+    }else if ( this.movementTypes.isHorizontal(position, newPosition) && position < newPosition){
       increment = 1
-    }else if ( (position - newPosition) % 1 === 0 && position > newPosition){
+    }else if ( this.movementTypes.isHorizontal(position, newPosition) && position > newPosition){
       increment = -1
     }
     // console.log("increment is " + increment)
