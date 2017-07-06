@@ -187,7 +187,7 @@ var rules = {
     var acceptability = eval(possibleMoves)
     return acceptability
   },
-  kingIsInCheckChecker(team, oldPosition, newPosition){
+  kingIsInCheckChecker: function(team, oldPosition, newPosition){
     var tiles = board.tiles;
     if (oldPosition && newPosition){
       // clone tiles, delete piece from old position, drop piece into new position
