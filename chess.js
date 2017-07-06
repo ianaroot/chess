@@ -235,12 +235,18 @@ var rules = {
       return
     }
 // 
-    if ( board.outOfbounds(newPosition)
-      || !this.movementTypeVerifier(possibleMoves, piece.position, newPosition, piece.team)
-      || board.positionIsOccupiedByTeamMate(newPosition, piece.team )
-      || (board.pathIsBlocked(piece.position, newPosition) && piece.name !== "night" ) ){
+    if ( board.outOfbounds(newPosition) ){
+      alert('stay on the board, fool')
+      return
+    } else if( !this.movementTypeVerifier(possibleMoves, piece.position, newPosition, piece.team) ){
       // break out separate alerts for different conditions
-      alert("not legal move")
+      alert("that's not how that piece moves")
+      return
+    } else if( board.pathIsBlocked(piece.position, newPosition) && piece.name !== "night" ){
+      alert("that position is blocked")
+      return
+    } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
+      alert("what, are you trying to capture your own piece?")
       return
     } else if ( board.tiles[newPosition] === undefined ){
       gridPosition = board.gridCalculator(piece.position)
