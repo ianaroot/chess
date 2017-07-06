@@ -129,7 +129,6 @@ var board = {
   },
 
   movementIncrement: function(position, newPosition){
-    // this function feels out of place?
     var increment;
     if ( this.movementTypes.isVertical(position, newPosition) && position < newPosition ){
       increment = 8
@@ -198,7 +197,6 @@ var rules = {
   },
 
   movementTypeVerifier: function(possibleMoves, currentPosition, newPosition){
-    // check self capture and emptiness in separate functions
     possibleMoves = possibleMoves.replace(/cP/g, currentPosition)
     possibleMoves = possibleMoves.replace(/nP/g, newPosition)
     var acceptability = eval(possibleMoves)
@@ -217,16 +215,28 @@ var rules = {
 // pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
 // maybe iterate across movements testing each individualy
   },
-
+  moveIsIllegal: function(piece, newPosition){
+    legal = false
+    if ( board.outOfbounds(newPosition) ){
+      alert('stay on the board, fool')
+      legal = true
+    } else if( !this.movementTypeVerifier(piece.possibleMoves(), piece.position, newPosition, piece.team) ){
+      alert("that's not how that piece moves")
+      legal = true
+    } else if( board.pathIsBlocked(piece.position, newPosition) && piece.name !== "night" ){
+      alert("that position is blocked")
+      legal = true
+    } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
+      alert("what, are you trying to capture your own piece?")
+      legal = true
+    }
+    return legal
+  },
   move: function(piece, newPosition){
-    // function is poorly named handles much other than actual movement, break it down to component parts
     if( piece.team !== game.allowedToMove ){
       alert("other team's turn")
       return
     }
-
-    var possibleMoves = piece.possibleMoves()
-
 // NOT IMPLEMENTED YET
 // 
 // 
@@ -235,39 +245,25 @@ var rules = {
       return
     }
 // 
-    if ( board.outOfbounds(newPosition) ){
-      alert('stay on the board, fool')
-      return
-    } else if( !this.movementTypeVerifier(possibleMoves, piece.position, newPosition, piece.team) ){
-      // break out separate alerts for different conditions
-      alert("that's not how that piece moves")
-      return
-    } else if( board.pathIsBlocked(piece.position, newPosition) && piece.name !== "night" ){
-      alert("that position is blocked")
-      return
-    } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
-      alert("what, are you trying to capture your own piece?")
-      return
+// 
+
+  if( this.moveIsIllegal(piece, newPosition) ){
+    return
     } else if ( board.tiles[newPosition] === undefined ){
       gridPosition = board.gridCalculator(piece.position)
       newGridPosition = board.gridCalculator(newPosition);
-      
       board.deleteOldStuff(gridPosition, newGridPosition, piece)
       board.placeNewStuff(piece, newPosition)
-
       game.nextTurn()
       // console.log("up here")
-
     } else if ( board.tiles[newPosition].team !== piece.team ){
 // track captured pieces
 // 
-// 
+// lots of duplication with the above function
       gridPosition = board.gridCalculator(piece.position)
       newGridPosition = board.gridCalculator(newPosition);
-      
       board.deleteOldStuff(gridPosition, newGridPosition, piece)
       board.placeNewStuff(piece, newPosition)
-
       game.nextTurn()
       // console.log("down here")
     }
