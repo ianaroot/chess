@@ -3,8 +3,8 @@ var board = {
   boundaries: {
     upperLimit: 63,
     lowerLimit: 0,
-    diagonalBorderForwardSlash: "(( ((cP % 8) > (nP % 8)) && (cP > nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP < nP) ))",
-    diagonalBorderBackSlash: "( ((cP % 8) > (nP % 8)) && (cP < nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP > nP) )",
+    diagonalForwardSlashMovementBorder: "(( ((cP % 8) > (nP % 8)) && (cP > nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP < nP) ))",
+    diagonalBackSlashMovementBorder: "( ((cP % 8) > (nP % 8)) && (cP < nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP > nP) )",
     horizontalBorder: "Math.floor(cP / 8) === Math.floor(nP / 8)"
   },
 
@@ -69,6 +69,7 @@ var board = {
   movementIncrement: function(position, newPosition){
     // this function feels out of place
     var increment
+    // refactor into functions like "movementIsVertical"
     if ( (position - newPosition) % 8 === 0 && position < newPosition ){
       increment = 8
     } else if ( (position - newPosition) % 8 === 0 && position > newPosition ){
@@ -120,7 +121,7 @@ function setImgSrc (team, piece){
 var rules = {
 
   movements: {
-    rangedDiagonals: "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalBorderForwardSlash + " ) || (((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBorderBackSlash + " )",
+    rangedDiagonals: "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorder + " ) || (((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorder + " )",
     rangedOrthogonals: "(cP - nP) % 8 === 0 || ((cP - nP) < 8 && " + board.boundaries.horizontalBorder + " )",
     nightMoves: // #segerJokes
       "(Math.abs(cP - nP) === 15 && (Math.abs(cP % 8 - nP % 8) === 1 )) || (Math.abs(cP - nP) === 17 && (Math.abs(cP % 8 - nP % 8) === 1 )) || (Math.abs(cP - nP) === 10 && (Math.abs(cP % 8 - nP % 8) === 2 )) || (Math.abs(cP - nP) === 6 && (Math.abs(cP % 8 - nP % 8) === 2 ))"
@@ -269,7 +270,7 @@ var kingCreator = (function (team, position){
     position: position,
     value: 0,
     team: team,
-    possibleMoves: "(Math.abs(cP - nP) === 1 && " + board.boundaries.horizontalBorder + " ) || (Math.abs(cP - nP) === 7 && " + board.boundaries.diagonalBorderBackSlash + " ) || (Math.abs(cP - nP) === 8) || (Math.abs(cP - nP) === 9 && " + board.boundaries.diagonalBorderForwardSlash + " )",
+    possibleMoves: "(Math.abs(cP - nP) === 1 && " + board.boundaries.horizontalBorder + " ) || (Math.abs(cP - nP) === 7 && " + board.boundaries.diagonalBackSlashMovementBorder + " ) || (Math.abs(cP - nP) === 8) || (Math.abs(cP - nP) === 9 && " + board.boundaries.diagonalForwardSlashMovementBorder + " )",
     isTurn: false
   };
 
