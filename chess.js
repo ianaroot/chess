@@ -230,7 +230,6 @@ var nightCreator = (function (team, position){
     position: position,
     value: 3,
     team: team,
-    // make into function
     possibleMoves: function(){
       return rules.movements.nightMoves
     },
@@ -251,7 +250,6 @@ var rookCreator = (function (team, position){
     position: position,
     value: 5,
     team: team,
-    // make into function
     possibleMoves: function(){
       return rules.movements.rangedOrthogonals
     },
@@ -272,7 +270,6 @@ var bishopCreator = (function (team, position){
     position: position,
     value: 3,
     team: team,
-    // make into function
     possibleMoves: function(){
       return rules.movements.rangedDiagonals
     },
@@ -292,7 +289,6 @@ var kingCreator = (function (team, position){
     position: position,
     value: 0,
     team: team,
-    // make into function
     possibleMoves: function(){
       return "(Math.abs(cP - nP) === 1 && " + board.boundaries.horizontalBorderCheck + " ) || (Math.abs(cP - nP) === 7 && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " ) || (Math.abs(cP - nP) === 8) || (Math.abs(cP - nP) === 9 && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )"
     },
@@ -313,7 +309,6 @@ var queenCreator = (function (team, position){
     position: position,
     value: 9,
     team: team,
-    // make into function
     possibleMoves: function(){
       return rules.movements.rangedDiagonals + " || " + rules.movements.rangedOrthogonals
     },
