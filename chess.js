@@ -13,6 +13,9 @@ var board = {
   positions: {
     isSeventhRank: function(position){
       return Math.floor(position / 8) === 6
+    },
+    isSecondRank: function(position){
+      return Math.floor(position / 8) === 1
     }
   },
 
@@ -20,16 +23,32 @@ var board = {
     return this.tiles[position - 16] === undefined
   },
 
+  twoSpacesUpIsEmpty: function(position){
+    return Math.floor(position / 8) === 1
+  },
+
   oneSpaceDownIsEmpty: function(position){
     return this.tiles[position - 8] === undefined
   },
 
-  stageRightPawnAttackOccupied: function(position){
+  oneSpaceUpIsEmpty: function(position){
+    return this.tiles[position + 8] === undefined
+  },
+
+  stageRightBlackPawnAttackOccupied: function(position){
     return this.tiles[position - 7] !== undefined
   },
 
-  stageLeftAttackOccupied: function(position){
+  stageLeftBlackAttackOccupied: function(position){
     return this.tiles[position - 9] !== undefined
+  },
+
+  stageLeftWhitePawnnAttackOccupied: function(position){
+    return this.tiles[position + 7] !== undefined
+  },
+
+  stageRightWhitePawnAttackOccupied: function(position){
+    return board.tiles[position + 9] !== undefined
   },
 
   outOfbounds: function(position){
@@ -167,7 +186,11 @@ var rules = {
     blackPawnTwoStep: "nP - cP === -16",
     blackPawnOneStep: "nP - cP === -8",
     blackPawnCaptureStageRight: "nP -cP === -7",
-    blackPawnCaptureStageLeft: "nP -cP === -9"
+    blackPawnCaptureStageLeft: "nP -cP === -9",
+    whitePawnTwoStep: "nP - cP === 16",
+    whitePawnOneStep: "nP - cP === 8",
+    whitePawnCaptureStageLeft: "nP -cP === 7",
+    whitePawnCaptureStageRight: "nP -cP === 9"
   },
 
   movementTypeVerifier: function(possibleMoves, currentPosition, newPosition, team){
@@ -361,24 +384,21 @@ var whitePawnCreator = (function (position){
       } else{
         possibilities = possibilities + " || " + move
       }
-
       return possibilities
     },
-    
     possibleMoves: function(){
       var possibilities = "";
-      // factor out logic for each movement type
-      if( Math.floor(this.position / 8) === 1 && board.tiles[this.position + 16] === undefined ){
-        possibilities = this.addPossibleMoves( "nP - cP === 16", possibilities )
+      if( board.positions.isSecondRank(this.position) && board.twoSpacesUpIsEmpty(this.position) ){
+        possibilities = this.addPossibleMoves( rules.movements.whitePawnTwoStep, possibilities )
       };
-      if( board.tiles[this.position + 8] === undefined ){
-        possibilities = this.addPossibleMoves( "nP - cP === 8", possibilities )
+      if( board.oneSpaceUpIsEmpty(this.position) ){
+        possibilities = this.addPossibleMoves( rules.movements.whitePawnOneStep, possibilities )
       };
-      if( board.tiles[this.position + 7] !== undefined ){
-        possibilities = this.addPossibleMoves( "nP -cP === 7", possibilities)
+      if( board.stageLeftWhitePawnnAttackOccupied(this.position) ){
+        possibilities = this.addPossibleMoves( rules.movements.whitePawnCaptureStageLeft, possibilities)
       };
-      if( board.tiles[this.position + 9] !== undefined ){
-        possibilities = this.addPossibleMoves( "nP -cP === 9", possibilities)
+      if( board.stageRightWhitePawnAttackOccupied(this.position) ){
+        possibilities = this.addPossibleMoves( rules.movements.whitePawnCaptureStageRight, possibilities)
       };
       return possibilities
     },
@@ -404,10 +424,8 @@ var blackPawnCreator = (function (position){
       } else{
         possibilities = possibilities + " || " + move
       }
-
       return possibilities
     },
-    
     possibleMoves: function(){
       var possibilities = "";
       if( board.positions.isSeventhRank(this.position) && board.twoSpacesDownIsEmpty(this.position) ){
@@ -418,11 +436,11 @@ var blackPawnCreator = (function (position){
         possibilities = this.addPossibleMoves( rules.movements.blackPawnOneStep, possibilities )
       };
 
-      if( board.stageRightPawnAttackOccupied(this.position) ){
+      if( board.stageRightBlackPawnAttackOccupied(this.position) ){
         possibilities = this.addPossibleMoves( rules.movements.blackPawnCaptureStageRight, possibilities)
       };
 
-      if( board.stageLeftAttackOccupied(this.position) ){
+      if( board.stageLeftBlackAttackOccupied(this.position) ){
         possibilities = this.addPossibleMoves( rules.movements.blackPawnCaptureStageLeft, possibilities)
       };
       return possibilities
