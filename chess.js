@@ -1,3 +1,11 @@
+copyPiece = function(piece, tiles){
+  //THIS FUNCTION IS INSANELY DANGEROUS
+  // AS IS REALLY ANYTHING USING EVAL. THOSE CANNOT BE PUBLIC LONG TERM.
+  // args = JSON.stringify
+  creatorFunc = eval( piece.name + "Creator" )
+  return  creatorFunc( {position: piece.position, team: piece.team, tiles: tiles} )
+}
+
 // pass objects instead of lists as args
 // write function to display possible paths, is good way to display data for error checking
 var board = {
@@ -6,7 +14,21 @@ var board = {
     upperLimit: 63,
     lowerLimit: 0
   },
-
+  deepCopyTiles: function(){
+    tiles = board.tiles
+    tilesCopy = []
+    for(i = 0; i < tiles.length; i++){
+      if( tiles[i] !== undefined){
+        piece = tiles[i]
+        pieceCopy = copyPiece( piece, tilesCopy )
+        tilesCopy[i] = pieceCopy
+          }
+      }
+    return tilesCopy
+  },
+  copyTiles: function(){
+    board.tiles.each 
+  },
   positions: {
     isSeventhRank: function(position){
       return Math.floor(position / 8) === 6
@@ -310,6 +332,7 @@ var rules = {
   if( this.moveIsIllegal(piece, newPosition) ){
     return
     } else {
+
       var gridPosition    = board.gridCalculator(piece.position),
           newGridPosition = board.gridCalculator(newPosition);
       board.deleteOldStuff(gridPosition, newGridPosition, piece)
