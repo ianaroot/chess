@@ -628,52 +628,58 @@ var game = {
     this.allowedToMove = white
   },
   addWhitePieces: function(){
-    white.king = kingCreator( white, 4);
-    white.pawns = [
-      whitePawnCreator(8),
-      whitePawnCreator(9),
-      whitePawnCreator(10),
-      whitePawnCreator(11),
-      whitePawnCreator(12),
-      whitePawnCreator(13),
-      whitePawnCreator(14),
-      whitePawnCreator(15)
-    ],
-    white.minors = [
-      nightCreator(   white, 1),
-      bishopCreator(  white, 2),
-      bishopCreator(  white, 5),
-      nightCreator(   white, 6),
-    ],
-    white.majors = [
-      rookCreator(    white, 0),
-      queenCreator(   white, 3),
-      rookCreator(    white, 7),
-    ]
+    white.capturedPieces = []
+    white.activePieces = {
+      king: kingCreator( white, 4),
+      pawns: [
+        whitePawnCreator(8),
+        whitePawnCreator(9),
+        whitePawnCreator(10),
+        whitePawnCreator(11),
+        whitePawnCreator(12),
+        whitePawnCreator(13),
+        whitePawnCreator(14),
+        whitePawnCreator(15)
+      ],
+      minors: [
+        nightCreator(  white, 1),
+        bishopCreator( white, 2),
+        bishopCreator( white, 5),
+        nightCreator(  white, 6),
+      ],
+      majors: [
+        rookCreator(  white, 0),
+        queenCreator( white, 3),
+        rookCreator(  white, 7),
+      ]
+    }
   },
   addBlackPieces: function(){
-    black.king = kingCreator(    black, 60);
-    black.pawns = [
-      blackPawnCreator(48),
-      blackPawnCreator(49),
-      blackPawnCreator(50),
-      blackPawnCreator(51),
-      blackPawnCreator(52),
-      blackPawnCreator(53),
-      blackPawnCreator(54),
-      blackPawnCreator(55),
-    ],
-    black.minors = [
-      nightCreator(   black, 57),
-      bishopCreator(  black, 58),
-      bishopCreator(  black, 61),
-      nightCreator(   black, 62),
-    ],
-    black.majors = [
-      rookCreator(    black, 56),
-      queenCreator(   black, 59),
-      rookCreator(    black, 63)
-    ]
+    black.capturedPieces = []
+    black.activePieces = {
+      king: kingCreator( black, 60),
+      pawns: [
+        blackPawnCreator(48),
+        blackPawnCreator(49),
+        blackPawnCreator(50),
+        blackPawnCreator(51),
+        blackPawnCreator(52),
+        blackPawnCreator(53),
+        blackPawnCreator(54),
+        blackPawnCreator(55),
+      ],
+      minors: [
+        nightCreator(  black, 57),
+        bishopCreator( black, 58),
+        bishopCreator( black, 61),
+        nightCreator(  black, 62),
+      ],
+      majors: [
+        rookCreator(  black, 56),
+        queenCreator( black, 59),
+        rookCreator(  black, 63)
+      ]
+    }
   },
   turn: function(turnNum){
     var turnNum = turnNum || 1
