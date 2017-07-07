@@ -5,11 +5,11 @@ var board = {
   boundaries: {
     upperLimit: 63,
     lowerLimit: 0,
-    diagonalForwardSlashMovementBorderCheck:  "(( ((cP % 8) > (nP % 8)) && (cP > nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP < nP) ))",
-    diagonalBackSlashMovementBorderCheck:     "( ((cP % 8) > (nP % 8)) && (cP < nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP > nP) )",
-    horizontalBorderCheck:                    "Math.floor(cP / 8) === Math.floor(nP / 8)",
-    verticalNightMovementBorderCheck:         "(Math.abs(cP % 8 - nP % 8) === 1 )",
-    horizontalNightMovementCheck:             "(Math.abs(cP % 8 - nP % 8) === 2 )"
+    // diagonalForwardSlashMovementBorderCheck:  "(( ((cP % 8) > (nP % 8)) && (cP > nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP < nP) ))",
+    // diagonalBackSlashMovementBorderCheck:     "( ((cP % 8) > (nP % 8)) && (cP < nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP > nP) )",
+    // horizontalBorderCheck:                    "Math.floor(cP / 8) === Math.floor(nP / 8)",
+    // verticalNightMovementBorderCheck:         "(Math.abs(cP % 8 - nP % 8) === 1 )",
+    // horizontalNightMovementCheck:             "(Math.abs(cP % 8 - nP % 8) === 2 )"
   },
 
   positions: {
@@ -57,6 +57,57 @@ var board = {
     return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
   },
 
+  isAttacked: function(position, team){
+    var attacked = false;
+    if( this.isAttackedByPawn(position, team) ){
+      attacked = true;
+    };
+    if( this.isAttackedByNight(position) ){
+      attacked = true;
+    };
+    if( this.isAttackedByBishop(position) ){
+      attacked = true;
+    };
+    if( this.isAttackedByRook(position) ){
+      attacked = true;
+    };
+    if( this.isAttackedByQueen(position) ){
+      attacked = true;
+    };
+    if( this.isAttackedByKing(position) ){
+      attacked = true;
+    };
+    return attacked
+  },
+  isAttackedByPawn: function(position, team){
+    if (team === white){
+      return this.isAttackedByWhitePawn(position);
+    } else {
+     return this.isAttackedByBlackPawn(position);
+    };
+  },
+  isAttackedByBlackPawn: function(position){
+    board.tiles[position]
+  },
+  isAttackedByWhitePawn: function(position){
+
+  },
+  isAttackedByNight: function(position){
+
+  },
+  isAttackedByBishop: function(position){
+
+  },
+  isAttackedByRook: function(position){
+
+  },
+  isAttackedByQueen: function(position){
+
+  },
+  isAttackedByKing: function(position){
+
+  },
+
   gridCalculator: function(tile){
     var x = Math.floor(tile % 8),
         y = Math.floor(tile / 8) + 1,
@@ -91,23 +142,23 @@ var board = {
       children[i].remove()
     }
   },
-  pathIsBlocked: function(position, newPosition){
-    var movementIncrement = this.movementIncrement(position, newPosition),
-        possibleBlocks    = [],
-        blocked           = false;
+  // pathIsBlocked: function(position, newPosition){
+  //   var movementIncrement = this.movementIncrement(position, newPosition),
+  //       possibleBlocks    = [],
+  //       blocked           = false;
 
-    for( i = 1; ( i * movementIncrement + position) !== newPosition ; i++ ){
-      possibleBlocks.push( i * movementIncrement + position )
-    }
-    // console.log(possibleBlocks)
-    for( i = 0; i < possibleBlocks.length; i++ ){
-      if ( board.tiles[possibleBlocks[i]] !== undefined ){
-        blocked = true
-      }
-    }
-    // console.log("blocked is " + blocked)
-    return blocked
-  },
+  //   for( i = 1; ( i * movementIncrement + position) !== newPosition ; i++ ){
+  //     possibleBlocks.push( i * movementIncrement + position )
+  //   }
+  //   // console.log(possibleBlocks)
+  //   for( i = 0; i < possibleBlocks.length; i++ ){
+  //     if ( board.tiles[possibleBlocks[i]] !== undefined ){
+  //       blocked = true
+  //     }
+  //   }
+  //   // console.log("blocked is " + blocked)
+  //   return blocked
+  // },
   positionIsOccupiedByTeamMate: function(position, team){
     return (this.tiles[position] !== undefined && this.tiles[position].team === team  )
   },
@@ -287,31 +338,31 @@ var rules = {
     return path
   },
 
-  movements: {
-    rangedDiagonalsForwardSlash:  "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
-    rangedDiagonalsBackSlash:     "(((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
-    rangedVerticals:              "(cP - nP) % 8 === 0",
-    rangedHorizontals:            "((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
-    nightMoves:                   "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )",
-    // #segerJokes
+  // movements: {
+  //   rangedDiagonalsForwardSlash:  "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
+  //   rangedDiagonalsBackSlash:     "(((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
+  //   rangedVerticals:              "(cP - nP) % 8 === 0",
+  //   rangedHorizontals:            "((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
+  //   nightMoves:                   "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )",
+  //   // #segerJokes
 
-    // THE DIAGONALS HERE ALL NEED BOUNDARY CHECKS!!
-    blackPawnTwoStep:             "nP - cP === -16",
-    blackPawnOneStep:             "nP - cP === -8",
-    blackPawnCaptureStageRight:   "nP - cP === -7",
-    blackPawnCaptureStageLeft:    "nP - cP === -9",
-    whitePawnTwoStep:             "nP - cP === 16",
-    whitePawnOneStep:             "nP - cP === 8",
-    whitePawnCaptureStageLeft:    "nP - cP === 7",
-    whitePawnCaptureStageRight:   "nP - cP === 9"
-  },
+  //   // THE DIAGONALS HERE ALL NEED BOUNDARY CHECKS!!
+  //   blackPawnTwoStep:             "nP - cP === -16",
+  //   blackPawnOneStep:             "nP - cP === -8",
+  //   blackPawnCaptureStageRight:   "nP - cP === -7",
+  //   blackPawnCaptureStageLeft:    "nP - cP === -9",
+  //   whitePawnTwoStep:             "nP - cP === 16",
+  //   whitePawnOneStep:             "nP - cP === 8",
+  //   whitePawnCaptureStageLeft:    "nP - cP === 7",
+  //   whitePawnCaptureStageRight:   "nP - cP === 9"
+  // },
 
-  movementTypeVerifier: function(possibleMoves, currentPosition, newPosition){
-    var possibleMoves = possibleMoves.replace(/cP/g, currentPosition),
-      possibleMoves   = possibleMoves.replace(/nP/g, newPosition),
-      acceptability   = eval(possibleMoves);
-    return acceptability
-  },
+  // movementTypeVerifier: function(possibleMoves, currentPosition, newPosition){
+  //   var possibleMoves = possibleMoves.replace(/cP/g, currentPosition),
+  //     possibleMoves   = possibleMoves.replace(/nP/g, newPosition),
+  //     acceptability   = eval(possibleMoves);
+  //   return acceptability
+  // },
 
   positionIsInPaths: function(position, piece){
     var paths = rules.allPathsFinder(piece),
@@ -350,9 +401,9 @@ var rules = {
     } else if( !rules.positionIsInPaths(newPosition, piece) ){
       alert("that's not how that piece moves")
       illegal = true
-    } else if( board.pathIsBlocked(piece.position, newPosition) && piece.name !== "night" ){
-      alert("that position is blocked")
-      illegal = true
+    // } else if( board.pathIsBlocked(piece.position, newPosition) && piece.name !== "night" ){
+    //   alert("that position is blocked")
+    //   illegal = true
     } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
       alert("what, are you trying to capture your own piece?")
       illegal = true
@@ -633,14 +684,22 @@ var game = {
   },
   nextTurn: function(){
     if( this.allowedToMove === white ){
-      this.allowedToMove = black
+      this.prepareBlackTurn()
     } else{
-      this.allowedToMove = white
+      this.prepareWhiteTurn()
     }
   },
-  whiteMove: function(){
+  prepareBlackTurn: function(){
+    this.allowedToMove = black
+  },
+  prepareWhiteTurn: function(){
+    this.allowedToMove = white
+  },
+  whiteMove: function(position, newPosition){
+    rules.move(board.tiles[position], newPosition)
   },
   blackMove: function(){
+    rules.move(board.tiles[position], newPosition)
   }
 }
 
@@ -662,6 +721,8 @@ setTimeout( function(){ rules.move(board.tiles[9],  18) }, 5500)
 setTimeout( function(){ rules.move(board.tiles[51], 35)},  6000)
 setTimeout( function(){ rules.move(board.tiles[15], 23)},  6500)
 setTimeout( function(){ rules.move(board.tiles[58], 23)},  7000)
+setTimeout( function(){ rules.move(board.tiles[19], 33)},  7500)
 
-king = black.king
-pos = king.pos
+
+// king = black.king
+// pos = king.pos
