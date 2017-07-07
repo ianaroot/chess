@@ -168,7 +168,7 @@ function setImgSrc (team, piece){
 };
 
 var rules = {
-  movementsHash = {
+  movementsHash: {
     // these boundary checks are all wrong. nP should be movement*i + position (see sheet)
     verticalUp: {               increment: "+8",  boundaryCheck: "board.inBounds(increment * i + position)                        && board.inBounds(increment * i + position)" }, //incrementLimit: 7},
     verticalDown: {             increment: "-8",  boundaryCheck: "board.inBounds(increment * i + position)                        && board.inBounds(increment * i + position)" }, //incrementLimit 7},
@@ -188,7 +188,7 @@ var rules = {
     nightHorizontalRightDown: { increment: "-10", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 2 && board.inBounds(increment * i + position)" } // incrementLimit: 1 }
     // pawns
     // king might want to attach the range limit when we get to object creation?
-  }
+  },
 
   movements: {
     rangedDiagonalsForwardSlash:  "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
