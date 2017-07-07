@@ -57,6 +57,57 @@ var board = {
     return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
   },
 
+  isAttacked: function(position, team){
+    var attacked = false;
+    if( this.isAttackedByPawn(position, team) ){
+      attacked = true;
+    };
+    if( this.isAttackedByNight(position) ){
+      attacked = true;
+    };
+    if( this.isAttackedByBishop(position) ){
+      attacked = true;
+    };
+    if( this.isAttackedByRook(position) ){
+      attacked = true;
+    };
+    if( this.isAttackedByQueen(position) ){
+      attacked = true;
+    };
+    if( this.isAttackedByKing(position) ){
+      attacked = true;
+    };
+    return attacked
+  },
+  isAttackedByPawn: function(position, team){
+    if (team === white){
+      return this.isAttackedByWhitePawn(position);
+    } else {
+     return this.isAttackedByBlackPawn(position);
+    };
+  },
+  isAttackedByBlackPawn: function(position){
+    board.tiles[position]
+  },
+  isAttackedByWhitePawn: function(position){
+
+  },
+  isAttackedByNight: function(position){
+
+  },
+  isAttackedByBishop: function(position){
+
+  },
+  isAttackedByRook: function(position){
+
+  },
+  isAttackedByQueen: function(position){
+
+  },
+  isAttackedByKing: function(position){
+
+  },
+
   gridCalculator: function(tile){
     var x = Math.floor(tile % 8),
         y = Math.floor(tile / 8) + 1,
@@ -662,6 +713,8 @@ setTimeout( function(){ rules.move(board.tiles[9],  18) }, 5500)
 setTimeout( function(){ rules.move(board.tiles[51], 35)},  6000)
 setTimeout( function(){ rules.move(board.tiles[15], 23)},  6500)
 setTimeout( function(){ rules.move(board.tiles[58], 23)},  7000)
+setTimeout( function(){ rules.move(board.tiles[19], 33)},  7500)
+
 
 king = black.king
 pos = king.pos
