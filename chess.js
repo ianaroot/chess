@@ -314,15 +314,16 @@ var rules = {
   },
 
   positionIsInPaths: function(position, piece){
-    var paths = rules.allPathsFinder(piece, position ),
+    var paths = rules.allPathsFinder(piece),
         positionViable = false;
     for( var i = 0; i < paths.length; i ++){
       var path = paths[i]
-      for( var j = 0; j < paths.length; j++){
+      for( var j = 0; j < path.length; j++){
         if( path[j] === position ){ positionViable = true }
       };
     };
 
+    console.log(positionViable)
     return positionViable
   },
 
