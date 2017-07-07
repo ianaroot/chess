@@ -304,26 +304,9 @@ var rules = {
         if( path[j] === position ){ positionViable = true }
       };
     };
-
-    console.log(positionViable)
     return positionViable
   },
 
-  kingIsInCheckChecker: function(team, oldPosition, newPosition){
-    var tiles = board.tiles;
-    if (oldPosition && newPosition){
-      // clone tiles, delete piece from old position, drop piece into new position
-      // 
-      // 
-    };
-
-    var king = team.king;
-    if( board.isAttacked(king.position, king.team) ){
-
-    }
-// pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
-// maybe iterate across movements testing each individualy
-  },
   moveIsIllegal: function(piece, newPosition){
     illegal = false
     if ( !board.inBounds(newPosition) ){
