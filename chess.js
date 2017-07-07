@@ -410,7 +410,8 @@ var rules = {
     }
     return illegal
   },
-  move: function(piece, newPosition){
+  move: function(position, newPosition){
+    piece = board.tiles[position]
     if( piece.team !== game.allowedToMove ){
       alert("other team's turn")
       return
@@ -707,21 +708,21 @@ game.createTeams()
 game.addWhitePieces()
 game.addBlackPieces()
 game.begin()
-setTimeout( function(){ rules.move(board.tiles[1],  18) }, 500)
-setTimeout( function(){ rules.move(board.tiles[50], 42) }, 1000)
-setTimeout( function(){ rules.move(board.tiles[11], 27) }, 1500)
-setTimeout( function(){ rules.move(board.tiles[59], 32) }, 2000)
-setTimeout( function(){ rules.move(board.tiles[3],  19) }, 2500)
-setTimeout( function(){ rules.move(board.tiles[42], 34) }, 3000)
-setTimeout( function(){ rules.move(board.tiles[12], 20) }, 3500)
-setTimeout( function(){ rules.move(board.tiles[34], 27) }, 4000)
-setTimeout( function(){ rules.move(board.tiles[0],  1) },  4500)
-setTimeout( function(){ rules.move(board.tiles[27], 18) }, 5000)
-setTimeout( function(){ rules.move(board.tiles[9],  18) }, 5500)
-setTimeout( function(){ rules.move(board.tiles[51], 35)},  6000)
-setTimeout( function(){ rules.move(board.tiles[15], 23)},  6500)
-setTimeout( function(){ rules.move(board.tiles[58], 23)},  7000)
-setTimeout( function(){ rules.move(board.tiles[19], 33)},  7500)
+setTimeout( function(){ rules.move(1,  18) }, 500)
+setTimeout( function(){ rules.move(50, 42) }, 1000)
+setTimeout( function(){ rules.move(11, 27) }, 1500)
+setTimeout( function(){ rules.move(59, 32) }, 2000)
+setTimeout( function(){ rules.move(3,  19) }, 2500)
+setTimeout( function(){ rules.move(42, 34) }, 3000)
+setTimeout( function(){ rules.move(12, 20) }, 3500)
+setTimeout( function(){ rules.move(34, 27) }, 4000)
+setTimeout( function(){ rules.move(0,  1) },  4500)
+setTimeout( function(){ rules.move(27, 18) }, 5000)
+setTimeout( function(){ rules.move(9,  18) }, 5500)
+setTimeout( function(){ rules.move(51, 35)},  6000)
+setTimeout( function(){ rules.move(15, 23)},  6500)
+setTimeout( function(){ rules.move(58, 23)},  7000)
+setTimeout( function(){ rules.move(19, 33)},  7500)
 
 
 // king = black.king
