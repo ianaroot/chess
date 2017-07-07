@@ -168,6 +168,28 @@ function setImgSrc (team, piece){
 };
 
 var rules = {
+  movementsHash = {
+    // these boundary checks are all wrong. nP should be movement*i + position (see sheet)
+    verticalUp: {               increment: "+8",  boundaryCheck: "board.inBounds(increment * i + position)                        && board.inBounds(increment * i + position)" }, //incrementLimit: 7},
+    verticalDown: {             increment: "-8",  boundaryCheck: "board.inBounds(increment * i + position)                        && board.inBounds(increment * i + position)" }, //incrementLimit 7},
+    horizontalRight: {          increment: "+1",  boundaryCheck: "(increment * i + position) / 8 === (position / 8)               && board.inBounds(increment * i + position)" }, // incrementLimit: 7},
+    horizontalLeft: {           increment: "-1",  boundaryCheck:"(increment * i + position) / 8 === (position / 8)                && board.inBounds(increment * i + position)" }, // incrementLimit: 7},
+    forwardSlashUp: {           increment: "+9",  boundaryCheck: "(increment * i + position) % 8 > (position % 8)                 && board.inBounds(increment * i + position)" }, // incrementLimit: 7},
+    forwardSlashDown: {         increment: "-9",  boundaryCheck: "(increment * i + position) % 8 < (position % 8)                 && board.inBounds(increment * i + position)" }, // incrementLimit 7},
+    backSlashUp: {              increment: "+7",  boundaryCheck: "(increment * i + position) % 8 < (position % 8)                 && board.inBounds(increment * i + position)" }, // incrementLimit: 7},
+    backSlashDown: {            increment: "-7",  boundaryCheck: "(increment * i + position) % 8 > (position % 8)                 && board.inBounds(increment * i + position)" }, // incrementLimit: 7},
+    nightVerticalLeftUp: {      increment: "+15", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 1 && board.inBounds(increment * i + position)" }, // incrementLimit: 1 },
+    nightVerticalRightUp: {     increment: "+17", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 1 && board.inBounds(increment * i + position)" }, // incrementLimit: 1 },
+    nightHorizontalLeftUp: {    increment: "+6",  boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 2 && board.inBounds(increment * i + position)" }, // incrementLimit: 1 },
+    nightHorizontalRightUp: {   increment: "+10", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 2 && board.inBounds(increment * i + position)" }, // incrementLimit: 1 },
+    nightVerticalLeftDown: {    increment: "-15", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 1 && board.inBounds(increment * i + position)" }, // incrementLimit: 1 },
+    nightVerticalRightDown: {   increment: "-17", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 1 && board.inBounds(increment * i + position)" }, // incrementLimit: 1 },
+    nightHorizontalLeftDown: {  increment: "-6",  boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 2 && board.inBounds(increment * i + position)" }, // incrementLimit: 1 },
+    nightHorizontalRightDown: { increment: "-10", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 2 && board.inBounds(increment * i + position)" } // incrementLimit: 1 }
+    // pawns
+    // king might want to attach the range limit when we get to object creation?
+  }
+
   movements: {
     rangedDiagonalsForwardSlash:  "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
     rangedDiagonalsBackSlash:     "(((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
