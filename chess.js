@@ -134,6 +134,7 @@ var board = {
 };
 function setImgSrc (team, piece){
   var pieceInitial = piece.name[0].toUpperCase()
+  if (piece.name === "whitePawn" || piece.name === "blackPawn"){ pieceInitial = "p" }
   if( team == white ){
     piece.imgSrc = "img/chesspieces/wikipedia/w" + pieceInitial + ".png"
   } else {
@@ -277,8 +278,27 @@ var rules = {
     } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
       alert("what, are you trying to capture your own piece?")
       illegal = true
-    }
+    } //else if( rules.kingIsInCheckChecker(piece, newPosition) ){
+    //   alert("check yo king")
+    //   illegal = true
+    // }
     return illegal
+  },
+  
+  kingIsInCheckChecker: function(piece, newPosition){
+    var tiles = board.copyTiles;
+    if (newPosition){
+      // clone tiles, delete piece from old position, drop piece into new position
+      // 
+      // 
+    };
+
+    var king = team.king;
+    if( board.isAttacked(king.position, king.team) ){
+
+    }
+// pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
+// maybe iterate across movements testing each individualy
   },
 
   move: function(position, newPosition){
@@ -308,94 +328,111 @@ function setStartPosition(position, piece) {
   board.tiles[position] = piece
 };
 
-var nightCreator = (function (team, position){
-  var night = {
-    name: "night",
-    position: position,
-    value: 3,
-    team: team,
-    possibleMoves: function(){
-      return rules.movementConstructor.set.night()
-    },
-    isTurn: false
-  };
+var nightCreator = (function (args){
+  var team = args["team"],
+      position = args["position"],
+      tiles = args["tiles"],
+      night = {
+        name: "night",
+        position: position,
+        value: 3,
+        team: team,
+        possibleMoves: function(){
+          return rules.movementConstructor.set.night()
+        },
+        isTurn: false
+      };
   setImgSrc(team, night)
   setStartPosition(position, night)
   board.displayPiece(night)
   return night
 });
 
-var rookCreator = (function (team, position){
-  var rook = {
-    name: "rook",
-    position: position,
-    value: 5,
-    team: team,
-    possibleMoves: function(){
-      return rules.movementConstructor.set.rook()
-    },
-    isTurn: false
-  };
+var rookCreator = (function (args){
+  var team = args["team"],
+      position = args["position"],
+      tiles = args["tiles"],
+      rook = {
+        name: "rook",
+        position: position,
+        value: 5,
+        team: team,
+        possibleMoves: function(){
+          return rules.movementConstructor.set.rook()
+        },
+        isTurn: false
+      };
   setImgSrc(team, rook)
   setStartPosition(position, rook)
   board.displayPiece(rook)
   return rook
 });
 
-var bishopCreator = (function (team, position){
-  var bishop = {
-    name: "bishop",
-    position: position,
-    value: 3,
-    team: team,
-    possibleMoves: function(){
-      return rules.movementConstructor.set.bishop()
-    },
-    isTurn: false
-  };
+var bishopCreator = (function (args){
+  var team = args["team"],
+      position = args["position"],
+      tiles = args["tiles"],
+      bishop = {
+        name: "bishop",
+        position: position,
+        value: 3,
+        team: team,
+        possibleMoves: function(){
+          return rules.movementConstructor.set.bishop()
+        },
+        isTurn: false
+      };
   setImgSrc(team, bishop)
   setStartPosition(position, bishop)
   board.displayPiece(bishop)
   return bishop
 });
 
-var kingCreator = (function (team, position){
-  var king = {
-    name: "king",
-    position: position,
-    value: 0,
-    team: team,
-    possibleMoves: function(){
-      return "(Math.abs(cP - nP) === 1 && " + board.boundaries.horizontalBorderCheck + " ) || (Math.abs(cP - nP) === 7 && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " ) || (Math.abs(cP - nP) === 8) || (Math.abs(cP - nP) === 9 && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )"
-    },
-    isTurn: false
-  };
+var kingCreator = (function (args){
+  var team = args["team"],
+      position = args["position"],
+      tiles = args["tiles"],
+      king = {
+        name: "king",
+        position: position,
+        value: 0,
+        team: team,
+        possibleMoves: function(){
+          return "(Math.abs(cP - nP) === 1 && " + board.boundaries.horizontalBorderCheck + " ) || (Math.abs(cP - nP) === 7 && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " ) || (Math.abs(cP - nP) === 8) || (Math.abs(cP - nP) === 9 && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )"
+        },
+        isTurn: false
+      };
   setImgSrc(team, king)
   setStartPosition(position, king)
   board.displayPiece(king)
   return king
 });
 
-var queenCreator = (function (team, position){
-  var queen = {
-    name: "queen",
-    position: position,
-    value: 9,
-    team: team,
-    possibleMoves: function(){
-      return rules.movementConstructor.set.queen()
-    },
-    isTurn: false
-  };
+var queenCreator = (function (args){
+  var team = args["team"],
+      position = args["position"],
+      tiles = args["tiles"],
+      queen = {
+        name: "queen",
+        position: position,
+        value: 9,
+        team: team,
+        possibleMoves: function(){
+          return rules.movementConstructor.set.queen()
+        },
+        isTurn: false
+      };
   setImgSrc(team, queen)
   setStartPosition(position, queen)
   board.displayPiece(queen)
   return queen
 });
 
-var whitePawnCreator = (function (position){
-  var pawn = {
-    name: "pawn",
+var whitePawnCreator = (function (args){
+  var position = args["position"],
+      tiles = args["tiles"],
+      pawn = {
+    name: "whitePawn",
     position: position,
     value: 1,
     team: white,
@@ -432,9 +469,11 @@ var whitePawnCreator = (function (position){
 });
 
 
-var blackPawnCreator = (function (position){
-  var pawn = {
-    name: "pawn",
+var blackPawnCreator = (function (args){
+  var position = args["position"],
+      tiles = args["tiles"],
+      pawn = {
+    name: "blackPawn",
     position: position,
     value: 1,
     team: black,
@@ -489,54 +528,54 @@ var game = {
   addWhitePieces: function(){
     white.capturedPieces = []
     white.activePieces = {
-      king: kingCreator( white, 4),
+      king: kingCreator({ position: 4, team: white, tiles: board.tiles} ),
       pawns: [
-        whitePawnCreator(8),
-        whitePawnCreator(9),
-        whitePawnCreator(10),
-        whitePawnCreator(11),
-        whitePawnCreator(12),
-        whitePawnCreator(13),
-        whitePawnCreator(14),
-        whitePawnCreator(15)
+        whitePawnCreator({ position: 8, tiles: board.tiles}),
+        whitePawnCreator({ position: 9, tiles: board.tiles}),
+        whitePawnCreator({ position: 10, tiles: board.tiles}),
+        whitePawnCreator({ position: 11, tiles: board.tiles}),
+        whitePawnCreator({ position: 12, tiles: board.tiles}),
+        whitePawnCreator({ position: 13, tiles: board.tiles}),
+        whitePawnCreator({ position: 14, tiles: board.tiles}),
+        whitePawnCreator({ position: 15, tiles: board.tiles})
       ],
       minors: [
-        nightCreator(  white, 1),
-        bishopCreator( white, 2),
-        bishopCreator( white, 5),
-        nightCreator(  white, 6),
+        nightCreator( { position: 1, team: white, tiles: board.tiles}),
+        bishopCreator({ position: 2, team: white, tiles: board.tiles}),
+        bishopCreator({ position: 5, team: white, tiles: board.tiles}),
+        nightCreator( { position: 6, team: white, tiles: board.tiles}),
       ],
       majors: [
-        rookCreator(  white, 0),
-        queenCreator( white, 3),
-        rookCreator(  white, 7),
+        rookCreator( {position: 0, team: white, tiles: board.tiles}),
+        queenCreator({position: 3, team: white, tiles: board.tiles}),
+        rookCreator( {position: 7, team: white, tiles: board.tiles}),
       ]
     }
   },
   addBlackPieces: function(){
     black.capturedPieces = []
     black.activePieces = {
-      king: kingCreator( black, 60),
+      king: kingCreator({position: 60, team: black, tiles: board.tiles}),
       pawns: [
-        blackPawnCreator(48),
-        blackPawnCreator(49),
-        blackPawnCreator(50),
-        blackPawnCreator(51),
-        blackPawnCreator(52),
-        blackPawnCreator(53),
-        blackPawnCreator(54),
-        blackPawnCreator(55),
+        blackPawnCreator({position: 48, tiles: board.tiles}),
+        blackPawnCreator({position: 49, tiles: board.tiles}),
+        blackPawnCreator({position: 50, tiles: board.tiles}),
+        blackPawnCreator({position: 51, tiles: board.tiles}),
+        blackPawnCreator({position: 52, tiles: board.tiles}),
+        blackPawnCreator({position: 53, tiles: board.tiles}),
+        blackPawnCreator({position: 54, tiles: board.tiles}),
+        blackPawnCreator({position: 55, tiles: board.tiles}),
       ],
       minors: [
-        nightCreator(  black, 57),
-        bishopCreator( black, 58),
-        bishopCreator( black, 61),
-        nightCreator(  black, 62),
+        nightCreator(  {position: 57, team: black, tiles: board.tiles}),
+        bishopCreator( {position: 58, team: black, tiles: board.tiles}),
+        bishopCreator( {position: 61, team: black, tiles: board.tiles}),
+        nightCreator(  {position: 62, team: black, tiles: board.tiles}),
       ],
       majors: [
-        rookCreator(  black, 56),
-        queenCreator( black, 59),
-        rookCreator(  black, 63)
+        rookCreator(  {position: 56, team: black, tiles: board.tiles}),
+        queenCreator( {position: 59, team: black, tiles: board.tiles}),
+        rookCreator(  {position: 63, team: black, tiles: board.tiles})
       ]
     }
   },
@@ -567,7 +606,7 @@ var game = {
   blackMove: function(position, newPosition){
     rules.move(position, newPosition)
   }
-}
+};
 
 game.createTeams()
 game.addWhitePieces()
