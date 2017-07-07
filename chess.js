@@ -4,12 +4,7 @@ var board = {
   tiles: [],
   boundaries: {
     upperLimit: 63,
-    lowerLimit: 0,
-    // diagonalForwardSlashMovementBorderCheck:  "(( ((cP % 8) > (nP % 8)) && (cP > nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP < nP) ))",
-    // diagonalBackSlashMovementBorderCheck:     "( ((cP % 8) > (nP % 8)) && (cP < nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP > nP) )",
-    // horizontalBorderCheck:                    "Math.floor(cP / 8) === Math.floor(nP / 8)",
-    // verticalNightMovementBorderCheck:         "(Math.abs(cP % 8 - nP % 8) === 1 )",
-    // horizontalNightMovementCheck:             "(Math.abs(cP % 8 - nP % 8) === 2 )"
+    lowerLimit: 0
   },
 
   positions: {
@@ -19,93 +14,24 @@ var board = {
     isSecondRank: function(position){
       return Math.floor(position / 8) === 1
     }
-  },
-
-  twoSpacesDownIsEmpty: function(position){
+  },  twoSpacesDownIsEmpty: function(position){
     return this.tiles[position - 16] === undefined
-  },
-
-  twoSpacesUpIsEmpty: function(position){
+  },  twoSpacesUpIsEmpty: function(position){
     return Math.floor(position / 8) === 1
-  },
-
-  oneSpaceDownIsEmpty: function(position){
+  },  oneSpaceDownIsEmpty: function(position){
     return this.tiles[position - 8] === undefined
-  },
-
-  oneSpaceUpIsEmpty: function(position){
+  },  oneSpaceUpIsEmpty: function(position){
     return this.tiles[position + 8] === undefined
-  },
-
-  stageRightBlackPawnAttackOccupied: function(position){
+  },  stageRightBlackPawnAttackOccupied: function(position){
     return this.tiles[position - 7] !== undefined
-  },
-
-  stageLeftBlackAttackOccupied: function(position){
+  },  stageLeftBlackAttackOccupied: function(position){
     return this.tiles[position - 9] !== undefined
-  },
-
-  stageLeftWhitePawnnAttackOccupied: function(position){
+  },  stageLeftWhitePawnnAttackOccupied: function(position){
     return this.tiles[position + 7] !== undefined
-  },
-
-  stageRightWhitePawnAttackOccupied: function(position){
+  },  stageRightWhitePawnAttackOccupied: function(position){
     return board.tiles[position + 9] !== undefined
-  },
-
-  inBounds: function(position){
+  },  inBounds: function(position){
     return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
-  },
-
-  isAttacked: function(position, team){
-    var attacked = false;
-    if( this.isAttackedByPawn(position, team) ){
-      attacked = true;
-    };
-    if( this.isAttackedByNight(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByBishop(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByRook(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByQueen(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByKing(position) ){
-      attacked = true;
-    };
-    return attacked
-  },
-  isAttackedByPawn: function(position, team){
-    if (team === white){
-      return this.isAttackedByWhitePawn(position);
-    } else {
-     return this.isAttackedByBlackPawn(position);
-    };
-  },
-  isAttackedByBlackPawn: function(position){
-    board.tiles[position]
-  },
-  isAttackedByWhitePawn: function(position){
-
-  },
-  isAttackedByNight: function(position){
-
-  },
-  isAttackedByBishop: function(position){
-
-  },
-  isAttackedByRook: function(position){
-
-  },
-  isAttackedByQueen: function(position){
-
-  },
-  isAttackedByKing: function(position){
-
   },
 
   gridCalculator: function(tile){
@@ -127,11 +53,9 @@ var board = {
   displayPiece: function(piece){
     var elem = document.createElement("img"),
       gridPosition = this.gridCalculator(piece.position);
-
     elem.setAttribute("src", piece.imgSrc);
     elem.setAttribute("height", "49");
     elem.setAttribute("width", "49");
-    // console.log(gridPosition)
     document.getElementsByClassName( gridPosition )[0].appendChild(elem)
   },
   undisplayPiece: function(gridPosition){
@@ -142,67 +66,13 @@ var board = {
       children[i].remove()
     }
   },
-  // pathIsBlocked: function(position, newPosition){
-  //   var movementIncrement = this.movementIncrement(position, newPosition),
-  //       possibleBlocks    = [],
-  //       blocked           = false;
-
-  //   for( i = 1; ( i * movementIncrement + position) !== newPosition ; i++ ){
-  //     possibleBlocks.push( i * movementIncrement + position )
-  //   }
-  //   // console.log(possibleBlocks)
-  //   for( i = 0; i < possibleBlocks.length; i++ ){
-  //     if ( board.tiles[possibleBlocks[i]] !== undefined ){
-  //       blocked = true
-  //     }
-  //   }
-  //   // console.log("blocked is " + blocked)
-  //   return blocked
-  // },
   positionIsOccupiedByTeamMate: function(position, team){
     return (this.tiles[position] !== undefined && this.tiles[position].team === team  )
-  },
-  movementTypes: {
-    isVertical: function(position, newPosition){
-      return(position - newPosition) % 8 === 0
-    },
-    isDiagonalForwardSlash: function(position, newPosition){
-      return (position - newPosition) % 9 === 0
-    },
-    isDiagonalBackSlash: function(position, newPosition){
-      return (position - newPosition) % 7 === 0
-    },
-    isHorizontal: function(position, newPosition){
-      return (position - newPosition) % 1 === 0
-    }
-  },
-  movementIncrement: function(position, newPosition){
-    var increment;
-    if ( this.movementTypes.isVertical(position, newPosition) && position < newPosition ){
-      increment = 8
-    } else if ( this.movementTypes.isVertical(position, newPosition) && position > newPosition ){
-      increment = -8
-    }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position < newPosition ){
-      increment = 9
-    }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position > newPosition ){
-      increment = -9
-    }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position < newPosition ){
-      increment = 7
-    }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position > newPosition ){
-      increment = -7
-    }else if ( this.movementTypes.isHorizontal(position, newPosition) && position < newPosition){
-      increment = 1
-    }else if ( this.movementTypes.isHorizontal(position, newPosition) && position > newPosition){
-      increment = -1
-    }
-    // console.log("increment is " + increment)
-    return increment
   },
   deleteOldStuff: function(gridPosition, newGridPosition, piece){ 
       delete board.tiles[piece.position];
       this.undisplayPiece(gridPosition)
       this.undisplayPiece(gridPosition)
-      // probably elsewhere, but track captures, maybe even display on side of board
       this.undisplayPiece(newGridPosition);
   },
   placeNewStuff: function( piece, newPosition ){
@@ -222,11 +92,6 @@ function setImgSrc (team, piece){
 
 var rules = {
   movementConstructor: {
-    // for (var key in p) {
-    //   if (p.hasOwnProperty(key)) {
-    //     console.log(key + " -> " + p[key]["boundaryCheck"]);
-    //   }
-    // }
     verticalUp: function(){
       return { increment: "+8",  boundaryCheck: "board.inBounds(increment * i + position)                                && board.inBounds(increment * i + position)"}
     },
@@ -311,7 +176,7 @@ var rules = {
       }
     }
     // pawns
-    // king might want to attach the range limit when we get to object creation?
+    // king
   },
 
   allPathsFinder: function(piece){
@@ -338,32 +203,6 @@ var rules = {
     return path
   },
 
-  // movements: {
-  //   rangedDiagonalsForwardSlash:  "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
-  //   rangedDiagonalsBackSlash:     "(((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
-  //   rangedVerticals:              "(cP - nP) % 8 === 0",
-  //   rangedHorizontals:            "((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
-  //   nightMoves:                   "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )",
-  //   // #segerJokes
-
-  //   // THE DIAGONALS HERE ALL NEED BOUNDARY CHECKS!!
-  //   blackPawnTwoStep:             "nP - cP === -16",
-  //   blackPawnOneStep:             "nP - cP === -8",
-  //   blackPawnCaptureStageRight:   "nP - cP === -7",
-  //   blackPawnCaptureStageLeft:    "nP - cP === -9",
-  //   whitePawnTwoStep:             "nP - cP === 16",
-  //   whitePawnOneStep:             "nP - cP === 8",
-  //   whitePawnCaptureStageLeft:    "nP - cP === 7",
-  //   whitePawnCaptureStageRight:   "nP - cP === 9"
-  // },
-
-  // movementTypeVerifier: function(possibleMoves, currentPosition, newPosition){
-  //   var possibleMoves = possibleMoves.replace(/cP/g, currentPosition),
-  //     possibleMoves   = possibleMoves.replace(/nP/g, newPosition),
-  //     acceptability   = eval(possibleMoves);
-  //   return acceptability
-  // },
-
   positionIsInPaths: function(position, piece){
     var paths = rules.allPathsFinder(piece),
         positionViable = false;
@@ -373,26 +212,9 @@ var rules = {
         if( path[j] === position ){ positionViable = true }
       };
     };
-
-    console.log(positionViable)
     return positionViable
   },
 
-  kingIsInCheckChecker: function(team, oldPosition, newPosition){
-    var tiles = board.tiles;
-    if (oldPosition && newPosition){
-      // clone tiles, delete piece from old position, drop piece into new position
-      // 
-      // 
-    };
-
-    var king = team.king;
-    if( board.isAttacked(king.position, king.team) ){
-
-    }
-// pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
-// maybe iterate across movements testing each individualy
-  },
   moveIsIllegal: function(piece, newPosition){
     illegal = false
     if ( !board.inBounds(newPosition) ){
@@ -401,31 +223,19 @@ var rules = {
     } else if( !rules.positionIsInPaths(newPosition, piece) ){
       alert("that's not how that piece moves")
       illegal = true
-    // } else if( board.pathIsBlocked(piece.position, newPosition) && piece.name !== "night" ){
-    //   alert("that position is blocked")
-    //   illegal = true
     } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
       alert("what, are you trying to capture your own piece?")
       illegal = true
     }
     return illegal
   },
+
   move: function(position, newPosition){
     piece = board.tiles[position]
     if( piece.team !== game.allowedToMove ){
       alert("other team's turn")
       return
     }
-// NOT IMPLEMENTED YET
-// 
-// 
-    if ( rules.kingIsInCheckChecker(piece.team, piece.position, newPosition) ){
-      alert("illegal move, check yo' king before you wreck yo' king")
-      return
-    }
-// 
-// 
-
   if( this.moveIsIllegal(piece, newPosition) ){
     return
     } else {
@@ -434,11 +244,9 @@ var rules = {
       board.deleteOldStuff(gridPosition, newGridPosition, piece)
       board.placeNewStuff(piece, newPosition)
       if ( board.tiles[newPosition].team !== piece.team ){
-        // in fact, just write a function called capture,
-        // track captured pieces
-        // 
-        // lots of duplication with the above function
-        // this is the only place that should be deleeting the destination tile
+        // capture(newPosition)
+        // this is the only place that should be deleting the destination tile
+        // it should also move the piece from active pieces into captured pieces
       }
       game.nextTurn()
     } 
@@ -628,52 +436,58 @@ var game = {
     this.allowedToMove = white
   },
   addWhitePieces: function(){
-    white.king = kingCreator( white, 4);
-    white.pawns = [
-      whitePawnCreator(8),
-      whitePawnCreator(9),
-      whitePawnCreator(10),
-      whitePawnCreator(11),
-      whitePawnCreator(12),
-      whitePawnCreator(13),
-      whitePawnCreator(14),
-      whitePawnCreator(15)
-    ],
-    white.minors = [
-      nightCreator(   white, 1),
-      bishopCreator(  white, 2),
-      bishopCreator(  white, 5),
-      nightCreator(   white, 6),
-    ],
-    white.majors = [
-      rookCreator(    white, 0),
-      queenCreator(   white, 3),
-      rookCreator(    white, 7),
-    ]
+    white.capturedPieces = []
+    white.activePieces = {
+      king: kingCreator( white, 4),
+      pawns: [
+        whitePawnCreator(8),
+        whitePawnCreator(9),
+        whitePawnCreator(10),
+        whitePawnCreator(11),
+        whitePawnCreator(12),
+        whitePawnCreator(13),
+        whitePawnCreator(14),
+        whitePawnCreator(15)
+      ],
+      minors: [
+        nightCreator(  white, 1),
+        bishopCreator( white, 2),
+        bishopCreator( white, 5),
+        nightCreator(  white, 6),
+      ],
+      majors: [
+        rookCreator(  white, 0),
+        queenCreator( white, 3),
+        rookCreator(  white, 7),
+      ]
+    }
   },
   addBlackPieces: function(){
-    black.king = kingCreator(    black, 60);
-    black.pawns = [
-      blackPawnCreator(48),
-      blackPawnCreator(49),
-      blackPawnCreator(50),
-      blackPawnCreator(51),
-      blackPawnCreator(52),
-      blackPawnCreator(53),
-      blackPawnCreator(54),
-      blackPawnCreator(55),
-    ],
-    black.minors = [
-      nightCreator(   black, 57),
-      bishopCreator(  black, 58),
-      bishopCreator(  black, 61),
-      nightCreator(   black, 62),
-    ],
-    black.majors = [
-      rookCreator(    black, 56),
-      queenCreator(   black, 59),
-      rookCreator(    black, 63)
-    ]
+    black.capturedPieces = []
+    black.activePieces = {
+      king: kingCreator( black, 60),
+      pawns: [
+        blackPawnCreator(48),
+        blackPawnCreator(49),
+        blackPawnCreator(50),
+        blackPawnCreator(51),
+        blackPawnCreator(52),
+        blackPawnCreator(53),
+        blackPawnCreator(54),
+        blackPawnCreator(55),
+      ],
+      minors: [
+        nightCreator(  black, 57),
+        bishopCreator( black, 58),
+        bishopCreator( black, 61),
+        nightCreator(  black, 62),
+      ],
+      majors: [
+        rookCreator(  black, 56),
+        queenCreator( black, 59),
+        rookCreator(  black, 63)
+      ]
+    }
   },
   turn: function(turnNum){
     var turnNum = turnNum || 1
@@ -697,10 +511,10 @@ var game = {
     this.allowedToMove = white
   },
   whiteMove: function(position, newPosition){
-    rules.move(board.tiles[position], newPosition)
+    rules.move(position, newPosition)
   },
-  blackMove: function(){
-    rules.move(board.tiles[position], newPosition)
+  blackMove: function(position, newPosition){
+    rules.move(position, newPosition)
   }
 }
 
@@ -725,5 +539,89 @@ setTimeout( function(){ rules.move(58, 23)},  7000)
 setTimeout( function(){ rules.move(19, 33)},  7500)
 
 
-// king = black.king
-// pos = king.pos
+  // movementTypes: {
+  //   isVertical: function(position, newPosition){
+  //     return(position - newPosition) % 8 === 0
+  //   },
+  //   isDiagonalForwardSlash: function(position, newPosition){
+  //     return (position - newPosition) % 9 === 0
+  //   },
+  //   isDiagonalBackSlash: function(position, newPosition){
+  //     return (position - newPosition) % 7 === 0
+  //   },
+  //   isHorizontal: function(position, newPosition){
+  //     return (position - newPosition) % 1 === 0
+  //   }
+  // },
+  // movementIncrement: function(position, newPosition){
+  //   var increment;
+  //   if ( this.movementTypes.isVertical(position, newPosition) && position < newPosition ){
+  //     increment = 8
+  //   } else if ( this.movementTypes.isVertical(position, newPosition) && position > newPosition ){
+  //     increment = -8
+  //   }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position < newPosition ){
+  //     increment = 9
+  //   }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position > newPosition ){
+  //     increment = -9
+  //   }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position < newPosition ){
+  //     increment = 7
+  //   }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position > newPosition ){
+  //     increment = -7
+  //   }else if ( this.movementTypes.isHorizontal(position, newPosition) && position < newPosition){
+  //     increment = 1
+  //   }else if ( this.movementTypes.isHorizontal(position, newPosition) && position > newPosition){
+  //     increment = -1
+  //   }
+  //   return increment
+  // },
+
+
+  // movements: {
+  //   rangedDiagonalsForwardSlash:  "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
+  //   rangedDiagonalsBackSlash:     "(((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
+  //   rangedVerticals:              "(cP - nP) % 8 === 0",
+  //   rangedHorizontals:            "((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
+  //   nightMoves:                   "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )",
+  //   // #segerJokes
+  //   // THE DIAGONALS HERE ALL NEED BOUNDARY CHECKS!!
+  //   blackPawnTwoStep:             "nP - cP === -16",
+  //   blackPawnOneStep:             "nP - cP === -8",
+  //   blackPawnCaptureStageRight:   "nP - cP === -7",
+  //   blackPawnCaptureStageLeft:    "nP - cP === -9",
+  //   whitePawnTwoStep:             "nP - cP === 16",
+  //   whitePawnOneStep:             "nP - cP === 8",
+  //   whitePawnCaptureStageLeft:    "nP - cP === 7",
+  //   whitePawnCaptureStageRight:   "nP - cP === 9"
+  // },
+
+
+  // movementTypeVerifier: function(possibleMoves, currentPosition, newPosition){
+  //   var possibleMoves = possibleMoves.replace(/cP/g, currentPosition),
+  //     possibleMoves   = possibleMoves.replace(/nP/g, newPosition),
+  //     acceptability   = eval(possibleMoves);
+  //   return acceptability
+  // },
+
+
+// ▼ removed from board.boundaries
+  // diagonalForwardSlashMovementBorderCheck:  "(( ((cP % 8) > (nP % 8)) && (cP > nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP < nP) ))",
+  // diagonalBackSlashMovementBorderCheck:     "( ((cP % 8) > (nP % 8)) && (cP < nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP > nP) )",
+  // horizontalBorderCheck:                    "Math.floor(cP / 8) === Math.floor(nP / 8)",
+  // verticalNightMovementBorderCheck:         "(Math.abs(cP % 8 - nP % 8) === 1 )",
+  // horizontalNightMovementCheck:             "(Math.abs(cP % 8 - nP % 8) === 2 )"
+
+
+  // pathIsBlocked: function(position, newPosition){
+  //   var movementIncrement = this.movementIncrement(position, newPosition),
+  //       possibleBlocks    = [],
+  //       blocked           = false;
+  //   for( i = 1; ( i * movementIncrement + position) !== newPosition ; i++ ){
+  //     possibleBlocks.push( i * movementIncrement + position )
+  //   }
+  //   for( i = 0; i < possibleBlocks.length; i++ ){
+  //     if ( board.tiles[possibleBlocks[i]] !== undefined ){
+  //       blocked = true
+  //     }
+  //   }
+  //   return blocked
+  // },
