@@ -703,10 +703,10 @@ var game = {
     this.allowedToMove = white
   },
   whiteMove: function(position, newPosition){
-    rules.move(board.tiles[position], newPosition)
+    rules.move(position, newPosition)
   },
-  blackMove: function(){
-    rules.move(board.tiles[position], newPosition)
+  blackMove: function(position, newPosition){
+    rules.move(position, newPosition)
   }
 }
 
