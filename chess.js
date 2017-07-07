@@ -347,8 +347,11 @@ var rules = {
   }
 };
 
-function setStartPosition(position, piece) {
-  board.tiles[position] = piece
+function setStartPosition(args) {
+  var position = args["position"], 
+      piece    = args["piece"],
+      tiles    = args["tiles"];
+  tiles[position] = piece
 };
 
 var nightCreator = (function (args){
@@ -366,7 +369,7 @@ var nightCreator = (function (args){
         isTurn: false
       };
   setImgSrc(team, night)
-  setStartPosition(position, night)
+  setStartPosition({position: position,piece: night, tiles: tiles})
   board.displayPiece(night)
   return night
 });
@@ -386,7 +389,7 @@ var rookCreator = (function (args){
         isTurn: false
       };
   setImgSrc(team, rook)
-  setStartPosition(position, rook)
+  setStartPosition({position: position,piece: rook, tiles: tiles})
   board.displayPiece(rook)
   return rook
 });
@@ -406,7 +409,7 @@ var bishopCreator = (function (args){
         isTurn: false
       };
   setImgSrc(team, bishop)
-  setStartPosition(position, bishop)
+  setStartPosition({position: position,piece: bishop, tiles: tiles})
   board.displayPiece(bishop)
   return bishop
 });
@@ -426,7 +429,7 @@ var kingCreator = (function (args){
         isTurn: false
       };
   setImgSrc(team, king)
-  setStartPosition(position, king)
+  setStartPosition({position: position,piece: king, tiles: tiles})
   board.displayPiece(king)
   return king
 });
@@ -446,7 +449,7 @@ var queenCreator = (function (args){
         isTurn: false
       };
   setImgSrc(team, queen)
-  setStartPosition(position, queen)
+  setStartPosition({position: position,piece: queen, tiles: tiles})
   board.displayPiece(queen)
   return queen
 });
@@ -486,7 +489,7 @@ var whitePawnCreator = (function (args){
     isTurn: false
   };
   setImgSrc(white, pawn)
-  setStartPosition(position, pawn)
+  setStartPosition({position: position,piece: pawn, tiles: tiles})
   board.displayPiece(pawn)
   return pawn
 });
@@ -530,7 +533,7 @@ var blackPawnCreator = (function (args){
     isTurn: false
   };
   setImgSrc(black, pawn)
-  setStartPosition(position, pawn)
+  setStartPosition({position: position,piece: pawn, tiles: tiles})
   board.displayPiece(pawn)
   return pawn
 });
