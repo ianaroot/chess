@@ -19,93 +19,24 @@ var board = {
     isSecondRank: function(position){
       return Math.floor(position / 8) === 1
     }
-  },
-
-  twoSpacesDownIsEmpty: function(position){
+  },  twoSpacesDownIsEmpty: function(position){
     return this.tiles[position - 16] === undefined
-  },
-
-  twoSpacesUpIsEmpty: function(position){
+  },  twoSpacesUpIsEmpty: function(position){
     return Math.floor(position / 8) === 1
-  },
-
-  oneSpaceDownIsEmpty: function(position){
+  },  oneSpaceDownIsEmpty: function(position){
     return this.tiles[position - 8] === undefined
-  },
-
-  oneSpaceUpIsEmpty: function(position){
+  },  oneSpaceUpIsEmpty: function(position){
     return this.tiles[position + 8] === undefined
-  },
-
-  stageRightBlackPawnAttackOccupied: function(position){
+  },  stageRightBlackPawnAttackOccupied: function(position){
     return this.tiles[position - 7] !== undefined
-  },
-
-  stageLeftBlackAttackOccupied: function(position){
+  },  stageLeftBlackAttackOccupied: function(position){
     return this.tiles[position - 9] !== undefined
-  },
-
-  stageLeftWhitePawnnAttackOccupied: function(position){
+  },  stageLeftWhitePawnnAttackOccupied: function(position){
     return this.tiles[position + 7] !== undefined
-  },
-
-  stageRightWhitePawnAttackOccupied: function(position){
+  },  stageRightWhitePawnAttackOccupied: function(position){
     return board.tiles[position + 9] !== undefined
-  },
-
-  inBounds: function(position){
+  },  inBounds: function(position){
     return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
-  },
-
-  isAttacked: function(position, team){
-    var attacked = false;
-    if( this.isAttackedByPawn(position, team) ){
-      attacked = true;
-    };
-    if( this.isAttackedByNight(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByBishop(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByRook(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByQueen(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByKing(position) ){
-      attacked = true;
-    };
-    return attacked
-  },
-  isAttackedByPawn: function(position, team){
-    if (team === white){
-      return this.isAttackedByWhitePawn(position);
-    } else {
-     return this.isAttackedByBlackPawn(position);
-    };
-  },
-  isAttackedByBlackPawn: function(position){
-    board.tiles[position]
-  },
-  isAttackedByWhitePawn: function(position){
-
-  },
-  isAttackedByNight: function(position){
-
-  },
-  isAttackedByBishop: function(position){
-
-  },
-  isAttackedByRook: function(position){
-
-  },
-  isAttackedByQueen: function(position){
-
-  },
-  isAttackedByKing: function(position){
-
   },
 
   gridCalculator: function(tile){
