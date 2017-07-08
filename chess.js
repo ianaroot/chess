@@ -26,9 +26,6 @@ var board = {
       }
     return tilesCopy
   },
-  copyTiles: function(){
-    board.tiles.each 
-  },
   positions: {
     isSeventhRank: function(position){
       return Math.floor(position / 8) === 6
@@ -54,57 +51,6 @@ var board = {
     return board.tiles[position + 9] !== undefined
   },  inBounds: function(position){
     return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
-  },
-
-  isAttacked: function(position, team){
-    var attacked = false;
-    if( this.isAttackedByPawn(position, team) ){
-      attacked = true;
-    };
-    if( this.isAttackedByNight(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByBishop(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByRook(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByQueen(position) ){
-      attacked = true;
-    };
-    if( this.isAttackedByKing(position) ){
-      attacked = true;
-    };
-    return attacked
-  },
-  isAttackedByPawn: function(position, team){
-    if (team === white){
-      return this.isAttackedByWhitePawn(position);
-    } else {
-     return this.isAttackedByBlackPawn(position);
-    };
-  },
-  isAttackedByBlackPawn: function(position){
-    board.tiles[position]
-  },
-  isAttackedByWhitePawn: function(position){
-
-  },
-  isAttackedByNight: function(position){
-
-  },
-  isAttackedByBishop: function(position){
-
-  },
-  isAttackedByRook: function(position){
-
-  },
-  isAttackedByQueen: function(position){
-
-  },
-  isAttackedByKing: function(position){
-
   },
 
   gridCalculator: function(tile){
@@ -165,7 +111,7 @@ function setImgSrc (team, piece){
 };
 
 var rules = {
-  movementConstructor: {
+  movementConstructors: {
     verticalUp: function(){
       return { increment: "+8",  boundaryCheck: "board.inBounds(increment * i + position)                                && board.inBounds(increment * i + position)"}
     },
@@ -214,11 +160,11 @@ var rules = {
     horizontalLeft: function(){
      return { increment: "-1",  boundaryCheck: "Math.floor((increment * i + position) / 8) === Math.floor(position / 8) && board.inBounds(increment * i + position)" }
    },
-    set: {
+    sets: {
       night: function(){
-        var moves = [rules.movementConstructor.nightHorizontalRightDown(), rules.movementConstructor.nightHorizontalLeftDown(), rules.movementConstructor.nightVerticalRightDown(),
-                      rules.movementConstructor.nightVerticalLeftDown(), rules.movementConstructor.nightHorizontalRightUp(), rules.movementConstructor.nightHorizontalLeftUp(),
-                      rules.movementConstructor.nightVerticalRightUp(), rules.movementConstructor.nightVerticalLeftUp()
+        var moves = [rules.movementConstructors.nightHorizontalRightDown(), rules.movementConstructors.nightHorizontalLeftDown(), rules.movementConstructors.nightVerticalRightDown(),
+                      rules.movementConstructors.nightVerticalLeftDown(), rules.movementConstructors.nightHorizontalRightUp(), rules.movementConstructors.nightHorizontalLeftUp(),
+                      rules.movementConstructors.nightVerticalRightUp(), rules.movementConstructors.nightVerticalLeftUp()
                     ];
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
@@ -228,7 +174,7 @@ var rules = {
         return  moves
       },
       rook: function(){
-        var moves = [rules.movementConstructor.horizontalRight(), rules.movementConstructor.horizontalLeft(), rules.movementConstructor.verticalUp(), rules.movementConstructor.verticalDown()]
+        var moves = [rules.movementConstructors.horizontalRight(), rules.movementConstructors.horizontalLeft(), rules.movementConstructors.verticalUp(), rules.movementConstructors.verticalDown()]
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
             moves[key].rangeLimit = 7 ;
@@ -237,7 +183,7 @@ var rules = {
         return moves
       },
       bishop: function(){
-        var moves = [rules.movementConstructor.forwardSlashDown(), rules.movementConstructor.forwardSlashUp(), rules.movementConstructor.backSlashDown(), rules.movementConstructor.backSlashUp()]
+        var moves = [rules.movementConstructors.forwardSlashDown(), rules.movementConstructors.forwardSlashUp(), rules.movementConstructors.backSlashDown(), rules.movementConstructors.backSlashUp()]
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
             moves[key].rangeLimit = 7 ;
@@ -246,7 +192,7 @@ var rules = {
         return moves
       },
       queen: function(){
-        return rules.movementConstructor.set.rook().concat( rules.movementConstructor.set.bishop() )
+        return rules.movementConstructors.sets.rook().concat( rules.movementConstructors.sets.bishop() )
       }
     }
     // pawns
@@ -300,28 +246,11 @@ var rules = {
     } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
       alert("what, are you trying to capture your own piece?")
       illegal = true
-    } //else if( rules.kingIsInCheckChecker(piece, newPosition) ){
-    //   alert("check yo king")
-    //   illegal = true
-    // }
+    }
     return illegal
   },
-  
-  kingIsInCheckChecker: function(piece, newPosition){
-    var tiles = board.copyTiles;
-    if (newPosition){
-      // clone tiles, delete piece from old position, drop piece into new position
-      // 
-      // 
-    };
 
-    var king = team.king;
-    if( board.isAttacked(king.position, king.team) ){
-
-    }
-// pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
-// maybe iterate across movements testing each individualy
-  },
+  // kingIsInCheck
 
   move: function(position, newPosition){
     piece = board.tiles[position]
@@ -364,7 +293,7 @@ var nightCreator = (function (args){
         value: 3,
         team: team,
         possibleMoves: function(){
-          return rules.movementConstructor.set.night()
+          return rules.movementConstructors.sets.night()
         },
         isTurn: false
       };
@@ -384,7 +313,7 @@ var rookCreator = (function (args){
         value: 5,
         team: team,
         possibleMoves: function(){
-          return rules.movementConstructor.set.rook()
+          return rules.movementConstructors.sets.rook()
         },
         isTurn: false
       };
@@ -404,7 +333,7 @@ var bishopCreator = (function (args){
         value: 3,
         team: team,
         possibleMoves: function(){
-          return rules.movementConstructor.set.bishop()
+          return rules.movementConstructors.sets.bishop()
         },
         isTurn: false
       };
@@ -444,7 +373,7 @@ var queenCreator = (function (args){
         value: 9,
         team: team,
         possibleMoves: function(){
-          return rules.movementConstructor.set.queen()
+          return rules.movementConstructors.sets.queen()
         },
         isTurn: false
       };
@@ -465,22 +394,22 @@ var whitePawnCreator = (function (args){
     possibleMoves: function(){
       var possibilities = [];
       if( board.positions.isSecondRank(this.position) && board.twoSpacesUpIsEmpty(this.position) ){
-        var newPossibility = rules.movementConstructor.verticalUp()
+        var newPossibility = rules.movementConstructors.verticalUp()
         newPossibility.rangeLimit = 2
         possibilities = possibilities.concat(newPossibility)
       };
       if( board.oneSpaceUpIsEmpty(this.position) ){
-        var newPossibility = rules.movementConstructor.verticalUp()
+        var newPossibility = rules.movementConstructors.verticalUp()
         newPossibility.rangeLimit = 1
         possibilities = possibilities.concat(newPossibility)
       };
       if( board.stageLeftWhitePawnnAttackOccupied(this.position) ){
-        var newPossibility = rules.movementConstructor.backSlashUp()
+        var newPossibility = rules.movementConstructors.backSlashUp()
         newPossibility.rangeLimit = 1
         possibilities = possibilities.concat(newPossibility)
       };
       if( board.stageRightWhitePawnAttackOccupied(this.position) ){
-        var newPossibility = rules.movementConstructor.forwardSlashUp()
+        var newPossibility = rules.movementConstructors.forwardSlashUp()
         newPossibility.rangeLimit = 1
         possibilities = possibilities.concat(newPossibility)
       };
@@ -506,25 +435,25 @@ var blackPawnCreator = (function (args){
     possibleMoves: function(){
       var possibilities = [];
       if( board.positions.isSeventhRank(this.position) && board.twoSpacesDownIsEmpty(this.position) ){
-        var newPossibility = rules.movementConstructor.verticalDown()
+        var newPossibility = rules.movementConstructors.verticalDown()
         newPossibility.rangeLimit = 2
         possibilities = possibilities.concat(newPossibility)
       };
 
       if( board.oneSpaceDownIsEmpty(this.position) ){
-        var newPossibility = rules.movementConstructor.verticalDown()
+        var newPossibility = rules.movementConstructors.verticalDown()
         newPossibility.rangeLimit = 1
         possibilities = possibilities.concat(newPossibility)
       };
 
       if( board.stageRightBlackPawnAttackOccupied(this.position) ){
-        var newPossibility = rules.movementConstructor.backSlashDown()
+        var newPossibility = rules.movementConstructors.backSlashDown()
         newPossibility.rangeLimit = 1
         possibilities = possibilities.concat(newPossibility)
       };
 
       if( board.stageLeftBlackAttackOccupied(this.position) ){
-        var newPossibility = rules.movementConstructor.forwardSlashDown()
+        var newPossibility = rules.movementConstructors.forwardSlashDown()
         newPossibility.rangeLimit = 1
         possibilities = possibilities.concat(newPossibility)
       };
@@ -634,25 +563,6 @@ var game = {
   }
 };
 
-game.createTeams()
-game.addWhitePieces()
-game.addBlackPieces()
-game.begin()
-setTimeout( function(){ rules.move(1,  18) }, 500)
-setTimeout( function(){ rules.move(50, 42) }, 1000)
-setTimeout( function(){ rules.move(11, 27) }, 1500)
-setTimeout( function(){ rules.move(59, 32) }, 2000)
-setTimeout( function(){ rules.move(3,  19) }, 2500)
-setTimeout( function(){ rules.move(42, 34) }, 3000)
-setTimeout( function(){ rules.move(12, 20) }, 3500)
-setTimeout( function(){ rules.move(34, 27) }, 4000)
-setTimeout( function(){ rules.move(0,  1) },  4500)
-setTimeout( function(){ rules.move(27, 18) }, 5000)
-setTimeout( function(){ rules.move(9,  18) }, 5500)
-setTimeout( function(){ rules.move(51, 35)},  6000)
-setTimeout( function(){ rules.move(15, 23)},  6500)
-setTimeout( function(){ rules.move(58, 23)},  7000)
-setTimeout( function(){ rules.move(19, 33)},  7500)
 
 
   // movementTypes: {
@@ -741,3 +651,25 @@ setTimeout( function(){ rules.move(19, 33)},  7500)
   //   }
   //   return blocked
   // },
+
+(function gameTest(){
+  game.createTeams()
+  game.addWhitePieces()
+  game.addBlackPieces()
+  game.begin()
+  setTimeout( function(){ rules.move(1,  18) }, 500)
+  setTimeout( function(){ rules.move(50, 42) }, 1000)
+  setTimeout( function(){ rules.move(11, 27) }, 1500)
+  setTimeout( function(){ rules.move(59, 32) }, 2000)
+  setTimeout( function(){ rules.move(3,  19) }, 2500)
+  setTimeout( function(){ rules.move(42, 34) }, 3000)
+  setTimeout( function(){ rules.move(12, 20) }, 3500)
+  setTimeout( function(){ rules.move(34, 27) }, 4000)
+  setTimeout( function(){ rules.move(0,  1) },  4500)
+  setTimeout( function(){ rules.move(27, 18) }, 5000)
+  setTimeout( function(){ rules.move(9,  18) }, 5500)
+  setTimeout( function(){ rules.move(51, 35)},  6000)
+  setTimeout( function(){ rules.move(15, 23)},  6500)
+  setTimeout( function(){ rules.move(58, 23)},  7000)
+  setTimeout( function(){ rules.move(19, 33)},  7500)
+})()
