@@ -1,3 +1,15 @@
+var Board = function(){
+  tileSet = [];
+  capturedPieces = [];
+}
+
+currentBoard = Object.create( Board.prototype )
+currentBoard2 = Object.create( Board.prototype)
+Board.prototype.isSeventhRank = function(position){
+    console.log("bam!")
+  }
+
+
 copyPiece = function(piece, tiles){
   //THIS FUNCTION IS INSANELY DANGEROUS
   // AS IS REALLY ANYTHING USING EVAL. THOSE CANNOT BE PUBLIC LONG TERM.
@@ -9,6 +21,7 @@ copyPiece = function(piece, tiles){
 // pass objects instead of lists as args
 // write function to display possible paths, is good way to display data for error checking
 var board = {
+  // break board up into separate functions and data objects to minimize duplication
   tiles: [],
   boundaries: {
     upperLimit: 63,
@@ -53,6 +66,7 @@ var board = {
     return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
   },
 
+// class method not instance
   gridCalculator: function(tile){
     var x = Math.floor(tile % 8),
         y = Math.floor(tile / 8) + 1,
@@ -98,8 +112,53 @@ var board = {
     this.tiles[newPosition] = piece;
     piece.position = newPosition;
     this.displayPiece(piece);
-  }
+  },
+
+  // isAttacked: function( args ){
+  //   var position      = args["position"],
+  //       team          = args["team"],
+  //       danger        = false,
+  //       opposingTeam;
+  //   if( team === white ){
+  //     opposingTeam = black
+  //   } else {
+  //     opposingTeam = white
+  //   };
+  //   var activeOpposingTeamPieces = opposingTeam.activePieces;
+  //   for (var i = 0; i < activeOpposingTeamPieces.length; i++){
+  //     if( isAttackedBy({piece: activeOpposingTeamPieces[i], position: position}) ){ danger = true }
+  //   }
+  // },
+  isAttackedByRnbq: function(args){
+    // will give false positives on pawns attacking empty positions
+    var piece     = args["piece"],
+        position = args["position"];
+    return rules.positionIsInPaths({position: position, piece: piece})
+  },
+  isAttackedByPawn: function(args){
+    // will give fals positives on whether pawns can attack space if it's not yet occupied[]
+    var pawn             = args["piece"],
+        attackingPosition = pawn.position
+        defendingPosition = args["position"],
+        possibleMoves = pawn.possibleMoves(),
+        attacked = false;
+    for( var i = 0; i < possibleMoves.length; i++){
+      var increment     = possibleMoves[i]["increment"],
+          boundaryCheck = possibleMoves[i]["boundaryCheck"].replace(/\* i/g, "").replace(/position/, "attackingPosition");
+      // could factor out the logic below and throw in a nifty object key or function name like "pawnAttacks" that's a horrible name, sit on it a while
+      debugger
+      if( attackingPosition + increment === defendingPosition && boundaryCheck && (Math.abs(increment) === 7 || Math.abs(increment) === 9)){
+        attacked = true;
+      }
+      return attacked
+    }
+  },
+  isAttackedByKing: function(args){
+    var piece     = args["piece"],
+        position = args["position"];
+  },
 };
+
 function setImgSrc (team, piece){
   var pieceInitial = piece.name[0].toUpperCase()
   if (piece.name === "whitePawn" || piece.name === "blackPawn"){ pieceInitial = "p" }
@@ -219,12 +278,14 @@ var rules = {
       pathPosition = position + i * increment
       if( board.tiles[pathPosition] !== undefined && board.tiles[pathPosition].team === team ){ break; }
       path.push(pathPosition)
-      }
+    }
     return path
   },
 
-  positionIsInPaths: function(position, piece){
-    var paths = rules.allPathsFinder(piece),
+  positionIsInPaths: function(args){
+    var position = args["position"],
+        piece = args["piece"]
+        paths = rules.allPathsFinder(piece),
         positionViable = false;
     for( var i = 0; i < paths.length; i ++){
       var path = paths[i]
@@ -240,17 +301,43 @@ var rules = {
     if ( !board.inBounds(newPosition) ){
       alert('stay on the board, fool')
       illegal = true
-    } else if( !rules.positionIsInPaths(newPosition, piece) ){
+    } else if( !rules.positionIsInPaths({position: newPosition, piece: piece}) ){
       alert("that's not how that piece moves")
       illegal = true
     } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
       alert("what, are you trying to capture your own piece?")
       illegal = true
-    }
+    } //else if( this.kingCheck( {piece: piece, position: newPosition})){
+    //   alert("check yo")
+    //   illegal = true
+    // }
     return illegal
   },
 
-  // kingIsInCheck
+  kingCheck: function(args){
+    var position          = args["position"],
+        piece             = args["piece"]
+        pieceCopy         = args["piece"],
+        team              = pieceCopy.team,
+        activeTeamPieces  = team.activePieces,
+        king              = activeTeamPieces.king,
+        tilesCopy         = board.deepCopyTiles,
+        danger            = false,
+        opposingTeam;
+    if( team === white ){
+      opposingTeam = black
+    } else {
+      opposingTeam = white
+    };
+    var activeOpposingTeamPieces = opposingTeam.activePieces;
+    for (var i = 0; i < activeOpposingTeamPieces.length; i++){
+      if( isAttackedBy({piece: activeOpposingTeamPieces[i], position: kingPosition}) ){ danger = true }
+    }
+        // danger            = board.isAttacked({position: position, piece: pieceCopy, tiles: tilesCopy});
+    return danger
+// pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
+// maybe iterate across movements testing each individualy
+  },
 
   move: function(position, newPosition){
     piece = board.tiles[position]
@@ -329,7 +416,7 @@ var bishopCreator = (function (args){
       tiles = args["tiles"],
       bishop = {
         name: "bishop",
-        position: position,
+        position: position, //single source of truth, ask your board where you are
         value: 3,
         team: team,
         possibleMoves: function(){
@@ -343,6 +430,7 @@ var bishopCreator = (function (args){
   return bishop
 });
 
+// still not up on the new movementConstructors
 var kingCreator = (function (args){
   var team = args["team"],
       position = args["position"],
@@ -483,7 +571,7 @@ var game = {
   addWhitePieces: function(){
     white.capturedPieces = []
     white.activePieces = {
-      king: kingCreator({ position: 4, team: white, tiles: board.tiles} ),
+      king: kingCreator({ position: 4, team: white, tiles: board.tiles}),
       pawns: [
         whitePawnCreator({ position: 8, tiles: board.tiles}),
         whitePawnCreator({ position: 9, tiles: board.tiles}),
