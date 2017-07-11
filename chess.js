@@ -1,72 +1,148 @@
-var Board = function(){
-  tileSet = [];
-  capturedPieces = [];
-}
+// implements borrowed chess js board
+var board1 = ChessBoard('board1');
 
-currentBoard = Object.create( Board.prototype )
-currentBoard2 = Object.create( Board.prototype)
-Board.prototype.isSeventhRank = function(position){
-    console.log("bam!")
+
+
+// PAWNCONTROLLERPROTOTYPE CALLS TO board.isEmpty(position)
+  // twoSpacesDownIsEmpty: function(position){
+  //   return this.tiles[position - 16] === undefined
+  // },
+  // twoSpacesUpIsEmpty: function(position){
+  //   return Math.floor(position / 8) === 1
+  // },
+  // oneSpaceDownIsEmpty: function(position){
+  //   return this.tiles[position - 8] === undefined
+  // },
+  // oneSpaceUpIsEmpty: function(position){
+  //   return this.tiles[position + 8] === undefined
+  // },
+  // stageRightBlackPawnAttackOccupied: function(position){
+  //   return this.tiles[position - 7] !== undefined
+  // },
+  // stageLeftBlackAttackOccupied: function(position){
+  //   return this.tiles[position - 9] !== undefined
+  // },
+  // stageLeftWhitePawnnAttackOccupied: function(position){
+  //   return this.tiles[position + 7] !== undefined
+  // },
+  // stageRightWhitePawnAttackOccupied: function(position){
+  //   return this.tiles[position + 9] !== undefined
+  // },
+  // inBounds: function(position){
+  //   return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
+  // },
+
+
+queenController = {
+  boo: "hiss"
+}
+// function setImgSrc (team, piece){
+//   var pieceInitial = piece.name[0].toUpperCase()
+//   if (piece.name === "whitePawn" || piece.name === "blackPawn"){ pieceInitial = "p" }
+//   if( team == white ){
+//     piece.imgSrc = "img/chesspieces/wikipedia/w" + pieceInitial + ".png"
+//   } else {
+//     piece.imgSrc = "img/chesspieces/wikipedia/b" + pieceInitial + ".png"
+//   }
+// };
+
+
+  // deleteOldStuff: function(gridPosition, newGridPosition, piece){ 
+  //     delete board.tiles[piece.position];
+  //     this.undisplayPiece(gridPosition)
+  //     this.undisplayPiece(gridPosition)
+  //     this.undisplayPiece(newGridPosition);
+  // },
+  // placeNewStuff: function( piece, newPosition ){
+  //   this.tiles[newPosition] = piece;
+  //   piece.position = newPosition;
+  //   this.displayPiece(piece);
+  // }
+
+var View = (function(){
+  var instance = {
+    displayPiece: function(piece){
+      var elem = document.createElement("img"),
+        gridPosition = this.gridCalculator(piece.position);
+      elem.setAttribute("src", piece.imgSrc);
+      elem.setAttribute("height", "49");
+      elem.setAttribute("width", "49");
+      document.getElementsByClassName( gridPosition )[0].appendChild(elem)
+    },
+    undisplayPiece: function(gridPosition){
+      var element = document.getElementsByClassName( gridPosition )[0],
+        children  = element.children;
+
+      for( var i = 0; i < children.length; i ++){
+        children[i].remove()
+      }
+    },
+    displayBoard: function(layOut){
+      for( var i = 0; i < layOut.length; i++){
+        if( layOut[i] !== "empty" ){
+          var elem = document.createElement("img"),
+              gridPosition = Board.classMethods.gridCalculator(i),
+              pieceInitials = this.pieceInitials(layOut[i]);
+          elem.setAttribute("src", this.pieceImgSrc( pieceInitials ) );
+          elem.setAttribute("height", "49");
+          elem.setAttribute("width", "49");
+          document.getElementsByClassName( gridPosition )[0].appendChild(elem)
+        }
+      }
+    },
+    pieceImgSrc: function(pieceInitials){
+      return "img/chesspieces/wikipedia/" + pieceInitials + ".png"
+    },
+    pieceInitials: function(string){
+      var firstInitial = string[0],
+        secondInitial;
+      for (i = 0; i < string.length; i++){
+        if( string[i] === string[i].toUpperCase() ){ secondInitial = string[i] }
+      };
+      return firstInitial + secondInitial
+    }
+  };
+
+  function createInstance() {
+      var object = new Object("I am the instance");
+      return object;
   }
+  return {
+      getInstance: function() {
+          if (!instance) {
+              instance = createInstance();
+          }
+          return instance;
+      },
+  };
+})();
 
-
-copyPiece = function(piece, tiles){
-  //THIS FUNCTION IS INSANELY DANGEROUS
-  // AS IS REALLY ANYTHING USING EVAL. THOSE CANNOT BE PUBLIC LONG TERM.
-  // args = JSON.stringify
-  creatorFunc = eval( piece.name + "Creator" )
-  return  creatorFunc( {position: piece.position, team: piece.team, tiles: tiles} )
-}
 
 // pass objects instead of lists as args
 // write function to display possible paths, is good way to display data for error checking
-var board = {
-  // break board up into separate functions and data objects to minimize duplication
-  tiles: [],
-  boundaries: {
-    upperLimit: 63,
-    lowerLimit: 0
-  },
-  deepCopyTiles: function(){
-    tiles = board.tiles
-    tilesCopy = []
-    for(i = 0; i < tiles.length; i++){
-      if( tiles[i] !== undefined){
-        piece = tiles[i]
-        pieceCopy = copyPiece( piece, tilesCopy )
-        tilesCopy[i] = pieceCopy
-          }
-      }
-    return tilesCopy
-  },
-  positions: {
-    isSeventhRank: function(position){
+
+
+
+function Board(options){
+  var layOut;
+  if( options && options["layOut"]){ layOut = options["layOut"] }else{ layOut = [] };
+  var capturedPieces;
+  if( options && options["capturedPieces"]){ capturedPieces = options["capturedPieces"] }else{ capturedPieces = [] };
+  this.layOut = layOut
+  this.capturedPieces = capturedPieces;
+  this.blackInCheck;
+  this.whiteInCheck;
+  // return classMethods
+};
+Board.classMethods = {
+  ranks: {
+    isSeventh: function(position){
       return Math.floor(position / 8) === 6
     },
-    isSecondRank: function(position){
+    isSecond: function(position){
       return Math.floor(position / 8) === 1
     }
-  },  twoSpacesDownIsEmpty: function(position){
-    return this.tiles[position - 16] === undefined
-  },  twoSpacesUpIsEmpty: function(position){
-    return Math.floor(position / 8) === 1
-  },  oneSpaceDownIsEmpty: function(position){
-    return this.tiles[position - 8] === undefined
-  },  oneSpaceUpIsEmpty: function(position){
-    return this.tiles[position + 8] === undefined
-  },  stageRightBlackPawnAttackOccupied: function(position){
-    return this.tiles[position - 7] !== undefined
-  },  stageLeftBlackAttackOccupied: function(position){
-    return this.tiles[position - 9] !== undefined
-  },  stageLeftWhitePawnnAttackOccupied: function(position){
-    return this.tiles[position + 7] !== undefined
-  },  stageRightWhitePawnAttackOccupied: function(position){
-    return board.tiles[position + 9] !== undefined
-  },  inBounds: function(position){
-    return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
   },
-
-// class method not instance
   gridCalculator: function(tile){
     var x = Math.floor(tile % 8),
         y = Math.floor(tile / 8) + 1,
@@ -83,35 +159,39 @@ var board = {
       x = alphaNum[x];
     return "square-" + x + y
   },
-  displayPiece: function(piece){
-    var elem = document.createElement("img"),
-      gridPosition = this.gridCalculator(piece.position);
-    elem.setAttribute("src", piece.imgSrc);
-    elem.setAttribute("height", "49");
-    elem.setAttribute("width", "49");
-    document.getElementsByClassName( gridPosition )[0].appendChild(elem)
-  },
-  undisplayPiece: function(gridPosition){
-    var element = document.getElementsByClassName( gridPosition )[0],
-      children  = element.children;
+  boundaries: {
+    upperLimit: 63,
+    lowerLimit: 0
+  }
+}
+Board.prototype = {
 
-    for( i = 0; i < children.length; i ++){
-      children[i].remove()
+  occupancy: {
+    twoSpacesUp: function(position){
+      return this.tileSet[position]  !== "empty"
     }
   },
+
+  positionIsInPaths: function(args){
+    var position = args["position"],
+        piece = args["piece"]
+        // paths will be part of the input coming from the piece
+        // paths = rules.allPathsFinder(piece),
+        positionViable = false;
+    for( var i = 0; i < paths.length; i ++){
+      var path = paths[i]
+      for( var j = 0; j < path.length; j++){
+        if( path[j] === position ){ positionViable = true }
+      };
+    };
+    return positionViable
+  },
+
+// positionIsOccupied
+// positionIsoccupiedByOpponent
+// occupant
   positionIsOccupiedByTeamMate: function(position, team){
     return (this.tiles[position] !== undefined && this.tiles[position].team === team  )
-  },
-  deleteOldStuff: function(gridPosition, newGridPosition, piece){ 
-      delete board.tiles[piece.position];
-      this.undisplayPiece(gridPosition)
-      this.undisplayPiece(gridPosition)
-      this.undisplayPiece(newGridPosition);
-  },
-  placeNewStuff: function( piece, newPosition ){
-    this.tiles[newPosition] = piece;
-    piece.position = newPosition;
-    this.displayPiece(piece);
   },
 
   // isAttacked: function( args ){
@@ -156,21 +236,223 @@ var board = {
   isAttackedByKing: function(args){
     var piece     = args["piece"],
         position = args["position"];
-  },
-};
-
-function setImgSrc (team, piece){
-  var pieceInitial = piece.name[0].toUpperCase()
-  if (piece.name === "whitePawn" || piece.name === "blackPawn"){ pieceInitial = "p" }
-  if( team == white ){
-    piece.imgSrc = "img/chesspieces/wikipedia/w" + pieceInitial + ".png"
-  } else {
-    piece.imgSrc = "img/chesspieces/wikipedia/b" + pieceInitial + ".png"
   }
-};
+}
 
-var rules = {
-  movementConstructors: {
+var Rules = (function () {
+  var instance = {
+    moveIsIllegal: function(piece, newPosition, board){
+      // could take in a tileset and chess notation!??!  using a reverse gridCalculator
+      illegal = false
+      if ( !board.inBounds(newPosition) ){
+        alert('stay on the board, fool')
+        illegal = true
+      } else if( !rules.positionIsInPaths({position: newPosition, piece: piece}) ){
+        alert("that's not how that piece moves")
+        illegal = true
+      } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
+        alert("what, are you trying to capture your own piece?")
+        illegal = true
+      } //else if( this.kingCheck( {piece: piece, position: newPosition})){
+      //   alert("check yo")
+      //   illegal = true
+      // }
+      return illegal
+    },
+    kingCheck: function(args){
+      var position          = args["position"],
+          piece             = args["piece"]
+          pieceCopy         = args["piece"],
+          team              = pieceCopy.team,
+          activeTeamPieces  = team.activePieces,
+          king              = activeTeamPieces.king,
+          tilesCopy         = board.deepCopyTiles,
+          danger            = false,
+          opposingTeam;
+      if( team === white ){
+        opposingTeam = black
+      } else {
+        opposingTeam = white
+      };
+      var activeOpposingTeamPieces = opposingTeam.activePieces;
+      for (var i = 0; i < activeOpposingTeamPieces.length; i++){
+        if( isAttackedBy({piece: activeOpposingTeamPieces[i], position: kingPosition}) ){ danger = true }
+      }
+          // danger            = board.isAttacked({position: position, piece: pieceCopy, tiles: tilesCopy});
+      return danger
+  // pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
+  // maybe iterate across movements testing each individualy
+    },
+    // castling  these can both refer to the previous board states to answer the question, so knowing about board states doesn't become a pieces job
+    // en passant  these can both refer to the previous board states to answer the question, so knowing about board states doesn't become a pieces job 
+    // stalemate
+  }
+
+  function createInstance() {
+      var object = new Object("I am the instance");
+      return object;
+  }
+  return {
+      getInstance: function() {
+          if (!instance) {
+              instance = createInstance();
+          }
+          return instance;
+      },
+  };
+})();
+
+
+
+var GameController = (function(){
+  var instance = {
+    view: View.getInstance(),
+    currentBoard: new Board({layOut: ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
+                             "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
+                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
+                             "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
+                             "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",
+    ]}),
+    simulate: function (){
+      game.createTeams()
+      game.addWhitePieces()
+      game.addBlackPieces()
+      game.begin()
+      setTimeout( function(){ rules.move(1,  18) }, 500)
+      setTimeout( function(){ rules.move(50, 42) }, 1000)
+      setTimeout( function(){ rules.move(11, 27) }, 1500)
+      setTimeout( function(){ rules.move(59, 32) }, 2000)
+      setTimeout( function(){ rules.move(3,  19) }, 2500)
+      setTimeout( function(){ rules.move(42, 34) }, 3000)
+      setTimeout( function(){ rules.move(12, 20) }, 3500)
+      setTimeout( function(){ rules.move(34, 27) }, 4000)
+      setTimeout( function(){ rules.move(0,  1) },  4500)
+      setTimeout( function(){ rules.move(27, 18) }, 5000)
+      setTimeout( function(){ rules.move(9,  18) }, 5500)
+      setTimeout( function(){ rules.move(51, 35)},  6000)
+      setTimeout( function(){ rules.move(15, 23)},  6500)
+      setTimeout( function(){ rules.move(58, 23)},  7000)
+      setTimeout( function(){ rules.move(19, 33)},  7500)
+    },
+    testing: function(){
+      game.createTeams()
+      game.addWhitePieces()
+      game.addBlackPieces()
+      game.begin()
+      setTimeout( function(){ rules.move(1,  18) }, 500)
+    },
+    createTeams: function(){
+      window.white = {
+        name: "white"
+      };
+      window.black = {
+        name: "black",
+      };
+      
+    },
+    begin: function(){
+      this.allowedToMove = white
+      this.view.displayBoard
+    },
+    turn: function(turnNum){
+      var turnNum = turnNum || 1
+      if( turnNum % 2 === 0  ){
+        this.allowedToMove = black
+      } else{
+        this.allowedToMove = white
+      }
+    },
+    nextTurn: function(){
+      if( this.allowedToMove === white ){
+        this.prepareBlackTurn()
+      } else{
+        this.prepareWhiteTurn()
+      }
+    },
+    prepareBlackTurn: function(){
+      this.allowedToMove = black
+    },
+    prepareWhiteTurn: function(){
+      this.allowedToMove = white
+    },
+    whiteMove: function(position, newPosition){
+      rules.move(position, newPosition)
+    },
+    blackMove: function(position, newPosition){
+      rules.move(position, newPosition)
+    },
+    turn: function(turnNum){
+      var turnNum = turnNum || 1
+      if( turnNum % 2 === 0  ){
+        this.allowedToMove = black
+      } else{
+        this.allowedToMove = white
+      }
+    },
+    nextTurn: function(){
+      if( this.allowedToMove === white ){
+        this.prepareBlackTurn()
+      } else{
+        this.prepareWhiteTurn()
+      }
+    },
+  }
+
+  function createInstance() {
+    var object  = new Object("yo soy el instancio")
+    return object;
+  };
+  return{
+    getInstance: function(){
+      if (!instance) {
+        instance = createInstance();
+      }
+      return instance;
+    }
+  };
+}());
+
+
+//   prepareBlackTurn: function(){
+//     this.allowedToMove = black
+//   },
+//   prepareWhiteTurn: function(){
+//     this.allowedToMove = white
+//   },
+//   whiteMove: function(position, newPosition){
+//     rules.move(position, newPosition)
+//   },
+//   blackMove: function(position, newPosition){
+//     rules.move(position, newPosition)
+//   }
+// };
+
+var PieceController = function(){
+  if (this.constructor === PieceController) {
+    throw new Error("Can't instantiate abstract class!");
+  }
+  // PieceController initialization...
+};
+PieceController.prototype = {
+  ranks: {
+    isSecond: function(position){
+      return Board.Ranks.isSecond(position)
+    },
+    isSeventh: function(position){
+      return Board.Ranks.isSeventh(position)
+    }
+  },
+  occupancy: {
+    twoSpacesUp: function(options){
+      var board = options["board"],
+        position = options["position"];
+      return board.occupancy.twoSpacesUp(position)
+    }
+  },
+  movementTypes: {
     verticalUp: function(){
       return { increment: "+8",  boundaryCheck: "board.inBounds(increment * i + position)                                && board.inBounds(increment * i + position)"}
     },
@@ -221,9 +503,9 @@ var rules = {
    },
     sets: {
       night: function(){
-        var moves = [rules.movementConstructors.nightHorizontalRightDown(), rules.movementConstructors.nightHorizontalLeftDown(), rules.movementConstructors.nightVerticalRightDown(),
-                      rules.movementConstructors.nightVerticalLeftDown(), rules.movementConstructors.nightHorizontalRightUp(), rules.movementConstructors.nightHorizontalLeftUp(),
-                      rules.movementConstructors.nightVerticalRightUp(), rules.movementConstructors.nightVerticalLeftUp()
+        var moves = [rules.movementTypes.nightHorizontalRightDown(), rules.movementTypes.nightHorizontalLeftDown(), rules.movementTypes.nightVerticalRightDown(),
+                      rules.movementTypes.nightVerticalLeftDown(), rules.movementTypes.nightHorizontalRightUp(), rules.movementTypes.nightHorizontalLeftUp(),
+                      rules.movementTypes.nightVerticalRightUp(), rules.movementTypes.nightVerticalLeftUp()
                     ];
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
@@ -233,7 +515,7 @@ var rules = {
         return  moves
       },
       rook: function(){
-        var moves = [rules.movementConstructors.horizontalRight(), rules.movementConstructors.horizontalLeft(), rules.movementConstructors.verticalUp(), rules.movementConstructors.verticalDown()]
+        var moves = [rules.movementTypes.horizontalRight(), rules.movementTypes.horizontalLeft(), rules.movementTypes.verticalUp(), rules.movementTypes.verticalDown()]
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
             moves[key].rangeLimit = 7 ;
@@ -242,7 +524,7 @@ var rules = {
         return moves
       },
       bishop: function(){
-        var moves = [rules.movementConstructors.forwardSlashDown(), rules.movementConstructors.forwardSlashUp(), rules.movementConstructors.backSlashDown(), rules.movementConstructors.backSlashUp()]
+        var moves = [rules.movementTypes.forwardSlashDown(), rules.movementTypes.forwardSlashUp(), rules.movementTypes.backSlashDown(), rules.movementTypes.backSlashUp()]
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
             moves[key].rangeLimit = 7 ;
@@ -251,25 +533,44 @@ var rules = {
         return moves
       },
       queen: function(){
-        return rules.movementConstructors.sets.rook().concat( rules.movementConstructors.sets.bishop() )
-      }
+        return rules.movementTypes.sets.rook().concat( rules.movementTypes.sets.bishop() )
+      },
+      king: function(){
+        var moves = [rules.movementTypes.horizontalRight(), rules.movementTypes.horizontalLeft(), rules.movementTypes.verticalUp(), rules.movementTypes.verticalDown(),
+        rules.movementTypes.forwardSlashDown(), rules.movementTypes.forwardSlashUp(), rules.movementTypes.backSlashDown(), rules.movementTypes.backSlashUp()
+        ]
+        for (var key in moves) {
+          if (moves.hasOwnProperty(key)) {
+            moves[key].rangeLimit = 1 ;
+          };
+        };
+        return moves
+      },
+      whitePawn: function(){
+        var moves = {
+          forwardSlashUp: rules.movementTypes.forwardSlashUp(), backSlashUp: rules.movementTypes.backSlashUp(), verticalUp: rules.movementTypes.verticalUp(), verticalUpTwoStep: rules.movementTypes.verticalUp()
+        }
+        for (var key in moves) {
+          if (moves.hasOwnProperty(key)) {
+            moves[key].rangeLimit = 1 ;
+          };
+        };
+        moves.verticalUpTwoStep.rangeLimit = 2;
+        return moves
+      },
     }
-    // pawns
-    // king
   },
-
-  allPathsFinder: function(piece){
-    var possibleMoves = piece.possibleMoves(),
-        paths = [],
-        position = piece.position,
-        team = piece.team;
+  allPathsFinder: function(board, position){
+    var possibleMovesFrom = piece.possibleMovesFrom(position, board),
+      paths = [];
+      // DANGER
+      // team = piece.team;
     for(inc = 0; inc < possibleMoves.length; inc++){
       paths.push(rules.pathFinder(possibleMoves[inc], position, team))
       }
     return paths
   },
-
-  pathFinder: function (move, position, team){
+  pathFinder: function(move, position, team){
     var increment = move["increment"],
         boundaryCheck = move["boundaryCheck"],
         rangeLimit = move["rangeLimit"],
@@ -280,484 +581,231 @@ var rules = {
       path.push(pathPosition)
     }
     return path
-  },
-
-  positionIsInPaths: function(args){
-    var position = args["position"],
-        piece = args["piece"]
-        paths = rules.allPathsFinder(piece),
-        positionViable = false;
-    for( var i = 0; i < paths.length; i ++){
-      var path = paths[i]
-      for( var j = 0; j < path.length; j++){
-        if( path[j] === position ){ positionViable = true }
-      };
-    };
-    return positionViable
-  },
-
-  moveIsIllegal: function(piece, newPosition){
-    illegal = false
-    if ( !board.inBounds(newPosition) ){
-      alert('stay on the board, fool')
-      illegal = true
-    } else if( !rules.positionIsInPaths({position: newPosition, piece: piece}) ){
-      alert("that's not how that piece moves")
-      illegal = true
-    } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
-      alert("what, are you trying to capture your own piece?")
-      illegal = true
-    } //else if( this.kingCheck( {piece: piece, position: newPosition})){
-    //   alert("check yo")
-    //   illegal = true
-    // }
-    return illegal
-  },
-
-  kingCheck: function(args){
-    var position          = args["position"],
-        piece             = args["piece"]
-        pieceCopy         = args["piece"],
-        team              = pieceCopy.team,
-        activeTeamPieces  = team.activePieces,
-        king              = activeTeamPieces.king,
-        tilesCopy         = board.deepCopyTiles,
-        danger            = false,
-        opposingTeam;
-    if( team === white ){
-      opposingTeam = black
-    } else {
-      opposingTeam = white
-    };
-    var activeOpposingTeamPieces = opposingTeam.activePieces;
-    for (var i = 0; i < activeOpposingTeamPieces.length; i++){
-      if( isAttackedBy({piece: activeOpposingTeamPieces[i], position: kingPosition}) ){ danger = true }
-    }
-        // danger            = board.isAttacked({position: position, piece: pieceCopy, tiles: tilesCopy});
-    return danger
-// pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
-// maybe iterate across movements testing each individualy
-  },
-
-  move: function(position, newPosition){
-    piece = board.tiles[position]
-    if( piece.team !== game.allowedToMove ){
-      alert("other team's turn")
-      return
-    }
-  if( this.moveIsIllegal(piece, newPosition) ){
-    return
-    } else {
-
-      var gridPosition    = board.gridCalculator(piece.position),
-          newGridPosition = board.gridCalculator(newPosition);
-      board.deleteOldStuff(gridPosition, newGridPosition, piece)
-      board.placeNewStuff(piece, newPosition)
-      if ( board.tiles[newPosition].team !== piece.team ){
-        // capture(newPosition)
-        // this is the only place that should be deleting the destination tile
-        // it should also move the piece from active pieces into captured pieces
-      }
-      game.nextTurn()
-    } 
   }
+
+}
+var NightController = function() {
+    var newMoves = this.movementTypes.sets.night
+    PieceController.apply(this, arguments);
+    this.movementTypes = newMoves
+    this.value = 3
+    this.srcImgWhite = "img/chesspieces/wikipedia/wN.png"
+    this.srcImgBlack = "img/chesspieces/wikipedia/bN.png"
+    this.name = "night"
+
 };
+NightController.prototype = Object.create(PieceController.prototype);
+NightController.prototype.constructor = NightController;
 
-function setStartPosition(args) {
-  var position = args["position"], 
-      piece    = args["piece"],
-      tiles    = args["tiles"];
-  tiles[position] = piece
+var RookController = function() {
+    var newMoves = this.movementTypes.sets.rook
+    PieceController.apply(this, arguments);
+    this.movementTypes = newMoves
+    this.value = 3
+    this.srcImgWhite = "img/chesspieces/wikipedia/wR.png"
+    this.srcImgBlack = "img/chesspieces/wikipedia/bR.png"
+    this.name = "rook"
+
 };
+RookController.prototype = Object.create(PieceController.prototype);
+RookController.prototype.constructor = RookController;
 
-var nightCreator = (function (args){
-  var team = args["team"],
-      position = args["position"],
-      tiles = args["tiles"],
-      night = {
-        name: "night",
-        position: position,
-        value: 3,
-        team: team,
-        possibleMoves: function(){
-          return rules.movementConstructors.sets.night()
-        },
-        isTurn: false
-      };
-  setImgSrc(team, night)
-  setStartPosition({position: position,piece: night, tiles: tiles})
-  board.displayPiece(night)
-  return night
-});
+var BishopController = function() {
+    var newMoves = this.movementTypes.sets.bishop
+    PieceController.apply(this, arguments);
+    this.movementTypes = newMoves
+    this.value = 3
+    this.srcImgWhite = "img/chesspieces/wikipedia/wB.png"
+    this.srcImgBlack = "img/chesspieces/wikipedia/bB.png"
+    this.name = "bishop"
 
-var rookCreator = (function (args){
-  var team = args["team"],
-      position = args["position"],
-      tiles = args["tiles"],
-      rook = {
-        name: "rook",
-        position: position,
-        value: 5,
-        team: team,
-        possibleMoves: function(){
-          return rules.movementConstructors.sets.rook()
-        },
-        isTurn: false
-      };
-  setImgSrc(team, rook)
-  setStartPosition({position: position,piece: rook, tiles: tiles})
-  board.displayPiece(rook)
-  return rook
-});
-
-var bishopCreator = (function (args){
-  var team = args["team"],
-      position = args["position"],
-      tiles = args["tiles"],
-      bishop = {
-        name: "bishop",
-        position: position, //single source of truth, ask your board where you are
-        value: 3,
-        team: team,
-        possibleMoves: function(){
-          return rules.movementConstructors.sets.bishop()
-        },
-        isTurn: false
-      };
-  setImgSrc(team, bishop)
-  setStartPosition({position: position,piece: bishop, tiles: tiles})
-  board.displayPiece(bishop)
-  return bishop
-});
-
-// still not up on the new movementConstructors
-var kingCreator = (function (args){
-  var team = args["team"],
-      position = args["position"],
-      tiles = args["tiles"],
-      king = {
-        name: "king",
-        position: position,
-        value: 0,
-        team: team,
-        possibleMoves: function(){
-          return "(Math.abs(cP - nP) === 1 && " + board.boundaries.horizontalBorderCheck + " ) || (Math.abs(cP - nP) === 7 && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " ) || (Math.abs(cP - nP) === 8) || (Math.abs(cP - nP) === 9 && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )"
-        },
-        isTurn: false
-      };
-  setImgSrc(team, king)
-  setStartPosition({position: position,piece: king, tiles: tiles})
-  board.displayPiece(king)
-  return king
-});
-
-var queenCreator = (function (args){
-  var team = args["team"],
-      position = args["position"],
-      tiles = args["tiles"],
-      queen = {
-        name: "queen",
-        position: position,
-        value: 9,
-        team: team,
-        possibleMoves: function(){
-          return rules.movementConstructors.sets.queen()
-        },
-        isTurn: false
-      };
-  setImgSrc(team, queen)
-  setStartPosition({position: position,piece: queen, tiles: tiles})
-  board.displayPiece(queen)
-  return queen
-});
-
-var whitePawnCreator = (function (args){
-  var position = args["position"],
-      tiles = args["tiles"],
-      pawn = {
-    name: "whitePawn",
-    position: position,
-    value: 1,
-    team: white,
-    possibleMoves: function(){
-      var possibilities = [];
-      if( board.positions.isSecondRank(this.position) && board.twoSpacesUpIsEmpty(this.position) ){
-        var newPossibility = rules.movementConstructors.verticalUp()
-        newPossibility.rangeLimit = 2
-        possibilities = possibilities.concat(newPossibility)
-      };
-      if( board.oneSpaceUpIsEmpty(this.position) ){
-        var newPossibility = rules.movementConstructors.verticalUp()
-        newPossibility.rangeLimit = 1
-        possibilities = possibilities.concat(newPossibility)
-      };
-      if( board.stageLeftWhitePawnnAttackOccupied(this.position) ){
-        var newPossibility = rules.movementConstructors.backSlashUp()
-        newPossibility.rangeLimit = 1
-        possibilities = possibilities.concat(newPossibility)
-      };
-      if( board.stageRightWhitePawnAttackOccupied(this.position) ){
-        var newPossibility = rules.movementConstructors.forwardSlashUp()
-        newPossibility.rangeLimit = 1
-        possibilities = possibilities.concat(newPossibility)
-      };
-      return possibilities
-    },
-    isTurn: false
-  };
-  setImgSrc(white, pawn)
-  setStartPosition({position: position,piece: pawn, tiles: tiles})
-  board.displayPiece(pawn)
-  return pawn
-});
+};
+BishopController.prototype = Object.create(PieceController.prototype);
+BishopController.prototype.constructor = BishopController;
 
 
-var blackPawnCreator = (function (args){
-  var position = args["position"],
-      tiles = args["tiles"],
-      pawn = {
-    name: "blackPawn",
-    position: position,
-    value: 1,
-    team: black,
-    possibleMoves: function(){
-      var possibilities = [];
-      if( board.positions.isSeventhRank(this.position) && board.twoSpacesDownIsEmpty(this.position) ){
-        var newPossibility = rules.movementConstructors.verticalDown()
-        newPossibility.rangeLimit = 2
-        possibilities = possibilities.concat(newPossibility)
-      };
+var KingController = function() {
+    var newMoves = this.movementTypes.sets.king
+    PieceController.apply(this, arguments);
+    this.movementTypes = newMoves
+    this.value = 3
+    this.srcImgWhite = "img/chesspieces/wikipedia/wK.png"
+    this.srcImgBlack = "img/chesspieces/wikipedia/bK.png"
+    this.name = "king"
 
-      if( board.oneSpaceDownIsEmpty(this.position) ){
-        var newPossibility = rules.movementConstructors.verticalDown()
-        newPossibility.rangeLimit = 1
-        possibilities = possibilities.concat(newPossibility)
-      };
+};
+KingController.prototype = Object.create(PieceController.prototype);
+KingController.prototype.constructor = KingController;
 
-      if( board.stageRightBlackPawnAttackOccupied(this.position) ){
-        var newPossibility = rules.movementConstructors.backSlashDown()
-        newPossibility.rangeLimit = 1
-        possibilities = possibilities.concat(newPossibility)
-      };
 
-      if( board.stageLeftBlackAttackOccupied(this.position) ){
-        var newPossibility = rules.movementConstructors.forwardSlashDown()
-        newPossibility.rangeLimit = 1
-        possibilities = possibilities.concat(newPossibility)
-      };
-      return possibilities
-    },
-    isTurn: false
-  };
-  setImgSrc(black, pawn)
-  setStartPosition({position: position,piece: pawn, tiles: tiles})
-  board.displayPiece(pawn)
-  return pawn
-});
+var QueenController = function() {
+    var newMoves = this.movementTypes.sets.queen
+    PieceController.apply(this, arguments);
+    this.movementTypes = newMoves
+    this.value = 3
+    this.srcImgWhite = "img/chesspieces/wikipedia/wQ.png"
+    this.srcImgBlack = "img/chesspieces/wikipedia/bQ.png"
+    this.name = "queen"
 
-var game = {
-  createTeams: function(){
-    window.white = {
-      name: "white"
+};
+QueenController.prototype = Object.create(PieceController.prototype);
+QueenController.prototype.constructor = QueenController;
+
+
+var whitePawncontroler = function(){
+  PieceController.apply(this, arguments);
+  this.name = "whitePawn";
+  this.value = 1
+  this.movementTypes = function(board, position){
+    var movements = [];
+    if( this.ranks.isSeventh(position) && this.occupancy.twoSpacesUp( {board: board, position: position} ) ){
+      var newPossibility = this.possibleMoves.verticalUp()
+      movements = movements.concat(newPossibility)
     };
-    window.black = {
-      name: "black",
+    if( board.occupancy.oneSpaceUpIsEmpty({board: board, position: position}) ){
+      var newPossibility = this.possibleMoves.verticalUp()
+      movements = movements.concat(newPossibility)
     };
-    
-  },
-  begin: function(){
-    this.allowedToMove = white
-  },
-  addWhitePieces: function(){
-    white.capturedPieces = []
-    white.activePieces = {
-      king: kingCreator({ position: 4, team: white, tiles: board.tiles}),
-      pawns: [
-        whitePawnCreator({ position: 8, tiles: board.tiles}),
-        whitePawnCreator({ position: 9, tiles: board.tiles}),
-        whitePawnCreator({ position: 10, tiles: board.tiles}),
-        whitePawnCreator({ position: 11, tiles: board.tiles}),
-        whitePawnCreator({ position: 12, tiles: board.tiles}),
-        whitePawnCreator({ position: 13, tiles: board.tiles}),
-        whitePawnCreator({ position: 14, tiles: board.tiles}),
-        whitePawnCreator({ position: 15, tiles: board.tiles})
-      ],
-      minors: [
-        nightCreator( { position: 1, team: white, tiles: board.tiles}),
-        bishopCreator({ position: 2, team: white, tiles: board.tiles}),
-        bishopCreator({ position: 5, team: white, tiles: board.tiles}),
-        nightCreator( { position: 6, team: white, tiles: board.tiles}),
-      ],
-      majors: [
-        rookCreator( {position: 0, team: white, tiles: board.tiles}),
-        queenCreator({position: 3, team: white, tiles: board.tiles}),
-        rookCreator( {position: 7, team: white, tiles: board.tiles}),
-      ]
-    }
-  },
-  addBlackPieces: function(){
-    black.capturedPieces = []
-    black.activePieces = {
-      king: kingCreator({position: 60, team: black, tiles: board.tiles}),
-      pawns: [
-        blackPawnCreator({position: 48, tiles: board.tiles}),
-        blackPawnCreator({position: 49, tiles: board.tiles}),
-        blackPawnCreator({position: 50, tiles: board.tiles}),
-        blackPawnCreator({position: 51, tiles: board.tiles}),
-        blackPawnCreator({position: 52, tiles: board.tiles}),
-        blackPawnCreator({position: 53, tiles: board.tiles}),
-        blackPawnCreator({position: 54, tiles: board.tiles}),
-        blackPawnCreator({position: 55, tiles: board.tiles}),
-      ],
-      minors: [
-        nightCreator(  {position: 57, team: black, tiles: board.tiles}),
-        bishopCreator( {position: 58, team: black, tiles: board.tiles}),
-        bishopCreator( {position: 61, team: black, tiles: board.tiles}),
-        nightCreator(  {position: 62, team: black, tiles: board.tiles}),
-      ],
-      majors: [
-        rookCreator(  {position: 56, team: black, tiles: board.tiles}),
-        queenCreator( {position: 59, team: black, tiles: board.tiles}),
-        rookCreator(  {position: 63, team: black, tiles: board.tiles})
-      ]
-    }
-  },
-  turn: function(turnNum){
-    var turnNum = turnNum || 1
-    if( turnNum % 2 === 0  ){
-      this.allowedToMove = black
-    } else{
-      this.allowedToMove = white
-    }
-  },
-  nextTurn: function(){
-    if( this.allowedToMove === white ){
-      this.prepareBlackTurn()
-    } else{
-      this.prepareWhiteTurn()
-    }
-  },
-  prepareBlackTurn: function(){
-    this.allowedToMove = black
-  },
-  prepareWhiteTurn: function(){
-    this.allowedToMove = white
-  },
-  whiteMove: function(position, newPosition){
-    rules.move(position, newPosition)
-  },
-  blackMove: function(position, newPosition){
-    rules.move(position, newPosition)
+    if( board.occupancy.upAndLeft(this.position) ){
+      var newPossibility = this.possibleMoves.backSlashUp()
+      movements = movements.concat(newPossibility)
+    };
+    if( board.occupancy.upAndRigth(this.position) ){
+      var newPossibility = this.possibleMoves.forwardSlashUp()
+      movements = movements.concat(newPossibility)
+    };
+    return movements
   }
 };
 
 
+// var blackPawncontroler = (function (args){
+//   var position = args["position"],
+//       tiles = args["tiles"],
+//       pawn = {
+//     name: "blackPawn",
+//     position: position,
+//     value: 1,
+//     team: black,
+//     possibleMoves: function(){
+//       var possibilities = [];
+//       if( board.positions.isSeventhRank(this.position) && board.twoSpacesDownIsEmpty(this.position) ){
+//         var newPossibility = rules.movementConstructors.verticalDown()
+//         newPossibility.rangeLimit = 2
+//         possibilities = possibilities.concat(newPossibility)
+//       };
 
-  // movementTypes: {
-  //   isVertical: function(position, newPosition){
-  //     return(position - newPosition) % 8 === 0
-  //   },
-  //   isDiagonalForwardSlash: function(position, newPosition){
-  //     return (position - newPosition) % 9 === 0
-  //   },
-  //   isDiagonalBackSlash: function(position, newPosition){
-  //     return (position - newPosition) % 7 === 0
-  //   },
-  //   isHorizontal: function(position, newPosition){
-  //     return (position - newPosition) % 1 === 0
-  //   }
-  // },
-  // movementIncrement: function(position, newPosition){
-  //   var increment;
-  //   if ( this.movementTypes.isVertical(position, newPosition) && position < newPosition ){
-  //     increment = 8
-  //   } else if ( this.movementTypes.isVertical(position, newPosition) && position > newPosition ){
-  //     increment = -8
-  //   }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position < newPosition ){
-  //     increment = 9
-  //   }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position > newPosition ){
-  //     increment = -9
-  //   }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position < newPosition ){
-  //     increment = 7
-  //   }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position > newPosition ){
-  //     increment = -7
-  //   }else if ( this.movementTypes.isHorizontal(position, newPosition) && position < newPosition){
-  //     increment = 1
-  //   }else if ( this.movementTypes.isHorizontal(position, newPosition) && position > newPosition){
-  //     increment = -1
-  //   }
-  //   return increment
-  // },
+//       if( board.oneSpaceDownIsEmpty(this.position) ){
+//         var newPossibility = rules.movementConstructors.verticalDown()
+//         newPossibility.rangeLimit = 1
+//         possibilities = possibilities.concat(newPossibility)
+//       };
 
+//       if( board.stageRightBlackPawnAttackOccupied(this.position) ){
+//         var newPossibility = rules.movementConstructors.backSlashDown()
+//         newPossibility.rangeLimit = 1
+//         possibilities = possibilities.concat(newPossibility)
+//       };
 
-  // movements: {
-  //   rangedDiagonalsForwardSlash:  "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
-  //   rangedDiagonalsBackSlash:     "(((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
-  //   rangedVerticals:              "(cP - nP) % 8 === 0",
-  //   rangedHorizontals:            "((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
-  //   nightMoves:                   "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )",
-  //   // #segerJokes
-  //   // THE DIAGONALS HERE ALL NEED BOUNDARY CHECKS!!
-  //   blackPawnTwoStep:             "nP - cP === -16",
-  //   blackPawnOneStep:             "nP - cP === -8",
-  //   blackPawnCaptureStageRight:   "nP - cP === -7",
-  //   blackPawnCaptureStageLeft:    "nP - cP === -9",
-  //   whitePawnTwoStep:             "nP - cP === 16",
-  //   whitePawnOneStep:             "nP - cP === 8",
-  //   whitePawnCaptureStageLeft:    "nP - cP === 7",
-  //   whitePawnCaptureStageRight:   "nP - cP === 9"
-  // },
+//       if( board.stageLeftBlackAttackOccupied(this.position) ){
+//         var newPossibility = rules.movementConstructors.forwardSlashDown()
+//         newPossibility.rangeLimit = 1
+//         possibilities = possibilities.concat(newPossibility)
+//       };
+//       return possibilities
+//     },
+//     isTurn: false
+//   };
+//   setImgSrc(black, pawn)
+//   setStartPosition({position: position,piece: pawn, tiles: tiles})
+//   board.displayPiece(pawn)
+//   return pawn
+// });
 
 
-  // movementTypeVerifier: function(possibleMoves, currentPosition, newPosition){
-  //   var possibleMoves = possibleMoves.replace(/cP/g, currentPosition),
-  //     possibleMoves   = possibleMoves.replace(/nP/g, newPosition),
-  //     acceptability   = eval(possibleMoves);
-  //   return acceptability
-  // },
+//   // movementTypes: {
+//   //   isVertical: function(position, newPosition){
+//   //     return(position - newPosition) % 8 === 0
+//   //   },
+//   //   isDiagonalForwardSlash: function(position, newPosition){
+//   //     return (position - newPosition) % 9 === 0
+//   //   },
+//   //   isDiagonalBackSlash: function(position, newPosition){
+//   //     return (position - newPosition) % 7 === 0
+//   //   },
+//   //   isHorizontal: function(position, newPosition){
+//   //     return (position - newPosition) % 1 === 0
+//   //   }
+//   // },
+//   // movementIncrement: function(position, newPosition){
+//   //   var increment;
+//   //   if ( this.movementTypes.isVertical(position, newPosition) && position < newPosition ){
+//   //     increment = 8
+//   //   } else if ( this.movementTypes.isVertical(position, newPosition) && position > newPosition ){
+//   //     increment = -8
+//   //   }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position < newPosition ){
+//   //     increment = 9
+//   //   }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position > newPosition ){
+//   //     increment = -9
+//   //   }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position < newPosition ){
+//   //     increment = 7
+//   //   }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position > newPosition ){
+//   //     increment = -7
+//   //   }else if ( this.movementTypes.isHorizontal(position, newPosition) && position < newPosition){
+//   //     increment = 1
+//   //   }else if ( this.movementTypes.isHorizontal(position, newPosition) && position > newPosition){
+//   //     increment = -1
+//   //   }
+//   //   return increment
+//   // },
 
 
-// ▼ removed from board.boundaries
-  // diagonalForwardSlashMovementBorderCheck:  "(( ((cP % 8) > (nP % 8)) && (cP > nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP < nP) ))",
-  // diagonalBackSlashMovementBorderCheck:     "( ((cP % 8) > (nP % 8)) && (cP < nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP > nP) )",
-  // horizontalBorderCheck:                    "Math.floor(cP / 8) === Math.floor(nP / 8)",
-  // verticalNightMovementBorderCheck:         "(Math.abs(cP % 8 - nP % 8) === 1 )",
-  // horizontalNightMovementCheck:             "(Math.abs(cP % 8 - nP % 8) === 2 )"
+//   // movements: {
+//   //   rangedDiagonalsForwardSlash:  "(((cP - nP) % 9 === 0) && " + board.boundaries.diagonalForwardSlashMovementBorderCheck + " )",
+//   //   rangedDiagonalsBackSlash:     "(((cP - nP) % 7 === 0) && " + board.boundaries.diagonalBackSlashMovementBorderCheck + " )",
+//   //   rangedVerticals:              "(cP - nP) % 8 === 0",
+//   //   rangedHorizontals:            "((cP - nP) < 8 && " + board.boundaries.horizontalBorderCheck + " )",
+//   //   nightMoves:                   "(Math.abs(cP - nP) === 15 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 17 && " + board.boundaries.verticalNightMovementBorderCheck + " ) || (Math.abs(cP - nP) === 10 && " + board.boundaries.horizontalNightMovementCheck + " ) || (Math.abs(cP - nP) === 6 && " + board.boundaries.horizontalNightMovementCheck + " )",
+//   //   // #segerJokes
+//   //   // THE DIAGONALS HERE ALL NEED BOUNDARY CHECKS!!
+//   //   blackPawnTwoStep:             "nP - cP === -16",
+//   //   blackPawnOneStep:             "nP - cP === -8",
+//   //   blackPawnCaptureStageRight:   "nP - cP === -7",
+//   //   blackPawnCaptureStageLeft:    "nP - cP === -9",
+//   //   whitePawnTwoStep:             "nP - cP === 16",
+//   //   whitePawnOneStep:             "nP - cP === 8",
+//   //   whitePawnCaptureStageLeft:    "nP - cP === 7",
+//   //   whitePawnCaptureStageRight:   "nP - cP === 9"
+//   // },
 
 
-  // pathIsBlocked: function(position, newPosition){
-  //   var movementIncrement = this.movementIncrement(position, newPosition),
-  //       possibleBlocks    = [],
-  //       blocked           = false;
-  //   for( i = 1; ( i * movementIncrement + position) !== newPosition ; i++ ){
-  //     possibleBlocks.push( i * movementIncrement + position )
-  //   }
-  //   for( i = 0; i < possibleBlocks.length; i++ ){
-  //     if ( board.tiles[possibleBlocks[i]] !== undefined ){
-  //       blocked = true
-  //     }
-  //   }
-  //   return blocked
-  // },
+//   // movementTypeVerifier: function(possibleMoves, currentPosition, newPosition){
+//   //   var possibleMoves = possibleMoves.replace(/cP/g, currentPosition),
+//   //     possibleMoves   = possibleMoves.replace(/nP/g, newPosition),
+//   //     acceptability   = eval(possibleMoves);
+//   //   return acceptability
+//   // },
 
-(function gameTest(){
-  game.createTeams()
-  game.addWhitePieces()
-  game.addBlackPieces()
-  game.begin()
-  setTimeout( function(){ rules.move(1,  18) }, 500)
-  setTimeout( function(){ rules.move(50, 42) }, 1000)
-  setTimeout( function(){ rules.move(11, 27) }, 1500)
-  setTimeout( function(){ rules.move(59, 32) }, 2000)
-  setTimeout( function(){ rules.move(3,  19) }, 2500)
-  setTimeout( function(){ rules.move(42, 34) }, 3000)
-  setTimeout( function(){ rules.move(12, 20) }, 3500)
-  setTimeout( function(){ rules.move(34, 27) }, 4000)
-  setTimeout( function(){ rules.move(0,  1) },  4500)
-  setTimeout( function(){ rules.move(27, 18) }, 5000)
-  setTimeout( function(){ rules.move(9,  18) }, 5500)
-  setTimeout( function(){ rules.move(51, 35)},  6000)
-  setTimeout( function(){ rules.move(15, 23)},  6500)
-  setTimeout( function(){ rules.move(58, 23)},  7000)
-  setTimeout( function(){ rules.move(19, 33)},  7500)
-})()
+
+// // ▼ removed from board.boundaries
+//   // diagonalForwardSlashMovementBorderCheck:  "(( ((cP % 8) > (nP % 8)) && (cP > nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP < nP) ))",
+//   // diagonalBackSlashMovementBorderCheck:     "( ((cP % 8) > (nP % 8)) && (cP < nP) ) || ( ((cP % 8) < (nP % 8) ) && (cP > nP) )",
+//   // horizontalBorderCheck:                    "Math.floor(cP / 8) === Math.floor(nP / 8)",
+//   // verticalNightMovementBorderCheck:         "(Math.abs(cP % 8 - nP % 8) === 1 )",
+//   // horizontalNightMovementCheck:             "(Math.abs(cP % 8 - nP % 8) === 2 )"
+
+
+//   // pathIsBlocked: function(position, newPosition){
+//   //   var movementIncrement = this.movementIncrement(position, newPosition),
+//   //       possibleBlocks    = [],
+//   //       blocked           = false;
+//   //   for( i = 1; ( i * movementIncrement + position) !== newPosition ; i++ ){
+//   //     possibleBlocks.push( i * movementIncrement + position )
+//   //   }
+//   //   for( var i = 0; i < possibleBlocks.length; i++ ){
+//   //     if ( board.tiles[possibleBlocks[i]] !== undefined ){
+//   //       blocked = true
+//   //     }
+//   //   }
+//   //   return blocked
+//   // },
