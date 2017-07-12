@@ -11,7 +11,6 @@ var View = (function(){
     undisplayPiece: function(gridPosition){
       var element = document.getElementsByClassName( gridPosition )[0],
         children  = element.children;
-        // if( gridPosition === "square-b1" ){debugger}
       for( var i = 0; i < children.length; i ++){
         children[i].remove()
       }

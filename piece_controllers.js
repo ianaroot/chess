@@ -10,7 +10,6 @@ PieceController.prototype = {
       startPosition = args["startPosition"],
       endPosition = args["endPosition"],
       movementType = this.movementDirectionFinder(startPosition, endPosition);
-      // if( layOut[startPosition] ==="whiteRook" ){ debugger }
     var movementType = movementType(),
       viable = false,
       directionalMovements = this.directionalMovements(layOut, startPosition);
@@ -79,7 +78,6 @@ PieceController.prototype = {
     return cheat
   },
   movementDirectionFinder: function(startPosition, endPosition){
-    // horizontal
     var movementDirection,
         queries = this.movements.vagueQueries;
     if ( queries.up(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
@@ -90,7 +88,6 @@ PieceController.prototype = {
       movementDirection = this.movements.directional.horizontalLeft
     } else if ( queries.horizontal(startPosition, endPosition) && queries.right(startPosition, endPosition) ){
       movementDirection = this.movements.directional.horizontalRight
-      // debugger
     } else if ( queries.down(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
       movementDirection = this.movements.directional.verticalDown
     } else if ( queries.down(startPosition, endPosition) && queries.backSlash(startPosition, endPosition) ){
@@ -106,7 +103,6 @@ PieceController.prototype = {
           movementDirection = this.movements.directional.nightVerticalRightUp
         }
     }
-    // debugger
     return movementDirection
   },
   positionIsInPaths: function(args){
@@ -132,13 +128,6 @@ PieceController.prototype = {
     },
     isSeventh: function(position){
       return Board.classMethods.ranks.isSeventh(position)
-    }
-  },
-  occupancy: {
-    twoSpacesUp: function(options){
-      var board = options["board"],
-        position = options["position"];
-      return board.occupancy.twoSpacesUp(position)
     }
   },
   movements: {
@@ -336,7 +325,7 @@ PieceController.prototype = {
         return moves
       },
       queen: function(){
-        // cannot for the life of me determine why this errors
+        // scoping error is cause this to be sets, not the piececontroller when we get in the sets.rook
         // return this.movements.sets.rook().concat( this.movements.sets.bishop() )
 
         var moves = [this.movements.directional.horizontalRight(), this.movements.directional.horizontalLeft(), this.movements.directional.verticalUp(), this.movements.directional.verticalDown(),
@@ -405,8 +394,6 @@ PieceController.prototype = {
   },
   allPathsFinder: function(layOut, position, team){
     var paths = [];
-      // DANGER
-      // team = piece.team;
     for(inc = 0; inc < this.directionalMovements.length; inc++){
       paths.push(this.pathFinder(this.directionalMovements[inc], position, team))
       }
@@ -545,7 +532,6 @@ var BlackPawnController = function(){
   this.value = 1
   this.directionalMovements = function(layOut, position){
     var movements = [];
-    // debugger
     if( this.ranks.isSecond(position) && this.twoSpacesDownIsEmpty(layOut, position) ){
       var newPossibility = this.movements.directional.verticalDown()
       movements = movements.concat(newPossibility)

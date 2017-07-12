@@ -14,12 +14,10 @@ var GameController = (function(){
                              "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",
     ]}),
     move: function(position, newPosition){
-      // debugger
       currentBoard = this.currentBoard
       layOut = currentBoard.layOut
       pieceString = layOut[position]
-      var team = pieceString.substring(0,5)
-      // debugger
+      var team = pieceString.substring(0,5) //this gets reused a few times and seems magic and should become a function
       if( team !== this.allowedToMove ){
         alert("other team's turn")
         return
@@ -27,12 +25,9 @@ var GameController = (function(){
       if( this.rules.moveIsIllegal(position, newPosition, currentBoard) ){
         return
       } else {
-
         // var gridPosition    = board.gridCalculator(piece.position),
         //     newGridPosition = board.gridCalculator(newPosition);
-
-
-// REFACTOR MEEEEEEEEE
+        // REFACTOR MEEEEEEEEE
         var pieceString = this.currentBoard.layOut[position];
         this.currentBoard.layOut[position] = "empty"
         capturedPiece = this.currentBoard.layOut[newPosition]

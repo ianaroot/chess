@@ -66,13 +66,11 @@ Board.prototype = {
       return this.tileSet[position]  !== "empty"
     }
   },
-
-
-// positionIsOccupied
-// positionIsoccupiedByOpponent
-// occupant
+  // positionIsOccupied,
+  // positionIsoccupiedByOpponent,
+  // occupant,
   positionIsOccupiedByTeamMate: function(position, team){
-    // factory out this !== empty nonsense
+    // factor out this !== empty nonsense
     return (this.layOut[position] !== "empty" && this.layOut[position].team === team  )
   },
 
@@ -92,13 +90,13 @@ Board.prototype = {
   //   }
   // },
   isAttackedByRnbq: function(args){
-    // will give false positives on pawns attacking empty positions
+    // will give false positives on pawns attacking empty positions, not that you should be inputting pawns, but you know
     var piece     = args["piece"],
         position = args["position"];
     return rules.positionIsInPaths({position: position, piece: piece})
   },
   isAttackedByPawn: function(args){
-    // will give fals positives on whether pawns can attack space if it's not yet occupied[]
+    // will give false positives on whether pawns can attack space if it's not yet occupied
     var pawn             = args["piece"],
         attackingPosition = pawn.position
         defendingPosition = args["position"],
@@ -108,7 +106,6 @@ Board.prototype = {
       var increment     = possibleMoves[i]["increment"],
         boundaryCheck = possibleMoves[i]["boundaryCheck"].replace(/\* i/g, "").replace(/position/, "attackingPosition");
       // could factor out the logic below and throw in a nifty object key or function name like "pawnAttacks" that's a horrible name, sit on it a while
-      // debugger
       if( attackingPosition + increment === defendingPosition && boundaryCheck && (Math.abs(increment) === 7 || Math.abs(increment) === 9)){
         attacked = true;
       }
