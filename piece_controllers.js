@@ -9,12 +9,14 @@ PieceController.prototype = {
     var layOut = args["layOut"],
       startPosition = args["startPosition"],
       endPosition = args["endPosition"],
-      movementType = this.movementDirectionFinder(startPosition, endPosition)(),
+      movementType = this.movementDirectionFinder(startPosition, endPosition);
+      // if( layOut[startPosition] ==="whiteRook" ){ debugger }
+    var movementType = movementType(),
       viable = false,
       directionalMovements = this.directionalMovements(layOut, startPosition);
     for(var i = 0; i < directionalMovements.length; i++){
       if( directionalMovements[i].increment === movementType.increment && !this.wrapAroundCheat(startPosition, endPosition, movementType) && this.pathIsClear(startPosition, endPosition, movementType, layOut) ){
-        
+
           // look for bad check?
         // look for capture
         viable = true
@@ -77,6 +79,7 @@ PieceController.prototype = {
     return cheat
   },
   movementDirectionFinder: function(startPosition, endPosition){
+    // horizontal
     var movementDirection,
         queries = this.movements.vagueQueries;
     if ( queries.up(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
@@ -87,6 +90,7 @@ PieceController.prototype = {
       movementDirection = this.movements.directional.horizontalLeft
     } else if ( queries.horizontal(startPosition, endPosition) && queries.right(startPosition, endPosition) ){
       movementDirection = this.movements.directional.horizontalRight
+      // debugger
     } else if ( queries.down(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
       movementDirection = this.movements.directional.verticalDown
     } else if ( queries.down(startPosition, endPosition) && queries.backSlash(startPosition, endPosition) ){
@@ -380,7 +384,7 @@ PieceController.prototype = {
         return startPosition % 8 === endPosition % 8
       },
       horizontal: function( startPosition, endPosition){
-        return startPosition / 8 === endPosition / 8
+        return Math.floor(startPosition / 8) === Math.floor(endPosition / 8)
       },
       left: function(startPosition, endPosition){
         return startPosition > endPosition
@@ -504,11 +508,11 @@ var WhitePawnController = function(){
       var newPossibility = this.movements.directional.verticalUp()
       movements = movements.concat(newPossibility)
     };
-    if( this.upAndLeftIsEmpty(layOut, position) ){
+    if( this.upAndLeftIsAttackable(layOut, position) ){
       var newPossibility = this.movements.directional.backSlashUp()
       movements = movements.concat(newPossibility)
     };
-    if( this.upAndRightIsEmpty(layOut, position) ){
+    if( this.upAndRightIsAttackable(layOut, position) ){
       var newPossibility = this.movements.directional.forwardSlashUp()
       movements = movements.concat(newPossibility)
     };
@@ -520,11 +524,15 @@ var WhitePawnController = function(){
   this.oneSpaceUpIsEmpty = function(layOut, position){
     return layOut[position + 8] === "empty"
   },
-  this.upAndLeftIsEmpty = function(layOut, position){
-    return layOut[position + 7] === "empty" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 7)
+  this.upAndLeftIsAttackable = function(layOut, position){
+    pieceString = layOut[position + 7]
+    pieceTeam = pieceString.substring(0,5)
+    return pieceTeam === "black" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 7)
   },
-  this.upAndRightIsEmpty = function(layOut, position){
-    return layOut[position + 9] === "empty" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 9)
+  this.upAndRightIsAttackable = function(layOut, position){
+    pieceString = layOut[position + 9]
+    pieceTeam = pieceString.substring(0,5)
+    return pieceTeam === "black" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 9)
   }
 };
 WhitePawnController.prototype = Object.create(PieceController.prototype);
@@ -546,11 +554,11 @@ var BlackPawnController = function(){
       var newPossibility = this.movements.directional.verticalDown()
       movements = movements.concat(newPossibility)
     };
-    if( this.downAndLeftIsEmpty(layOut, position) ){
+    if( this.downAndLeftIsAttackable(layOut, position) ){
       var newPossibility = this.movements.directional.forwardSlashDown()
       movements = movements.concat(newPossibility)
     };
-    if( this.downAndRightIsEmpty(layOut, position) ){
+    if( this.downAndRightIsAttackable(layOut, position) ){
       var newPossibility = this.movements.directional.backSlashDown()
       movements = movements.concat(newPossibility)
     };
@@ -562,11 +570,15 @@ var BlackPawnController = function(){
   this.oneSpaceDownIsEmpty = function(layOut, position){
     return layOut[position - 8] === "empty"
   },
-  this.downAndLeftIsEmpty = function(layOut, position){
-    return layOut[position - 9] === "empty" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 9)
+  this.downAndLeftIsAttackable = function(layOut, position){
+    pieceString = layOut[position - 9]
+    pieceTeam = pieceString.substring(0,5)
+    return pieceTeam === "white" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 9)
   },
-  this.downAndRightIsEmpty = function(layOut, position){
-    return layOut[position - 7] === "empty" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 7)
+  this.downAndRightIsAttackable = function(layOut, position){
+    pieceString = layOut[position - 7]
+    pieceTeam = pieceString.substring(0,5)
+    return pieceTeam === "white" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 7)
   }
 };
 BlackPawnController.prototype = Object.create(PieceController.prototype);

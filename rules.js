@@ -13,6 +13,7 @@ var Rules = (function () {
       // PieceController = 
       // could take in a tileset and chess notation!??!  using a reverse gridCalculator
       illegal = false
+      // if (pieceType === "Rook"){debugger}
       if ( !Board.classMethods.inBounds(endPosition) ){
         alert('stay on the board, fool')
         illegal = true
@@ -22,6 +23,7 @@ var Rules = (function () {
         alert("that's not how that piece moves")
         illegal = true
       } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
+        // debugger
         alert("what, are you trying to capture your own piece?")
         illegal = true
       } //else if( this.kingCheck( {piece: piece, position: endPosition})){

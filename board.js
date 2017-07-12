@@ -59,6 +59,7 @@ Board.prototype = {
   teamAt: function(position){
     pieceString = this.layOut[position]
     teamString = pieceString.substring(0,5)
+    return teamString
   },
   occupancy: {
     twoSpacesUp: function(position){
