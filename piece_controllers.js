@@ -11,12 +11,14 @@ PieceController.prototype = {
       endPosition = args["endPosition"],
       movementType = this.movementDirectionFinder(startPosition, endPosition)(),
       viable = false,
-      directionalMovements = this.directionalMovements();
+      directionalMovements = this.directionalMovements(layOut, startPosition);
     for(var i = 0; i < directionalMovements.length; i++){
-      if( directionalMovements[i].increment === movementType.increment && !this.wrapAroundCheat(startPosition, endPosition, movementType) && this.pathIsClear(startPosition, endPosition, movementType, layOut) )
-        // look for bad check?
-      // look for capture
-      viable = true
+      if( directionalMovements[i].increment === movementType.increment && !this.wrapAroundCheat(startPosition, endPosition, movementType) && this.pathIsClear(startPosition, endPosition, movementType, layOut) ){
+        
+          // look for bad check?
+        // look for capture
+        viable = true
+      }
     }
     return viable
   },
@@ -77,7 +79,6 @@ PieceController.prototype = {
   movementDirectionFinder: function(startPosition, endPosition){
     var movementDirection,
         queries = this.movements.vagueQueries;
-        console.log("yea")
     if ( queries.up(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
       movementDirection = this.movements.directional.verticalUp
     } else if ( queries.down(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
@@ -98,7 +99,6 @@ PieceController.prototype = {
       movementDirection = this.movements.directional.forwardSlashUp
     } else if ( queries.nights(startPosition, endPosition) ){
         if ( startPosition + 17 === endPosition ){
-      console.log("yerp")
           movementDirection = this.movements.directional.nightVerticalRightUp
         }
     }
@@ -332,7 +332,18 @@ PieceController.prototype = {
         return moves
       },
       queen: function(){
-        return this.movement.sets.rook().concat( this.movement.sets.bishop() )
+        // cannot for the life of me determine why this errors
+        // return this.movements.sets.rook().concat( this.movements.sets.bishop() )
+
+        var moves = [this.movements.directional.horizontalRight(), this.movements.directional.horizontalLeft(), this.movements.directional.verticalUp(), this.movements.directional.verticalDown(),
+          this.movements.directional.forwardSlashDown(), this.movements.directional.forwardSlashUp(), this.movements.directional.backSlashDown(), this.movements.directional.backSlashUp()
+        ]
+        for (var key in moves) {
+          if (moves.hasOwnProperty(key)) {
+            moves[key].rangeLimit = 7 ;
+          };
+        };
+        return moves
       },
       king: function(){
         var moves = [this.movements.directional.horizontalRight(), this.movements.directional.horizontalLeft(), this.movements.directional.verticalUp(), this.movements.directional.verticalDown(),
@@ -425,7 +436,7 @@ NightController.prototype = Object.create(PieceController.prototype);
 NightController.prototype.constructor = NightController;
 
 var RookController = function() {
-    var newMoves = this.movement.sets.rook
+    var newMoves = this.movements.sets.rook
     PieceController.apply(this, arguments);
     this.directionalMovements = newMoves
     this.value = 3
@@ -438,7 +449,7 @@ RookController.prototype = Object.create(PieceController.prototype);
 RookController.prototype.constructor = RookController;
 
 var BishopController = function() {
-    var newMoves = this.movement.sets.bishop
+    var newMoves = this.movements.sets.bishop
     PieceController.apply(this, arguments);
     this.directionalMovements = newMoves
     this.value = 3
@@ -452,7 +463,7 @@ BishopController.prototype.constructor = BishopController;
 
 
 var KingController = function() {
-    var newMoves = this.movement.sets.king
+    var newMoves = this.movements.sets.king
     PieceController.apply(this, arguments);
     this.directionalMovements = newMoves
     this.value = 3
@@ -466,7 +477,7 @@ KingController.prototype.constructor = KingController;
 
 
 var QueenController = function() {
-    var newMoves = this.movement.sets.queen
+    var newMoves = this.movements.sets.queen
     PieceController.apply(this, arguments);
     this.directionalMovements = newMoves
     this.value = 3
@@ -479,58 +490,83 @@ QueenController.prototype = Object.create(PieceController.prototype);
 QueenController.prototype.constructor = QueenController;
 
 
-var WhitePawncontroler = function(){
+var WhitePawnController = function(){
   PieceController.apply(this, arguments);
   this.name = "whitePawn";
   this.value = 1
   this.directionalMovements = function(board, position){
     var movements = [];
-    if( this.ranks.isSeventh(position) && this.occupancy.twoSpacesUp( {board: board, position: position} ) ){
-      var newPossibility = this.possibleMoves.verticalUp()
+    if( this.ranks.isSeventh(position) && this.twoSpacesUpIsEmpty( layOut, position ) ){
+      var newPossibility = this.movements.directional.verticalUp()
       movements = movements.concat(newPossibility)
     };
-    if( board.occupancy.oneSpaceUpIsEmpty({board: board, position: position}) ){
-      var newPossibility = this.possibleMoves.verticalUp()
+    if( this.oneSpaceUpIsEmpty(layOut, position) ){
+      var newPossibility = this.movements.directional.verticalUp()
       movements = movements.concat(newPossibility)
     };
-    if( board.occupancy.upAndLeft(this.position) ){
-      var newPossibility = this.possibleMoves.backSlashUp()
+    if( this.upAndLeftIsEmpty(layOut, position) ){
+      var newPossibility = this.movements.directional.backSlashUp()
       movements = movements.concat(newPossibility)
     };
-    if( board.occupancy.upAndRigth(this.position) ){
-      var newPossibility = this.possibleMoves.forwardSlashUp()
+    if( this.upAndRightIsEmpty(layOut, position) ){
+      var newPossibility = this.movements.directional.forwardSlashUp()
       movements = movements.concat(newPossibility)
     };
     return movements
   }
+  this.twoSpacesUpIsEmpty = function(layOut, position){
+    return layOut[position + 16] === "empty"
+  },
+  this.oneSpaceUpIsEmpty = function(layOut, position){
+    return layOut[position + 8] === "empty"
+  },
+  this.upAndLeftIsEmpty = function(layOut, position){
+    return layOut[position + 7] === "empty" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 7)
+  },
+  this.upAndRightIsEmpty = function(layOut, position){
+    return layOut[position + 9] === "empty" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 9)
+  }
 };
-WhitePawncontroler.prototype = Object.create(PieceController.prototype);
-WhitePawncontroler.prototype.constructor = WhitePawncontroler;
+WhitePawnController.prototype = Object.create(PieceController.prototype);
+WhitePawnController.prototype.constructor = WhitePawnController;
 
 
 var BlackPawnController = function(){
   PieceController.apply(this, arguments);
   this.name = "whitePawn";
   this.value = 1
-  this.directionalMovements = function(board, position){
+  this.directionalMovements = function(layOut, position){
     var movements = [];
-    if( this.ranks.isSecond(position) && this.occupancy.twoSpacesDown( {board: board, position: position} ) ){
-      var newPossibility = this.possibleMoves.verticalDown()
+    // debugger
+    if( this.ranks.isSecond(position) && this.twoSpacesDownIsEmpty(layOut, position) ){
+      var newPossibility = this.movements.directional.verticalDown()
       movements = movements.concat(newPossibility)
     };
-    if( board.occupancy.oneSpaceDown({board: board, position: position}) ){
-      var newPossibility = this.possibleMoves.verticalDown()
+    if( this.oneSpaceDownIsEmpty(layOut, position) ){
+      var newPossibility = this.movements.directional.verticalDown()
       movements = movements.concat(newPossibility)
     };
-    if( board.occupancy.downAndLeft(this.position) ){
-      var newPossibility = this.possibleMoves.forwardSlashDown()
+    if( this.downAndLeftIsEmpty(layOut, position) ){
+      var newPossibility = this.movements.directional.forwardSlashDown()
       movements = movements.concat(newPossibility)
     };
-    if( board.occupancy.downAndRight(this.position) ){
-      var newPossibility = this.possibleMoves.backSlashDown()
+    if( this.downAndRightIsEmpty(layOut, position) ){
+      var newPossibility = this.movements.directional.backSlashDown()
       movements = movements.concat(newPossibility)
     };
     return movements
+  },
+  this.twoSpacesDownIsEmpty = function(layOut, position){
+    return layOut[position - 16] === "empty"
+  },
+  this.oneSpaceDownIsEmpty = function(layOut, position){
+    return layOut[position - 8] === "empty"
+  },
+  this.downAndLeftIsEmpty = function(layOut, position){
+    return layOut[position - 9] === "empty" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 9)
+  },
+  this.downAndRightIsEmpty = function(layOut, position){
+    return layOut[position - 7] === "empty" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 7)
   }
 };
 BlackPawnController.prototype = Object.create(PieceController.prototype);

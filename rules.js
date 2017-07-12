@@ -7,7 +7,7 @@ var Rules = (function () {
         pieceType = pieceString.substring(5, stringLength),
         team = board.teamAt(startPosition);
       if( pieceType === "Pawn" ){ pieceType = pieceString.charAt(0).toUpperCase() + pieceString.slice(1) }
-        debugger
+        // debugger
       pieceController = new window[ pieceType + "Controller"]()
     // debugger
       // PieceController = 
@@ -22,7 +22,6 @@ var Rules = (function () {
         alert("that's not how that piece moves")
         illegal = true
       } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
-        debugger
         alert("what, are you trying to capture your own piece?")
         illegal = true
       } //else if( this.kingCheck( {piece: piece, position: endPosition})){

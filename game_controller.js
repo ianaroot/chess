@@ -46,9 +46,7 @@ var GameController = (function(){
           // this is the only place that should be deleting the destination tile
           // it should also move the piece from active pieces into captured pieces
         // }
-        console.log('next turn comin')
         this.nextTurn()
-        console.log('next turn came')
       } 
     },
     simulate: function (){
@@ -59,12 +57,12 @@ var GameController = (function(){
       gC.begin()
       setTimeout( function(){ gC.move(1,  18) }, 500)
       setTimeout( function(){ gC.move(50, 42) }, 1000)
-      // setTimeout( function(){ gC.move(11, 27) }, 1500)
-      // setTimeout( function(){ gC.move(59, 32) }, 2000)
-      // setTimeout( function(){ gC.move(3,  19) }, 2500)
-      // setTimeout( function(){ gC.move(42, 34) }, 3000)
-      // setTimeout( function(){ gC.move(12, 20) }, 3500)
-      // setTimeout( function(){ gC.move(34, 27) }, 4000)
+      setTimeout( function(){ gC.move(11, 27) }, 1500)
+      setTimeout( function(){ gC.move(59, 32) }, 2000)
+      setTimeout( function(){ gC.move(3,  19) }, 2500)
+      setTimeout( function(){ gC.move(42, 34) }, 3000)
+      setTimeout( function(){ gC.move(12, 20) }, 3500)
+      setTimeout( function(){ gC.move(34, 27) }, 4000)
       // setTimeout( function(){ gC.move(0,  1) },  4500)
       // setTimeout( function(){ gC.move(27, 18) }, 5000)
       // setTimeout( function(){ gC.move(9,  18) }, 5500)
@@ -102,7 +100,6 @@ var GameController = (function(){
       }
     },
     nextTurn: function(){
-      console.log("doin the damned thang")
       if( this.allowedToMove === "white" ){
         this.prepareBlackTurn()
       } else{

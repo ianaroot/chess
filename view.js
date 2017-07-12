@@ -11,21 +11,26 @@ var View = (function(){
     undisplayPiece: function(gridPosition){
       var element = document.getElementsByClassName( gridPosition )[0],
         children  = element.children;
-
+        // if( gridPosition === "square-b1" ){debugger}
       for( var i = 0; i < children.length; i ++){
         children[i].remove()
       }
     },
     displayBoard: function(layOut){
       for( var i = 0; i < layOut.length; i++){
+        var elem = document.createElement("img"),
+            gridPosition = Board.classMethods.gridCalculator(i),
+            pieceInitials = this.pieceInitials(layOut[i]);
+        this.undisplayPiece(gridPosition);
+        this.undisplayPiece(gridPosition);
         if( layOut[i] !== "empty" ){
-          var elem = document.createElement("img"),
-              gridPosition = Board.classMethods.gridCalculator(i),
-              pieceInitials = this.pieceInitials(layOut[i]);
           elem.setAttribute("src", this.pieceImgSrc( pieceInitials ) );
           elem.setAttribute("height", "49");
           elem.setAttribute("width", "49");
-          document.getElementsByClassName( gridPosition )[0].appendChild(elem)
+          element = document.getElementsByClassName( gridPosition )[0]
+
+
+          element.appendChild(elem)
         }
       }
     },

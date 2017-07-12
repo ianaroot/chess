@@ -28,9 +28,7 @@ var board1 = ChessBoard('board1');
   // stageRightWhitePawnAttackOccupied: function(position){
   //   return this.tiles[position + 9] !== undefined
   // },
-  // inBounds: function(position){
-  //   return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
-  // },
+
 
 
 queenController = {
@@ -143,6 +141,18 @@ Board.classMethods = {
       return Math.floor(position / 8) === 1
     }
   },
+  squareColor: function(position){
+    var div = position / 8,
+      mod   = position % 8,
+      sum   = div + mod,
+      squareColor;
+    if (sum % 2 === 0){
+      squareColor = "dark"
+    } else {
+      squareColor = "light"
+    }
+    return squareColor;
+  },
   gridCalculator: function(tile){
     var x = Math.floor(tile % 8),
         y = Math.floor(tile / 8) + 1,
@@ -162,6 +172,9 @@ Board.classMethods = {
   boundaries: {
     upperLimit: 63,
     lowerLimit: 0
+  },
+    inBounds: function(position){
+    return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
   }
 }
 Board.prototype = {
@@ -172,20 +185,6 @@ Board.prototype = {
     }
   },
 
-  positionIsInPaths: function(args){
-    var position = args["position"],
-        piece = args["piece"]
-        // paths will be part of the input coming from the piece
-        // paths = rules.allPathsFinder(piece),
-        positionViable = false;
-    for( var i = 0; i < paths.length; i ++){
-      var path = paths[i]
-      for( var j = 0; j < path.length; j++){
-        if( path[j] === position ){ positionViable = true }
-      };
-    };
-    return positionViable
-  },
 
 // positionIsOccupied
 // positionIsoccupiedByOpponent
@@ -224,9 +223,9 @@ Board.prototype = {
         attacked = false;
     for( var i = 0; i < possibleMoves.length; i++){
       var increment     = possibleMoves[i]["increment"],
-          boundaryCheck = possibleMoves[i]["boundaryCheck"].replace(/\* i/g, "").replace(/position/, "attackingPosition");
+        boundaryCheck = possibleMoves[i]["boundaryCheck"].replace(/\* i/g, "").replace(/position/, "attackingPosition");
       // could factor out the logic below and throw in a nifty object key or function name like "pawnAttacks" that's a horrible name, sit on it a while
-      debugger
+      // debugger
       if( attackingPosition + increment === defendingPosition && boundaryCheck && (Math.abs(increment) === 7 || Math.abs(increment) === 9)){
         attacked = true;
       }
@@ -241,13 +240,20 @@ Board.prototype = {
 
 var Rules = (function () {
   var instance = {
-    moveIsIllegal: function(piece, newPosition, board){
+    moveIsIllegal: function(position, newPosition, board){
+      pieceString = board[position]
+      stringLength = pieceString.length
+      pieceType = pieceString.substring(5, stringLength)
+      if( pieceType === "Pawn" ){ pieceType = pieceString.charAt(0).toUpperCase() + pieceString.slice(1) }
+      pieceController = new window[ pieceType + "Controller"]()
+    // debugger
+      // PieceController = 
       // could take in a tileset and chess notation!??!  using a reverse gridCalculator
       illegal = false
-      if ( !board.inBounds(newPosition) ){
+      if ( !Board.classMethods.inBounds(newPosition) ){
         alert('stay on the board, fool')
         illegal = true
-      } else if( !rules.positionIsInPaths({position: newPosition, piece: piece}) ){
+      } else if( !pieceController.positionIsInPaths({position: position, newPosition: newPosition, board: board}) ){
         alert("that's not how that piece moves")
         illegal = true
       } else if( board.positionIsOccupiedByTeamMate(newPosition, piece.team ) ){
@@ -307,6 +313,7 @@ var Rules = (function () {
 var GameController = (function(){
   var instance = {
     view: View.getInstance(),
+    rules: Rules.getInstance(),
     currentBoard: new Board({layOut: ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
                              "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
                              "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
@@ -316,26 +323,63 @@ var GameController = (function(){
                              "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
                              "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",
     ]}),
+    move: function(position, newPosition){
+      // debugger
+      currentBoard = this.currentBoard
+      layOut = currentBoard.layOut
+      pieceString = layOut[position]
+      var team = pieceString.substring(0,5)
+      // debugger
+      if( team !== this.allowedToMove ){
+        alert("other team's turn")
+        return
+      }
+      if( this.rules.moveIsIllegal(position, newPosition, this.currentBoard.layOut) ){
+        return
+      } else {
+
+        // var gridPosition    = board.gridCalculator(piece.position),
+        //     newGridPosition = board.gridCalculator(newPosition);
+
+
+// REFACTOR MEEEEEEEEE
+        var pieceString = this.currentBoard.layOut[position];
+        this.currentBoard.layOut[position] = "empty"
+        capturedPiece = this.currentBoard.layOut[newPosition]
+        this.currentBoard.layOut[newPosition] = pieceString
+        this.view.displayBoard(this.currentBoard.layOut)
+        // this.view.deleteOldStuff(gridPosition, newGridPosition, piece)
+        // board.placeNewStuff(piece, newPosition)
+
+        if ( board.tiles[newPosition].team !== piece.team ){
+          // capture(newPosition)
+          // this is the only place that should be deleting the destination tile
+          // it should also move the piece from active pieces into captured pieces
+        }
+        game.nextTurn()
+      } 
+    },
     simulate: function (){
-      game.createTeams()
-      game.addWhitePieces()
-      game.addBlackPieces()
-      game.begin()
-      setTimeout( function(){ rules.move(1,  18) }, 500)
-      setTimeout( function(){ rules.move(50, 42) }, 1000)
-      setTimeout( function(){ rules.move(11, 27) }, 1500)
-      setTimeout( function(){ rules.move(59, 32) }, 2000)
-      setTimeout( function(){ rules.move(3,  19) }, 2500)
-      setTimeout( function(){ rules.move(42, 34) }, 3000)
-      setTimeout( function(){ rules.move(12, 20) }, 3500)
-      setTimeout( function(){ rules.move(34, 27) }, 4000)
-      setTimeout( function(){ rules.move(0,  1) },  4500)
-      setTimeout( function(){ rules.move(27, 18) }, 5000)
-      setTimeout( function(){ rules.move(9,  18) }, 5500)
-      setTimeout( function(){ rules.move(51, 35)},  6000)
-      setTimeout( function(){ rules.move(15, 23)},  6500)
-      setTimeout( function(){ rules.move(58, 23)},  7000)
-      setTimeout( function(){ rules.move(19, 33)},  7500)
+      var gC = this
+
+      gC.createTeams()
+      gC.view.displayBoard(gC.currentBoard.layOut)
+      gC.begin()
+      setTimeout( function(){ gC.move(1,  18) }, 500)
+      // setTimeout( function(){ gC.move(50, 42) }, 1000)
+      // setTimeout( function(){ gC.move(11, 27) }, 1500)
+      // setTimeout( function(){ gC.move(59, 32) }, 2000)
+      // setTimeout( function(){ gC.move(3,  19) }, 2500)
+      // setTimeout( function(){ gC.move(42, 34) }, 3000)
+      // setTimeout( function(){ gC.move(12, 20) }, 3500)
+      // setTimeout( function(){ gC.move(34, 27) }, 4000)
+      // setTimeout( function(){ gC.move(0,  1) },  4500)
+      // setTimeout( function(){ gC.move(27, 18) }, 5000)
+      // setTimeout( function(){ gC.move(9,  18) }, 5500)
+      // setTimeout( function(){ gC.move(51, 35)},  6000)
+      // setTimeout( function(){ gC.move(15, 23)},  6500)
+      // setTimeout( function(){ gC.move(58, 23)},  7000)
+      // setTimeout( function(){ gC.move(19, 33)},  7500)
     },
     testing: function(){
       game.createTeams()
@@ -354,7 +398,7 @@ var GameController = (function(){
       
     },
     begin: function(){
-      this.allowedToMove = white
+      this.allowedToMove = "white"
       this.view.displayBoard
     },
     turn: function(turnNum){
@@ -366,17 +410,17 @@ var GameController = (function(){
       }
     },
     nextTurn: function(){
-      if( this.allowedToMove === white ){
+      if( this.allowedToMove === "white" ){
         this.prepareBlackTurn()
       } else{
         this.prepareWhiteTurn()
       }
     },
     prepareBlackTurn: function(){
-      this.allowedToMove = black
+      this.allowedToMove = "black"
     },
     prepareWhiteTurn: function(){
-      this.allowedToMove = white
+      this.allowedToMove = "white"
     },
     whiteMove: function(position, newPosition){
       rules.move(position, newPosition)
@@ -437,6 +481,68 @@ var PieceController = function(){
   // PieceController initialization...
 };
 PieceController.prototype = {
+  positionIsViable: function(args){
+    var layOut = args["layOut"],
+        startPosition = args["startPosition"],
+        endPosition = args["endPosition"],
+        movementType = this.movementTypeFinder(startPosition, endPosition),
+        ;
+  },
+  wrapAroundCheat: function(movementType, startSquareColor, range){
+    switch(movementType){
+      case this.backSlashDown
+      case this.backSlashUp
+      case this.forwardSlashUp
+      case this.forwardSlashDown
+      case this.nightVerticalLeftUp
+      case 
+
+      case this.verticalUp
+      case this.verticalDown
+      case this.horizontalLeft
+      case this.horizontalRight
+    }
+  },
+  movementDirectionFinder: function(startPosition, endPosition){
+    var movementDirection,
+        queries = this.movements.vagueQueries;
+    if ( queries.up(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
+      movementDirection = this.movements.directional.verticalUp
+    } else if ( queries.down(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
+      movementDirection = this.movements.directional.verticalDown
+    } else if ( queries.horizontal(startPosition, endPosition) && queries.left(startPosition, endPosition) ){
+      movementDirection = this.movements.directional.horizontalLeft
+    } else if ( queries.horizontal(startPosition, endPosition) && queries.right(startPosition, endPosition) ){
+      movementDirection = this.movements.directional.horizontalRight
+    } else if ( queries.down(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
+      movementDirection = this.movements.directional.verticalDown
+    } else if ( queries.down(startPosition, endPosition) && queries.backSlash(startPosition, endPosition) ){
+      movementDirection = this.movements.directional.backSlashDown
+    } else if ( queries.up(startPosition, endPosition) && queries.backSlash(startPosition, endPosition) ){
+      movementDirection = this.movements.directional.backSlashUp
+    } else if ( queries.down(startPosition, endPosition) && queries.forwardSlash(startPosition, endPosition) ){
+      movementDirection = this.movements.directional.forwardSlashDown
+    } else if ( queries.up(startPosition, endPosition) && queries.forwardSlash(startPosition, endPosition) ){
+      movementDirection = this.movements.directional.forwardSlashUp
+    }
+  },
+  positionIsInPaths: function(args){
+    // there are faster ways to calculate what i'm using this for
+    var position = args["position"],
+        newPosition = args["newPosition"],
+        layOut = args["layOut"],
+        paths = this.allPathsFinder(layOut, position);
+        // paths will be part of the input coming from the piece
+        // paths = rules.allPathsFinder(piece),
+        positionViable = false;
+    for( var i = 0; i < paths.length; i ++){
+      var path = paths[i]
+      for( var j = 0; j < path.length; j++){
+        if( path[j] === newPosition ){ positionViable = true }
+      };
+    };
+    return positionViable
+  },
   ranks: {
     isSecond: function(position){
       return Board.Ranks.isSecond(position)
@@ -452,60 +558,174 @@ PieceController.prototype = {
       return board.occupancy.twoSpacesUp(position)
     }
   },
-  movementTypes: {
-    verticalUp: function(){
-      return { increment: "+8",  boundaryCheck: "board.inBounds(increment * i + position)                                && board.inBounds(increment * i + position)"}
+  movements: {
+    directional: {
+      verticalUp: function(){
+        return {
+          increment: "+8",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      verticalDown: function(){
+        return {
+          increment: "-8",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      forwardSlashUp: function(){
+        return {
+          increment: "+9",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return (endPosition) % 8 > (startPosition % 8) && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      forwardSlashDown: function(){
+        return {
+          increment: "-9",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return (endPosition) % 8 < (startPosition % 8) && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      backSlashUp: function(){
+        return {
+          increment: "+7",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return (endPosition) % 8 < (startPosition % 8) && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      backSlashDown: function(){
+        return {
+          increment: "-7",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return (endPosition) % 8 > (startPosition % 8) && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      nightVerticalLeftUp: function(){
+        return {
+          increment: "+15",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      nightVerticalRightUp: function(){
+        return {
+          increment: "+17",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      nightHorizontalLeftUp: function(){
+        return {
+          increment: "+6",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      nightHorizontalRightUp: function(){
+        return {
+          increment: "+10",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      nightVerticalLeftDown: function(){
+        return {
+          increment: "-15",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      nightVerticalRightDown: function(){
+        return {
+          increment: "-17",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      nightHorizontalLeftDown: function(){
+        return {
+          increment: "-6",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      nightHorizontalRightDown: function(){
+        return {
+          increment: "-10",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      horizontalRight: function(){
+        return {
+          increment: "+1",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Math.floor((endPosition) / 8) === Math.floor(startPosition / 8) && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      },
+      horizontalLeft: function(){
+        return {
+          increment: "-1",
+          boundaryCheck: function(i, increment, startPosition) {
+            // throw error if args missing. make a reusable function, throw it in some stuff
+            var endPosition = i * increment + startPosition;
+            return Math.floor((endPosition) / 8) === Math.floor(startPosition / 8) && Board.classMethods.inBounds(endPosition)
+          }
+        }
+      }
     },
-    verticalDown: function(){
-      return { increment: "-8",  boundaryCheck: "board.inBounds(increment * i + position)                                && board.inBounds(increment * i + position)"}
-    },
-    forwardSlashUp: function(){
-      return { increment: "+9",  boundaryCheck: "(increment * i + position) % 8 > (position % 8)                         && board.inBounds(increment * i + position)"}
-    },
-    forwardSlashDown: function(){
-      return { increment: "-9",  boundaryCheck: "(increment * i + position) % 8 < (position % 8)                         && board.inBounds(increment * i + position)"}
-    },
-    backSlashUp: function(){
-      return { increment: "+7",  boundaryCheck: "(increment * i + position) % 8 < (position % 8)                         && board.inBounds(increment * i + position)"}
-    },
-    backSlashDown: function(){
-      return { increment: "-7",  boundaryCheck: "(increment * i + position) % 8 > (position % 8)                         && board.inBounds(increment * i + position)"}
-    },
-    nightVerticalLeftUp: function(){
-     return { increment: "+15", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 1         && board.inBounds(increment * i + position)" }
-   },
-    nightVerticalRightUp: function(){
-     return { increment: "+17", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 1         && board.inBounds(increment * i + position)" }
-   },
-    nightHorizontalLeftUp: function(){
-     return { increment: "+6",  boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 2         && board.inBounds(increment * i + position)" }
-   },
-    nightHorizontalRightUp: function(){
-     return { increment: "+10", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 2         && board.inBounds(increment * i + position)" }
-   },
-    nightVerticalLeftDown: function(){
-     return { increment: "-15", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 1         && board.inBounds(increment * i + position)" }
-   },
-    nightVerticalRightDown: function(){
-     return { increment: "-17", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 1         && board.inBounds(increment * i + position)" }
-   },
-    nightHorizontalLeftDown: function(){
-     return { increment: "-6",  boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 2         && board.inBounds(increment * i + position)" }
-   },
-    nightHorizontalRightDown: function(){
-     return { increment: "-10", boundaryCheck: "Math.abs( (increment * i + position) % 8 - position % 8 ) === 2         && board.inBounds(increment * i + position)" }
-   },
-    horizontalRight: function(){
-     return { increment: "+1",  boundaryCheck: "Math.floor((increment * i + position) / 8) === Math.floor(position / 8) && board.inBounds(increment * i + position)" }
-   },
-    horizontalLeft: function(){
-     return { increment: "-1",  boundaryCheck: "Math.floor((increment * i + position) / 8) === Math.floor(position / 8) && board.inBounds(increment * i + position)" }
-   },
     sets: {
       night: function(){
-        var moves = [rules.movementTypes.nightHorizontalRightDown(), rules.movementTypes.nightHorizontalLeftDown(), rules.movementTypes.nightVerticalRightDown(),
-                      rules.movementTypes.nightVerticalLeftDown(), rules.movementTypes.nightHorizontalRightUp(), rules.movementTypes.nightHorizontalLeftUp(),
-                      rules.movementTypes.nightVerticalRightUp(), rules.movementTypes.nightVerticalLeftUp()
+        var moves = [this.allMovements.nightHorizontalRightDown(), this.allMovements.nightHorizontalLeftDown(), this.allMovements.nightVerticalRightDown(),
+                      this.allMovements.nightVerticalLeftDown(), this.allMovements.nightHorizontalRightUp(), this.allMovements.nightHorizontalLeftUp(),
+                      this.allMovements.nightVerticalRightUp(), this.allMovements.nightVerticalLeftUp()
                     ];
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
@@ -515,7 +735,7 @@ PieceController.prototype = {
         return  moves
       },
       rook: function(){
-        var moves = [rules.movementTypes.horizontalRight(), rules.movementTypes.horizontalLeft(), rules.movementTypes.verticalUp(), rules.movementTypes.verticalDown()]
+        var moves = [this.allMovements.horizontalRight(), this.allMovements.horizontalLeft(), this.allMovements.verticalUp(), this.allMovements.verticalDown()]
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
             moves[key].rangeLimit = 7 ;
@@ -524,7 +744,7 @@ PieceController.prototype = {
         return moves
       },
       bishop: function(){
-        var moves = [rules.movementTypes.forwardSlashDown(), rules.movementTypes.forwardSlashUp(), rules.movementTypes.backSlashDown(), rules.movementTypes.backSlashUp()]
+        var moves = [this.allMovements.forwardSlashDown(), this.allMovements.forwardSlashUp(), this.allMovements.backSlashDown(), this.allMovements.backSlashUp()]
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
             moves[key].rangeLimit = 7 ;
@@ -533,11 +753,11 @@ PieceController.prototype = {
         return moves
       },
       queen: function(){
-        return rules.movementTypes.sets.rook().concat( rules.movementTypes.sets.bishop() )
+        return this.allMovements.sets.rook().concat( this.allMovements.sets.bishop() )
       },
       king: function(){
-        var moves = [rules.movementTypes.horizontalRight(), rules.movementTypes.horizontalLeft(), rules.movementTypes.verticalUp(), rules.movementTypes.verticalDown(),
-        rules.movementTypes.forwardSlashDown(), rules.movementTypes.forwardSlashUp(), rules.movementTypes.backSlashDown(), rules.movementTypes.backSlashUp()
+        var moves = [this.allMovements.horizontalRight(), this.allMovements.horizontalLeft(), this.allMovements.verticalUp(), this.allMovements.verticalDown(),
+        this.allMovements.forwardSlashDown(), this.allMovements.forwardSlashUp(), this.allMovements.backSlashDown(), this.allMovements.backSlashUp()
         ]
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
@@ -548,7 +768,7 @@ PieceController.prototype = {
       },
       whitePawn: function(){
         var moves = {
-          forwardSlashUp: rules.movementTypes.forwardSlashUp(), backSlashUp: rules.movementTypes.backSlashUp(), verticalUp: rules.movementTypes.verticalUp(), verticalUpTwoStep: rules.movementTypes.verticalUp()
+          forwardSlashUp: this.allMovements.forwardSlashUp(), backSlashUp: this.allMovements.backSlashUp(), verticalUp: this.allMovements.verticalUp(), verticalUpTwoStep: this.allMovements.verticalUp()
         }
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
@@ -558,15 +778,43 @@ PieceController.prototype = {
         moves.verticalUpTwoStep.rangeLimit = 2;
         return moves
       },
+    },
+    vagueQueries: {
+      up: function(startPosition, endPosition){
+        return startPosition < endPosition
+      },
+      down: function(startPosition, endPosition){
+        return startPosition > endPosition
+      },
+      vertical: function( startPosition, endPosition){
+        return startPosition % 8 === endPosition % 8
+      },
+      horizontal: function( startPosition, endPosition){
+        return startPosition / 8 === endPosition / 8
+      },
+      left: function(startPosition, endPosition){
+        return startPosition > endPosition
+      },
+      right: function(startPosition, endPosition){
+        return startPosition < endPosition
+      },
+      backSlash: function(startPosition, endPosition){
+        return Math.abs( startPosition - endPosition ) % 7 === 0
+      },
+      forwardSlash: function(startPosition, endPosition){
+        return Math.abs( startPosition - endPosition ) % 9 === 0
+      },
+      nights: function(startPosition, endPosition){
+        return Math.abs( startPosition - endPosition) === 6 || Math.abs( startPosition - endPosition) === 10 || Math.abs( startPosition - endPosition) === 15 || Math.abs( startPosition - endPosition) === 17
+      },
     }
   },
-  allPathsFinder: function(board, position){
-    var possibleMovesFrom = piece.possibleMovesFrom(position, board),
-      paths = [];
+  allPathsFinder: function(layOut, position, team){
+    var paths = [];
       // DANGER
       // team = piece.team;
-    for(inc = 0; inc < possibleMoves.length; inc++){
-      paths.push(rules.pathFinder(possibleMoves[inc], position, team))
+    for(inc = 0; inc < this.viableMovements.length; inc++){
+      paths.push(this.pathFinder(this.viableMovements[inc], position, team))
       }
     return paths
   },
@@ -575,7 +823,7 @@ PieceController.prototype = {
         boundaryCheck = move["boundaryCheck"],
         rangeLimit = move["rangeLimit"],
         path = [];
-    for (i = 1; eval( boundaryCheck ) && i <= rangeLimit; i++){
+    for (i = 1; boundaryCheck(i, increment, position) && i <= rangeLimit; i++){
       pathPosition = position + i * increment
       if( board.tiles[pathPosition] !== undefined && board.tiles[pathPosition].team === team ){ break; }
       path.push(pathPosition)
@@ -585,9 +833,9 @@ PieceController.prototype = {
 
 }
 var NightController = function() {
-    var newMoves = this.movementTypes.sets.night
+    var newMoves = this.allMovements.sets.night
     PieceController.apply(this, arguments);
-    this.movementTypes = newMoves
+    this.viableMovements = newMoves
     this.value = 3
     this.srcImgWhite = "img/chesspieces/wikipedia/wN.png"
     this.srcImgBlack = "img/chesspieces/wikipedia/bN.png"
@@ -598,9 +846,9 @@ NightController.prototype = Object.create(PieceController.prototype);
 NightController.prototype.constructor = NightController;
 
 var RookController = function() {
-    var newMoves = this.movementTypes.sets.rook
+    var newMoves = this.allMovements.sets.rook
     PieceController.apply(this, arguments);
-    this.movementTypes = newMoves
+    this.viableMovements = newMoves
     this.value = 3
     this.srcImgWhite = "img/chesspieces/wikipedia/wR.png"
     this.srcImgBlack = "img/chesspieces/wikipedia/bR.png"
@@ -611,9 +859,9 @@ RookController.prototype = Object.create(PieceController.prototype);
 RookController.prototype.constructor = RookController;
 
 var BishopController = function() {
-    var newMoves = this.movementTypes.sets.bishop
+    var newMoves = this.allMovements.sets.bishop
     PieceController.apply(this, arguments);
-    this.movementTypes = newMoves
+    this.viableMovements = newMoves
     this.value = 3
     this.srcImgWhite = "img/chesspieces/wikipedia/wB.png"
     this.srcImgBlack = "img/chesspieces/wikipedia/bB.png"
@@ -625,9 +873,9 @@ BishopController.prototype.constructor = BishopController;
 
 
 var KingController = function() {
-    var newMoves = this.movementTypes.sets.king
+    var newMoves = this.allMovements.sets.king
     PieceController.apply(this, arguments);
-    this.movementTypes = newMoves
+    this.viableMovements = newMoves
     this.value = 3
     this.srcImgWhite = "img/chesspieces/wikipedia/wK.png"
     this.srcImgBlack = "img/chesspieces/wikipedia/bK.png"
@@ -639,9 +887,9 @@ KingController.prototype.constructor = KingController;
 
 
 var QueenController = function() {
-    var newMoves = this.movementTypes.sets.queen
+    var newMoves = this.allMovements.sets.queen
     PieceController.apply(this, arguments);
-    this.movementTypes = newMoves
+    this.viableMovements = newMoves
     this.value = 3
     this.srcImgWhite = "img/chesspieces/wikipedia/wQ.png"
     this.srcImgBlack = "img/chesspieces/wikipedia/bQ.png"
@@ -656,7 +904,7 @@ var whitePawncontroler = function(){
   PieceController.apply(this, arguments);
   this.name = "whitePawn";
   this.value = 1
-  this.movementTypes = function(board, position){
+  this.viableMovements = function(board, position){
     var movements = [];
     if( this.ranks.isSeventh(position) && this.occupancy.twoSpacesUp( {board: board, position: position} ) ){
       var newPossibility = this.possibleMoves.verticalUp()
@@ -723,7 +971,7 @@ var whitePawncontroler = function(){
 // });
 
 
-//   // movementTypes: {
+//   // viableMovements: {
 //   //   isVertical: function(position, newPosition){
 //   //     return(position - newPosition) % 8 === 0
 //   //   },
@@ -739,21 +987,21 @@ var whitePawncontroler = function(){
 //   // },
 //   // movementIncrement: function(position, newPosition){
 //   //   var increment;
-//   //   if ( this.movementTypes.isVertical(position, newPosition) && position < newPosition ){
+//   //   if ( this.viableMovements.isVertical(position, newPosition) && position < newPosition ){
 //   //     increment = 8
-//   //   } else if ( this.movementTypes.isVertical(position, newPosition) && position > newPosition ){
+//   //   } else if ( this.viableMovements.isVertical(position, newPosition) && position > newPosition ){
 //   //     increment = -8
-//   //   }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position < newPosition ){
+//   //   }else if ( this.viableMovements.isDiagonalForwardSlash(position, newPosition) && position < newPosition ){
 //   //     increment = 9
-//   //   }else if ( this.movementTypes.isDiagonalForwardSlash(position, newPosition) && position > newPosition ){
+//   //   }else if ( this.viableMovements.isDiagonalForwardSlash(position, newPosition) && position > newPosition ){
 //   //     increment = -9
-//   //   }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position < newPosition ){
+//   //   }else if ( this.viableMovements.isDiagonalBackSlash(position, newPosition) && position < newPosition ){
 //   //     increment = 7
-//   //   }else if ( this.movementTypes.isDiagonalBackSlash(position, newPosition) && position > newPosition ){
+//   //   }else if ( this.viableMovements.isDiagonalBackSlash(position, newPosition) && position > newPosition ){
 //   //     increment = -7
-//   //   }else if ( this.movementTypes.isHorizontal(position, newPosition) && position < newPosition){
+//   //   }else if ( this.viableMovements.isHorizontal(position, newPosition) && position < newPosition){
 //   //     increment = 1
-//   //   }else if ( this.movementTypes.isHorizontal(position, newPosition) && position > newPosition){
+//   //   }else if ( this.viableMovements.isHorizontal(position, newPosition) && position > newPosition){
 //   //     increment = -1
 //   //   }
 //   //   return increment
