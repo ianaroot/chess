@@ -1,9 +1,22 @@
+// singleton JSON stuff object that gets dependency injected into other objects
 var board1 = ChessBoard('board1');
 
 var GameController = (function(){
   var instance = {
     view: View.getInstance(),
-    rules: Rules.getInstance(),
+    rules: (function(){
+      rules = Rules.getInstance()
+      rules.pieceControllerSet = {
+        Queen: new QueenController(),
+        Rook: new RookController(),
+        Bishop: new BishopController(),
+        Night: new NightController(),
+        King: new KingController(),
+        BlackPawn: new BlackPawnController(),
+        WhitePawn: new WhitePawnController()
+      }
+      return rules
+    })(),
     currentBoard: new Board({layOut: ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
                              "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
                              "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
