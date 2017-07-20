@@ -61,6 +61,11 @@ Board.prototype = {
     teamString = pieceString.substring(0,5)
     return teamString
   },
+  pieceTypeAt: function(position){
+    pieceString = this.layOut[position]
+    pieceType = pieceString.substring(5,pieceString.length)
+    return pieceType
+  },
   occupancy: {
     twoSpacesUp: function(position){
       return this.tileSet[position]  !== "empty"
@@ -71,7 +76,7 @@ Board.prototype = {
   // occupant,
   positionIsOccupiedByTeamMate: function(position, team){
     // factor out this !== empty nonsense
-    return (this.layOut[position] !== "empty" && this.layOut[position].team === team  )
+    return (this.layOut[position] !== "empty" && this.teamAt(position) === team  )
   },
 
   // isAttacked: function( args ){
@@ -89,6 +94,33 @@ Board.prototype = {
   //     if( isAttackedBy({piece: activeOpposingTeamPieces[i], position: position}) ){ danger = true }
   //   }
   // },
+
+  kingPosition: function(teamString){
+    var layout = this.layOut,
+        position;
+    for(i = 0; i < layOut.length; i ++){
+      var teamAtPosition = this.teamAt(i),
+          pieceType = this.pieceTypeAt(i);
+      console.log(layOut[position])
+      console.log(teamAtPosition)
+      console.log(pieceType)
+      if(teamAtPosition === teamString && pieceType === "King"){
+        position = i
+        break
+      }
+    }
+    console.log(position)
+    return position
+  },
+
+
+
+
+
+
+
+
+  // THESE ARE ALL PROBABLY GONNA BE OBSOLETE
   isAttackedByRnbq: function(args){
     // will give false positives on pawns attacking empty positions, not that you should be inputting pawns, but you know
     var piece     = args["piece"],
