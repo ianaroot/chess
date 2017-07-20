@@ -1,3 +1,4 @@
+// search for equals deglobalize scope slippage
 var PieceController = function(){
   if (this.constructor === PieceController) {
     throw new Error("Can't instantiate abstract class!");
@@ -10,6 +11,10 @@ PieceController.prototype = {
       startPosition = args["startPosition"],
       endPosition = args["endPosition"],
       movementType = this.movementDirectionFinder(startPosition, endPosition);
+      // maybe pass empty set something instead of relying on undefined
+    if ( movementType === undefined ){ //no valid movement type was found that leads to this position
+      return false
+    } 
     var movementType = movementType(),
       viable = false,
       directionalMovements = this.directionalMovements(layOut, startPosition);
@@ -23,12 +28,29 @@ PieceController.prototype = {
     }
     return viable
   },
+  viablePositionsFrom: function(startPosition, layOut){
+    var movements = this.directionalMovements,
+    viablePositions = [];
+    for(i = 0; i < movements.length; i++){
+      var movement = movements[i],
+        increment = movement.increment,
+        range = movement.range,
+        boundaryCheck = movement.boundaryCheck;
+        for( j = 0; j <= range; j++){
+          if( pathIsClear){
+
+          };
+        };
+    };
+  },
   pathIsClear: function(startPosition, endPosition, movementType, layOut){
     var clear = true,
     rangeLimit = movementType.rangeLimit,
     increment = movementType.increment;
+    debugger
     for( var i = 1; i <= movementType.range && (startPosition + i * increment) < endPosition; i++){
-      var currentPosition = startPosition + i * increment
+      var currentPosition = startPosition + i * increment;
+      debugger
       if( layOut[currentPosition] !== "empty"){
         clear = false;
       }
@@ -78,8 +100,8 @@ PieceController.prototype = {
     return cheat
   },
   movementDirectionFinder: function(startPosition, endPosition){
-    var movementDirection,
-        queries = this.movements.vagueQueries;
+    var queries = this.movements.vagueQueries,
+        movementDirection;
     if ( queries.up(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
       movementDirection = this.movements.directional.verticalUp
     } else if ( queries.down(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
@@ -101,7 +123,37 @@ PieceController.prototype = {
     } else if ( queries.nights(startPosition, endPosition) ){
         if ( startPosition + 17 === endPosition ){
           movementDirection = this.movements.directional.nightVerticalRightUp
+          movementDirection.range = 1
         }
+        if ( startPosition + 15 === endPosition ){
+          movementDirection = this.movements.directional.nightVerticalLeftUp
+          movementDirection.range = 1
+        };
+        if ( startPosition - 17 === endPosition ){
+          movementDirection = this.movements.directional.nightVerticalLeftDown
+          movementDirection.range = 1
+        }
+        if ( startPosition - 15 === endPosition ){
+          movementDirection = this.movements.directional.nightVerticalRightDown
+          movementDirection.range = 1
+        };
+
+        if ( startPosition + 10 === endPosition ){
+          movementDirection = this.movements.directional.nightHorizontalRightUp
+          movementDirection.range = 1
+        }
+        if ( startPosition + 6 === endPosition ){
+          movementDirection = this.movements.directional.nightVerticalLeftUp
+          movementDirection.range = 1
+        };
+        if ( startPosition - 10 === endPosition ){
+          movementDirection = this.movements.directional.nightHorizontalLeftDown
+          movementDirection.range = 1
+        }
+        if ( startPosition - 6 === endPosition ){
+          movementDirection = this.movements.directional.nightHorizontalRightDown
+          movementDirection.range = 1
+        };
     }
     return movementDirection
   },
