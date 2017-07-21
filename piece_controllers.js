@@ -63,6 +63,8 @@ PieceController.prototype = {
           } else if( board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
             viablePositions.push(currentPosition)
             break 
+          } else if(board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
+            break
           };
         };
     };

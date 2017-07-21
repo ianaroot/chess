@@ -65,11 +65,17 @@ Board.prototype = {
     ;
     return teamString
   },
+  occupiedByTeamMate: function(args){
+    var position = args["position"],
+        teamString = args["teamString"],
+        occupantTeam = this.teamAt(position)
+    ;
+    return teamString === occupantTeam
+  },
   occupiedByOpponent: function(args){
     var position = args["position"],
         teamString = args["teamString"],
         occupantTeam = this.teamAt(position);
-        debugger
     return !this.positionEmpty(position) && teamString !== occupantTeam
   },
   pieceTypeAt: function(position){
