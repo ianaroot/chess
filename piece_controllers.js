@@ -10,11 +10,10 @@ PieceController.prototype = {
     var board = args["board"],
       startPosition = args["startPosition"],
       endPosition = args["endPosition"],
-      movementType = this.movementDirectionFinder(startPosition, endPosition),
+      // movementType = this.movementDirectionFinder(startPosition, endPosition),
       viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board} ),
-      viable = false
-    ;
-    for( i = 0; i < viablePositions.length; i++){
+      viable = false;
+    for(var i = 0; i < viablePositions.length; i++){
       if( viablePositions[i] === endPosition ){
         viable = true;
         break;
@@ -45,16 +44,14 @@ PieceController.prototype = {
         movements = this.directionalMovements(board.layOut, startPosition),
         viablePositions = []
     ;
-    for(i = 0; i < movements.length; i++){
+    for(var i = 0; i < movements.length; i++){
       var movement = movements[i],
         increment = movement.increment,
         rangeLimit = movement.rangeLimit,
         boundaryCheck = movement.boundaryCheck;
-        // console.log("team is: " + teamString)
-        for( j = 1; j <= rangeLimit; j++){
+        for(var j = 1; j <= rangeLimit; j++){
           var currentPosition = increment * j + startPosition,
               occupyingTeam = board.teamAt(currentPosition);
-              // debugger
           if ( !boundaryCheck(j, increment, startPosition) ){
             break
           }
@@ -611,7 +608,7 @@ WhitePawnController.prototype.constructor = WhitePawnController;
 
 var BlackPawnController = function(){
   PieceController.apply(this, arguments);
-  this.name = "whitePawn";
+  this.name = "blackPawn";
   this.value = 1
   this.directionalMovements = function(layOut, position){
     var movements = [];

@@ -5,7 +5,7 @@ var GameController = (function(){
   var instance = {
     view: View.getInstance(),
     rules: (function(){
-      rules = Rules.getInstance()
+      var rules = Rules.getInstance();
       rules.pieceControllerSet = {
         Queen: new QueenController(),
         Rook: new RookController(),
@@ -58,7 +58,7 @@ var GameController = (function(){
       } 
     },
     simulate: function (){
-      var gC = this
+      var gC = this;
 
       gC.createTeams()
       gC.view.displayBoard(gC.currentBoard.layOut)
@@ -87,6 +87,7 @@ var GameController = (function(){
       setTimeout( function(){ rules.move(1,  18) }, 500)
     },
     createTeams: function(){
+      // not really applying the globality or the team at all in the way i had planned
       window.white = {
         name: "white"
       };
