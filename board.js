@@ -3,11 +3,9 @@ function Board(options){
   if( options && options["layOut"]){ layOut = options["layOut"] }else{ layOut = [] };
   var capturedPieces;
   if( options && options["capturedPieces"]){ capturedPieces = options["capturedPieces"] }else{ capturedPieces = [] };
-  this.layOut = layOut
+  this.layOut = layOut;
   this.capturedPieces = capturedPieces;
-  this.blackInCheck;
-  this.whiteInCheck;
-  // return classMethods
+  this.previousLayouts = [];
 };
 Board.classMethods = {
   deepCopyLayout: function(layOut){

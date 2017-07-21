@@ -41,6 +41,7 @@ var GameController = (function(){
         // var gridPosition    = board.gridCalculator(piece.position),
         //     newGridPosition = board.gridCalculator(newPosition);
         // REFACTOR MEEEEEEEEE
+        board.previousLayouts.push(layOut)
         var pieceString = this.board.layOut[position];
         this.board.layOut[position] = "empty"
         capturedPiece = this.board.layOut[newPosition]
