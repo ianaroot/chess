@@ -65,6 +65,16 @@ Board.prototype = {
     ;
     return teamString
   },
+  positionsOccupiedByTeam: function(teamString){
+    var positions = [];
+    for( i = 0; i < this.layOut.length; i++){
+      var teamAt = this.teamAt(i);
+      if(teamAt === teamString){
+        positions.push(i)
+      };
+    };
+    return positions
+  },
   occupiedByTeamMate: function(args){
     var position = args["position"],
         teamString = args["teamString"],
@@ -116,15 +126,11 @@ Board.prototype = {
     for(i = 0; i < layOut.length; i ++){
       var teamAtPosition = this.teamAt(i),
           pieceType = this.pieceTypeAt(i);
-      console.log(layOut[position])
-      console.log(teamAtPosition)
-      console.log(pieceType)
       if(teamAtPosition === teamString && pieceType === "King"){
         position = i
         break
       }
     }
-    console.log(position)
     return position
   },
 }
