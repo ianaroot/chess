@@ -50,7 +50,7 @@ PieceController.prototype = {
         increment = movement.increment,
         rangeLimit = movement.rangeLimit,
         boundaryCheck = movement.boundaryCheck;
-        console.log("team is: " + teamString)
+        // console.log("team is: " + teamString)
         for( j = 1; j <= rangeLimit; j++){
           var currentPosition = increment * j + startPosition,
               occupyingTeam = board.teamAt(currentPosition);

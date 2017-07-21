@@ -51,7 +51,7 @@ Board.classMethods = {
     lowerLimit: 0
   },
     inBounds: function(position){
-    return position < this.boundaries.upperLimit && position > this.boundaries.lowerLimit
+    return position <= this.boundaries.upperLimit && position >= this.boundaries.lowerLimit
   }
 }
 Board.prototype = {
