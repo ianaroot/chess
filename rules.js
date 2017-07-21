@@ -53,11 +53,9 @@ var Rules = function () {
       };
 
 // do this in a function
-      // delete newLayout[startPosition]
       newLayout[startPosition] = "empty"
       newLayout[endPosition] = pieceString
       var newBoard = new Board({layOut: newLayout})
-      // debugger
 // seriously, factor it ou
 
       var enemyPositions = board.positionsOccupiedByTeam(opposingTeamString);
