@@ -39,20 +39,32 @@ var Rules = function () {
       var startPosition     = args["startPosition"],
           endPosition       = args["endPosition"]
           board             = args["board"],
+          layOut            = board.layOut,
+          pieceString       = layOut[startPosition],
           teamString        = board.teamAt(startPosition),
           kingPosition      = board.kingPosition(teamString),
           danger            = false,
+          newLayout         = Board.classMethods.deepCopyLayout(layOut),
           opposingTeamString = "";
       if( teamString === "white" ){
         opposingTeamString = "black"
       } else {
         opposingTeamString = "white"
       };
+
+// do this in a function
+      // delete newLayout[startPosition]
+      newLayout[startPosition] = "empty"
+      newLayout[endPosition] = pieceString
+      var newBoard = new Board({layOut: newLayout})
+      // debugger
+// seriously, factor it ou
+
       var enemyPositions = board.positionsOccupiedByTeam(opposingTeamString);
       for(var i = 0; i < enemyPositions.length; i++){
         var enemyPosition = enemyPositions[i],
           pieceController = this.retrieveControllerForPosition( enemyPosition );
-          if( pieceController.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: board} ) ){
+          if( pieceController.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
           danger = true
             
           }

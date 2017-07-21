@@ -1,4 +1,4 @@
-// search for equals deglobalize scope slippage
+// search for equals, deglobalize scope slippage
 var PieceController = function(){
   if (this.constructor === PieceController) {
     throw new Error("Can't instantiate abstract class!");
@@ -593,6 +593,7 @@ var WhitePawnController = function(){
   },
   this.upAndLeftIsAttackable = function(layOut, position){
     pieceString = layOut[position + 7]
+    // debugger
     pieceTeam = pieceString.substring(0,5)
     return pieceTeam === "black" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 7)
   },

@@ -10,6 +10,13 @@ function Board(options){
   // return classMethods
 };
 Board.classMethods = {
+  deepCopyLayout: function(layOut){
+    var newLayOut = [];
+    for( var i = 0; i < layOut.length; i ++){
+      newLayOut.push( layOut[i] )
+    }
+    return newLayOut
+  },
   ranks: {
     isSeventh: function(position){
       return Math.floor(position / 8) === 6
