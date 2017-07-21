@@ -1,5 +1,7 @@
 // pieceControllerSet must be defined by the gameController when creating Rules singleton, not the best approach,
 // but there were lots of arguments on the internet about dependency injection and singltons in js, and i just wanted something to work. will address later
+
+// tells you it's the other team's turn if you try to move from an empty square
 var Rules = function () {
   var instance = {
     moveIsIllegal: function(startPosition, endPosition, board){
@@ -16,7 +18,7 @@ var Rules = function () {
         alert('stay on the board, fool')
         illegal = true
 
-      } else if( !pieceController.positionViable( {startPosition: startPosition, endPosition: endPosition, layOut: layOut} ) ) {
+      } else if( !pieceController.positionViable( {startPosition: startPosition, endPosition: endPosition, board: board} ) ) {
       // else if( !pieceController.positionIsInPaths({position: position, endPosition: endPosition, board: board}) ){
 
         alert("that's not how that piece moves")

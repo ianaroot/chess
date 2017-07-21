@@ -57,26 +57,35 @@ Board.classMethods = {
 Board.prototype = {
 
   teamAt: function(position){
-    pieceString = this.layOut[position]
-    teamString = pieceString.substring(0,5)
+    if( !Board.classMethods.inBounds(position) ){
+      return "empty"
+    };
+    var pieceString = this.layOut[position],
+      teamString = pieceString.substring(0,5)
+    ;
     return teamString
+  },
+  occupiedByOpponent: function(args){
+    var position = args["position"],
+        teamString = args["teamString"],
+        occupantTeam = this.teamAt(position);
+        debugger
+    return !this.positionEmpty(position) && teamString !== occupantTeam
   },
   pieceTypeAt: function(position){
     pieceString = this.layOut[position]
     pieceType = pieceString.substring(5,pieceString.length)
     return pieceType
   },
-  occupancy: {
-    twoSpacesUp: function(position){
-      return this.tileSet[position]  !== "empty"
-    }
-  },
   // positionIsOccupied,
   // positionIsoccupiedByOpponent,
   // occupant,
   positionIsOccupiedByTeamMate: function(position, team){
     // factor out this !== empty nonsense
-    return (this.layOut[position] !== "empty" && this.teamAt(position) === team  )
+    return ( !this.positionEmpty(position) && this.teamAt(position) === team  )
+  },
+  positionEmpty: function(position){
+    return this.layOut[position] === "empty"
   },
 
   // isAttacked: function( args ){
@@ -112,40 +121,4 @@ Board.prototype = {
     console.log(position)
     return position
   },
-
-
-
-
-
-
-
-
-  // THESE ARE ALL PROBABLY GONNA BE OBSOLETE
-  isAttackedByRnbq: function(args){
-    // will give false positives on pawns attacking empty positions, not that you should be inputting pawns, but you know
-    var piece     = args["piece"],
-        position = args["position"];
-    return rules.positionIsInPaths({position: position, piece: piece})
-  },
-  isAttackedByPawn: function(args){
-    // will give false positives on whether pawns can attack space if it's not yet occupied
-    var pawn             = args["piece"],
-        attackingPosition = pawn.position
-        defendingPosition = args["position"],
-        possibleMoves = pawn.possibleMoves(),
-        attacked = false;
-    for( var i = 0; i < possibleMoves.length; i++){
-      var increment     = possibleMoves[i]["increment"],
-        boundaryCheck = possibleMoves[i]["boundaryCheck"].replace(/\* i/g, "").replace(/position/, "attackingPosition");
-      // could factor out the logic below and throw in a nifty object key or function name like "pawnAttacks" that's a horrible name, sit on it a while
-      if( attackingPosition + increment === defendingPosition && boundaryCheck && (Math.abs(increment) === 7 || Math.abs(increment) === 9)){
-        attacked = true;
-      }
-      return attacked
-    }
-  },
-  isAttackedByKing: function(args){
-    var piece     = args["piece"],
-        position = args["position"];
-  }
 }

@@ -7,50 +7,75 @@ var PieceController = function(){
 };
 PieceController.prototype = {
   positionViable: function(args){
-    var layOut = args["layOut"],
+    var board = args["board"],
       startPosition = args["startPosition"],
       endPosition = args["endPosition"],
-      movementType = this.movementDirectionFinder(startPosition, endPosition);
-      // maybe pass empty set something instead of relying on undefined
-    if ( movementType === undefined ){ //no valid movement type was found that leads to this position
-      return false
-    } 
-    var movementType = movementType(),
-      viable = false,
-      directionalMovements = this.directionalMovements(layOut, startPosition);
-    for(var i = 0; i < directionalMovements.length; i++){
-      if( directionalMovements[i].increment === movementType.increment && !this.wrapAroundCheat(startPosition, endPosition, movementType) && this.pathIsClear(startPosition, endPosition, movementType, layOut) ){
-
-          // look for bad check?
-        // look for capture
-        viable = true
+      movementType = this.movementDirectionFinder(startPosition, endPosition),
+      viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board} ),
+      viable = false
+    ;
+    for( i = 0; i < viablePositions.length; i++){
+      if( viablePositions[i] === endPosition ){
+        viable = true;
+        break;
       }
-    }
+    };
     return viable
+    //   // maybe pass empty set something instead of relying on undefined
+    // if ( movementType === undefined ){ //no valid movement type was found that leads to this position
+    //   return false
+    // } 
+    // var movementType = movementType(),
+    //   viable = false,
+    //   directionalMovements = this.directionalMovements(layOut, startPosition);
+    // for(var i = 0; i < directionalMovements.length; i++){
+    //   if( directionalMovements[i].increment === movementType.increment && !this.wrapAroundCheat(startPosition, endPosition, movementType) && this.pathIsClear(startPosition, endPosition, movementType, layOut) ){
+
+    //       // look for bad check?
+    //     // look for capture
+    //     viable = true
+    //   }
+    // }
+    // return viable
   },
-  viablePositionsFrom: function(startPosition, layOut){
-    var movements = this.directionalMovements,
-    viablePositions = [];
+  viablePositionsFrom: function(args){
+    var startPosition = args["startPosition"],
+        board = args["board"],
+        teamString = board.teamAt(startPosition),
+        movements = this.directionalMovements(board.layOut, startPosition),
+        viablePositions = []
+    ;
     for(i = 0; i < movements.length; i++){
       var movement = movements[i],
         increment = movement.increment,
-        range = movement.range,
+        rangeLimit = movement.rangeLimit,
         boundaryCheck = movement.boundaryCheck;
-        for( j = 0; j <= range; j++){
-          if( pathIsClear){
-
+        console.log("team is: " + teamString)
+        for( j = 1; j <= rangeLimit; j++){
+          var currentPosition = increment * j + startPosition,
+              occupyingTeam = board.teamAt(currentPosition);
+              // debugger
+          if ( !boundaryCheck(j, increment, startPosition) ){
+            break
+          }
+          if ( board.positionEmpty(currentPosition) ){
+            viablePositions.push(currentPosition)
+          } else if( board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
+            viablePositions.push(currentPosition)
+            break 
           };
         };
     };
+    return viablePositions
   },
   pathIsClear: function(startPosition, endPosition, movementType, layOut){
     var clear = true,
     rangeLimit = movementType.rangeLimit,
     increment = movementType.increment;
-    debugger
-    for( var i = 1; i <= movementType.range && (startPosition + i * increment) < endPosition; i++){
+    // debugger
+    for( var i = 1; i <= movementType.rangeLimit && (startPosition + i * increment) < endPosition; i++){
       var currentPosition = startPosition + i * increment;
-      debugger
+      // debugger
       if( layOut[currentPosition] !== "empty"){
         clear = false;
       }
@@ -61,7 +86,7 @@ PieceController.prototype = {
     // should this not just live on the movement Type object?
     var startSquareColor = Board.classMethods.squareColor(startPosition),
       endSquareColor = Board.classMethods.squareColor(endPosition),
-      range = (startPosition - endPosition) / movementType.increment,
+      rangeLimit = (startPosition - endPosition) / movementType.increment,
       cheat;
     switch(true){
       case (this.backSlashDown === movementType):
@@ -92,9 +117,9 @@ PieceController.prototype = {
   },
   orthogonalMoveSquareColorCheat: function(startSquareColor, endSquareColor, range){
     var cheat = true;
-    if (startSquareColor === endSquareColor && range % 2 === 0){
+    if (startSquareColor === endSquareColor && rangeLimit % 2 === 0){
       cheat = false;
-    } else if(startSquareColor !== endSquareColor && range % 2 === 1){
+    } else if(startSquareColor !== endSquareColor && rangeLimit % 2 === 1){
       cheat = false;
     }
     return cheat
@@ -123,36 +148,36 @@ PieceController.prototype = {
     } else if ( queries.nights(startPosition, endPosition) ){
         if ( startPosition + 17 === endPosition ){
           movementDirection = this.movements.directional.nightVerticalRightUp
-          movementDirection.range = 1
+          movementDirection.rangeLimit = 1
         }
         if ( startPosition + 15 === endPosition ){
           movementDirection = this.movements.directional.nightVerticalLeftUp
-          movementDirection.range = 1
+          movementDirection.rangeLimit = 1
         };
         if ( startPosition - 17 === endPosition ){
           movementDirection = this.movements.directional.nightVerticalLeftDown
-          movementDirection.range = 1
+          movementDirection.rangeLimit = 1
         }
         if ( startPosition - 15 === endPosition ){
           movementDirection = this.movements.directional.nightVerticalRightDown
-          movementDirection.range = 1
+          movementDirection.rangeLimit = 1
         };
 
         if ( startPosition + 10 === endPosition ){
           movementDirection = this.movements.directional.nightHorizontalRightUp
-          movementDirection.range = 1
+          movementDirection.rangeLimit = 1
         }
         if ( startPosition + 6 === endPosition ){
           movementDirection = this.movements.directional.nightVerticalLeftUp
-          movementDirection.range = 1
+          movementDirection.rangeLimit = 1
         };
         if ( startPosition - 10 === endPosition ){
           movementDirection = this.movements.directional.nightHorizontalLeftDown
-          movementDirection.range = 1
+          movementDirection.rangeLimit = 1
         }
         if ( startPosition - 6 === endPosition ){
           movementDirection = this.movements.directional.nightHorizontalRightDown
-          movementDirection.range = 1
+          movementDirection.rangeLimit = 1
         };
     }
     return movementDirection
@@ -537,22 +562,26 @@ var WhitePawnController = function(){
   PieceController.apply(this, arguments);
   this.name = "whitePawn";
   this.value = 1
-  this.directionalMovements = function(board, position){
+  this.directionalMovements = function(layOut, position){
     var movements = [];
-    if( this.ranks.isSeventh(position) && this.twoSpacesUpIsEmpty( layOut, position ) ){
+    if( Board.classMethods.ranks.isSecond(position) && this.twoSpacesUpIsEmpty( layOut, position ) ){
       var newPossibility = this.movements.directional.verticalUp()
+      newPossibility.rangeLimit = 2
       movements = movements.concat(newPossibility)
     };
     if( this.oneSpaceUpIsEmpty(layOut, position) ){
       var newPossibility = this.movements.directional.verticalUp()
+      newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
     if( this.upAndLeftIsAttackable(layOut, position) ){
       var newPossibility = this.movements.directional.backSlashUp()
+      newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
     if( this.upAndRightIsAttackable(layOut, position) ){
       var newPossibility = this.movements.directional.forwardSlashUp()
+      newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
     return movements
@@ -584,20 +613,24 @@ var BlackPawnController = function(){
   this.value = 1
   this.directionalMovements = function(layOut, position){
     var movements = [];
-    if( this.ranks.isSecond(position) && this.twoSpacesDownIsEmpty(layOut, position) ){
+    if( Board.classMethods.ranks.isSeventh(position) && this.twoSpacesDownIsEmpty(layOut, position) ){
       var newPossibility = this.movements.directional.verticalDown()
+      newPossibility.rangeLimit = 2
       movements = movements.concat(newPossibility)
     };
     if( this.oneSpaceDownIsEmpty(layOut, position) ){
       var newPossibility = this.movements.directional.verticalDown()
+      newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
     if( this.downAndLeftIsAttackable(layOut, position) ){
       var newPossibility = this.movements.directional.forwardSlashDown()
+      newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
     if( this.downAndRightIsAttackable(layOut, position) ){
       var newPossibility = this.movements.directional.backSlashDown()
+      newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
     return movements
