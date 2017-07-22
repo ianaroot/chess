@@ -17,15 +17,38 @@ var GameController = (function(){
       }
       return rules
     })(),
-    board: new Board({layOut: ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
-                             "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
-                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
-                             "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
-                             "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",
-    ], allowedToMove: "white"}),
+    board: new Board({layOut: 
+      
+      // ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
+      //  "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
+      //  "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
+      //  "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",],
+
+      // ["whiteKing", "empty", "empty", "empty", "empty", "empty", "empty", "whiteQueen", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "whitePawn", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "blackPawn", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "whiteRook", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "blackKing", "empty", ],
+
+      [
+       "blackRook", "blackKing", "empty", "whiteKing", "empty", "empty", "whiteBishop", "empty", 
+       "blackPawn", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
+       "empty", "empty", "whiteQueen", "empty", "empty", "empty", "whitePawn", "blackBishop", 
+       "whiteRook", "empty", "empty", "empty", "empty", "empty", "BlackPawn", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       ],
+
+        allowedToMove: "white"}),
     move: function(position, newPosition){
       board = this.board
       layOut = board.layOut
@@ -81,21 +104,21 @@ var GameController = (function(){
       gC.createTeams()
       gC.view.displayBoard(gC.board.layOut)
       gC.begin()
-      setTimeout( function(){ gC.move(1,  18) }, 500)
-      setTimeout( function(){ gC.move(50, 42) }, 1000)
-      setTimeout( function(){ gC.move(11, 27) }, 1500)
-      setTimeout( function(){ gC.move(59, 32) }, 2000)
-      setTimeout( function(){ gC.move(3,  19) }, 2500)
-      setTimeout( function(){ gC.move(42, 34) }, 3000)
-      setTimeout( function(){ gC.move(12, 20) }, 3500)
-      setTimeout( function(){ gC.move(34, 27) }, 4000)
-      setTimeout( function(){ gC.move(0,  1) },  4500)
-      setTimeout( function(){ gC.move(27, 18) }, 5000)
-      setTimeout( function(){ gC.move(9,  18) }, 5500)
-      setTimeout( function(){ gC.move(51, 35)},  6000)
-      setTimeout( function(){ gC.move(15, 23)},  6500)
-      setTimeout( function(){ gC.move(58, 23)},  7000)
-      setTimeout( function(){ gC.move(19, 33)},  7500)
+      // setTimeout( function(){ gC.move(1,  18) }, 500)
+      // setTimeout( function(){ gC.move(50, 42) }, 1000)
+      // setTimeout( function(){ gC.move(11, 27) }, 1500)
+      // setTimeout( function(){ gC.move(59, 32) }, 2000)
+      // setTimeout( function(){ gC.move(3,  19) }, 2500)
+      // setTimeout( function(){ gC.move(42, 34) }, 3000)
+      // setTimeout( function(){ gC.move(12, 20) }, 3500)
+      // setTimeout( function(){ gC.move(34, 27) }, 4000)
+      // setTimeout( function(){ gC.move(0,  1) },  4500)
+      // setTimeout( function(){ gC.move(27, 18) }, 5000)
+      // setTimeout( function(){ gC.move(9,  18) }, 5500)
+      // setTimeout( function(){ gC.move(51, 35)},  6000)
+      // setTimeout( function(){ gC.move(15, 23)},  6500)
+      // setTimeout( function(){ gC.move(58, 23)},  7000)
+      // setTimeout( function(){ gC.move(19, 33)},  7500)
     },
     testing: function(){
       game.createTeams()
