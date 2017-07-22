@@ -11,6 +11,7 @@ PieceController.prototype = {
       startPosition = args["startPosition"],
       endPosition = args["endPosition"],
       // movementType = this.movementDirectionFinder(startPosition, endPosition),
+
       viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board} ),
       viable = false;
     for(var i = 0; i < viablePositions.length; i++){
@@ -20,22 +21,6 @@ PieceController.prototype = {
       }
     };
     return viable
-    //   // maybe pass empty set something instead of relying on undefined
-    // if ( movementType === undefined ){ //no valid movement type was found that leads to this position
-    //   return false
-    // } 
-    // var movementType = movementType(),
-    //   viable = false,
-    //   directionalMovements = this.directionalMovements(layOut, startPosition);
-    // for(var i = 0; i < directionalMovements.length; i++){
-    //   if( directionalMovements[i].increment === movementType.increment && !this.wrapAroundCheat(startPosition, endPosition, movementType) && this.pathIsClear(startPosition, endPosition, movementType, layOut) ){
-
-    //       // look for bad check?
-    //     // look for capture
-    //     viable = true
-    //   }
-    // }
-    // return viable
   },
   viablePositionsFrom: function(args){
     var startPosition = args["startPosition"],
@@ -71,10 +56,8 @@ PieceController.prototype = {
     var clear = true,
     rangeLimit = movementType.rangeLimit,
     increment = movementType.increment;
-    // debugger
     for( var i = 1; i <= movementType.rangeLimit && (startPosition + i * increment) < endPosition; i++){
       var currentPosition = startPosition + i * increment;
-      // debugger
       if( layOut[currentPosition] !== "empty"){
         clear = false;
       }
@@ -403,7 +386,6 @@ PieceController.prototype = {
       queen: function(){
         // scoping error is cause this to be sets, not the piececontroller when we get in the sets.rook
         // return this.movements.sets.rook().concat( this.movements.sets.bishop() )
-
         var moves = [this.movements.directional.horizontalRight(), this.movements.directional.horizontalLeft(), this.movements.directional.verticalUp(), this.movements.directional.verticalDown(),
           this.movements.directional.forwardSlashDown(), this.movements.directional.forwardSlashUp(), this.movements.directional.backSlashDown(), this.movements.directional.backSlashUp()
         ]
@@ -586,21 +568,36 @@ var WhitePawnController = function(){
     return movements
   }
   this.twoSpacesUpIsEmpty = function(layOut, position){
-    return layOut[position + 16] === "empty"
+    if( Board.classMethods.inBounds( position + 16)){
+      return layOut[position + 16] === "empty"
+    } else {
+      return false
+    }
   },
   this.oneSpaceUpIsEmpty = function(layOut, position){
-    return layOut[position + 8] === "empty"
+    if( Board.classMethods.inBounds( position + 8)){
+      return layOut[position + 8] === "empty"
+    } else {
+      return false
+    }
   },
   this.upAndLeftIsAttackable = function(layOut, position){
-    pieceString = layOut[position + 7]
-    // debugger
-    pieceTeam = pieceString.substring(0,5)
-    return pieceTeam === "black" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 7)
+    if( Board.classMethods.inBounds( position + 7)){
+      var pieceString = layOut[position + 7],
+        pieceTeam = pieceString.substring(0,5);
+      return pieceTeam === "black" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 7)
+    } else {
+      return false
+    }
   },
   this.upAndRightIsAttackable = function(layOut, position){
-    pieceString = layOut[position + 9]
-    pieceTeam = pieceString.substring(0,5)
-    return pieceTeam === "black" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 9)
+    if( Board.classMethods.inBounds( position + 9)){
+      var pieceString = layOut[position + 9],
+        pieceTeam = pieceString.substring(0,5);
+      return pieceTeam === "black" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 9)
+    } else {
+      return false
+    }
   }
 };
 WhitePawnController.prototype = Object.create(PieceController.prototype);
@@ -636,20 +633,36 @@ var BlackPawnController = function(){
     return movements
   },
   this.twoSpacesDownIsEmpty = function(layOut, position){
-    return layOut[position - 16] === "empty"
+    if( Board.classMethods.inBounds( position - 16 )){ 
+      return layOut[position - 16] === "empty"
+    } else {
+      return false
+    }
   },
   this.oneSpaceDownIsEmpty = function(layOut, position){
-    return layOut[position - 8] === "empty"
+    if( Board.classMethods.inBounds( position - 8 ) ){
+      return layOut[position - 8] === "empty"
+    } else {
+      return false
+    }
   },
   this.downAndLeftIsAttackable = function(layOut, position){
-    pieceString = layOut[position - 9]
-    pieceTeam = pieceString.substring(0,5)
-    return pieceTeam === "white" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 9)
+    if( Board.classMethods.inBounds( position - 9 )){ 
+      var pieceString = layOut[position - 9],
+        pieceTeam = pieceString.substring(0,5);
+      return pieceTeam === "white" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 9)
+    } else {
+      return false
+    }
   },
   this.downAndRightIsAttackable = function(layOut, position){
-    pieceString = layOut[position - 7]
-    pieceTeam = pieceString.substring(0,5)
-    return pieceTeam === "white" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 7)
+    if( Board.classMethods.inBounds( position - 7 ) ){
+      var pieceString = layOut[position - 7],
+        pieceTeam = pieceString.substring(0,5);
+      return pieceTeam === "white" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 7)
+    } else {
+      return false
+    }
   }
 };
 BlackPawnController.prototype = Object.create(PieceController.prototype);
