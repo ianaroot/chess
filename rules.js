@@ -93,24 +93,24 @@ var Rules = function () {
           layOut            = board.layOut,
           pieceString       = layOut[startPosition],
           teamString        = board.teamAt(startPosition),
-          kingPosition      = board.kingPosition(teamString),
           danger            = false,
           newLayout         = Board.classMethods.deepCopyLayout(layOut),
           opposingTeamString = "";
+
       if( teamString === "white" ){
         opposingTeamString = "black"
       } else {
         opposingTeamString = "white"
       };
-
 // do this in a function
 // also probably gonna wanna copy all the board stuff, like previous states
       newLayout[startPosition] = "empty"
       newLayout[endPosition] = pieceString
-      var newBoard = new Board({layOut: newLayout})
+      var newBoard = new Board({layOut: newLayout}),
+      kingPosition = newBoard.kingPosition(teamString);
 // seriously, factor it ou
 
-      var enemyPositions = board.positionsOccupiedByTeam(opposingTeamString);
+      var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
       for(var i = 0; i < enemyPositions.length; i++){
         var enemyPosition = enemyPositions[i],
           pieceController = this.retrieveControllerForPosition( enemyPosition );
