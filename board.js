@@ -6,6 +6,7 @@ function Board(options){
   this.layOut = layOut;
   this.capturedPieces = capturedPieces;
   this.previousLayouts = [];
+  this.allowedToMove = options["allowedToMove"]
 };
 Board.classMethods = {
   deepCopyLayout: function(layOut){

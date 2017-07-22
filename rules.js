@@ -4,6 +4,57 @@
 // tells you it's the other team's turn if you try to move from an empty square
 var Rules = function () {
   var instance = {
+    stalemate: function(board){
+      var movingTeamString = board.allowedToMove,
+        previousLayouts = board.previousLayouts,
+        repetitions = 0,
+        threeFoldRepetition = false,
+        noLegalMoves = true,
+        currentLayOut = board.layOut;
+      for( var i = 0; i < previousLayouts.length; i++ ){
+        var comparisonLayout = previousLayouts[i],
+          different = false;
+        for( var j = 0; j < comparisonLayout.length; j++){
+          if( comparisonLayout[j] !== currentLayOut[j] ){
+            different = true
+            break
+          }
+        };
+        if( !different ){ repetitions ++ }
+        console.log("repetitions is: " + repetitions)
+      };
+      if(repetitions >= 2){
+        threeFoldRepetition = true
+      }
+
+
+      if(movingTeamString === "black"){
+        onDeckTeamString = "white"        
+      } else {
+        onDeckTeamString = "black"
+      }
+
+      var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
+      // console.log( "occcupiedPositions is: " + occcupiedPositions )
+      // console.log( "noLegalMoves is: " + noLegalMoves )
+      // console.log( 0 < )
+
+      for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
+        var startPosition = occcupiedPositions[i],
+        pieceController = this.retrieveControllerForPosition(startPosition),
+        viablePositions = pieceController.viablePositionsFrom({startPosition: startPosition, board: board});
+        for(var j = 0; j < viablePositions.length && noLegalMoves; j++){
+          var endPosition = viablePositions[j];
+          // only checking kingCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
+          if( !this.kingCheck( {startPosition: startPosition, endPosition: endPosition, board: board}) ){
+            noLegalMoves = false
+          }
+        };
+      };
+      console.log("threeFoldRepetition is: " + threeFoldRepetition)
+      console.log("noLegalMoves is: " + noLegalMoves)
+      return threeFoldRepetition || noLegalMoves
+    },
     moveIsIllegal: function(startPosition, endPosition, board){
       var layOut = board.layOut,
         team = board.teamAt(startPosition),
@@ -53,6 +104,7 @@ var Rules = function () {
       };
 
 // do this in a function
+// also probably gonna wanna copy all the board stuff, like previous states
       newLayout[startPosition] = "empty"
       newLayout[endPosition] = pieceString
       var newBoard = new Board({layOut: newLayout})
@@ -79,7 +131,7 @@ var Rules = function () {
       //   if( isAttackedBy({piece: activeOpposingTeamPieces[i], position: kingPosition}) ){ danger = true }
       // }
 
-      console.log("danger is: " + danger)
+      // console.log("danger is: " + danger)
 
 
 

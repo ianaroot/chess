@@ -25,13 +25,15 @@ var GameController = (function(){
                              "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
                              "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
                              "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",
-    ]}),
+    ], allowedToMove: "white"}),
     move: function(position, newPosition){
       board = this.board
       layOut = board.layOut
       pieceString = layOut[position]
       var team = pieceString.substring(0,5) //this gets reused a few times and seems magic and should become a function
-      if( team !== this.allowedToMove ){
+
+      // this can live in rules now that allowed to move will be accessible there
+      if( team !== board.allowedToMove ){
         alert("other team's turn")
         return
       }
@@ -41,7 +43,8 @@ var GameController = (function(){
         // var gridPosition    = board.gridCalculator(piece.position),
         //     newGridPosition = board.gridCalculator(newPosition);
         // REFACTOR MEEEEEEEEE
-        board.previousLayouts.push(layOut)
+        newLayOut = Board.classMethods.deepCopyLayout( layOut )
+        board.previousLayouts.push(newLayOut)
         var pieceString = this.board.layOut[position];
         this.board.layOut[position] = "empty"
         capturedPiece = this.board.layOut[newPosition]
@@ -55,6 +58,20 @@ var GameController = (function(){
           // this is the only place that should be deleting the destination tile
           // it should also move the piece from active pieces into captured pieces
         // }
+
+        var stalemate = this.rules.stalemate(board);
+        if( stalemate ){
+          alert("stalemate!")
+        }
+        // wary of this check occurring after the move is made but before allowedToMove is flipped
+
+      // if the same state occurs twice in previousLayouts, stalemate
+      // if the opposing team can't move, stalemate
+      // check for en passant, am i white on the fifth rank with a black pawn to the side who used to be on the sixth?
+      // or am i black pawn on fourth besidea  white pawn that used to be on the second?
+      // pawn promotoion
+      // checkmate
+      // check
         this.nextTurn()
       } 
     },
@@ -98,29 +115,28 @@ var GameController = (function(){
       
     },
     begin: function(){
-      this.allowedToMove = "white"
       this.view.displayBoard
     },
     turn: function(turnNum){
       var turnNum = turnNum || 1
       if( turnNum % 2 === 0  ){
-        this.allowedToMove = black
+        board.allowedToMove = black
       } else{
-        this.allowedToMove = white
+        board.allowedToMove = white
       }
     },
     nextTurn: function(){
-      if( this.allowedToMove === "white" ){
+      if( board.allowedToMove === "white" ){
         this.prepareBlackTurn()
       } else{
         this.prepareWhiteTurn()
       }
     },
     prepareBlackTurn: function(){
-      this.allowedToMove = "black"
+      board.allowedToMove = "black"
     },
     prepareWhiteTurn: function(){
-      this.allowedToMove = "white"
+      board.allowedToMove = "white"
     },
     whiteMove: function(position, newPosition){
       rules.move(position, newPosition)
@@ -131,9 +147,9 @@ var GameController = (function(){
     turn: function(turnNum){
       var turnNum = turnNum || 1
       if( turnNum % 2 === 0  ){
-        this.allowedToMove = black
+        board.allowedToMove = black
       } else{
-        this.allowedToMove = white
+        board.allowedToMove = white
       }
     },
   }
