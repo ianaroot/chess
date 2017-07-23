@@ -73,7 +73,6 @@ var GameController = (function(){
         this.board.layOut[position] = "empty"
         capturedPiece = this.board.layOut[newPosition]
         this.board.layOut[newPosition] = pieceString
-        this.view.displayBoard(this.board.layOut)
         // this.view.deleteOldStuff(gridPosition, newGridPosition, piece)
         // board.placeNewStuff(piece, newPosition)
 
@@ -98,6 +97,7 @@ var GameController = (function(){
       // pawn promotoion
       // checkmate
       // check (like if it happens after a legal move, not prevents a move from being legal)
+        this.view.displayBoard(this.board.layOut)
         this.nextTurn()
       } 
     },
@@ -122,6 +122,18 @@ var GameController = (function(){
       setTimeout( function(){ gC.move(15, 23)},  6500)
       setTimeout( function(){ gC.move(58, 23)},  7000)
       setTimeout( function(){ gC.move(19, 33)},  7500)
+      setTimeout( function(){ gC.move(57, 42)},  8000)
+      setTimeout( function(){ gC.move(33, 49)},  8500)
+      setTimeout( function(){ gC.move(35, 27)},  9000)
+      setTimeout( function(){ gC.move(49, 56)},  9500)
+      setTimeout( function(){ gC.move(60, 51)},  10000)
+      setTimeout( function(){ gC.move(56, 61)},  10500)
+      setTimeout( function(){ gC.move(27, 19)},  11500)
+      setTimeout( function(){ gC.move(61, 54)},  12000)
+      setTimeout( function(){ gC.move(19, 11)},  12500)
+      setTimeout( function(){ gC.move(4, 12)},  13000)
+      setTimeout( function(){ gC.move(11, 3)},  13500)
+      
     },
     testing: function(){
       game.createTeams()

@@ -65,6 +65,7 @@ Board.prototype = {
     // later i'll make this request input as to what piece to become
     var teamString = this.teamAt(position)
     this.layOut[position] = teamString + "Queen"
+    
   },
   teamAt: function(position){
     if( !Board.classMethods.inBounds(position) ){
