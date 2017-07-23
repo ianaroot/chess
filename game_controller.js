@@ -20,14 +20,14 @@ var GameController = (function(){
     })(),
     board: new Board({layOut: 
       
-      // ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
-      //  "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
-      //  "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
-      //  "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",],
+      ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
+       "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
+       "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
+       "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",],
 
       // ["whiteKing", "empty", "empty", "empty", "empty", "empty", "empty", "whiteQueen", 
       //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
@@ -38,16 +38,16 @@ var GameController = (function(){
       //  "whiteRook", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
       //  "empty", "empty", "empty", "empty", "empty", "empty", "blackKing", "empty", ],
 
-      [
-       "blackRook", "blackKing", "empty", "whiteKing", "empty", "empty", "whiteBishop", "empty", 
-       "blackPawn", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
-       "empty", "empty", "whiteQueen", "empty", "empty", "empty", "whitePawn", "blackBishop", 
-       "whiteRook", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-       ],
+      // [
+      //  "blackRook", "blackKing", "empty", "whiteKing", "empty", "empty", "whiteBishop", "empty", 
+      //  "blackPawn", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
+      //  "empty", "empty", "whiteQueen", "empty", "empty", "empty", "whitePawn", "blackBishop", 
+      //  "whiteRook", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  ],
 
         allowedToMove: "white"}),
     move: function(position, newPosition){
@@ -85,17 +85,18 @@ var GameController = (function(){
 
         var stalemate = this.rules.stalemate(board);
         if( stalemate ){
+          // end the game etc..
+        // wary of this check occurring after the move is made but before allowedToMove is flipped
+        // also problematic that stalemate is announced before the piece actually moves
           alert("stalemate!")
         }
-        // wary of this check occurring after the move is made but before allowedToMove is flipped
 
-      // if the same state occurs twice in previousLayouts, stalemate
-      // if the opposing team can't move, stalemate
+
       // check for en passant, am i white on the fifth rank with a black pawn to the side who used to be on the sixth?
       // or am i black pawn on fourth besidea  white pawn that used to be on the second?
       // pawn promotoion
       // checkmate
-      // check
+      // check (like if it happens after a legal move, not prevents a move from being legal)
         this.nextTurn()
       } 
     },
@@ -105,21 +106,21 @@ var GameController = (function(){
       gC.createTeams()
       gC.view.displayBoard(gC.board.layOut)
       gC.begin()
-      // setTimeout( function(){ gC.move(1,  18) }, 500)
-      // setTimeout( function(){ gC.move(50, 42) }, 1000)
-      // setTimeout( function(){ gC.move(11, 27) }, 1500)
-      // setTimeout( function(){ gC.move(59, 32) }, 2000)
-      // setTimeout( function(){ gC.move(3,  19) }, 2500)
-      // setTimeout( function(){ gC.move(42, 34) }, 3000)
-      // setTimeout( function(){ gC.move(12, 20) }, 3500)
-      // setTimeout( function(){ gC.move(34, 27) }, 4000)
-      // setTimeout( function(){ gC.move(0,  1) },  4500)
-      // setTimeout( function(){ gC.move(27, 18) }, 5000)
-      // setTimeout( function(){ gC.move(9,  18) }, 5500)
-      // setTimeout( function(){ gC.move(51, 35)},  6000)
-      // setTimeout( function(){ gC.move(15, 23)},  6500)
-      // setTimeout( function(){ gC.move(58, 23)},  7000)
-      // setTimeout( function(){ gC.move(19, 33)},  7500)
+      setTimeout( function(){ gC.move(1,  18) }, 500)
+      setTimeout( function(){ gC.move(50, 42) }, 1000)
+      setTimeout( function(){ gC.move(11, 27) }, 1500)
+      setTimeout( function(){ gC.move(59, 32) }, 2000)
+      setTimeout( function(){ gC.move(3,  19) }, 2500)
+      setTimeout( function(){ gC.move(42, 34) }, 3000)
+      setTimeout( function(){ gC.move(12, 20) }, 3500)
+      setTimeout( function(){ gC.move(34, 27) }, 4000)
+      setTimeout( function(){ gC.move(0,  1) },  4500)
+      setTimeout( function(){ gC.move(27, 18) }, 5000)
+      setTimeout( function(){ gC.move(9,  18) }, 5500)
+      setTimeout( function(){ gC.move(51, 35)},  6000)
+      setTimeout( function(){ gC.move(15, 23)},  6500)
+      setTimeout( function(){ gC.move(58, 23)},  7000)
+      setTimeout( function(){ gC.move(19, 33)},  7500)
     },
     testing: function(){
       game.createTeams()
