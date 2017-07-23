@@ -71,8 +71,10 @@ var GameController = (function(){
         board.previousLayouts.push(newLayOut)
         var pieceString = this.board.layOut[position];
         this.board.emptify(position)
+
         capturedPiece = this.board.layOut[newPosition]
-        this.board.layOut[newPosition] = pieceString
+        // this.board.layOut[newPosition] = pieceString
+        this.board.placePiece({ position: newPosition, pieceString: pieceString })
         // this.view.deleteOldStuff(gridPosition, newGridPosition, piece)
         // board.placeNewStuff(piece, newPosition)
 

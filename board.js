@@ -64,6 +64,11 @@ Board.prototype = {
   emptify: function(position){
     this.layOut[position] = "empty"
   },
+  placePiece: function(args){
+    var position = args["position"],
+      pieceString = args["pieceString"];
+    this.layOut[position] = pieceString
+  },
   promotePawn: function(position){
     // later i'll make this request input as to what piece to become
     var teamString = this.teamAt(position)
