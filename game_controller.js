@@ -1,4 +1,5 @@
 // singleton JSON stuff object that gets dependency injected into other objects
+// should have case sensitivity protection to avoid future blackPawn BlackPawn issues
 var board1 = ChessBoard('board1');
 
 var GameController = (function(){
@@ -17,21 +18,46 @@ var GameController = (function(){
       }
       return rules
     })(),
-    board: new Board({layOut: ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
-                             "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
-                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-                             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
-                             "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
-                             "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",
-    ]}),
+    board: new Board({layOut: 
+      
+      ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
+       "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
+       "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
+       "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",],
+
+      // ["whiteKing", "empty", "empty", "empty", "empty", "empty", "empty", "whiteQueen", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "whitePawn", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "blackPawn", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "whiteRook", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "blackKing", "empty", ],
+
+      // [
+      //  "blackRook", "blackKing", "empty", "whiteKing", "empty", "empty", "whiteBishop", "empty", 
+      //  "blackPawn", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
+      //  "empty", "empty", "whiteQueen", "empty", "empty", "empty", "whitePawn", "blackBishop", 
+      //  "whiteRook", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  ],
+
+        allowedToMove: "white"}),
     move: function(position, newPosition){
       board = this.board
       layOut = board.layOut
       pieceString = layOut[position]
       var team = pieceString.substring(0,5) //this gets reused a few times and seems magic and should become a function
-      if( team !== this.allowedToMove ){
+
+      // this can live in rules now that allowed to move will be accessible there
+      if( team !== board.allowedToMove ){
         alert("other team's turn")
         return
       }
@@ -41,7 +67,8 @@ var GameController = (function(){
         // var gridPosition    = board.gridCalculator(piece.position),
         //     newGridPosition = board.gridCalculator(newPosition);
         // REFACTOR MEEEEEEEEE
-        board.previousLayouts.push(layOut)
+        newLayOut = Board.classMethods.deepCopyLayout( layOut )
+        board.previousLayouts.push(newLayOut)
         var pieceString = this.board.layOut[position];
         this.board.layOut[position] = "empty"
         capturedPiece = this.board.layOut[newPosition]
@@ -55,6 +82,21 @@ var GameController = (function(){
           // this is the only place that should be deleting the destination tile
           // it should also move the piece from active pieces into captured pieces
         // }
+
+        var stalemate = this.rules.stalemate(board);
+        if( stalemate ){
+          // end the game etc..
+        // wary of this check occurring after the move is made but before allowedToMove is flipped
+        // also problematic that stalemate is announced before the piece actually moves
+          alert("stalemate!")
+        }
+
+
+      // check for en passant, am i white on the fifth rank with a black pawn to the side who used to be on the sixth?
+      // or am i black pawn on fourth besidea  white pawn that used to be on the second?
+      // pawn promotoion
+      // checkmate
+      // check (like if it happens after a legal move, not prevents a move from being legal)
         this.nextTurn()
       } 
     },
@@ -98,29 +140,28 @@ var GameController = (function(){
       
     },
     begin: function(){
-      this.allowedToMove = "white"
       this.view.displayBoard
     },
     turn: function(turnNum){
       var turnNum = turnNum || 1
       if( turnNum % 2 === 0  ){
-        this.allowedToMove = black
+        board.allowedToMove = black
       } else{
-        this.allowedToMove = white
+        board.allowedToMove = white
       }
     },
     nextTurn: function(){
-      if( this.allowedToMove === "white" ){
+      if( board.allowedToMove === "white" ){
         this.prepareBlackTurn()
       } else{
         this.prepareWhiteTurn()
       }
     },
     prepareBlackTurn: function(){
-      this.allowedToMove = "black"
+      board.allowedToMove = "black"
     },
     prepareWhiteTurn: function(){
-      this.allowedToMove = "white"
+      board.allowedToMove = "white"
     },
     whiteMove: function(position, newPosition){
       rules.move(position, newPosition)
@@ -131,9 +172,9 @@ var GameController = (function(){
     turn: function(turnNum){
       var turnNum = turnNum || 1
       if( turnNum % 2 === 0  ){
-        this.allowedToMove = black
+        board.allowedToMove = black
       } else{
-        this.allowedToMove = white
+        board.allowedToMove = white
       }
     },
   }
