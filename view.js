@@ -1,13 +1,5 @@
 var View = (function(){
   var instance = {
-    displayPiece: function(piece){
-      var elem = document.createElement("img"),
-        gridPosition = this.gridCalculator(piece.position);
-      elem.setAttribute("src", piece.imgSrc);
-      elem.setAttribute("height", "49");
-      elem.setAttribute("width", "49");
-      document.getElementsByClassName( gridPosition )[0].appendChild(elem)
-    },
     undisplayPiece: function(gridPosition){
       var element = document.getElementsByClassName( gridPosition )[0],
         children  = element.children;
@@ -15,21 +7,24 @@ var View = (function(){
         children[i].remove()
       }
     },
+    displayPiece: function(args){
+      var elem = document.createElement("img"),
+        pieceInitials = args["pieceInitials"],
+        gridPosition = args["gridPosition"];
+      elem.setAttribute("src", this.pieceImgSrc( pieceInitials ) );
+      elem.setAttribute("height", "49");
+      elem.setAttribute("width", "49");
+      var element = document.getElementsByClassName( gridPosition )[0];
+      element.appendChild(elem)
+    },
     displayBoard: function(layOut){
       for( var i = 0; i < layOut.length; i++){
-        var elem = document.createElement("img"),
-            gridPosition = Board.classMethods.gridCalculator(i),
+        var gridPosition = Board.classMethods.gridCalculator(i),
             pieceInitials = this.pieceInitials(layOut[i]);
         this.undisplayPiece(gridPosition);
         this.undisplayPiece(gridPosition);
         if( layOut[i] !== "empty" ){
-          elem.setAttribute("src", this.pieceImgSrc( pieceInitials ) );
-          elem.setAttribute("height", "49");
-          elem.setAttribute("width", "49");
-          element = document.getElementsByClassName( gridPosition )[0]
-
-
-          element.appendChild(elem)
+          this.displayPiece({pieceInitials: pieceInitials, gridPosition: gridPosition})
         }
       }
     },

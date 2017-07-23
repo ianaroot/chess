@@ -91,6 +91,7 @@ var GameController = (function(){
           alert("stalemate!")
         }
 
+        this.rules.pawnPromotionQuery( board )
 
       // check for en passant, am i white on the fifth rank with a black pawn to the side who used to be on the sixth?
       // or am i black pawn on fourth besidea  white pawn that used to be on the second?
