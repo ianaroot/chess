@@ -70,7 +70,7 @@ var GameController = (function(){
         newLayOut = Board.classMethods.deepCopyLayout( layOut )
         board.previousLayouts.push(newLayOut)
         var pieceString = this.board.layOut[position];
-        this.board.layOut[position] = "empty"
+        this.board.emptify(position)
         capturedPiece = this.board.layOut[newPosition]
         this.board.layOut[newPosition] = pieceString
         // this.view.deleteOldStuff(gridPosition, newGridPosition, piece)
@@ -94,9 +94,13 @@ var GameController = (function(){
 
       // check for en passant, am i white on the fifth rank with a black pawn to the side who used to be on the sixth?
       // or am i black pawn on fourth besidea  white pawn that used to be on the second?
-      // pawn promotoion
       // checkmate
       // check (like if it happens after a legal move, not prevents a move from being legal)
+
+
+      // if i make modular functions that move pieces and capture pieces, en passant and castling will be simpler to implement
+      // for castling, iterate across previous boards, and just check whether the king, or rooks ever weren't in their starting position
+      // king will have to add this to his directionMoves
         this.view.displayBoard(this.board.layOut)
         this.nextTurn()
       } 

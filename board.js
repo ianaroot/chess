@@ -61,6 +61,9 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  emptify: function(position){
+    this.layOut[position] = "empty"
+  },
   promotePawn: function(position){
     // later i'll make this request input as to what piece to become
     var teamString = this.teamAt(position)
