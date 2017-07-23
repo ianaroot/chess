@@ -4,6 +4,19 @@
 // tells you it's the other team's turn if you try to move from an empty square
 var Rules = function () {
   var instance = {
+    pawnPromotionQuery: function(board){
+      var layOut = board.layOut;
+      for(var i = 0; i < 8; i++){
+        if (layOut[i] === "blackPawn" ){
+          board.promotePawn(i)
+        }
+      }
+      for(var i = 56; i < 64; i++){
+        if(layOut[i] === "whitePawn" ){
+          board.promotePawn(i)
+        }
+      }
+    },
     stalemate: function(board){
       var movingTeamString = board.allowedToMove,
         previousLayouts = board.previousLayouts,
@@ -112,26 +125,8 @@ var Rules = function () {
           pieceController = this.retrieveControllerForPosition( enemyPosition );
           if( pieceController.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
           danger = true
-            
           }
-        // ;
-        // console.log(pieceController)
-        // debugger
-        // if( pieceController.positionViable( {startPosition: enemyPosition, endPosition: kingPosition, board: board} ) ){
-        // }
-
       };
-
-      // var activeOpposingTeamPieces = opposingTeam.activePieces;
-      // for (var i = 0; i < activeOpposingTeamPieces.length; i++){
-      //   if( isAttackedBy({piece: activeOpposingTeamPieces[i], position: kingPosition}) ){ danger = true }
-      // }
-
-      // console.log("danger is: " + danger)
-
-
-
-      // danger = board.isAttacked({position: position, piece: pieceCopy, tiles: tilesCopy});
       return danger
       // pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
       // maybe iterate across movements testing each individualy

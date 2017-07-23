@@ -61,7 +61,12 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
-
+  promotePawn: function(position){
+    // later i'll make this request input as to what piece to become
+    var teamString = this.teamAt(position)
+    this.layOut[position] = teamString + "Queen"
+    
+  },
   teamAt: function(position){
     if( !Board.classMethods.inBounds(position) ){
       return "empty"
@@ -99,9 +104,6 @@ Board.prototype = {
     pieceType = pieceString.substring(5,pieceString.length)
     return pieceType
   },
-  // positionIsOccupied,
-  // positionIsoccupiedByOpponent,
-  // occupant,
   positionIsOccupiedByTeamMate: function(position, team){
     // factor out this !== empty nonsense
     return ( !this.positionEmpty(position) && this.teamAt(position) === team  )
@@ -109,23 +111,6 @@ Board.prototype = {
   positionEmpty: function(position){
     return this.layOut[position] === "empty"
   },
-
-  // isAttacked: function( args ){
-  //   var position      = args["position"],
-  //       team          = args["team"],
-  //       danger        = false,
-  //       opposingTeam;
-  //   if( team === white ){
-  //     opposingTeam = black
-  //   } else {
-  //     opposingTeam = white
-  //   };
-  //   var activeOpposingTeamPieces = opposingTeam.activePieces;
-  //   for (var i = 0; i < activeOpposingTeamPieces.length; i++){
-  //     if( isAttackedBy({piece: activeOpposingTeamPieces[i], position: position}) ){ danger = true }
-  //   }
-  // },
-
   kingPosition: function(teamString){
     var layout = this.layOut,
         position;
