@@ -35,10 +35,6 @@ var Rules = function () {
       }
 
       var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
-      // console.log( "occcupiedPositions is: " + occcupiedPositions )
-      // console.log( "noLegalMoves is: " + noLegalMoves )
-      // console.log( 0 < )
-
       for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
         var startPosition = occcupiedPositions[i],
         pieceController = this.retrieveControllerForPosition(startPosition),

@@ -37,6 +37,9 @@ PieceController.prototype = {
         for(var j = 1; j <= rangeLimit; j++){
           var currentPosition = increment * j + startPosition,
               occupyingTeam = board.teamAt(currentPosition);
+          // if( currentPosition === 30){
+          //   debugger
+          // } 
           if ( !boundaryCheck(j, increment, startPosition) ){
             break
           }

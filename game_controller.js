@@ -1,4 +1,5 @@
 // singleton JSON stuff object that gets dependency injected into other objects
+// should have case sensitivity protection to avoid future blackPawn BlackPawn issues
 var board1 = ChessBoard('board1');
 
 var GameController = (function(){
@@ -41,7 +42,7 @@ var GameController = (function(){
        "blackRook", "blackKing", "empty", "whiteKing", "empty", "empty", "whiteBishop", "empty", 
        "blackPawn", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
        "empty", "empty", "whiteQueen", "empty", "empty", "empty", "whitePawn", "blackBishop", 
-       "whiteRook", "empty", "empty", "empty", "empty", "empty", "BlackPawn", "empty", 
+       "whiteRook", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
        "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
        "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
        "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
