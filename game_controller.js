@@ -50,10 +50,10 @@ var GameController = (function(){
       //  ],
 
         allowedToMove: "white"}),
-    move: function(position, newPosition){
+    move: function(startPosition, endPosition){
       board = this.board
       layOut = board.layOut
-      pieceString = layOut[position]
+      pieceString = layOut[startPosition]
       var team = pieceString.substring(0,5) //this gets reused a few times and seems magic and should become a function
 
       // this can live in rules now that allowed to move will be accessible there
@@ -61,25 +61,25 @@ var GameController = (function(){
         alert("other team's turn")
         return
       }
-      if( this.rules.moveIsIllegal(position, newPosition, board) ){
+      if( this.rules.moveIsIllegal(startPosition, endPosition, board) ){
         return
       } else {
-        // var gridPosition    = board.gridCalculator(piece.position),
-        //     newGridPosition = board.gridCalculator(newPosition);
+        // var gridPosition    = board.gridCalculator(piece.startPosition),
+        //     newGridPosition = board.gridCalculator(endPosition);
         // REFACTOR MEEEEEEEEE
         newLayOut = Board.classMethods.deepCopyLayout( layOut )
         board.previousLayouts.push(newLayOut)
-        var pieceString = this.board.layOut[position];
-        this.board.emptify(position)
+        var pieceString = this.board.layOut[startPosition];
+        this.board.emptify(startPosition)
 
-        capturedPiece = this.board.layOut[newPosition]
-        // this.board.layOut[newPosition] = pieceString
-        this.board.placePiece({ position: newPosition, pieceString: pieceString })
+        capturedPiece = this.board.layOut[endPosition]
+        // this.board.layOut[endPosition] = pieceString
+        this.board.placePiece({ position: endPosition, pieceString: pieceString })
         // this.view.deleteOldStuff(gridPosition, newGridPosition, piece)
-        // board.placeNewStuff(piece, newPosition)
+        // board.placeNewStuff(piece, endPosition)
 
-        // if ( board.layOut[newPosition].team !== team ){
-          // capture(newPosition)
+        // if ( board.layOut[endPosition].team !== team ){
+          // capture(endPosition)
           // this is the only place that should be deleting the destination tile
           // it should also move the piece from active pieces into captured pieces
         // }
@@ -93,6 +93,8 @@ var GameController = (function(){
         }
 
         this.rules.pawnPromotionQuery( board )
+
+        // this.rules.castle()
 
       // check for en passant, am i white on the fifth rank with a black pawn to the side who used to be on the sixth?
       // or am i black pawn on fourth besidea  white pawn that used to be on the second?
@@ -183,11 +185,11 @@ var GameController = (function(){
     prepareWhiteTurn: function(){
       board.allowedToMove = "white"
     },
-    whiteMove: function(position, newPosition){
-      rules.move(position, newPosition)
+    whiteMove: function(startPosition, endPosition){
+      rules.move(startPosition, endPosition)
     },
-    blackMove: function(position, newPosition){
-      rules.move(position, newPosition)
+    blackMove: function(startPosition, endPosition){
+      rules.move(startPosition, endPosition)
     },
     turn: function(turnNum){
       var turnNum = turnNum || 1

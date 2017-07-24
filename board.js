@@ -61,6 +61,12 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  kingSideCastleIsClear: function(kingPosition){
+    return this.positionEmpty(kingPosition + 1) && this.positionEmpty(kingPosition + 2 )
+  },
+  queenSideCastleIsClear: function(kingPosition){
+    return this.positionEmpty(kingPosition - 1 ) && this.positionEmpty(kingPosition - 2 ) && this.positionEmpty(kingPosition - 3 )
+  },
   kingSideRookHasNotMoved: function(kingPosition){
     var kingSideRookStartPosition = kingPosition + 3;
     return (this.pieceTypeAt( kingSideRookStartPosition ) ==="Rook") && this.pieceHasNotMovedFrom( kingSideRookStartPosition )

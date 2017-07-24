@@ -6,6 +6,9 @@ var PieceController = function(){
   // PieceController initialization...
 };
 PieceController.prototype = {
+  addSpecialMoves: function(){
+    // only some pieceController types use this method, but it should be able to be called by all without errors
+  },
   positionViable: function(args){
     var board = args["board"],
       startPosition = args["startPosition"],
@@ -37,9 +40,6 @@ PieceController.prototype = {
         for(var j = 1; j <= rangeLimit; j++){
           var currentPosition = increment * j + startPosition,
               occupyingTeam = board.teamAt(currentPosition);
-          // if( currentPosition === 30){
-          //   debugger
-          // } 
           if ( !boundaryCheck(j, increment, startPosition) ){
             break
           }
@@ -53,15 +53,7 @@ PieceController.prototype = {
           };
         };
     };
-    // also needs to be verifying that the positions in between are empty and that the positions are not in check
-    if( board.pieceTypeAt(startPosition) === "King" && board.pieceHasNotMovedFrom(startPosition) ){
-      if( board.queenSideRookHasNotMoved(startPosition) ){
-        viablePositions.push( startPosition - 2 )
-      }
-      if( board.kingSideRookHasNotMoved(startPosition) ){
-        viablePositions.push( startPosition + 2 )
-      }
-    };
+    this.addSpecialMoves({ startPosition: startPosition, board: board, viablePositions: viablePositions})
     return viablePositions
   },
   pathIsClear: function(startPosition, endPosition, movementType, layOut){
@@ -531,7 +523,30 @@ var KingController = function() {
     this.srcImgWhite = "img/chesspieces/wikipedia/wK.png"
     this.srcImgBlack = "img/chesspieces/wikipedia/bK.png"
     this.name = "king"
+    this.kingSideCastleAllowed = function(args){
+      var board = args["board"],
+        startPosition = args["startPosition"];
+      return board.pieceHasNotMovedFrom( startPosition ) && board.kingSideRookHasNotMoved( startPosition ) && board.kingSideCastleIsClear( startPosition )
+    },
+    this.addSpecialMoves = function(args){
+      var startPosition = args["startPosition"],
+        board = args["board"],
+        viablePositions = args["viablePositions"];
+      // check for pieces blocking
+      // check for moving through out of or into check
+      // also needs to be verifying that the positions in between are empty and that the positions are not in check
 
+      // technically it should not be possible to end up checking a pieceController possiblemoves from a position it doesn't occupy, but it's worth making sure that can't happen
+      // if( board.pieceTypeAt(startPosition) === "King" && 
+      if( board.pieceHasNotMovedFrom(startPosition) ){
+        if( board.queenSideRookHasNotMoved(startPosition) ){
+          viablePositions.push( startPosition - 2 )
+        }
+        if( board.kingSideRookHasNotMoved(startPosition) ){
+          viablePositions.push( startPosition + 2 )
+        }
+      };
+    }
 };
 KingController.prototype = Object.create(PieceController.prototype);
 KingController.prototype.constructor = KingController;
