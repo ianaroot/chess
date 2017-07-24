@@ -61,6 +61,27 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  kingSideRookHasNotMoved: function(kingPosition){
+    var kingSideRookStartPosition = kingPosition + 3;
+    return (this.pieceTypeAt( kingSideRookStartPosition ) ==="Rook") && this.pieceHasNotMovedFrom( kingSideRookStartPosition )
+  },
+  queenSideRookHasNotMoved: function(kingPosition){
+    var queenSideRookStartPosition = kingPosition - 4;
+    return (this.pieceTypeAt( queenSideRookStartPosition ) ==="Rook") && this.pieceHasNotMovedFrom( queenSideRookStartPosition )
+  },
+  pieceHasNotMovedFrom: function(position){
+    var pieceString = this.layOut[position],
+      previousLayouts = this.previousLayouts,
+      pieceHasNotMoved = true;
+    for(var i = 0; i < previousLayouts.length; i++){
+      var previousLayout = previousLayouts[i];
+      if(previousLayout[position] !== pieceString ){
+        pieceHasNotMoved = false
+        break;
+      };
+    };
+    return pieceHasNotMoved
+  },
   emptify: function(position){
     this.layOut[position] = "empty"
   },

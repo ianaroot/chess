@@ -53,6 +53,15 @@ PieceController.prototype = {
           };
         };
     };
+    // also needs to be verifying that the positions in between are empty and that the positions are not in check
+    if( board.pieceTypeAt(startPosition) === "King" && board.pieceHasNotMovedFrom(startPosition) ){
+      if( board.queenSideRookHasNotMoved(startPosition) ){
+        viablePositions.push( startPosition - 2 )
+      }
+      if( board.kingSideRookHasNotMoved(startPosition) ){
+        viablePositions.push( startPosition + 2 )
+      }
+    };
     return viablePositions
   },
   pathIsClear: function(startPosition, endPosition, movementType, layOut){
