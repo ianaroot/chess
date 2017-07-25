@@ -13,8 +13,6 @@ PieceController.prototype = {
     var board = args["board"],
       startPosition = args["startPosition"],
       endPosition = args["endPosition"],
-      // movementType = this.movementDirectionFinder(startPosition, endPosition),
-
       viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board} ),
       viable = false;
     for(var i = 0; i < viablePositions.length; i++){
@@ -110,91 +108,8 @@ PieceController.prototype = {
     }
     return cheat
   },
-  movementDirectionFinder: function(startPosition, endPosition){
-    var queries = this.movements.vagueQueries,
-        movementDirection;
-    if ( queries.up(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
-      movementDirection = this.movements.directional.verticalUp
-    } else if ( queries.down(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
-      movementDirection = this.movements.directional.verticalDown
-    } else if ( queries.horizontal(startPosition, endPosition) && queries.left(startPosition, endPosition) ){
-      movementDirection = this.movements.directional.horizontalLeft
-    } else if ( queries.horizontal(startPosition, endPosition) && queries.right(startPosition, endPosition) ){
-      movementDirection = this.movements.directional.horizontalRight
-    } else if ( queries.down(startPosition, endPosition) && queries.vertical(startPosition, endPosition) ){
-      movementDirection = this.movements.directional.verticalDown
-    } else if ( queries.down(startPosition, endPosition) && queries.backSlash(startPosition, endPosition) ){
-      movementDirection = this.movements.directional.backSlashDown
-    } else if ( queries.up(startPosition, endPosition) && queries.backSlash(startPosition, endPosition) ){
-      movementDirection = this.movements.directional.backSlashUp
-    } else if ( queries.down(startPosition, endPosition) && queries.forwardSlash(startPosition, endPosition) ){
-      movementDirection = this.movements.directional.forwardSlashDown
-    } else if ( queries.up(startPosition, endPosition) && queries.forwardSlash(startPosition, endPosition) ){
-      movementDirection = this.movements.directional.forwardSlashUp
-    } else if ( queries.nights(startPosition, endPosition) ){
-        if ( startPosition + 17 === endPosition ){
-          movementDirection = this.movements.directional.nightVerticalRightUp
-          movementDirection.rangeLimit = 1
-        }
-        if ( startPosition + 15 === endPosition ){
-          movementDirection = this.movements.directional.nightVerticalLeftUp
-          movementDirection.rangeLimit = 1
-        };
-        if ( startPosition - 17 === endPosition ){
-          movementDirection = this.movements.directional.nightVerticalLeftDown
-          movementDirection.rangeLimit = 1
-        }
-        if ( startPosition - 15 === endPosition ){
-          movementDirection = this.movements.directional.nightVerticalRightDown
-          movementDirection.rangeLimit = 1
-        };
-
-        if ( startPosition + 10 === endPosition ){
-          movementDirection = this.movements.directional.nightHorizontalRightUp
-          movementDirection.rangeLimit = 1
-        }
-        if ( startPosition + 6 === endPosition ){
-          movementDirection = this.movements.directional.nightVerticalLeftUp
-          movementDirection.rangeLimit = 1
-        };
-        if ( startPosition - 10 === endPosition ){
-          movementDirection = this.movements.directional.nightHorizontalLeftDown
-          movementDirection.rangeLimit = 1
-        }
-        if ( startPosition - 6 === endPosition ){
-          movementDirection = this.movements.directional.nightHorizontalRightDown
-          movementDirection.rangeLimit = 1
-        };
-    }
-    return movementDirection
-  },
-  positionIsInPaths: function(args){
-    // there are faster ways to calculate what i'm using this for
-    var position = args["position"],
-        newPosition = args["newPosition"],
-        layOut = args["layOut"],
-        paths = this.allPathsFinder(layOut, position);
-        // paths will be part of the input coming from the piece
-        // paths = rules.allPathsFinder(piece),
-        positionViable = false;
-    for( var i = 0; i < paths.length; i ++){
-      var path = paths[i]
-      for( var j = 0; j < path.length; j++){
-        if( path[j] === newPosition ){ positionViable = true }
-      };
-    };
-    return positionViable
-  },
-  ranks: {
-    isSecond: function(position){
-      return Board.classMethods.ranks.isSecond(position)
-    },
-    isSeventh: function(position){
-      return Board.classMethods.ranks.isSeventh(position)
-    }
-  },
   movements: {
-    directional: {
+    generic: {
       verticalUp: function(){
         return {
           increment: "+8",
@@ -356,11 +271,11 @@ PieceController.prototype = {
         }
       }
     },
-    sets: {
+    pieceSpecific: {
       night: function(){
-        var moves = [this.movements.directional.nightHorizontalRightDown(), this.movements.directional.nightHorizontalLeftDown(), this.movements.directional.nightVerticalRightDown(),
-                      this.movements.directional.nightVerticalLeftDown(), this.movements.directional.nightHorizontalRightUp(), this.movements.directional.nightHorizontalLeftUp(),
-                      this.movements.directional.nightVerticalRightUp(), this.movements.directional.nightVerticalLeftUp()
+        var moves = [this.movements.generic.nightHorizontalRightDown(), this.movements.generic.nightHorizontalLeftDown(), this.movements.generic.nightVerticalRightDown(),
+                      this.movements.generic.nightVerticalLeftDown(), this.movements.generic.nightHorizontalRightUp(), this.movements.generic.nightHorizontalLeftUp(),
+                      this.movements.generic.nightVerticalRightUp(), this.movements.generic.nightVerticalLeftUp()
                     ];
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
@@ -370,7 +285,7 @@ PieceController.prototype = {
         return  moves
       },
       rook: function(){
-        var moves = [this.movements.directional.horizontalRight(), this.movements.directional.horizontalLeft(), this.movements.directional.verticalUp(), this.movements.directional.verticalDown()]
+        var moves = [this.movements.generic.horizontalRight(), this.movements.generic.horizontalLeft(), this.movements.generic.verticalUp(), this.movements.generic.verticalDown()]
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
             moves[key].rangeLimit = 7 ;
@@ -379,7 +294,7 @@ PieceController.prototype = {
         return moves
       },
       bishop: function(){
-        var moves = [this.movements.directional.forwardSlashDown(), this.movements.directional.forwardSlashUp(), this.movements.directional.backSlashDown(), this.movements.directional.backSlashUp()]
+        var moves = [this.movements.generic.forwardSlashDown(), this.movements.generic.forwardSlashUp(), this.movements.generic.backSlashDown(), this.movements.generic.backSlashUp()]
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
             moves[key].rangeLimit = 7 ;
@@ -388,10 +303,10 @@ PieceController.prototype = {
         return moves
       },
       queen: function(){
-        // scoping error is cause this to be sets, not the piececontroller when we get in the sets.rook
-        // return this.movements.sets.rook().concat( this.movements.sets.bishop() )
-        var moves = [this.movements.directional.horizontalRight(), this.movements.directional.horizontalLeft(), this.movements.directional.verticalUp(), this.movements.directional.verticalDown(),
-          this.movements.directional.forwardSlashDown(), this.movements.directional.forwardSlashUp(), this.movements.directional.backSlashDown(), this.movements.directional.backSlashUp()
+        // scoping error is cause this to be pieceSpecific, not the piececontroller when we get in the pieceSpecific.rook
+        // return this.movements.pieceSpecific.rook().concat( this.movements.pieceSpecific.bishop() )
+        var moves = [this.movements.generic.horizontalRight(), this.movements.generic.horizontalLeft(), this.movements.generic.verticalUp(), this.movements.generic.verticalDown(),
+          this.movements.generic.forwardSlashDown(), this.movements.generic.forwardSlashUp(), this.movements.generic.backSlashDown(), this.movements.generic.backSlashUp()
         ]
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
@@ -401,8 +316,8 @@ PieceController.prototype = {
         return moves
       },
       king: function(){
-        var moves = [this.movements.directional.horizontalRight(), this.movements.directional.horizontalLeft(), this.movements.directional.verticalUp(), this.movements.directional.verticalDown(),
-        this.movements.directional.forwardSlashDown(), this.movements.directional.forwardSlashUp(), this.movements.directional.backSlashDown(), this.movements.directional.backSlashUp()
+        var moves = [this.movements.generic.horizontalRight(), this.movements.generic.horizontalLeft(), this.movements.generic.verticalUp(), this.movements.generic.verticalDown(),
+        this.movements.generic.forwardSlashDown(), this.movements.generic.forwardSlashUp(), this.movements.generic.backSlashDown(), this.movements.generic.backSlashUp()
         ]
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
@@ -413,7 +328,7 @@ PieceController.prototype = {
       },
       whitePawn: function(){
         var moves = {
-          forwardSlashUp: this.movements.directional.forwardSlashUp(), backSlashUp: this.movements.directional.backSlashUp(), verticalUp: this.movements.directional.verticalUp(), verticalUpTwoStep: this.movements.directional.verticalUp()
+          forwardSlashUp: this.movements.generic.forwardSlashUp(), backSlashUp: this.movements.generic.backSlashUp(), verticalUp: this.movements.generic.verticalUp(), verticalUpTwoStep: this.movements.generic.verticalUp()
         }
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
@@ -454,61 +369,30 @@ PieceController.prototype = {
       },
     }
   },
-  allPathsFinder: function(layOut, position, team){
-    var paths = [];
-    for(inc = 0; inc < this.directionalMovements.length; inc++){
-      paths.push(this.pathFinder(this.directionalMovements[inc], position, team))
-      }
-    return paths
-  },
-  pathFinder: function(move, position, team){
-    var increment = move["increment"],
-        boundaryCheck = move["boundaryCheck"],
-        rangeLimit = move["rangeLimit"],
-        path = [];
-    for (i = 1; boundaryCheck(i, increment, position) && i <= rangeLimit; i++){
-      pathPosition = position + i * increment
-      if( board.tiles[pathPosition] !== undefined && board.tiles[pathPosition].team === team ){ break; }
-      path.push(pathPosition)
-    }
-    return path
-  }
 
 }
 var NightController = function() {
-    var newMoves = this.movements.sets.night
+    var newMoves = this.movements.pieceSpecific.night
     PieceController.apply(this, arguments);
     this.directionalMovements = newMoves
-    this.value = 3
-    this.srcImgWhite = "img/chesspieces/wikipedia/wN.png"
-    this.srcImgBlack = "img/chesspieces/wikipedia/bN.png"
-    this.name = "night"
 
 };
 NightController.prototype = Object.create(PieceController.prototype);
 NightController.prototype.constructor = NightController;
 
 var RookController = function() {
-    var newMoves = this.movements.sets.rook
+    var newMoves = this.movements.pieceSpecific.rook
     PieceController.apply(this, arguments);
     this.directionalMovements = newMoves
-    this.value = 3
-    this.srcImgWhite = "img/chesspieces/wikipedia/wR.png"
-    this.srcImgBlack = "img/chesspieces/wikipedia/bR.png"
-    this.name = "rook"
 
 };
 RookController.prototype = Object.create(PieceController.prototype);
 RookController.prototype.constructor = RookController;
 
 var BishopController = function() {
-    var newMoves = this.movements.sets.bishop
+    var newMoves = this.movements.pieceSpecific.bishop
     PieceController.apply(this, arguments);
     this.directionalMovements = newMoves
-    this.value = 3
-    this.srcImgWhite = "img/chesspieces/wikipedia/wB.png"
-    this.srcImgBlack = "img/chesspieces/wikipedia/bB.png"
-    this.name = "bishop"
 
 };
 BishopController.prototype = Object.create(PieceController.prototype);
@@ -516,13 +400,9 @@ BishopController.prototype.constructor = BishopController;
 
 
 var KingController = function() {
-    var newMoves = this.movements.sets.king
+    var newMoves = this.movements.pieceSpecific.king
     PieceController.apply(this, arguments);
     this.directionalMovements = newMoves
-    this.value = 3
-    this.srcImgWhite = "img/chesspieces/wikipedia/wK.png"
-    this.srcImgBlack = "img/chesspieces/wikipedia/bK.png"
-    this.name = "king"
     this.kingSideCastleAllowed = function(args){
       var board = args["board"],
         startPosition = args["startPosition"];
@@ -553,13 +433,9 @@ KingController.prototype.constructor = KingController;
 
 
 var QueenController = function() {
-    var newMoves = this.movements.sets.queen
+    var newMoves = this.movements.pieceSpecific.queen
     PieceController.apply(this, arguments);
     this.directionalMovements = newMoves
-    this.value = 3
-    this.srcImgWhite = "img/chesspieces/wikipedia/wQ.png"
-    this.srcImgBlack = "img/chesspieces/wikipedia/bQ.png"
-    this.name = "queen"
 
 };
 QueenController.prototype = Object.create(PieceController.prototype);
@@ -568,27 +444,25 @@ QueenController.prototype.constructor = QueenController;
 
 var WhitePawnController = function(){
   PieceController.apply(this, arguments);
-  this.name = "whitePawn";
-  this.value = 1
   this.directionalMovements = function(layOut, position){
     var movements = [];
     if( Board.classMethods.ranks.isSecond(position) && this.twoSpacesUpIsEmpty( layOut, position ) ){
-      var newPossibility = this.movements.directional.verticalUp()
+      var newPossibility = this.movements.generic.verticalUp()
       newPossibility.rangeLimit = 2
       movements = movements.concat(newPossibility)
     };
     if( this.oneSpaceUpIsEmpty(layOut, position) ){
-      var newPossibility = this.movements.directional.verticalUp()
+      var newPossibility = this.movements.generic.verticalUp()
       newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
     if( this.upAndLeftIsAttackable(layOut, position) ){
-      var newPossibility = this.movements.directional.backSlashUp()
+      var newPossibility = this.movements.generic.backSlashUp()
       newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
     if( this.upAndRightIsAttackable(layOut, position) ){
-      var newPossibility = this.movements.directional.forwardSlashUp()
+      var newPossibility = this.movements.generic.forwardSlashUp()
       newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
@@ -633,27 +507,25 @@ WhitePawnController.prototype.constructor = WhitePawnController;
 
 var BlackPawnController = function(){
   PieceController.apply(this, arguments);
-  this.name = "blackPawn";
-  this.value = 1
   this.directionalMovements = function(layOut, position){
     var movements = [];
     if( Board.classMethods.ranks.isSeventh(position) && this.twoSpacesDownIsEmpty(layOut, position) ){
-      var newPossibility = this.movements.directional.verticalDown()
+      var newPossibility = this.movements.generic.verticalDown()
       newPossibility.rangeLimit = 2
       movements = movements.concat(newPossibility)
     };
     if( this.oneSpaceDownIsEmpty(layOut, position) ){
-      var newPossibility = this.movements.directional.verticalDown()
+      var newPossibility = this.movements.generic.verticalDown()
       newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
     if( this.downAndLeftIsAttackable(layOut, position) ){
-      var newPossibility = this.movements.directional.forwardSlashDown()
+      var newPossibility = this.movements.generic.forwardSlashDown()
       newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
     if( this.downAndRightIsAttackable(layOut, position) ){
-      var newPossibility = this.movements.directional.backSlashDown()
+      var newPossibility = this.movements.generic.backSlashDown()
       newPossibility.rangeLimit = 1
       movements = movements.concat(newPossibility)
     };
