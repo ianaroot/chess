@@ -51,7 +51,8 @@ var Rules = function () {
       for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
         var startPosition = occcupiedPositions[i],
         pieceController = this.retrieveControllerForPosition(startPosition),
-        viablePositions = pieceController.viablePositionsFrom({startPosition: startPosition, board: board});
+
+        viablePositions = PieceController.getInstance().viablePositionsFrom({startPosition: startPosition, board: board, pieceMovements: pieceController});
         for(var j = 0; j < viablePositions.length && noLegalMoves; j++){
           var endPosition = viablePositions[j];
           // only checking kingCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
@@ -76,7 +77,7 @@ var Rules = function () {
       } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
         alert("what, are you trying to capture your own piece?")
         illegal = true
-      } else if( !pieceController.positionViable( {startPosition: startPosition, endPosition: endPosition, board: board} ) ) {
+      } else if( !PieceController.getInstance().positionViable( {startPosition: startPosition, endPosition: endPosition, board: board, pieceMovements: pieceController} ) ) {
         alert("that's not how that piece moves")
         illegal = true
       } else if( this.kingCheck( {startPosition: startPosition, endPosition: endPosition, board: board})){
@@ -89,9 +90,11 @@ var Rules = function () {
       var  positionString = layOut[position],
         stringLength = positionString.length,
         pieceType = positionString.substring(5, stringLength)
-      ;
-      if( pieceType === "Pawn" ){ pieceType = positionString.charAt(0).toUpperCase() + positionString.slice(1) }
-      pieceController = this.pieceControllerSet[pieceType]
+        pieceType = pieceType.charAt(0).toLowerCase() + pieceType.slice(1);
+      if( pieceType === "pawn" ){ pieceType = positionString }
+      // pieceController = this.pieceControllerSet[pieceType]
+    // debugger
+      pieceController = PieceController.getInstance().movements.pieceSpecific[pieceType]
       return pieceController
     },
     kingCheck: function(args){
@@ -123,7 +126,8 @@ var Rules = function () {
       for(var i = 0; i < enemyPositions.length; i++){
         var enemyPosition = enemyPositions[i],
           pieceController = this.retrieveControllerForPosition( enemyPosition );
-          if( pieceController.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
+          // debugger
+          if( PieceController.getInstance().positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard, pieceMovements: pieceController} ) ){
           danger = true
           }
       };

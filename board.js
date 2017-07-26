@@ -61,6 +61,64 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  oneSpaceDownIsEmpty: function(position){
+    return this.positionEmpty(position - 8)
+  },
+  twoSpacesDownIsEmpty: function(position){
+    return this.positionEmpty(position - 16)
+  },
+  downAndLeftIsAttackable: function(args){
+    var position = args["position"],
+      attackingTeamString = args["attackingTeamString"];
+    if( Board.classMethods.inBounds( position - 9 )){ 
+      var pieceString = this.layOut[position - 9],
+        pieceTeam = pieceString.substring(0,5);
+      return pieceTeam !== attackingTeamString && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 9)
+    } else {
+      // down and left would be off board
+      return false
+    }
+  },
+  downAndRightIsAttackable: function(args){
+    var position = args["position"],
+      attackingTeamString = args["attackingTeamString"];
+    if( Board.classMethods.inBounds( position - 7 ) ){
+      var pieceString = this.layOut[position - 7],
+        pieceTeam = pieceString.substring(0,5);
+      return pieceTeam !== attackingTeamString && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 7)
+    } else {
+      return false
+    }
+  },
+  twoSpacesUpIsEmpty: function(position){
+    return this.positionEmpty( position + 16)
+  },
+  oneSpaceUpIsEmpty: function(position){
+    return this.positionEmpty( position + 8)
+  },
+  upAndLeftIsAttackable: function(args){
+    var position = args["position"],
+      attackingTeamString = args["attackingTeamString"];
+    if( Board.classMethods.inBounds( position + 7)){
+      var pieceString = this.layOut[position + 7],
+        pieceTeam = pieceString.substring(0,5);
+        // this needs to leverage the occupiedByOpponent function and that function needs to be more wary of empties
+      return pieceTeam !== attackingTeamString && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 7)
+    } else {
+      return false
+    }
+  },
+  upAndRightIsAttackable: function(args){
+    var position = args["position"],
+      attackingTeamString = args["attackingTeamString"];
+    if( Board.classMethods.inBounds( position + 9)){
+      var pieceString = this.layOut[position + 9],
+        pieceTeam = pieceString.substring(0,5);
+      return pieceTeam !== attackingTeamString && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 9)
+    } else {
+      return false
+    }
+  },
   kingSideCastleIsClear: function(kingPosition){
     return this.positionEmpty(kingPosition + 1) && this.positionEmpty(kingPosition + 2 )
   },

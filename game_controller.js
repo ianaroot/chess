@@ -5,38 +5,39 @@ var board1 = ChessBoard('board1');
 var GameController = (function(){
   var instance = {
     view: View.getInstance(),
-    rules: (function(){
-      var rules = Rules.getInstance();
-      rules.pieceControllerSet = {
-        Queen: new QueenController(),
-        Rook: new RookController(),
-        Bishop: new BishopController(),
-        Night: new NightController(),
-        King: new KingController(),
-        BlackPawn: new BlackPawnController(),
-        WhitePawn: new WhitePawnController()
-      }
-      return rules
-    })(),
+    rules: Rules.getInstance(),
+    // rules: (function(){
+      // var rules = Rules.getInstance();
+      // rules.pieceControllerSet = {
+      //   Queen: new QueenController(),
+      //   Rook: new RookController(),
+      //   Bishop: new BishopController(),
+      //   Night: new NightController(),
+      //   King: new KingController(),
+      //   BlackPawn: new BlackPawnController(),
+      //   WhitePawn: new WhitePawnController()
+      // }
+      // return rules
+    // })(),
     board: new Board({layOut: 
       
-      ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
-       "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
-       "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
-       "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",],
+      // ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
+      //  "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
+      //  "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
+      //  "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",],
 
-      // ["whiteKing", "empty", "empty", "empty", "empty", "empty", "empty", "whiteQueen", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "whitePawn", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "blackPawn", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "whiteRook", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "blackKing", "empty", ],
+      ["whiteKing", "empty", "empty", "empty", "empty", "empty", "empty", "whiteQueen", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "whitePawn", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "blackPawn", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "whiteRook", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+       "empty", "empty", "empty", "empty", "empty", "empty", "blackKing", "empty", ],
 
       // [
       //  "blackRook", "blackKing", "empty", "whiteKing", "empty", "empty", "whiteBishop", "empty", 
@@ -115,7 +116,7 @@ var GameController = (function(){
       gC.createTeams()
       gC.view.displayBoard(gC.board.layOut)
       gC.begin()
-      setTimeout( function(){ gC.move(1,  18) }, 500)
+      // setTimeout( function(){ gC.move(1,  18) }, 500)
       // setTimeout( function(){ gC.move(50, 42) }, 1000)
       // setTimeout( function(){ gC.move(11, 27) }, 1500)
       // setTimeout( function(){ gC.move(59, 32) }, 2000)
@@ -130,7 +131,6 @@ var GameController = (function(){
       // setTimeout( function(){ gC.move(15, 23)},  6500)
       // setTimeout( function(){ gC.move(58, 23)},  7000)
       // setTimeout( function(){ gC.move(19, 33)},  7500)
-
       // setTimeout( function(){ gC.move(57, 42)},  8000)
       // setTimeout( function(){ gC.move(33, 49)},  8500)
       // setTimeout( function(){ gC.move(35, 27)},  9000)
