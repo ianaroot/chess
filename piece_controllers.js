@@ -1,9 +1,9 @@
 // search for equals, deglobalize scope slippage
-var PieceController = function(){
-  // if (this.constructor === PieceController) {
+var PieceMovementRules = function(){
+  // if (this.constructor === PieceMovementRules) {
   //   throw new Error("Can't instantiate abstract class!");
   // }
-  // PieceController initialization...
+  // PieceMovementRules initialization...
   var instance = {
     addSpecialMoves: function(){
       // only some pieceController types use this method, but it should be able to be called by all without errors
@@ -273,9 +273,9 @@ var PieceController = function(){
       },
       pieceSpecific: {
         night: function(){
-          var moves = [PieceController.getInstance().movements.generic.nightHorizontalRightDown(), PieceController.getInstance().movements.generic.nightHorizontalLeftDown(), PieceController.getInstance().movements.generic.nightVerticalRightDown(),
-                        PieceController.getInstance().movements.generic.nightVerticalLeftDown(), PieceController.getInstance().movements.generic.nightHorizontalRightUp(), PieceController.getInstance().movements.generic.nightHorizontalLeftUp(),
-                        PieceController.getInstance().movements.generic.nightVerticalRightUp(), PieceController.getInstance().movements.generic.nightVerticalLeftUp()
+          var moves = [PieceMovementRules.getInstance().movements.generic.nightHorizontalRightDown(), PieceMovementRules.getInstance().movements.generic.nightHorizontalLeftDown(), PieceMovementRules.getInstance().movements.generic.nightVerticalRightDown(),
+                        PieceMovementRules.getInstance().movements.generic.nightVerticalLeftDown(), PieceMovementRules.getInstance().movements.generic.nightHorizontalRightUp(), PieceMovementRules.getInstance().movements.generic.nightHorizontalLeftUp(),
+                        PieceMovementRules.getInstance().movements.generic.nightVerticalRightUp(), PieceMovementRules.getInstance().movements.generic.nightVerticalLeftUp()
                       ];
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
@@ -285,7 +285,7 @@ var PieceController = function(){
           return  moves
         },
         rook: function(){
-          var moves = [PieceController.getInstance().movements.generic.horizontalRight(), PieceController.getInstance().movements.generic.horizontalLeft(), PieceController.getInstance().movements.generic.verticalUp(), PieceController.getInstance().movements.generic.verticalDown()]
+          var moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown()]
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
               moves[key].rangeLimit = 7 ;
@@ -294,7 +294,7 @@ var PieceController = function(){
           return moves
         },
         bishop: function(){
-          var moves = [PieceController.getInstance().movements.generic.forwardSlashDown(), PieceController.getInstance().movements.generic.forwardSlashUp(), PieceController.getInstance().movements.generic.backSlashDown(), PieceController.getInstance().movements.generic.backSlashUp()]
+          var moves = [PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()]
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
               moves[key].rangeLimit = 7 ;
@@ -303,10 +303,10 @@ var PieceController = function(){
           return moves
         },
         queen: function(){
-          // scoping error is cause PieceController.getInstance() to be pieceSpecific, not the piececontroller when we get in the pieceSpecific.rook
-          // return PieceController.getInstance().movements.pieceSpecific.rook().concat( PieceController.getInstance().movements.pieceSpecific.bishop() )
-          var moves = [PieceController.getInstance().movements.generic.horizontalRight(), PieceController.getInstance().movements.generic.horizontalLeft(), PieceController.getInstance().movements.generic.verticalUp(), PieceController.getInstance().movements.generic.verticalDown(),
-            PieceController.getInstance().movements.generic.forwardSlashDown(), PieceController.getInstance().movements.generic.forwardSlashUp(), PieceController.getInstance().movements.generic.backSlashDown(), PieceController.getInstance().movements.generic.backSlashUp()
+          // scoping error is cause PieceMovementRules.getInstance() to be pieceSpecific, not the piececontroller when we get in the pieceSpecific.rook
+          // return PieceMovementRules.getInstance().movements.pieceSpecific.rook().concat( PieceMovementRules.getInstance().movements.pieceSpecific.bishop() )
+          var moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown(),
+            PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()
           ]
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
@@ -316,8 +316,8 @@ var PieceController = function(){
           return moves
         },
         king: function(){
-          var moves = [PieceController.getInstance().movements.generic.horizontalRight(), PieceController.getInstance().movements.generic.horizontalLeft(), PieceController.getInstance().movements.generic.verticalUp(), PieceController.getInstance().movements.generic.verticalDown(),
-          PieceController.getInstance().movements.generic.forwardSlashDown(), PieceController.getInstance().movements.generic.forwardSlashUp(), PieceController.getInstance().movements.generic.backSlashDown(), PieceController.getInstance().movements.generic.backSlashUp()
+          var moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown(),
+          PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()
           ]
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
@@ -331,22 +331,22 @@ var PieceController = function(){
             startPosition = args["startPosition"],
             movements = [];
           if( Board.classMethods.ranks.isSecond(startPosition) && board.twoSpacesUpIsEmpty( startPosition ) ){
-            var newPossibility = PieceController.getInstance().movements.generic.verticalUp()
+            var newPossibility = PieceMovementRules.getInstance().movements.generic.verticalUp()
             newPossibility.rangeLimit = 2
             movements = movements.concat(newPossibility)
           };
           if( board.oneSpaceUpIsEmpty(startPosition) ){
-            var newPossibility = PieceController.getInstance().movements.generic.verticalUp()
+            var newPossibility = PieceMovementRules.getInstance().movements.generic.verticalUp()
             newPossibility.rangeLimit = 1
             movements = movements.concat(newPossibility)
           };
           if( board.upAndLeftIsAttackable({position: startPosition, attackingTeamString: "white"}) ){
-            var newPossibility = PieceController.getInstance().movements.generic.backSlashUp()
+            var newPossibility = PieceMovementRules.getInstance().movements.generic.backSlashUp()
             newPossibility.rangeLimit = 1
             movements = movements.concat(newPossibility)
           };
           if( board.upAndRightIsAttackable({position: startPosition, attackingTeamString: "white"}) ){
-            var newPossibility = PieceController.getInstance().movements.generic.forwardSlashUp()
+            var newPossibility = PieceMovementRules.getInstance().movements.generic.forwardSlashUp()
             newPossibility.rangeLimit = 1
             movements = movements.concat(newPossibility)
           };
@@ -357,22 +357,22 @@ var PieceController = function(){
           startPosition = args["startPosition"],
           movements = []
           if( Board.classMethods.ranks.isSeventh(startPosition) && board.twoSpacesDownIsEmpty(startPosition) ){
-            var newPossibility = PieceController.getInstance().movements.generic.verticalDown()
+            var newPossibility = PieceMovementRules.getInstance().movements.generic.verticalDown()
             newPossibility.rangeLimit = 2
             movements = movements.concat(newPossibility)
           };
           if( board.oneSpaceDownIsEmpty(startPosition) ){
-            var newPossibility = PieceController.getInstance().movements.generic.verticalDown()
+            var newPossibility = PieceMovementRules.getInstance().movements.generic.verticalDown()
             newPossibility.rangeLimit = 1
             movements = movements.concat(newPossibility)
           };
           if( board.downAndLeftIsAttackable({position: startPosition, attackingTeamString: "black"}) ){
-            var newPossibility = PieceController.getInstance().movements.generic.forwardSlashDown()
+            var newPossibility = PieceMovementRules.getInstance().movements.generic.forwardSlashDown()
             newPossibility.rangeLimit = 1
             movements = movements.concat(newPossibility)
           };
           if( board.downAndRightIsAttackable({position: startPosition, attackingTeamString: "black"}) ){
-            var newPossibility = PieceController.getInstance().movements.generic.backSlashDown()
+            var newPossibility = PieceMovementRules.getInstance().movements.generic.backSlashDown()
             newPossibility.rangeLimit = 1
             movements = movements.concat(newPossibility)
           };
@@ -429,36 +429,36 @@ var PieceController = function(){
 
 
 // var NightController = function() {
-//     var newMoves = PieceController.getInstance().movements.pieceSpecific.night
-//     PieceController.apply(this, arguments);
+//     var newMoves = PieceMovementRules.getInstance().movements.pieceSpecific.night
+//     PieceMovementRules.apply(this, arguments);
 //     this.directionalMovements = newMoves
 
 // };
-// NightController.prototype = Object.create(PieceController.prototype);
+// NightController.prototype = Object.create(PieceMovementRules.prototype);
 // NightController.prototype.constructor = NightController;
 
 // var RookController = function() {
 //     var newMoves = this.movements.pieceSpecific.rook
-//     PieceController.apply(this, arguments);
+//     PieceMovementRules.apply(this, arguments);
 //     this.directionalMovements = newMoves
 
 // };
-// RookController.prototype = Object.create(PieceController.prototype);
+// RookController.prototype = Object.create(PieceMovementRules.prototype);
 // RookController.prototype.constructor = RookController;
 
 // var BishopController = function() {
 //     var newMoves = this.movements.pieceSpecific.bishop
-//     PieceController.apply(this, arguments);
+//     PieceMovementRules.apply(this, arguments);
 //     this.directionalMovements = newMoves
 
 // };
-// BishopController.prototype = Object.create(PieceController.prototype);
+// BishopController.prototype = Object.create(PieceMovementRules.prototype);
 // BishopController.prototype.constructor = BishopController;
 
 
 // var KingController = function() {
 //     var newMoves = this.movements.pieceSpecific.king
-//     PieceController.apply(this, arguments);
+//     PieceMovementRules.apply(this, arguments);
 //     this.directionalMovements = newMoves
 //     this.kingSideCastleAllowed = function(args){
 //       var board = args["board"],
@@ -485,22 +485,22 @@ var PieceController = function(){
 //       };
 //     }
 // };
-// KingController.prototype = Object.create(PieceController.prototype);
+// KingController.prototype = Object.create(PieceMovementRules.prototype);
 // KingController.prototype.constructor = KingController;
 
 
 // var QueenController = function() {
 //     var newMoves = this.movements.pieceSpecific.queen
-//     PieceController.apply(this, arguments);
+//     PieceMovementRules.apply(this, arguments);
 //     this.directionalMovements = newMoves
 
 // };
-// QueenController.prototype = Object.create(PieceController.prototype);
+// QueenController.prototype = Object.create(PieceMovementRules.prototype);
 // QueenController.prototype.constructor = QueenController;
 
 
 // var WhitePawnController = function(){
-//   PieceController.apply(this, arguments);
+//   PieceMovementRules.apply(this, arguments);
 //   this.directionalMovements = function(layOut, position){
 //     var movements = [];
 //     if( Board.classMethods.ranks.isSecond(position) && this.twoSpacesUpIsEmpty( layOut, position ) ){
@@ -558,12 +558,12 @@ var PieceController = function(){
 //     }
 //   }
 // };
-// WhitePawnController.prototype = Object.create(PieceController.prototype);
+// WhitePawnController.prototype = Object.create(PieceMovementRules.prototype);
 // WhitePawnController.prototype.constructor = WhitePawnController;
 
 
 // var BlackPawnController = function(){
-//   PieceController.apply(this, arguments);
+//   PieceMovementRules.apply(this, arguments);
 //   this.directionalMovements = function(layOut, position){
 //     var movements = [];
 //     if( Board.classMethods.ranks.isSeventh(position) && this.twoSpacesDownIsEmpty(layOut, position) ){
@@ -621,5 +621,5 @@ var PieceController = function(){
 //     }
 //   }
 // };
-// BlackPawnController.prototype = Object.create(PieceController.prototype);
+// BlackPawnController.prototype = Object.create(PieceMovementRules.prototype);
 // BlackPawnController.prototype.constructor = BlackPawnController;
