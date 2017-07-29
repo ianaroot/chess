@@ -46,7 +46,6 @@ var Rules = function () {
       } else {
         onDeckTeamString = "black"
       }
-
       var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
       for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
         var startPosition = occcupiedPositions[i],

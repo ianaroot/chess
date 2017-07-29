@@ -102,7 +102,6 @@ Board.prototype = {
     if( Board.classMethods.inBounds( position + 7)){
       var pieceString = this.layOut[position + 7],
         pieceTeam = pieceString.substring(0,5);
-        // this needs to leverage the occupiedByOpponent function and that function needs to be more wary of empties
       return this.occupiedByOpponent({position: position + 7, teamString: attackingTeamString}) && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 7)
     } else {
       return false
