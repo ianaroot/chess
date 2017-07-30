@@ -197,7 +197,6 @@ Board.prototype = {
     return pieceType
   },
   positionIsOccupiedByTeamMate: function(position, team){
-    // factor out this !== empty nonsense
     return ( !this.positionEmpty(position) && this.teamAt(position) === team  )
   },
   positionEmpty: function(position){

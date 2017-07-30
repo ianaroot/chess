@@ -1,8 +1,9 @@
-// pieceControllerSet must be defined by the gameController when creating Rules singleton, not the best approach,
+// pieceControllerSet must be defined by the gameController when creating PostMovementRules singleton, not the best approach,
 // but there were lots of arguments on the internet about dependency injection and singltons in js, and i just wanted something to work. will address later
 
 // tells you it's the other team's turn if you try to move from an empty square
-var Rules = function () {
+var PostMovementRules = function (pieceMovementRules) {
+  console.log("pieceMovementRules is " + pieceMovementRules)
   var instance = {
     pawnPromotionQuery: function(board){
       var layOut = board.layOut;
@@ -48,14 +49,16 @@ var Rules = function () {
       }
       var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
       for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
+        
         var startPosition = occcupiedPositions[i],
-        pieceController = this.retrieveControllerForPosition(startPosition),
+        // parts of this need to move over to the pieceMvementPostMovementRules
+        pieceController = pieceMovementRules.retrieveControllerForPosition(startPosition),
 
-        viablePositions = PieceMovementRules.getInstance().viablePositionsFrom({startPosition: startPosition, board: board, pieceMovements: pieceController});
+        viablePositions = pieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board, pieceMovements: pieceController});
         for(var j = 0; j < viablePositions.length && noLegalMoves; j++){
           var endPosition = viablePositions[j];
           // only checking kingCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
-          if( !this.kingCheck( {startPosition: startPosition, endPosition: endPosition, board: board}) ){
+          if( !pieceMovementRules.kingCheck( {startPosition: startPosition, endPosition: endPosition, board: board}) ){
             noLegalMoves = false
           }
         };
@@ -64,81 +67,7 @@ var Rules = function () {
       console.log("noLegalMoves is: " + noLegalMoves)
       return threeFoldRepetition || noLegalMoves
     },
-    moveIsIllegal: function(startPosition, endPosition, board){
-      var layOut = board.layOut,
-        team = board.teamAt(startPosition),
-        pieceController = this.retrieveControllerForPosition( startPosition ),
-        illegal = false
-      ;
-      if ( !Board.classMethods.inBounds(endPosition) ){
-        alert('stay on the board, fool')
-        illegal = true
-      } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
-        alert("what, are you trying to capture your own piece?")
-        illegal = true
-      } else if( !PieceMovementRules.getInstance().positionViable( {startPosition: startPosition, endPosition: endPosition, board: board, pieceMovements: pieceController} ) ) {
-        alert("that's not how that piece moves")
-        illegal = true
-      } else if( this.kingCheck( {startPosition: startPosition, endPosition: endPosition, board: board})){
-        alert("check yo king fool")
-        illegal = true
-      }
-      return illegal
-    },
-    retrieveControllerForPosition: function(position){
-      var  positionString = layOut[position],
-        stringLength = positionString.length,
-        pieceType = positionString.substring(5, stringLength)
-        pieceType = pieceType.charAt(0).toLowerCase() + pieceType.slice(1);
-      if( pieceType === "pawn" ){ pieceType = positionString }
-      // pieceController = this.pieceControllerSet[pieceType]
-    // debugger
-      pieceController = PieceMovementRules.getInstance().movements.pieceSpecific[pieceType]
-      return pieceController
-    },
-    kingCheck: function(args){
-      // debugger
-      var startPosition     = args["startPosition"],
-          endPosition       = args["endPosition"]
-          board             = args["board"],
-          layOut            = board.layOut,
-          pieceString       = layOut[startPosition],
-          teamString        = board.teamAt(startPosition),
-          danger            = false,
-          newLayout         = Board.classMethods.deepCopyLayout(layOut),
-          opposingTeamString = "";
-
-      if( teamString === "white" ){
-        opposingTeamString = "black"
-      } else {
-        opposingTeamString = "white"
-      };
-// do this in a function
-// also probably gonna wanna copy all the board stuff, like previous states
-      newLayout[startPosition] = "empty"
-      newLayout[endPosition] = pieceString
-      var newBoard = new Board({layOut: newLayout}),
-      kingPosition = newBoard.kingPosition(teamString);
-// seriously, factor it ou
-
-      var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
-      for(var i = 0; i < enemyPositions.length; i++){
-        var enemyPosition = enemyPositions[i],
-          pieceController = this.retrieveControllerForPosition( enemyPosition );
-          // debugger
-          if( PieceMovementRules.getInstance().positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard, pieceMovements: pieceController} ) ){
-          danger = true
-          }
-      };
-      return danger
-      // pretend king has all movement abilities. stretch outward with them until hittting block, see if that block has the ability that was used to get to the king,
-      // maybe iterate across movements testing each individualy
-    },
-    // castling  these can both refer to the previous board states to answer the question, so knowing about board states doesn't become a pieces job
-    // en passant  these can both refer to the previous board states to answer the question, so knowing about board states doesn't become a pieces job 
-    // stalemate
   }
-
   function createInstance() {
       var object = new Object("I am the instance");
       return object;
@@ -151,4 +80,4 @@ var Rules = function () {
       return instance;
     },
   };
-}();
+};

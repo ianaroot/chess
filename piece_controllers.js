@@ -1,13 +1,83 @@
 // search for equals, deglobalize scope slippage
 var PieceMovementRules = function(){
-  // if (this.constructor === PieceMovementRules) {
-  //   throw new Error("Can't instantiate abstract class!");
-  // }
-  // PieceMovementRules initialization...
   var instance = {
     addSpecialMoves: function(){
       // only some pieceController types use this method, but it should be able to be called by all without errors
     },
+    moveIsIllegal: function(startPosition, endPosition, board){
+      var layOut = board.layOut,
+        team = board.teamAt(startPosition),
+        pieceController = this.retrieveControllerForPosition( startPosition ),
+        illegal = false
+      ;
+      if ( !Board.classMethods.inBounds(endPosition) ){
+        alert('stay on the board, fool')
+        illegal = true
+      } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
+        alert("what, are you trying to capture your own piece?")
+        illegal = true
+      } else if( !PieceMovementRules.getInstance().positionViable( {startPosition: startPosition, endPosition: endPosition, board: board, pieceMovements: pieceController} ) ) {
+        alert("that's not how that piece moves")
+        illegal = true
+      } else if( this.kingCheck( {startPosition: startPosition, endPosition: endPosition, board: board})){
+        alert("check yo king fool")
+        illegal = true
+      }
+      return illegal
+    },
+    retrieveControllerForPosition: function(position){
+      var  positionString = layOut[position],
+        stringLength = positionString.length,
+        pieceType = positionString.substring(5, stringLength)
+        pieceType = pieceType.charAt(0).toLowerCase() + pieceType.slice(1);
+      if( pieceType === "pawn" ){ pieceType = positionString }
+        // needs a new name, not pieceController
+      pieceController = PieceMovementRules.getInstance().movements.pieceSpecific[pieceType]
+      return pieceController
+    },
+    kingCheck: function(args){
+      var startPosition     = args["startPosition"],
+          endPosition       = args["endPosition"]
+          board             = args["board"],
+          layOut            = board.layOut,
+          pieceString       = layOut[startPosition],
+          teamString        = board.teamAt(startPosition),
+          danger            = false,
+          newLayout         = Board.classMethods.deepCopyLayout(layOut),
+          opposingTeamString = "";
+
+      if( teamString === "white" ){
+        opposingTeamString = "black"
+      } else {
+        opposingTeamString = "white"
+      };
+// do this in a function
+// also probably gonna wanna copy all the board stuff, like previous states
+      newLayout[startPosition] = "empty"
+      newLayout[endPosition] = pieceString
+      var newBoard = new Board({layOut: newLayout}),
+      kingPosition = newBoard.kingPosition(teamString);
+// seriously, factor it out
+
+      var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
+      for(var i = 0; i < enemyPositions.length; i++){
+        var enemyPosition = enemyPositions[i],
+          pieceController = this.retrieveControllerForPosition( enemyPosition );
+          if( PieceMovementRules.getInstance().positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard, pieceMovements: pieceController} ) ){
+          danger = true
+          }
+      };
+      return danger
+    },
+    // castling  these can both refer to the previous board states to answer the question, so knowing about board states doesn't become a pieces job
+    // en passant  these can both refer to the previous board states to answer the question, so knowing about board states doesn't become a pieces job 
+    // stalemate
+
+
+
+
+
+
     positionViable: function(args){
       var board = args["board"],
         startPosition = args["startPosition"],
@@ -67,7 +137,6 @@ var PieceMovementRules = function(){
       return clear
     },
     wrapAroundCheat: function(startPosition, endPosition, movementType){
-      // should this not just live on the movement Type object?
       var startSquareColor = Board.classMethods.squareColor(startPosition),
         endSquareColor = Board.classMethods.squareColor(endPosition),
         rangeLimit = (startPosition - endPosition) / movementType.increment,
@@ -426,200 +495,3 @@ var PieceMovementRules = function(){
     },
   };
 }();
-
-
-// var NightController = function() {
-//     var newMoves = PieceMovementRules.getInstance().movements.pieceSpecific.night
-//     PieceMovementRules.apply(this, arguments);
-//     this.directionalMovements = newMoves
-
-// };
-// NightController.prototype = Object.create(PieceMovementRules.prototype);
-// NightController.prototype.constructor = NightController;
-
-// var RookController = function() {
-//     var newMoves = this.movements.pieceSpecific.rook
-//     PieceMovementRules.apply(this, arguments);
-//     this.directionalMovements = newMoves
-
-// };
-// RookController.prototype = Object.create(PieceMovementRules.prototype);
-// RookController.prototype.constructor = RookController;
-
-// var BishopController = function() {
-//     var newMoves = this.movements.pieceSpecific.bishop
-//     PieceMovementRules.apply(this, arguments);
-//     this.directionalMovements = newMoves
-
-// };
-// BishopController.prototype = Object.create(PieceMovementRules.prototype);
-// BishopController.prototype.constructor = BishopController;
-
-
-// var KingController = function() {
-//     var newMoves = this.movements.pieceSpecific.king
-//     PieceMovementRules.apply(this, arguments);
-//     this.directionalMovements = newMoves
-//     this.kingSideCastleAllowed = function(args){
-//       var board = args["board"],
-//         startPosition = args["startPosition"];
-//       return board.pieceHasNotMovedFrom( startPosition ) && board.kingSideRookHasNotMoved( startPosition ) && board.kingSideCastleIsClear( startPosition )
-//     },
-//     this.addSpecialMoves = function(args){
-//       var startPosition = args["startPosition"],
-//         board = args["board"],
-//         viablePositions = args["viablePositions"];
-//       // check for pieces blocking
-//       // check for moving through out of or into check
-//       // also needs to be verifying that the positions in between are empty and that the positions are not in check
-
-//       // technically it should not be possible to end up checking a pieceController possiblemoves from a position it doesn't occupy, but it's worth making sure that can't happen
-//       // if( board.pieceTypeAt(startPosition) === "King" && 
-//       if( board.pieceHasNotMovedFrom(startPosition) ){
-//         if( board.queenSideRookHasNotMoved(startPosition) ){
-//           viablePositions.push( startPosition - 2 )
-//         }
-//         if( board.kingSideRookHasNotMoved(startPosition) ){
-//           viablePositions.push( startPosition + 2 )
-//         }
-//       };
-//     }
-// };
-// KingController.prototype = Object.create(PieceMovementRules.prototype);
-// KingController.prototype.constructor = KingController;
-
-
-// var QueenController = function() {
-//     var newMoves = this.movements.pieceSpecific.queen
-//     PieceMovementRules.apply(this, arguments);
-//     this.directionalMovements = newMoves
-
-// };
-// QueenController.prototype = Object.create(PieceMovementRules.prototype);
-// QueenController.prototype.constructor = QueenController;
-
-
-// var WhitePawnController = function(){
-//   PieceMovementRules.apply(this, arguments);
-//   this.directionalMovements = function(layOut, position){
-//     var movements = [];
-//     if( Board.classMethods.ranks.isSecond(position) && this.twoSpacesUpIsEmpty( layOut, position ) ){
-//       var newPossibility = this.movements.generic.verticalUp()
-//       newPossibility.rangeLimit = 2
-//       movements = movements.concat(newPossibility)
-//     };
-//     if( this.oneSpaceUpIsEmpty(layOut, position) ){
-//       var newPossibility = this.movements.generic.verticalUp()
-//       newPossibility.rangeLimit = 1
-//       movements = movements.concat(newPossibility)
-//     };
-//     if( this.upAndLeftIsAttackable(layOut, position) ){
-//       var newPossibility = this.movements.generic.backSlashUp()
-//       newPossibility.rangeLimit = 1
-//       movements = movements.concat(newPossibility)
-//     };
-//     if( this.upAndRightIsAttackable(layOut, position) ){
-//       var newPossibility = this.movements.generic.forwardSlashUp()
-//       newPossibility.rangeLimit = 1
-//       movements = movements.concat(newPossibility)
-//     };
-//     return movements
-//   }
-//   this.twoSpacesUpIsEmpty = function(layOut, position){
-//     if( Board.classMethods.inBounds( position + 16)){
-//       return layOut[position + 16] === "empty"
-//     } else {
-//       return false
-//     }
-//   },
-//   this.oneSpaceUpIsEmpty = function(layOut, position){
-//     if( Board.classMethods.inBounds( position + 8)){
-//       return layOut[position + 8] === "empty"
-//     } else {
-//       return false
-//     }
-//   },
-//   this.upAndLeftIsAttackable = function(layOut, position){
-//     if( Board.classMethods.inBounds( position + 7)){
-//       var pieceString = layOut[position + 7],
-//         pieceTeam = pieceString.substring(0,5);
-//       return pieceTeam === "black" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 7)
-//     } else {
-//       return false
-//     }
-//   },
-//   this.upAndRightIsAttackable = function(layOut, position){
-//     if( Board.classMethods.inBounds( position + 9)){
-//       var pieceString = layOut[position + 9],
-//         pieceTeam = pieceString.substring(0,5);
-//       return pieceTeam === "black" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 9)
-//     } else {
-//       return false
-//     }
-//   }
-// };
-// WhitePawnController.prototype = Object.create(PieceMovementRules.prototype);
-// WhitePawnController.prototype.constructor = WhitePawnController;
-
-
-// var BlackPawnController = function(){
-//   PieceMovementRules.apply(this, arguments);
-//   this.directionalMovements = function(layOut, position){
-//     var movements = [];
-//     if( Board.classMethods.ranks.isSeventh(position) && this.twoSpacesDownIsEmpty(layOut, position) ){
-//       var newPossibility = this.movements.generic.verticalDown()
-//       newPossibility.rangeLimit = 2
-//       movements = movements.concat(newPossibility)
-//     };
-//     if( this.oneSpaceDownIsEmpty(layOut, position) ){
-//       var newPossibility = this.movements.generic.verticalDown()
-//       newPossibility.rangeLimit = 1
-//       movements = movements.concat(newPossibility)
-//     };
-//     if( this.downAndLeftIsAttackable(layOut, position) ){
-//       var newPossibility = this.movements.generic.forwardSlashDown()
-//       newPossibility.rangeLimit = 1
-//       movements = movements.concat(newPossibility)
-//     };
-//     if( this.downAndRightIsAttackable(layOut, position) ){
-//       var newPossibility = this.movements.generic.backSlashDown()
-//       newPossibility.rangeLimit = 1
-//       movements = movements.concat(newPossibility)
-//     };
-//     return movements
-//   },
-//   this.twoSpacesDownIsEmpty = function(layOut, position){
-//     if( Board.classMethods.inBounds( position - 16 )){ 
-//       return layOut[position - 16] === "empty"
-//     } else {
-//       return false
-//     }
-//   },
-//   this.oneSpaceDownIsEmpty = function(layOut, position){
-//     if( Board.classMethods.inBounds( position - 8 ) ){
-//       return layOut[position - 8] === "empty"
-//     } else {
-//       return false
-//     }
-//   },
-//   this.downAndLeftIsAttackable = function(layOut, position){
-//     if( Board.classMethods.inBounds( position - 9 )){ 
-//       var pieceString = layOut[position - 9],
-//         pieceTeam = pieceString.substring(0,5);
-//       return pieceTeam === "white" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 9)
-//     } else {
-//       return false
-//     }
-//   },
-//   this.downAndRightIsAttackable = function(layOut, position){
-//     if( Board.classMethods.inBounds( position - 7 ) ){
-//       var pieceString = layOut[position - 7],
-//         pieceTeam = pieceString.substring(0,5);
-//       return pieceTeam === "white" && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 7)
-//     } else {
-//       return false
-//     }
-//   }
-// };
-// BlackPawnController.prototype = Object.create(PieceMovementRules.prototype);
-// BlackPawnController.prototype.constructor = BlackPawnController;

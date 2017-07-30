@@ -5,20 +5,8 @@ var board1 = ChessBoard('board1');
 var GameController = (function(){
   var instance = {
     view: View.getInstance(),
-    rules: Rules.getInstance(),
-    // rules: (function(){
-      // var rules = Rules.getInstance();
-      // rules.pieceControllerSet = {
-      //   Queen: new QueenController(),
-      //   Rook: new RookController(),
-      //   Bishop: new BishopController(),
-      //   Night: new NightController(),
-      //   King: new KingController(),
-      //   BlackPawn: new BlackPawnController(),
-      //   WhitePawn: new WhitePawnController()
-      // }
-      // return rules
-    // })(),
+    pieceMovementRules: PieceMovementRules.getInstance(),
+    postMovementRules: PostMovementRules( PieceMovementRules.getInstance() ).getInstance() ,
     board: new Board({layOut: 
       
       // ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
@@ -62,11 +50,9 @@ var GameController = (function(){
         alert("other team's turn")
         return
       }
-      if( this.rules.moveIsIllegal(startPosition, endPosition, board) ){
+      if( this.pieceMovementRules.moveIsIllegal(startPosition, endPosition, board) ){
         return
       } else {
-        // var gridPosition    = board.gridCalculator(piece.startPosition),
-        //     newGridPosition = board.gridCalculator(endPosition);
         // REFACTOR MEEEEEEEEE
         newLayOut = Board.classMethods.deepCopyLayout( layOut )
         board.previousLayouts.push(newLayOut)
@@ -74,10 +60,7 @@ var GameController = (function(){
         this.board.emptify(startPosition)
 
         capturedPiece = this.board.layOut[endPosition]
-        // this.board.layOut[endPosition] = pieceString
         this.board.placePiece({ position: endPosition, pieceString: pieceString })
-        // this.view.deleteOldStuff(gridPosition, newGridPosition, piece)
-        // board.placeNewStuff(piece, endPosition)
 
         // if ( board.layOut[endPosition].team !== team ){
           // capture(endPosition)
@@ -85,7 +68,7 @@ var GameController = (function(){
           // it should also move the piece from active pieces into captured pieces
         // }
 
-        var stalemate = this.rules.stalemate(board);
+        var stalemate = this.postMovementRules.stalemate(board);
         if( stalemate ){
           // end the game etc..
         // wary of this check occurring after the move is made but before allowedToMove is flipped
@@ -93,9 +76,9 @@ var GameController = (function(){
           alert("stalemate!")
         }
 
-        this.rules.pawnPromotionQuery( board )
+        this.postMovementRules.pawnPromotionQuery( board )
 
-        // this.rules.castle()
+        // this.postMovementRules.castle()
 
       // check for en passant, am i white on the fifth rank with a black pawn to the side who used to be on the sixth?
       // or am i black pawn on fourth besidea  white pawn that used to be on the second?
