@@ -1,3 +1,4 @@
+// throw error if args missing. make a reusable function, throw it in some stuff
 // tells you it's the other team's turn if you try to move from an empty square
 // search for equals, deglobalize scope slippage
 var PieceMovementRules = function(){
@@ -6,8 +7,8 @@ var PieceMovementRules = function(){
       var layOut = board.layOut,
         team = board.teamAt(startPosition),
         pieceController = this.retrieveControllerForPosition( startPosition ),
-        illegal = false
-      ;
+        illegal = false;
+        
       if ( !Board.classMethods.inBounds(endPosition) ){
         alert('stay on the board, fool')
         illegal = true
@@ -181,7 +182,6 @@ var PieceMovementRules = function(){
           return {
             increment: "+8",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Board.classMethods.inBounds(endPosition)
             }
@@ -191,7 +191,6 @@ var PieceMovementRules = function(){
           return {
             increment: "-8",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Board.classMethods.inBounds(endPosition)
             }
@@ -201,7 +200,6 @@ var PieceMovementRules = function(){
           return {
             increment: "+9",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return (endPosition) % 8 > (startPosition % 8) && Board.classMethods.inBounds(endPosition)
             }
@@ -211,7 +209,6 @@ var PieceMovementRules = function(){
           return {
             increment: "-9",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return (endPosition) % 8 < (startPosition % 8) && Board.classMethods.inBounds(endPosition)
             }
@@ -221,7 +218,6 @@ var PieceMovementRules = function(){
           return {
             increment: "+7",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return (endPosition) % 8 < (startPosition % 8) && Board.classMethods.inBounds(endPosition)
             }
@@ -231,7 +227,6 @@ var PieceMovementRules = function(){
           return {
             increment: "-7",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return (endPosition) % 8 > (startPosition % 8) && Board.classMethods.inBounds(endPosition)
             }
@@ -241,7 +236,6 @@ var PieceMovementRules = function(){
           return {
             increment: "+15",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.classMethods.inBounds(endPosition)
             }
@@ -251,7 +245,6 @@ var PieceMovementRules = function(){
           return {
             increment: "+17",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.classMethods.inBounds(endPosition)
             }
@@ -261,7 +254,6 @@ var PieceMovementRules = function(){
           return {
             increment: "+6",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.classMethods.inBounds(endPosition)
             }
@@ -271,7 +263,6 @@ var PieceMovementRules = function(){
           return {
             increment: "+10",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.classMethods.inBounds(endPosition)
             }
@@ -281,7 +272,6 @@ var PieceMovementRules = function(){
           return {
             increment: "-15",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.classMethods.inBounds(endPosition)
             }
@@ -291,7 +281,6 @@ var PieceMovementRules = function(){
           return {
             increment: "-17",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.classMethods.inBounds(endPosition)
             }
@@ -301,7 +290,6 @@ var PieceMovementRules = function(){
           return {
             increment: "-6",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.classMethods.inBounds(endPosition)
             }
@@ -311,7 +299,6 @@ var PieceMovementRules = function(){
           return {
             increment: "-10",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.classMethods.inBounds(endPosition)
             }
@@ -321,7 +308,6 @@ var PieceMovementRules = function(){
           return {
             increment: "+1",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Math.floor((endPosition) / 8) === Math.floor(startPosition / 8) && Board.classMethods.inBounds(endPosition)
             }
@@ -331,7 +317,6 @@ var PieceMovementRules = function(){
           return {
             increment: "-1",
             boundaryCheck: function(i, increment, startPosition) {
-              // throw error if args missing. make a reusable function, throw it in some stuff
               var endPosition = i * increment + startPosition;
               return Math.floor((endPosition) / 8) === Math.floor(startPosition / 8) && Board.classMethods.inBounds(endPosition)
             }
