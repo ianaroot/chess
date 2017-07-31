@@ -1,7 +1,3 @@
-// pieceControllerSet must be defined by the gameController when creating PostMovementRules singleton, not the best approach,
-// but there were lots of arguments on the internet about dependency injection and singltons in js, and i just wanted something to work. will address later
-
-// tells you it's the other team's turn if you try to move from an empty square
 var PostMovementRules = function (pieceMovementRules) {
   console.log("pieceMovementRules is " + pieceMovementRules)
   var instance = {
@@ -49,7 +45,7 @@ var PostMovementRules = function (pieceMovementRules) {
       }
       var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
       for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
-        
+
         var startPosition = occcupiedPositions[i],
         // parts of this need to move over to the pieceMvementPostMovementRules
         pieceController = pieceMovementRules.retrieveControllerForPosition(startPosition),

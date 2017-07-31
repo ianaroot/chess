@@ -1,3 +1,4 @@
+// tells you it's the other team's turn if you try to move from an empty square
 // search for equals, deglobalize scope slippage
 var PieceMovementRules = function(){
   var instance = {
