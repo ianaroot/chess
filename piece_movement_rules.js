@@ -381,13 +381,13 @@ var PieceMovementRules = function(){
           if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition) ){
             var castle = PieceMovementRules.getInstance().movements.generic.horizontalLeft()
             castle.increment = + 2
-            castle.range = 1
+            castle.rangeLimit = 1
             moves.push(castle)
           };
           if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear && board.queenSideRookHasNotMoved(startPosition) ){
             var castle = PieceMovementRules.getInstance().movements.generic.horizontalRight()
             castle.increment = - 2
-            castle.range = 1
+            castle.rangeLimit = 1
             moves.push(castle)
           };
           return moves

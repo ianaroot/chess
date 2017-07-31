@@ -1,5 +1,4 @@
 var PostMovementRules = function (pieceMovementRules) {
-  console.log("pieceMovementRules is " + pieceMovementRules)
   var instance = {
     pawnPromotionQuery: function(board){
       var layOut = board.layOut;
