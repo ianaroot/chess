@@ -5,19 +5,8 @@ var board1 = ChessBoard('board1');
 var GameController = (function(){
   var instance = {
     view: View.getInstance(),
-    rules: (function(){
-      var rules = Rules.getInstance();
-      rules.pieceControllerSet = {
-        Queen: new QueenController(),
-        Rook: new RookController(),
-        Bishop: new BishopController(),
-        Night: new NightController(),
-        King: new KingController(),
-        BlackPawn: new BlackPawnController(),
-        WhitePawn: new WhitePawnController()
-      }
-      return rules
-    })(),
+    pieceMovementRules: PieceMovementRules.getInstance(),
+    postMovementRules: PostMovementRules( PieceMovementRules.getInstance() ).getInstance() ,
     board: new Board({layOut: 
       
       ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
@@ -50,10 +39,10 @@ var GameController = (function(){
       //  ],
 
         allowedToMove: "white"}),
-    move: function(position, newPosition){
+    move: function(startPosition, endPosition){
       board = this.board
       layOut = board.layOut
-      pieceString = layOut[position]
+      pieceString = layOut[startPosition]
       var team = pieceString.substring(0,5) //this gets reused a few times and seems magic and should become a function
 
       // this can live in rules now that allowed to move will be accessible there
@@ -61,30 +50,25 @@ var GameController = (function(){
         alert("other team's turn")
         return
       }
-      if( this.rules.moveIsIllegal(position, newPosition, board) ){
+      if( this.pieceMovementRules.moveIsIllegal(startPosition, endPosition, board) ){
         return
       } else {
-        // var gridPosition    = board.gridCalculator(piece.position),
-        //     newGridPosition = board.gridCalculator(newPosition);
         // REFACTOR MEEEEEEEEE
         newLayOut = Board.classMethods.deepCopyLayout( layOut )
         board.previousLayouts.push(newLayOut)
-        var pieceString = this.board.layOut[position];
-        this.board.emptify(position)
+        var pieceString = this.board.layOut[startPosition];
+        this.board.emptify(startPosition)
 
-        capturedPiece = this.board.layOut[newPosition]
-        // this.board.layOut[newPosition] = pieceString
-        this.board.placePiece({ position: newPosition, pieceString: pieceString })
-        // this.view.deleteOldStuff(gridPosition, newGridPosition, piece)
-        // board.placeNewStuff(piece, newPosition)
+        capturedPiece = this.board.layOut[endPosition]
+        this.board.placePiece({ position: endPosition, pieceString: pieceString })
 
-        // if ( board.layOut[newPosition].team !== team ){
-          // capture(newPosition)
+        // if ( board.layOut[endPosition].team !== team ){
+          // capture(endPosition)
           // this is the only place that should be deleting the destination tile
           // it should also move the piece from active pieces into captured pieces
         // }
 
-        var stalemate = this.rules.stalemate(board);
+        var stalemate = this.postMovementRules.stalemate(board);
         if( stalemate ){
           // end the game etc..
         // wary of this check occurring after the move is made but before allowedToMove is flipped
@@ -92,7 +76,9 @@ var GameController = (function(){
           alert("stalemate!")
         }
 
-        this.rules.pawnPromotionQuery( board )
+        this.postMovementRules.pawnPromotionQuery( board )
+
+        // this.postMovementRules.castle()
 
       // check for en passant, am i white on the fifth rank with a black pawn to the side who used to be on the sixth?
       // or am i black pawn on fourth besidea  white pawn that used to be on the second?
@@ -127,18 +113,25 @@ var GameController = (function(){
       setTimeout( function(){ gC.move(51, 35)},  6000)
       setTimeout( function(){ gC.move(15, 23)},  6500)
       setTimeout( function(){ gC.move(58, 23)},  7000)
-      setTimeout( function(){ gC.move(19, 33)},  7500)
+
+      setTimeout( function(){ gC.move(14, 22)},  7500)
       setTimeout( function(){ gC.move(57, 42)},  8000)
-      setTimeout( function(){ gC.move(33, 49)},  8500)
-      setTimeout( function(){ gC.move(35, 27)},  9000)
-      setTimeout( function(){ gC.move(49, 56)},  9500)
-      setTimeout( function(){ gC.move(60, 51)},  10000)
-      setTimeout( function(){ gC.move(56, 61)},  10500)
-      setTimeout( function(){ gC.move(27, 19)},  11500)
-      setTimeout( function(){ gC.move(61, 54)},  12000)
-      setTimeout( function(){ gC.move(19, 11)},  12500)
-      setTimeout( function(){ gC.move(4, 12)},  13000)
-      setTimeout( function(){ gC.move(11, 3)},  13500)
+
+
+
+
+      // setTimeout( function(){ gC.move(19, 33)},  7500)
+      // setTimeout( function(){ gC.move(57, 42)},  8000)
+      // setTimeout( function(){ gC.move(33, 49)},  8500)
+      // setTimeout( function(){ gC.move(35, 27)},  9000)
+      // setTimeout( function(){ gC.move(49, 56)},  9500)
+      // setTimeout( function(){ gC.move(60, 51)},  10000)
+      // setTimeout( function(){ gC.move(56, 61)},  10500)
+      // setTimeout( function(){ gC.move(27, 19)},  11500)
+      // setTimeout( function(){ gC.move(61, 54)},  12000)
+      // setTimeout( function(){ gC.move(19, 11)},  12500)
+      // setTimeout( function(){ gC.move(4, 12)},  13000)
+      // setTimeout( function(){ gC.move(11, 3)},  13500)
       
     },
     testing: function(){
@@ -182,11 +175,11 @@ var GameController = (function(){
     prepareWhiteTurn: function(){
       board.allowedToMove = "white"
     },
-    whiteMove: function(position, newPosition){
-      rules.move(position, newPosition)
+    whiteMove: function(startPosition, endPosition){
+      rules.move(startPosition, endPosition)
     },
-    blackMove: function(position, newPosition){
-      rules.move(position, newPosition)
+    blackMove: function(startPosition, endPosition){
+      rules.move(startPosition, endPosition)
     },
     turn: function(turnNum){
       var turnNum = turnNum || 1
