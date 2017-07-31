@@ -1,9 +1,6 @@
 // search for equals, deglobalize scope slippage
 var PieceMovementRules = function(){
   var instance = {
-    addSpecialMoves: function(){
-      // only some pieceController types use this method, but it should be able to be called by all without errors
-    },
     moveIsIllegal: function(startPosition, endPosition, board){
       var layOut = board.layOut,
         team = board.teamAt(startPosition),
@@ -105,23 +102,23 @@ var PieceMovementRules = function(){
           increment = movement.increment,
           rangeLimit = movement.rangeLimit,
           boundaryCheck = movement.boundaryCheck;
-          for(var j = 1; j <= rangeLimit; j++){
-            var currentPosition = increment * j + startPosition,
-                occupyingTeam = board.teamAt(currentPosition);
-            if ( !boundaryCheck(j, increment, startPosition) ){
-              break
-            }
-            if ( board.positionEmpty(currentPosition) ){
-              viablePositions.push(currentPosition)
-            } else if( board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
-              viablePositions.push(currentPosition)
-              break 
-            } else if(board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
-              break
-            };
+        for(var j = 1; j <= rangeLimit; j++){
+          var currentPosition = increment * j + startPosition,
+              occupyingTeam = board.teamAt(currentPosition);
+          if(startPosition === 60  && increment === -2 && board.positionEmpty(57) ){ debugger }
+          if ( !boundaryCheck(j, increment, startPosition) ){
+            break
+          }
+          if ( board.positionEmpty(currentPosition) ){
+            viablePositions.push(currentPosition)
+          } else if( board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
+            viablePositions.push(currentPosition)
+            break 
+          } else if(board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
+            break
           };
+        };
       };
-      this.addSpecialMoves({ startPosition: startPosition, board: board, viablePositions: viablePositions})
       return viablePositions
     },
     pathIsClear: function(startPosition, endPosition, movementType, layOut){
@@ -384,14 +381,28 @@ var PieceMovementRules = function(){
           };
           return moves
         },
-        king: function(){
-          var moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown(),
+        king: function(args){
+          var board = args["board"],
+            startPosition = args["startPosition"],
+            moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown(),
           PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()
-          ]
+          ];
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
               moves[key].rangeLimit = 1 ;
             };
+          };
+          if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition) ){
+            var castle = PieceMovementRules.getInstance().movements.generic.horizontalLeft()
+            castle.increment = + 2
+            castle.range = 1
+            moves.push(castle)
+          };
+          if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear && board.queenSideRookHasNotMoved(startPosition) ){
+            var castle = PieceMovementRules.getInstance().movements.generic.horizontalRight()
+            castle.increment = - 2
+            castle.range = 1
+            moves.push(castle)
           };
           return moves
         },
