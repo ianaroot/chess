@@ -1,3 +1,7 @@
+// moveIsLegal returns the moves occuring as an object
+// movements can have a followUpMove property which indicates any additional movements... not sure how that would accomplishment en passant, i guess instead 
+// of a position it could have "capture", or a function even. you ever feel like i'm not properly making us of functional programming?
+
 // singleton JSON stuff object that gets dependency injected into other objects
 // should have case sensitivity protection to avoid future blackPawn BlackPawn issues
 var board1 = ChessBoard('board1');
@@ -50,7 +54,9 @@ var GameController = (function(){
         alert("other team's turn")
         return
       }
-      if( this.pieceMovementRules.moveIsIllegal(startPosition, endPosition, board) ){
+      var moveObject = this.pieceMovementRules.moveIsIllegal(startPosition, endPosition, board);
+      // could maybe pass the message back out to here instead of alerting it from the piece_movement_rules
+      if( moveObject.illegal ){
         return
       } else {
         // REFACTOR MEEEEEEEEE
@@ -61,6 +67,10 @@ var GameController = (function(){
 
         capturedPiece = this.board.layOut[endPosition]
         this.board.placePiece({ position: endPosition, pieceString: pieceString })
+
+        if( moveObject.additionalActions ){
+          moveObject.additionalActions.call(this, startPosition)
+        }
 
         // if ( board.layOut[endPosition].team !== team ){
           // capture(endPosition)
@@ -78,10 +88,11 @@ var GameController = (function(){
 
         this.postMovementRules.pawnPromotionQuery( board )
 
+        // this.board.recordNotation(startPosition, endPosition)
         // this.postMovementRules.castle()
+        // moveIsLegal could return most of the necessary information for recording notation i think 
+        // this.postMovementRules.enPassant()
 
-      // check for en passant, am i white on the fifth rank with a black pawn to the side who used to be on the sixth?
-      // or am i black pawn on fourth besidea  white pawn that used to be on the second?
       // checkmate
       // check (like if it happens after a legal move, not prevents a move from being legal)
 
@@ -116,6 +127,8 @@ var GameController = (function(){
 
       setTimeout( function(){ gC.move(14, 22)},  7500)
       setTimeout( function(){ gC.move(57, 42)},  8000)
+      setTimeout( function(){ gC.move(22, 30)},  8500)
+      setTimeout( function(){ gC.move(60, 58)},  9000)
 
 
 

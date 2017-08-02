@@ -7,22 +7,36 @@ var PieceMovementRules = function(){
       var layOut = board.layOut,
         team = board.teamAt(startPosition),
         pieceController = this.retrieveControllerForPosition( startPosition ),
-        illegal = false;
+        viableMovement = {},
+        moveObject = {
+          illegal: false,
+          startPosition: startPosition,
+          endPosition: endPosition
+        },
+        viableMovement = PieceMovementRules.getInstance().positionViable( {startPosition: startPosition, endPosition: endPosition, board: board, pieceMovements: pieceController} );
         
       if ( !Board.classMethods.inBounds(endPosition) ){
         alert('stay on the board, fool')
-        illegal = true
+        moveObject.illegal = true
       } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
         alert("what, are you trying to capture your own piece?")
-        illegal = true
-      } else if( !PieceMovementRules.getInstance().positionViable( {startPosition: startPosition, endPosition: endPosition, board: board, pieceMovements: pieceController} ) ) {
+        moveObject.illegal = true
+        // !PieceMovementRules.getInstance().positionViable( {startPosition: startPosition, endPosition: endPosition, board: board, pieceMovements: pieceController} )
+      } else if( !viableMovement ) {
         alert("that's not how that piece moves")
-        illegal = true
+        moveObject.illegal = true
       } else if( this.kingCheck( {startPosition: startPosition, endPosition: endPosition, board: board})){
         alert("check yo king fool")
-        illegal = true
+        moveObject.illegal = true
       }
-      return illegal
+      moveObject.additionalActions = viableMovement.additionalActions
+      // moveObject = {
+      //   illegal: illegal,
+      //   startPosition: startPosition,
+      //   endPosition: endPosition,
+      //   additionalActions: viableMovement.additionalActions
+      // }
+      return moveObject
     },
     retrieveControllerForPosition: function(position){
       var  positionString = layOut[position],
@@ -84,10 +98,15 @@ var PieceMovementRules = function(){
         pieceMovements = args["pieceMovements"],
         viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board, pieceMovements: pieceMovements} ),
         viable = false;
-      for(var i = 0; i < viablePositions.length; i++){
-        if( viablePositions[i] === endPosition ){
-          viable = true;
-          break;
+      // for(var i = 0; i < viablePositions.length; i++){
+      //   if( viablePositions[i] === endPosition ){
+      //     viable = true;
+      //     break;
+      //   }
+      // };
+      for( var key in viablePositions ){
+        if( key == endPosition ){
+          viable = viablePositions[key]
         }
       };
       return viable
@@ -98,7 +117,8 @@ var PieceMovementRules = function(){
         pieceMovements = args["pieceMovements"]({board: board, startPosition: startPosition}),
         teamString = board.teamAt(startPosition),
         // movements = this.directionalMovements(board.layOut, startPosition),
-        viablePositions = [];
+        // viablePositions = [];
+        viablePositions = {};
       for(var i = 0; i < pieceMovements.length; i++){
         var movement = pieceMovements[i],
           increment = movement.increment,
@@ -107,14 +127,15 @@ var PieceMovementRules = function(){
         for(var j = 1; j <= rangeLimit; j++){
           var currentPosition = increment * j + startPosition,
               occupyingTeam = board.teamAt(currentPosition);
-          if(startPosition === 60  && increment === -2 && board.positionEmpty(57) ){ debugger }
           if ( !boundaryCheck(j, increment, startPosition) ){
             break
           }
           if ( board.positionEmpty(currentPosition) ){
-            viablePositions.push(currentPosition)
+            // viablePositions.push(currentPosition)
+            viablePositions[currentPosition] = movement
           } else if( board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
-            viablePositions.push(currentPosition)
+            // viablePositions.push(currentPosition)
+            viablePositions[currentPosition] = movement
             break 
           } else if(board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
             break
@@ -382,12 +403,26 @@ var PieceMovementRules = function(){
             var castle = PieceMovementRules.getInstance().movements.generic.horizontalLeft()
             castle.increment = + 2
             castle.rangeLimit = 1
+            castle.additionalActions = function(startPosition){
+              //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
+              // explicit here and use game controller instead of this
+              pieceString = this.board.layOut[startPosition + 3]
+              this.board.emptify( startPosition + 3)
+              this.board.placePiece({ position: (startPosition + 1), pieceString: pieceString })
+            }
             moves.push(castle)
           };
           if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear && board.queenSideRookHasNotMoved(startPosition) ){
             var castle = PieceMovementRules.getInstance().movements.generic.horizontalRight()
             castle.increment = - 2
             castle.rangeLimit = 1
+            castle.additionalActions = function(startPosition){
+              //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
+              // explicit here and use game controller instead of this
+              pieceString = this.board.layOut[startPosition - 4]
+              this.board.emptify( startPosition - 4)
+              this.board.placePiece({ position: (startPosition - 1), pieceString: pieceString })
+            }
             moves.push(castle)
           };
           return moves
