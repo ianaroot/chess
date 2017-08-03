@@ -7,6 +7,7 @@ function Board(options){
   this.capturedPieces = capturedPieces;
   this.previousLayouts = [];
   this.allowedToMove = options["allowedToMove"]
+  this.movementNotation = [];
 };
 Board.classMethods = {
   deepCopyLayout: function(layOut){
@@ -61,6 +62,106 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  // newShit
+  recordNotation: function(startPosition, endPosition){
+    var capture = !this.positionWasEmpty(endPosition),
+      castled = this.castled(startPosition, endPosition);
+// if castle was kingside 0-0, queenside 0-0-0
+// if pawn captures, include starting file
+// if rook or night moves and other night or rook could've acheived that position include differentiationg rank or position
+    // board.fileIncludesTeammateRook
+    // board.rankIncludesTeammateRook
+    // board.moveWithinRank
+    // board.MoveWithinFile
+    // board.teammateNightWithinReachOf(position)
+// if check include +
+// if mate include #
+  },
+
+  oneSpaceDownIsEmpty: function(position){
+    return this.positionEmpty(position - 8)
+  },
+  twoSpacesDownIsEmpty: function(position){
+    return this.positionEmpty(position - 16)
+  },
+  downAndLeftIsAttackable: function(args){
+    var position = args["position"],
+      attackingTeamString = args["attackingTeamString"];
+    if( Board.classMethods.inBounds( position - 9 )){ 
+      var pieceString = this.layOut[position - 9],
+        pieceTeam = pieceString.substring(0,5);
+      return this.occupiedByOpponent({position: position - 9, teamString: attackingTeamString}) && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 9)
+    } else {
+      // down and left would be off board
+      return false
+    }
+  },
+  downAndRightIsAttackable: function(args){
+    var position = args["position"],
+      attackingTeamString = args["attackingTeamString"];
+    if( Board.classMethods.inBounds( position - 7 ) ){
+      var pieceString = this.layOut[position - 7],
+        pieceTeam = pieceString.substring(0,5);
+      return this.occupiedByOpponent({position: position - 7, teamString: attackingTeamString}) && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position - 7)
+    } else {
+      return false
+    }
+  },
+  twoSpacesUpIsEmpty: function(position){
+    return this.positionEmpty( position + 16)
+  },
+  oneSpaceUpIsEmpty: function(position){
+    return this.positionEmpty( position + 8)
+  },
+  upAndLeftIsAttackable: function(args){
+    var position = args["position"],
+      attackingTeamString = args["attackingTeamString"];
+    if( Board.classMethods.inBounds( position + 7)){
+      var pieceString = this.layOut[position + 7],
+        pieceTeam = pieceString.substring(0,5);
+      return this.occupiedByOpponent({position: position + 7, teamString: attackingTeamString}) && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 7)
+    } else {
+      return false
+    }
+  },
+  upAndRightIsAttackable: function(args){
+    var position = args["position"],
+      attackingTeamString = args["attackingTeamString"];
+    if( Board.classMethods.inBounds( position + 9)){
+      var pieceString = this.layOut[position + 9],
+        pieceTeam = pieceString.substring(0,5);
+      return this.occupiedByOpponent({position: position + 9, teamString: attackingTeamString}) && Board.classMethods.squareColor(position) === Board.classMethods.squareColor(position + 9)
+    } else {
+      return false
+    }
+  },
+  kingSideCastleIsClear: function(kingPosition){
+    return this.positionEmpty(kingPosition + 1) && this.positionEmpty(kingPosition + 2 )
+  },
+  queenSideCastleIsClear: function(kingPosition){
+    return this.positionEmpty(kingPosition - 1 ) && this.positionEmpty(kingPosition - 2 ) && this.positionEmpty(kingPosition - 3 )
+  },
+  kingSideRookHasNotMoved: function(kingPosition){
+    var kingSideRookStartPosition = kingPosition + 3;
+    return (this.pieceTypeAt( kingSideRookStartPosition ) ==="Rook") && this.pieceHasNotMovedFrom( kingSideRookStartPosition )
+  },
+  queenSideRookHasNotMoved: function(kingPosition){
+    var queenSideRookStartPosition = kingPosition - 4;
+    return (this.pieceTypeAt( queenSideRookStartPosition ) ==="Rook") && this.pieceHasNotMovedFrom( queenSideRookStartPosition )
+  },
+  pieceHasNotMovedFrom: function(position){
+    var pieceString = this.layOut[position],
+      previousLayouts = this.previousLayouts,
+      pieceHasNotMoved = true;
+    for(var i = 0; i < previousLayouts.length; i++){
+      var oldLayout= previousLayouts[i];
+      if(oldLayout[position] !== pieceString ){
+        pieceHasNotMoved = false
+        break;
+      };
+    };
+    return pieceHasNotMoved
+  },
   emptify: function(position){
     this.layOut[position] = "empty"
   },
