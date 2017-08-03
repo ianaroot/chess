@@ -44,12 +44,12 @@ var GameController = (function(){
 
         allowedToMove: "white"}),
     move: function(startPosition, endPosition){
+      // attempt move is probably a better name for this func
       board = this.board
       layOut = board.layOut
       pieceString = layOut[startPosition]
       var team = pieceString.substring(0,5) //this gets reused a few times and seems magic and should become a function
 
-      // this can live in rules now that allowed to move will be accessible there
       if( team !== board.allowedToMove ){
         alert("other team's turn")
         return
@@ -118,17 +118,20 @@ var GameController = (function(){
       setTimeout( function(){ gC.move(42, 34) }, 3000)
       setTimeout( function(){ gC.move(12, 20) }, 3500)
       setTimeout( function(){ gC.move(34, 27) }, 4000)
-      setTimeout( function(){ gC.move(0,  1) },  4500)
-      setTimeout( function(){ gC.move(27, 18) }, 5000)
-      setTimeout( function(){ gC.move(9,  18) }, 5500)
-      setTimeout( function(){ gC.move(51, 35)},  6000)
-      setTimeout( function(){ gC.move(15, 23)},  6500)
-      setTimeout( function(){ gC.move(58, 23)},  7000)
+      
+      // setTimeout( function(){ gC.move(0,  1) },  4500)
+      // setTimeout( function(){ gC.move(27, 18) }, 5000)
+      // setTimeout( function(){ gC.move(9,  18) }, 5500)
+      // setTimeout( function(){ gC.move(51, 35)},  6000)
+      // setTimeout( function(){ gC.move(15, 23)},  6500)
+      // setTimeout( function(){ gC.move(58, 23)},  7000)
 
-      setTimeout( function(){ gC.move(14, 22)},  7500)
-      setTimeout( function(){ gC.move(57, 42)},  8000)
-      setTimeout( function(){ gC.move(22, 30)},  8500)
-      setTimeout( function(){ gC.move(60, 58)},  9000)
+      // setTimeout( function(){ gC.move(14, 22)},  7500)
+      // setTimeout( function(){ gC.move(57, 42)},  8000)
+
+
+      // setTimeout( function(){ gC.move(22, 30)},  8500)
+      // setTimeout( function(){ gC.move(60, 58)},  9000)
 
 
 

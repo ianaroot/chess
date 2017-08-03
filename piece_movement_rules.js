@@ -1,3 +1,4 @@
+// even if move is illegal catches it, have viablePositions return illegal positions, such as checked castling, is gonna be problematic
 // throw error if args missing. make a reusable function, throw it in some stuff
 // tells you it's the other team's turn if you try to move from an empty square
 // search for equals, deglobalize scope slippage
@@ -6,14 +7,13 @@ var PieceMovementRules = function(){
     moveIsIllegal: function(startPosition, endPosition, board){
       var layOut = board.layOut,
         team = board.teamAt(startPosition),
-        pieceController = this.retrieveControllerForPosition( startPosition ),
         viableMovement = {},
         moveObject = {
           illegal: false,
           startPosition: startPosition,
           endPosition: endPosition
         },
-        viableMovement = PieceMovementRules.getInstance().positionViable( {startPosition: startPosition, endPosition: endPosition, board: board, pieceMovements: pieceController} );
+        viableMovement = PieceMovementRules.getInstance().positionViable( {startPosition: startPosition, endPosition: endPosition, board: board} );
         
       if ( !Board.classMethods.inBounds(endPosition) ){
         alert('stay on the board, fool')
@@ -25,7 +25,7 @@ var PieceMovementRules = function(){
       } else if( !viableMovement ) {
         alert("that's not how that piece moves")
         moveObject.illegal = true
-      } else if( this.kingCheck( {startPosition: startPosition, endPosition: endPosition, board: board})){
+      } else if( this.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board})){
         alert("check yo king fool")
         moveObject.illegal = true
       }
@@ -48,7 +48,8 @@ var PieceMovementRules = function(){
       pieceController = PieceMovementRules.getInstance().movements.pieceSpecific[pieceType]
       return pieceController
     },
-    kingCheck: function(args){
+    kingInCheck: function(args){
+      // can just pass in same position as start and end if you want to know whether not moving anything creates check
       var startPosition     = args["startPosition"],
           endPosition       = args["endPosition"]
           board             = args["board"],
@@ -76,10 +77,12 @@ var PieceMovementRules = function(){
       for(var i = 0; i < enemyPositions.length; i++){
         var enemyPosition = enemyPositions[i],
           pieceController = this.retrieveControllerForPosition( enemyPosition );
-          if( PieceMovementRules.getInstance().positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard, pieceMovements: pieceController} ) ){
+          enemyPieceType = board.pieceTypeAt( enemyPosition );
+          if( enemyPieceType !== "King" && PieceMovementRules.getInstance().positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard, pieceMovements: pieceController} ) ){
           danger = true
           }
       };
+      // debugger
       return danger
     },
     // castling  these can both refer to the previous board states to answer the question, so knowing about board states doesn't become a pieces job
@@ -96,7 +99,7 @@ var PieceMovementRules = function(){
         startPosition = args["startPosition"],
         endPosition = args["endPosition"],
         pieceMovements = args["pieceMovements"],
-        viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board, pieceMovements: pieceMovements} ),
+        viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board} ),
         viable = false;
       // for(var i = 0; i < viablePositions.length; i++){
       //   if( viablePositions[i] === endPosition ){
@@ -114,7 +117,9 @@ var PieceMovementRules = function(){
     viablePositionsFrom: function(args){
       var startPosition = args["startPosition"],
         board = args["board"],
-        pieceMovements = args["pieceMovements"]({board: board, startPosition: startPosition}),
+        pieceController = this.retrieveControllerForPosition( startPosition ),
+        pieceMovements = pieceController({board: board, startPosition: startPosition}),
+        // why pass in pieceMovements? this accessible given we have the board and position
         teamString = board.teamAt(startPosition),
         // movements = this.directionalMovements(board.layOut, startPosition),
         // viablePositions = [];
@@ -399,7 +404,10 @@ var PieceMovementRules = function(){
               moves[key].rangeLimit = 1 ;
             };
           };
-          if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition) ){
+          if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition) 
+            && !PieceMovementRules.getInstance().kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
+            && !PieceMovementRules.getInstance().kingInCheck({startPosition: (startPosition), endPosition: (startPosition + 1), board: board })
+            ){
             var castle = PieceMovementRules.getInstance().movements.generic.horizontalLeft()
             castle.increment = + 2
             castle.rangeLimit = 1
@@ -412,7 +420,10 @@ var PieceMovementRules = function(){
             }
             moves.push(castle)
           };
-          if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear && board.queenSideRookHasNotMoved(startPosition) ){
+          if( board.layOut[42] === "blackNight" ){debugger}
+          if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition) 
+            && !PieceMovementRules.getInstance().kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
+            && !PieceMovementRules.getInstance().kingInCheck({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
             var castle = PieceMovementRules.getInstance().movements.generic.horizontalRight()
             castle.increment = - 2
             castle.rangeLimit = 1

@@ -138,8 +138,8 @@ Board.prototype = {
       previousLayouts = this.previousLayouts,
       pieceHasNotMoved = true;
     for(var i = 0; i < previousLayouts.length; i++){
-      var previousLayout = previousLayouts[i];
-      if(previousLayout[position] !== pieceString ){
+      var oldLayout= previousLayouts[i];
+      if(oldLayout[position] !== pieceString ){
         pieceHasNotMoved = false
         break;
       };

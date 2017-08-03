@@ -54,7 +54,7 @@ var PostMovementRules = function (pieceMovementRules) {
         for( var key in viablePositions ){
           // var endPosition = viablePositions[j];
           // only checking kingCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
-          if( !pieceMovementRules.kingCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
+          if( !pieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
             noLegalMoves = false
           }
         };
