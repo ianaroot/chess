@@ -62,6 +62,22 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  // newShit
+  recordNotation: function(startPosition, endPosition){
+    var capture = !this.positionWasEmpty(endPosition),
+      castled = this.castled(startPosition, endPosition);
+// if castle was kingside 0-0, queenside 0-0-0
+// if pawn captures, include starting file
+// if rook or night moves and other night or rook could've acheived that position include differentiationg rank or position
+    // board.fileIncludesTeammateRook
+    // board.rankIncludesTeammateRook
+    // board.moveWithinRank
+    // board.MoveWithinFile
+    // board.teammateNightWithinReachOf(position)
+// if check include +
+// if mate include #
+  },
+
   oneSpaceDownIsEmpty: function(position){
     return this.positionEmpty(position - 8)
   },
