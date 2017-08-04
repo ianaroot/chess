@@ -77,8 +77,8 @@ var PieceMovementRules = function(){
       };
 // do this in a function
 // also probably gonna wanna copy all the board stuff, like previous states
-      newLayout[startPosition] = "empty"
-      newLayout[endPosition] = pieceString
+      newLayout[startPosition] = "empty";
+      newLayout[endPosition] = pieceString;
       var newBoard = new Board({layOut: newLayout}),
       kingPosition = newBoard.kingPosition(teamString);
 // seriously, factor it out
@@ -86,8 +86,7 @@ var PieceMovementRules = function(){
       var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
       for(var i = 0; i < enemyPositions.length; i++){
         var enemyPosition = enemyPositions[i],
-          pieceController = this.retrieveControllerForPosition( {position: enemyPosition, layOut: board.layOut} );
-
+          pieceController = this.retrieveControllerForPosition( {position: enemyPosition, layOut: board.layOut} ),
           enemyPieceType = board.pieceTypeAt( enemyPosition );
           if( enemyPieceType !== "King" && PieceMovementRules.getInstance().positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard, pieceMovements: pieceController} ) ){
           danger = true
@@ -108,9 +107,8 @@ var PieceMovementRules = function(){
     positionViable: function(args){
       var board = args["board"],
         startPosition = args["startPosition"],
-        endPosition = args["endPosition"];
-
-      var pieceMovements = args["pieceMovements"],
+        endPosition = args["endPosition"],
+        pieceMovements = args["pieceMovements"],
         viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board} ),
         viable = false;
       // for(var i = 0; i < viablePositions.length; i++){
@@ -128,9 +126,8 @@ var PieceMovementRules = function(){
     },
     viablePositionsFrom: function(args){
       var startPosition = args["startPosition"],
-        board = args["board"];
-
-      var pieceController = this.retrieveControllerForPosition( { position: startPosition, layOut: board.layOut} ),
+        board = args["board"]
+        pieceController = this.retrieveControllerForPosition( { position: startPosition, layOut: board.layOut} ),
         pieceMovements = pieceController({board: board, startPosition: startPosition}),
         // why pass in pieceMovements? this accessible given we have the board and position
         teamString = board.teamAt(startPosition),
@@ -164,8 +161,8 @@ var PieceMovementRules = function(){
     },
     pathIsClear: function(startPosition, endPosition, movementType, layOut){
       var clear = true,
-      rangeLimit = movementType.rangeLimit,
-      increment = movementType.increment;
+        rangeLimit = movementType.rangeLimit,
+        increment = movementType.increment;
       for( var i = 1; i <= movementType.rangeLimit && (startPosition + i * increment) < endPosition; i++){
         var currentPosition = startPosition + i * increment;
         if( layOut[currentPosition] !== "empty"){
@@ -367,9 +364,9 @@ var PieceMovementRules = function(){
           var board = args["board"],
             startPosition = args["startPosition"],
             moves = [PieceMovementRules.getInstance().movements.generic.nightHorizontalRightDown(), PieceMovementRules.getInstance().movements.generic.nightHorizontalLeftDown(), PieceMovementRules.getInstance().movements.generic.nightVerticalRightDown(),
-                        PieceMovementRules.getInstance().movements.generic.nightVerticalLeftDown(), PieceMovementRules.getInstance().movements.generic.nightHorizontalRightUp(), PieceMovementRules.getInstance().movements.generic.nightHorizontalLeftUp(),
-                        PieceMovementRules.getInstance().movements.generic.nightVerticalRightUp(), PieceMovementRules.getInstance().movements.generic.nightVerticalLeftUp()
-                      ];
+                      PieceMovementRules.getInstance().movements.generic.nightVerticalLeftDown(), PieceMovementRules.getInstance().movements.generic.nightHorizontalRightUp(), PieceMovementRules.getInstance().movements.generic.nightHorizontalLeftUp(),
+                      PieceMovementRules.getInstance().movements.generic.nightVerticalRightUp(), PieceMovementRules.getInstance().movements.generic.nightVerticalLeftUp()
+                    ];
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
               moves[key].rangeLimit = 1;
@@ -408,8 +405,8 @@ var PieceMovementRules = function(){
           // scoping error is cause PieceMovementRules.getInstance() to be pieceSpecific, not the piececontroller when we get in the pieceSpecific.rook
           // return PieceMovementRules.getInstance().movements.pieceSpecific.rook().concat( PieceMovementRules.getInstance().movements.pieceSpecific.bishop() )
             moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown(),
-            PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()
-          ];
+                      PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()
+                    ];
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
               moves[key].rangeLimit = 7;
@@ -422,8 +419,8 @@ var PieceMovementRules = function(){
           var board = args["board"],
             startPosition = args["startPosition"],
             moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown(),
-          PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()
-          ];
+                      PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()
+                    ];
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
               moves[key].rangeLimit = 1;
@@ -439,17 +436,16 @@ var PieceMovementRules = function(){
             castle.rangeLimit = 1
             castle.fullNotation = "O-O"
             castle.additionalActions = function(args){
+            //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
+            // explicit here and use game controller instead of this
               var position = args["position"],
-                board = args["board"];
-              //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
-              // explicit here and use game controller instead of this
-              pieceString = this.board.layOut[startPosition + 3]
+                board = args["board"],
+                pieceString = this.board.layOut[startPosition + 3];
               this.board.emptify( startPosition + 3)
               this.board.placePiece({ position: (startPosition + 1), pieceString: pieceString })
             }
             moves.push(castle)
           };
-          if( board.layOut[42] === "blackNight" ){debugger}
           if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition) 
             && !PieceMovementRules.getInstance().kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
             && !PieceMovementRules.getInstance().kingInCheck({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
@@ -458,11 +454,11 @@ var PieceMovementRules = function(){
             castle.rangeLimit = 1
             castle.fullNotation = "O-O-O"
             castle.additionalActions = function(args){
-              var position = args["position"],
-                board = args["board"];
               //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
               // explicit here and use game controller instead of this
-              pieceString = this.board.layOut[startPosition - 4]
+              var position = args["position"],
+                board = args["board"],
+                pieceString = this.board.layOut[startPosition - 4];
               this.board.emptify( startPosition - 4)
               this.board.placePiece({ position: (startPosition - 1), pieceString: pieceString })
             }
@@ -484,7 +480,7 @@ var PieceMovementRules = function(){
               return false
             }
           };
-          enPassantRight= function(args){
+          enPassantRight = function(args){
             var board = args["board"],
               position = args["position"];
             if( Board.classMethods.rank(position) === 5 && board.layOut[position + 1] === "blackPawn" && board.previousLayouts.length && board.positionEmpty(position + 17) && board.lastLayout()[position +  17] === "blackPawn" ){
@@ -518,7 +514,6 @@ var PieceMovementRules = function(){
             newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             movements = movements.concat(newPossibility)
           };
-          if( startPosition === 34 && board.layOut[33] ==="blackPawn" ){debugger};
           if( this.enPassantLeft( {position: startPosition, board: board}) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.backSlashUp()
             newPossibility.rangeLimit = 1
