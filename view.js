@@ -19,7 +19,7 @@ var View = (function(){
     },
     displayBoard: function(layOut){
       for( var i = 0; i < layOut.length; i++){
-        var gridPosition = Board.classMethods.gridCalculator(i),
+        var gridPosition = "square-" +Board.classMethods.gridCalculator(i),
             pieceInitials = this.pieceInitials(layOut[i]);
         this.undisplayPiece(gridPosition);
         this.undisplayPiece(gridPosition);

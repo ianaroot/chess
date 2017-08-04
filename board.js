@@ -25,6 +25,13 @@ Board.classMethods = {
       return Math.floor(position / 8) === 1
     }
   },
+  rank: function(position){
+    return Math.floor(position / 8) + 1
+  },
+  file: function(position){
+    var files = "abcdefgh";
+    return files[position % 8]
+  },
   squareColor: function(position){
     var div = position / 8,
       mod   = position % 8,
@@ -51,7 +58,7 @@ Board.classMethods = {
         7: "h"
       },
       x = alphaNum[x];
-    return "square-" + x + y
+    return x + y
   },
   boundaries: {
     upperLimit: 63,

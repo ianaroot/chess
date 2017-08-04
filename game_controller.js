@@ -45,10 +45,11 @@ var GameController = (function(){
         allowedToMove: "white"}),
     move: function(startPosition, endPosition){
       // attempt move is probably a better name for this func
-      board = this.board
-      layOut = board.layOut
-      pieceString = layOut[startPosition]
-      var team = pieceString.substring(0,5) //this gets reused a few times and seems magic and should become a function
+      var board = this.board,
+        layOut = board.layOut,
+        pieceString = layOut[startPosition],
+        team = pieceString.substring(0,5), //this gets reused a few times and seems magic and should become a function
+        captureNotation;
 
       if( team !== board.allowedToMove ){
         alert("other team's turn")
@@ -59,19 +60,36 @@ var GameController = (function(){
       if( moveObject.illegal ){
         return
       } else {
+
         // REFACTOR MEEEEEEEEE
         newLayOut = Board.classMethods.deepCopyLayout( layOut )
         board.previousLayouts.push(newLayOut)
         var pieceString = this.board.layOut[startPosition];
         this.board.emptify(startPosition)
+        // fo real, refac
 
-        capturedPiece = this.board.layOut[endPosition]
+        if( !this.board.positionEmpty(endPosition) ){
+          this.board.capturedPieces.push( this.board.layOut[endPosition] )
+          captureNotation = "x"
+        }
+
+
         this.board.placePiece({ position: endPosition, pieceString: pieceString })
 
         if( moveObject.additionalActions ){
           moveObject.additionalActions.call(this, startPosition)
         }
-
+         
+        if( moveObject.fullNotation ){
+          notation = moveObject.fullNotation
+        }
+         else {
+          positionNotation = Board.classMethods.gridCalculator(endPosition)
+          pieceNotation = moveObject.pieceNotation
+          captureNotation = captureNotation || moveObject.captureNotation || ""
+          notation = pieceNotation + captureNotation + positionNotation
+        }
+        console.log( notation )
         // if ( board.layOut[endPosition].team !== team ){
           // capture(endPosition)
           // this is the only place that should be deleting the destination tile

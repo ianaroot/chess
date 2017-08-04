@@ -30,7 +30,7 @@ var PostMovementRules = function (pieceMovementRules) {
           }
         };
         if( !different ){ repetitions ++ }
-        console.log("repetitions is: " + repetitions)
+        // console.log("repetitions is: " + repetitions)
       };
       if(repetitions >= 2){
         threeFoldRepetition = true
@@ -47,7 +47,7 @@ var PostMovementRules = function (pieceMovementRules) {
 
         var startPosition = occcupiedPositions[i],
         // parts of this need to move over to the pieceMvementPostMovementRules
-        pieceController = pieceMovementRules.retrieveControllerForPosition(startPosition),
+        pieceController = pieceMovementRules.retrieveControllerForPosition({position: startPosition, layOut: board.layOut}),
 
         viablePositions = pieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board, pieceMovements: pieceController});
         // for(var j = 0; j < viablePositions.length && noLegalMoves; j++){
@@ -59,8 +59,8 @@ var PostMovementRules = function (pieceMovementRules) {
           }
         };
       };
-      console.log("threeFoldRepetition is: " + threeFoldRepetition)
-      console.log("noLegalMoves is: " + noLegalMoves)
+      // console.log("threeFoldRepetition is: " + threeFoldRepetition)
+      // console.log("noLegalMoves is: " + noLegalMoves)
       return threeFoldRepetition || noLegalMoves
     },
   }

@@ -29,7 +29,15 @@ var PieceMovementRules = function(){
         alert("check yo king fool")
         moveObject.illegal = true
       }
+      // now we know the move is legal
+
       moveObject.additionalActions = viableMovement.additionalActions
+      if( viableMovement.fullNotation ){
+        moveObject.notation = viableMovement.fullNotation
+      } 
+      // if( viableMovement.pieceNotation ){
+        moveObject.pieceNotation = viableMovement.pieceNotation
+      // }
       // moveObject = {
       //   illegal: illegal,
       //   startPosition: startPosition,
@@ -38,8 +46,10 @@ var PieceMovementRules = function(){
       // }
       return moveObject
     },
-    retrieveControllerForPosition: function(position){
-      var  positionString = layOut[position],
+    retrieveControllerForPosition: function(args){
+      var  layOut = args["layOut"],
+        position = args["position"],
+        positionString = layOut[position],
         stringLength = positionString.length,
         pieceType = positionString.substring(5, stringLength)
         pieceType = pieceType.charAt(0).toLowerCase() + pieceType.slice(1);
@@ -76,7 +86,7 @@ var PieceMovementRules = function(){
       var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
       for(var i = 0; i < enemyPositions.length; i++){
         var enemyPosition = enemyPositions[i],
-          pieceController = this.retrieveControllerForPosition( enemyPosition );
+          pieceController = this.retrieveControllerForPosition( {position: enemyPosition, layOut: board.layOut} );
           enemyPieceType = board.pieceTypeAt( enemyPosition );
           if( enemyPieceType !== "King" && PieceMovementRules.getInstance().positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard, pieceMovements: pieceController} ) ){
           danger = true
@@ -117,7 +127,7 @@ var PieceMovementRules = function(){
     viablePositionsFrom: function(args){
       var startPosition = args["startPosition"],
         board = args["board"],
-        pieceController = this.retrieveControllerForPosition( startPosition ),
+        pieceController = this.retrieveControllerForPosition( { position: startPosition, layOut: board.layOut} ),
         pieceMovements = pieceController({board: board, startPosition: startPosition}),
         // why pass in pieceMovements? this accessible given we have the board and position
         teamString = board.teamAt(startPosition),
@@ -350,45 +360,57 @@ var PieceMovementRules = function(){
         }
       },
       pieceSpecific: {
-        night: function(){
-          var moves = [PieceMovementRules.getInstance().movements.generic.nightHorizontalRightDown(), PieceMovementRules.getInstance().movements.generic.nightHorizontalLeftDown(), PieceMovementRules.getInstance().movements.generic.nightVerticalRightDown(),
+        night: function(args){
+          var board = args["board"],
+            startPosition = args["startPosition"],
+            moves = [PieceMovementRules.getInstance().movements.generic.nightHorizontalRightDown(), PieceMovementRules.getInstance().movements.generic.nightHorizontalLeftDown(), PieceMovementRules.getInstance().movements.generic.nightVerticalRightDown(),
                         PieceMovementRules.getInstance().movements.generic.nightVerticalLeftDown(), PieceMovementRules.getInstance().movements.generic.nightHorizontalRightUp(), PieceMovementRules.getInstance().movements.generic.nightHorizontalLeftUp(),
                         PieceMovementRules.getInstance().movements.generic.nightVerticalRightUp(), PieceMovementRules.getInstance().movements.generic.nightVerticalLeftUp()
                       ];
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
-              moves[key].rangeLimit = 1 ;
+              moves[key].rangeLimit = 1;
+              moves[key].pieceNotation = "N"
             };
           };
           return  moves
         },
-        rook: function(){
-          var moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown()]
+        rook: function(args){
+          var board = args["board"],
+            startPosition = args["startPosition"],
+            moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown()]
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
-              moves[key].rangeLimit = 7 ;
+              moves[key].rangeLimit = 7;
+              moves[key].pieceNotation = "R"
             };
           };
           return moves
         },
-        bishop: function(){
-          var moves = [PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()]
+        bishop: function(args){
+          var board = args["board"],
+            startPosition = args["startPosition"],
+            moves = [PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()]
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
-              moves[key].rangeLimit = 7 ;
+              moves[key].rangeLimit = 7;
+              moves[key].pieceNotation = "B"
             };
           };
           return moves
         },
-        queen: function(){
+        queen: function(args){
+          var board = args["board"],
+            startPosition = args["startPosition"],
           // scoping error is cause PieceMovementRules.getInstance() to be pieceSpecific, not the piececontroller when we get in the pieceSpecific.rook
           // return PieceMovementRules.getInstance().movements.pieceSpecific.rook().concat( PieceMovementRules.getInstance().movements.pieceSpecific.bishop() )
-          var moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown(),
+            moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown(),
             PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()
-          ]
+          ];
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
-              moves[key].rangeLimit = 7 ;
+              moves[key].rangeLimit = 7;
+              moves[key].pieceNotation = "Q"
             };
           };
           return moves
@@ -401,7 +423,8 @@ var PieceMovementRules = function(){
           ];
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
-              moves[key].rangeLimit = 1 ;
+              moves[key].rangeLimit = 1;
+              moves[key].pieceNotation = "K"
             };
           };
           if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition) 
@@ -411,6 +434,7 @@ var PieceMovementRules = function(){
             var castle = PieceMovementRules.getInstance().movements.generic.horizontalLeft()
             castle.increment = + 2
             castle.rangeLimit = 1
+            castle.fullNotation = "O-O"
             castle.additionalActions = function(startPosition){
               //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
               // explicit here and use game controller instead of this
@@ -427,6 +451,7 @@ var PieceMovementRules = function(){
             var castle = PieceMovementRules.getInstance().movements.generic.horizontalRight()
             castle.increment = - 2
             castle.rangeLimit = 1
+            castle.fullNotation = "O-O-O"
             castle.additionalActions = function(startPosition){
               //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
               // explicit here and use game controller instead of this
@@ -445,21 +470,25 @@ var PieceMovementRules = function(){
           if( Board.classMethods.ranks.isSecond(startPosition) && board.twoSpacesUpIsEmpty( startPosition ) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.verticalUp()
             newPossibility.rangeLimit = 2
+            newPossibility.pieceNotation = ""
             movements = movements.concat(newPossibility)
           };
           if( board.oneSpaceUpIsEmpty(startPosition) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.verticalUp()
             newPossibility.rangeLimit = 1
+            newPossibility.pieceNotation = ""
             movements = movements.concat(newPossibility)
           };
           if( board.upAndLeftIsAttackable({position: startPosition, attackingTeamString: "white"}) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.backSlashUp()
             newPossibility.rangeLimit = 1
+            newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             movements = movements.concat(newPossibility)
           };
           if( board.upAndRightIsAttackable({position: startPosition, attackingTeamString: "white"}) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.forwardSlashUp()
             newPossibility.rangeLimit = 1
+            newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             movements = movements.concat(newPossibility)
           };
           return movements
@@ -471,21 +500,25 @@ var PieceMovementRules = function(){
           if( Board.classMethods.ranks.isSeventh(startPosition) && board.twoSpacesDownIsEmpty(startPosition) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.verticalDown()
             newPossibility.rangeLimit = 2
+            newPossibility.pieceNotation = ""
             movements = movements.concat(newPossibility)
           };
           if( board.oneSpaceDownIsEmpty(startPosition) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.verticalDown()
             newPossibility.rangeLimit = 1
+            newPossibility.pieceNotation = ""
             movements = movements.concat(newPossibility)
           };
           if( board.downAndLeftIsAttackable({position: startPosition, attackingTeamString: "black"}) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.forwardSlashDown()
             newPossibility.rangeLimit = 1
+            newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             movements = movements.concat(newPossibility)
           };
           if( board.downAndRightIsAttackable({position: startPosition, attackingTeamString: "black"}) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.backSlashDown()
             newPossibility.rangeLimit = 1
+            newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             movements = movements.concat(newPossibility)
           };
           // moves.verticalDownTwoStep.rangeLimit = 2;
