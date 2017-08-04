@@ -80,7 +80,7 @@ var GameController = (function(){
         this.board.placePiece({ position: endPosition, pieceString: pieceString })
 
         if( moveObject.additionalActions ){
-          moveObject.additionalActions.call(this, startPosition)
+          moveObject.additionalActions.call(this, {position: startPosition, board: board} )
         }
          
         if( moveObject.fullNotation ){
