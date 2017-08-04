@@ -4,16 +4,6 @@
 // search for equals, deglobalize scope slippage
 var PieceMovementRules = function(){
   var instance = {
-    blackEnPassantLeftTargetAvailable: function(args){
-      var board = args["board"],
-        position = args["position"];
-
-          // if( position === 27){ debugger }
-          console.log("inside blackEnPassantLeftTargetAvailable" + board.previousLayouts.length)
-        if( Board.classMethods.rank(position) === 4 && board.layOut[position - 1] === "whitePawn" && board.previousLayouts.length && board.positionEmpty(position - 17) && board.lastLayout()[position -  17] === "whitePawn" ){
-          return position - 1
-        }
-    },
     moveIsIllegal: function(startPosition, endPosition, board){
       var layOut = board.layOut,
         team = board.teamAt(startPosition),
@@ -98,8 +88,6 @@ var PieceMovementRules = function(){
         var enemyPosition = enemyPositions[i],
           pieceController = this.retrieveControllerForPosition( {position: enemyPosition, layOut: board.layOut} );
 
-          console.log("inside kingInCheck" + board.previousLayouts.length)
-
           enemyPieceType = board.pieceTypeAt( enemyPosition );
           if( enemyPieceType !== "King" && PieceMovementRules.getInstance().positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard, pieceMovements: pieceController} ) ){
           danger = true
@@ -122,8 +110,6 @@ var PieceMovementRules = function(){
         startPosition = args["startPosition"],
         endPosition = args["endPosition"];
 
-      console.log("inside positionViable" + board.previousLayouts.length)
-
       var pieceMovements = args["pieceMovements"],
         viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board} ),
         viable = false;
@@ -143,8 +129,6 @@ var PieceMovementRules = function(){
     viablePositionsFrom: function(args){
       var startPosition = args["startPosition"],
         board = args["board"];
-
-      console.log("inside viablePositionsFrom" + board.previousLayouts.length)
 
       var pieceController = this.retrieveControllerForPosition( { position: startPosition, layOut: board.layOut} ),
         pieceMovements = pieceController({board: board, startPosition: startPosition}),
@@ -516,7 +500,22 @@ var PieceMovementRules = function(){
           var board = args["board"],
           startPosition = args["startPosition"],
           enPassantTarget,
-          movements = [];
+          movements = []
+          enPassantRight = function(args){
+            var position = args["position"],
+              board = args["board"]; 
+            if( Board.classMethods.rank(position) === 4 && board.layOut[position + 1] === "whitePawn" && board.previousLayouts.length && board.positionEmpty(position - 15) && board.lastLayout()[position -  15] === "whitePawn" ){
+              return position + 1
+            }
+          },
+          enPassantLeft= function(args){
+            var board = args["board"],
+              position = args["position"];
+
+              if( Board.classMethods.rank(position) === 4 && board.layOut[position - 1] === "whitePawn" && board.previousLayouts.length && board.positionEmpty(position - 17) && board.lastLayout()[position -  17] === "whitePawn" ){
+                return position - 1
+              }
+          };
           if( Board.classMethods.ranks.isSeventh(startPosition) && board.twoSpacesDownIsEmpty(startPosition) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.verticalDown()
             newPossibility.rangeLimit = 2
@@ -541,15 +540,21 @@ var PieceMovementRules = function(){
             newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             movements = movements.concat(newPossibility)
           };
-          console.log("inside blackPawn" + board.previousLayouts.length)
-          if( enPassantTarget = PieceMovementRules.getInstance().blackEnPassantLeftTargetAvailable( {position: startPosition, board: board}) ){
-            console.log(enPassantTarget)
-
+          if( this.enPassantLeft( {position: startPosition, board: board}) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.forwardSlashDown()
             newPossibility.rangeLimit = 1
             newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             newPossibility.additionalActions = function(position){
               this.board.capture(position - 1)
+            }
+            movements = movements.concat(newPossibility)
+          };
+          if( this.enPassantRight( {position: startPosition, board: board}) ){
+            var newPossibility = PieceMovementRules.getInstance().movements.generic.backSlashDown()
+            newPossibility.rangeLimit = 1
+            newPossibility.pieceNotation = Board.classMethods.file(startPosition)
+            newPossibility.additionalActions = function(position){
+              this.board.capture(position + 1)
             }
             movements = movements.concat(newPossibility)
           };

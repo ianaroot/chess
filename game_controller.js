@@ -92,7 +92,6 @@ var GameController = (function(){
           captureNotation = captureNotation || moveObject.captureNotation || ""
           notation = pieceNotation + captureNotation + positionNotation
         }
-        console.log( notation )
         // if ( board.layOut[endPosition].team !== team ){
           // capture(endPosition)
           // this is the only place that should be deleting the destination tile
@@ -138,7 +137,7 @@ var GameController = (function(){
       setTimeout( function(){ gC.move(59, 41) }, 2000)
       setTimeout( function(){ gC.move(3,  19) }, 2500)
       setTimeout( function(){ gC.move(42, 34) }, 3000)
-      setTimeout( function(){ gC.move(12, 20) }, 3500)
+      setTimeout( function(){ gC.move(14, 22) }, 3500)
       setTimeout( function(){ gC.move(34, 27) }, 4000)
       setTimeout( function(){ gC.move(18, 24) }, 4500)
       setTimeout( function(){ gC.move(51, 43) }, 5000)
