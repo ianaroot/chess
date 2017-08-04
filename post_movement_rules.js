@@ -19,7 +19,8 @@ var PostMovementRules = function (pieceMovementRules) {
         repetitions = 0,
         threeFoldRepetition = false,
         noLegalMoves = true,
-        currentLayOut = board.layOut;
+        currentLayOut = board.layOut
+        different;
       for( var i = 0; i < previousLayouts.length; i++ ){
         var comparisonLayout = previousLayouts[i],
           different = false;
@@ -30,7 +31,6 @@ var PostMovementRules = function (pieceMovementRules) {
           }
         };
         if( !different ){ repetitions ++ }
-        // console.log("repetitions is: " + repetitions)
       };
       if(repetitions >= 2){
         threeFoldRepetition = true
@@ -38,18 +38,17 @@ var PostMovementRules = function (pieceMovementRules) {
 
 
       if(movingTeamString === "black"){
-        onDeckTeamString = "white"        
+        var onDeckTeamString = "white"        
       } else {
-        onDeckTeamString = "black"
+        var onDeckTeamString = "black"
       }
       var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
       for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
 
-        var startPosition = occcupiedPositions[i],
         // parts of this need to move over to the pieceMvementPostMovementRules
-        pieceController = pieceMovementRules.retrieveControllerForPosition({position: startPosition, layOut: board.layOut}),
-
-        viablePositions = pieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board, pieceMovements: pieceController});
+        var startPosition = occcupiedPositions[i],
+          pieceController = pieceMovementRules.retrieveControllerForPosition({position: startPosition, layOut: board.layOut}),
+          viablePositions = pieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board, pieceMovements: pieceController});
         // for(var j = 0; j < viablePositions.length && noLegalMoves; j++){
         for( var key in viablePositions ){
           // var endPosition = viablePositions[j];
@@ -59,8 +58,6 @@ var PostMovementRules = function (pieceMovementRules) {
           }
         };
       };
-      // console.log("threeFoldRepetition is: " + threeFoldRepetition)
-      // console.log("noLegalMoves is: " + noLegalMoves)
       return threeFoldRepetition || noLegalMoves
     },
   }
