@@ -45,14 +45,15 @@ var GameController = (function(){
       //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
       //  ],
 
-        allowedToMove: "white"}),
+    allowedToMove: "white"}),
     move: function(startPosition, endPosition){
       // attempt move is probably a better name for this func
       var board = this.board,
         layOut = board.layOut,
         pieceString = layOut[startPosition],
         team = pieceString.substring(0,5), //this gets reused a few times and seems magic and should become a function
-        captureNotation;
+        captureNotation,
+        notation;
 
       if( team !== board.allowedToMove ){
         alert("other team's turn")
@@ -65,7 +66,7 @@ var GameController = (function(){
       } else {
 
         // REFACTOR MEEEEEEEEE
-        newLayOut = Board.classMethods.deepCopyLayout( layOut )
+        var newLayOut = Board.classMethods.deepCopyLayout( layOut );
         board.previousLayouts.push(newLayOut)
         var pieceString = this.board.layOut[startPosition];
         this.board.emptify(startPosition)
@@ -88,9 +89,9 @@ var GameController = (function(){
           notation = moveObject.fullNotation
         }
          else {
-          positionNotation = Board.classMethods.gridCalculator(endPosition)
-          pieceNotation = moveObject.pieceNotation
-          captureNotation = captureNotation || moveObject.captureNotation || ""
+          var positionNotation = Board.classMethods.gridCalculator(endPosition),
+            pieceNotation = moveObject.pieceNotation,
+            captureNotation = captureNotation || moveObject.captureNotation || "";
           notation = pieceNotation + captureNotation + positionNotation
         }
         // if ( board.layOut[endPosition].team !== team ){
@@ -129,7 +130,7 @@ var GameController = (function(){
     simulate: function (){
       var gC = this;
 
-      gC.createTeams()
+      // gC.createTeams()
       gC.view.displayBoard(gC.board.layOut)
       gC.begin()
       setTimeout( function(){ gC.move(1,  18) }, 500)
@@ -185,16 +186,16 @@ var GameController = (function(){
       game.begin()
       setTimeout( function(){ rules.move(1,  18) }, 500)
     },
-    createTeams: function(){
+    // createTeams: function(){
       // not really applying the globality or the team at all in the way i had planned
-      window.white = {
-        name: "white"
-      };
-      window.black = {
-        name: "black",
-      };
+      // window.white = {
+      //   name: "white"
+      // };
+      // window.black = {
+      //   name: "black",
+      // };
       
-    },
+    // },
     begin: function(){
       this.view.displayBoard
     },
