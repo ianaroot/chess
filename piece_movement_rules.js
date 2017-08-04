@@ -474,6 +474,26 @@ var PieceMovementRules = function(){
           var board = args["board"],
             startPosition = args["startPosition"],
             movements = [];
+          enPassantLeft = function(args){
+            var position = args["position"],
+              board = args["board"]; 
+            if( Board.classMethods.rank(position) === 5 && board.layOut[position - 1] === "blackPawn" && board.previousLayouts.length && board.positionEmpty(position + 15) && board.lastLayout()[position +  15] === "blackPawn" ){
+              // not making use of this number as expected, may as well return true
+              return position + 1
+            } else {
+              return false
+            }
+          };
+          enPassantRight= function(args){
+            var board = args["board"],
+              position = args["position"];
+            if( Board.classMethods.rank(position) === 5 && board.layOut[position + 1] === "blackPawn" && board.previousLayouts.length && board.positionEmpty(position + 17) && board.lastLayout()[position +  17] === "blackPawn" ){
+              return position - 1
+              // not making use of this number as expected, may as well return true
+            } else {
+              return false
+            }
+          };
           if( Board.classMethods.ranks.isSecond(startPosition) && board.twoSpacesUpIsEmpty( startPosition ) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.verticalUp()
             newPossibility.rangeLimit = 2
@@ -498,27 +518,51 @@ var PieceMovementRules = function(){
             newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             movements = movements.concat(newPossibility)
           };
+          if( startPosition === 34 && board.layOut[33] ==="blackPawn" ){debugger};
+          if( this.enPassantLeft( {position: startPosition, board: board}) ){
+            var newPossibility = PieceMovementRules.getInstance().movements.generic.backSlashUp()
+            newPossibility.rangeLimit = 1
+            newPossibility.pieceNotation = Board.classMethods.file(startPosition)
+            newPossibility.additionalActions = function(args){
+              var position = args["position"],
+                board = args["board"];
+              board.capture(position - 1)
+            }
+            movements = movements.concat(newPossibility)
+          };
+          if( this.enPassantRight( {position: startPosition, board: board}) ){
+            var newPossibility = PieceMovementRules.getInstance().movements.generic.forwardSlashUp()
+            newPossibility.rangeLimit = 1
+            newPossibility.pieceNotation = Board.classMethods.file(startPosition)
+            newPossibility.additionalActions = function(args){
+              var position = args["position"],
+                board = args["board"];
+              board.capture(position + 1)
+            }
+            movements = movements.concat(newPossibility)
+          };
           return movements
         },
         blackPawn: function(args){
           var board = args["board"],
-          startPosition = args["startPosition"],
-          enPassantTarget,
-          movements = []
+            startPosition = args["startPosition"],
+            enPassantTarget,
+            movements = [];
           enPassantRight = function(args){
             var position = args["position"],
               board = args["board"]; 
             if( Board.classMethods.rank(position) === 4 && board.layOut[position + 1] === "whitePawn" && board.previousLayouts.length && board.positionEmpty(position - 15) && board.lastLayout()[position -  15] === "whitePawn" ){
               return position + 1
+              // not making use of this number as expected, may as well return true
             }
-          },
+          };
           enPassantLeft= function(args){
             var board = args["board"],
               position = args["position"];
-
-              if( Board.classMethods.rank(position) === 4 && board.layOut[position - 1] === "whitePawn" && board.previousLayouts.length && board.positionEmpty(position - 17) && board.lastLayout()[position -  17] === "whitePawn" ){
-                return position - 1
-              }
+            if( Board.classMethods.rank(position) === 4 && board.layOut[position - 1] === "whitePawn" && board.previousLayouts.length && board.positionEmpty(position - 17) && board.lastLayout()[position -  17] === "whitePawn" ){
+              return position - 1
+              // not making use of this number as expected, may as well return true
+            }
           };
           if( Board.classMethods.ranks.isSeventh(startPosition) && board.twoSpacesDownIsEmpty(startPosition) ){
             var newPossibility = PieceMovementRules.getInstance().movements.generic.verticalDown()

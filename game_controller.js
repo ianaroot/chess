@@ -1,3 +1,4 @@
+// not loggin notation on en passant
 // i think there is an edge case where the captured pawn in en passant isn't removed yet during kingInCheck but it's removal would result in check
 // clarify difference between trying to move wrong color, and trying to move from empty space
 // moveIsLegal returns the moves occuring as an object
@@ -142,6 +143,9 @@ var GameController = (function(){
       setTimeout( function(){ gC.move(18, 24) }, 4500)
       setTimeout( function(){ gC.move(51, 43) }, 5000)
       setTimeout( function(){ gC.move(10, 26) }, 5500)
+      setTimeout( function(){ gC.move(41, 17) }, 6000)
+      setTimeout( function(){ gC.move(26, 34) }, 6500)
+      setTimeout( function(){ gC.move(49, 33) }, 7000)
       
       // setTimeout( function(){ gC.move(0,  1) },  4500)
       // setTimeout( function(){ gC.move(27, 18) }, 5000)
