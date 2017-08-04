@@ -45,14 +45,12 @@ var PostMovementRules = function (pieceMovementRules) {
       var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
       for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
 
-        // parts of this need to move over to the pieceMvementPostMovementRules
+        // parts of this need to move over to the pieceMovementRules
         var startPosition = occcupiedPositions[i],
           pieceController = pieceMovementRules.retrieveControllerForPosition({position: startPosition, layOut: board.layOut}),
           viablePositions = pieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board, pieceMovements: pieceController});
-        // for(var j = 0; j < viablePositions.length && noLegalMoves; j++){
         for( var key in viablePositions ){
-          // var endPosition = viablePositions[j];
-          // only checking kingCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
+          // only checking kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
           if( !pieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
             noLegalMoves = false
           }
