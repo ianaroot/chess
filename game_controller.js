@@ -74,7 +74,6 @@ var GameController = (function(){
         // fo real, refac
 
         if( !this.board.positionEmpty(endPosition) ){
-          // this.board.capturedPieces.push( this.board.layOut[endPosition] )
           this.board.capture(endPosition)
           captureNotation = "x"
         }
@@ -95,11 +94,6 @@ var GameController = (function(){
             captureNotation = captureNotation || moveObject.captureNotation || "";
           notation = pieceNotation + captureNotation + positionNotation
         }
-        // if ( board.layOut[endPosition].team !== team ){
-          // capture(endPosition)
-          // this is the only place that should be deleting the destination tile
-          // it should also move the piece from active pieces into captured pieces
-        // }
 
         var stalemate = this.postMovementRules.stalemate(board);
         if( stalemate ){
@@ -109,20 +103,12 @@ var GameController = (function(){
           alert("stalemate!")
         }
 
-        this.postMovementRules.pawnPromotionQuery( board )
+        this.postMovementRules.pawnPromotionQuery( board ) //this nees to then alter the notation
 
         // this.board.recordNotation(startPosition, endPosition)
-        // this.postMovementRules.castle()
-        // moveIsLegal could return most of the necessary information for recording notation i think 
-        // this.postMovementRules.enPassant()
-
-      // checkmate
-      // check (like if it happens after a legal move, not prevents a move from being legal)
-
-
+        // checkmate
+        // check (like if it happens after a legal move, not prevents a move from being legal) also need to verify that for notation
       // if i make modular functions that move pieces and capture pieces, en passant and castling will be simpler to implement
-      // for castling, iterate across previous boards, and just check whether the king, or rooks ever weren't in their starting position
-      // king will have to add this to his directionMoves
 
         this.view.displayBoard(this.board.layOut)
         this.nextTurn()
@@ -131,9 +117,7 @@ var GameController = (function(){
     simulate: function (){
       var gC = this;
 
-      // gC.createTeams()
       gC.view.displayBoard(gC.board.layOut)
-      gC.begin()
       setTimeout( function(){ gC.move(1,  18) }, 500)
       setTimeout( function(){ gC.move(50, 42) }, 1000)
       setTimeout( function(){ gC.move(11, 27) }, 1500)
@@ -181,24 +165,9 @@ var GameController = (function(){
       
     },
     testing: function(){
-      game.createTeams()
-      game.addWhitePieces()
-      game.addBlackPieces()
-      game.begin()
-      setTimeout( function(){ rules.move(1,  18) }, 500)
-    },
-    // createTeams: function(){
-      // not really applying the globality or the team at all in the way i had planned
-      // window.white = {
-      //   name: "white"
-      // };
-      // window.black = {
-      //   name: "black",
-      // };
-      
-    // },
-    begin: function(){
-      this.view.displayBoard
+      var gC = this;
+      gC.view.displayBoard(gC.board.layOut)
+      setTimeout( function(){ gC.move(1,  18) }, 500)
     },
     turn: function(turnNum){
       var turnNum = turnNum || 1
