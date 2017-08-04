@@ -69,6 +69,14 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  capture: function(position){
+    var pieceString = this.layOut[position];
+    this.capturedPieces.push(pieceString)
+    this.emptify(position)
+  },
+  lastLayout: function(){
+    return this.previousLayouts[this.previousLayouts.length - 1]
+  },
   oneSpaceDownIsEmpty: function(position){
     return this.positionEmpty(position - 8)
   },

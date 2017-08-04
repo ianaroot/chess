@@ -1,3 +1,5 @@
+// i think there is an edge case where the captured pawn in en passant isn't removed yet during kingInCheck but it's removal would result in check
+// clarify difference between trying to move wrong color, and trying to move from empty space
 // moveIsLegal returns the moves occuring as an object
 // movements can have a followUpMove property which indicates any additional movements... not sure how that would accomplishment en passant, i guess instead 
 // of a position it could have "capture", or a function even. you ever feel like i'm not properly making us of functional programming?
@@ -69,7 +71,8 @@ var GameController = (function(){
         // fo real, refac
 
         if( !this.board.positionEmpty(endPosition) ){
-          this.board.capturedPieces.push( this.board.layOut[endPosition] )
+          // this.board.capturedPieces.push( this.board.layOut[endPosition] )
+          this.board.capture(endPosition)
           captureNotation = "x"
         }
 
@@ -118,6 +121,7 @@ var GameController = (function(){
       // if i make modular functions that move pieces and capture pieces, en passant and castling will be simpler to implement
       // for castling, iterate across previous boards, and just check whether the king, or rooks ever weren't in their starting position
       // king will have to add this to his directionMoves
+
         this.view.displayBoard(this.board.layOut)
         this.nextTurn()
       } 
@@ -131,11 +135,14 @@ var GameController = (function(){
       setTimeout( function(){ gC.move(1,  18) }, 500)
       setTimeout( function(){ gC.move(50, 42) }, 1000)
       setTimeout( function(){ gC.move(11, 27) }, 1500)
-      setTimeout( function(){ gC.move(59, 32) }, 2000)
+      setTimeout( function(){ gC.move(59, 41) }, 2000)
       setTimeout( function(){ gC.move(3,  19) }, 2500)
       setTimeout( function(){ gC.move(42, 34) }, 3000)
       setTimeout( function(){ gC.move(12, 20) }, 3500)
       setTimeout( function(){ gC.move(34, 27) }, 4000)
+      setTimeout( function(){ gC.move(18, 24) }, 4500)
+      setTimeout( function(){ gC.move(51, 43) }, 5000)
+      setTimeout( function(){ gC.move(10, 26) }, 5500)
       
       // setTimeout( function(){ gC.move(0,  1) },  4500)
       // setTimeout( function(){ gC.move(27, 18) }, 5000)
