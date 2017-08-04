@@ -1,7 +1,7 @@
 function Board(options){
-  var layOut;
+  var layOut,
+    capturedPieces;
   if( options && options["layOut"]){ layOut = options["layOut"] }else{ layOut = [] };
-  var capturedPieces;
   if( options && options["capturedPieces"]){ capturedPieces = options["capturedPieces"] }else{ capturedPieces = [] };
   this.layOut = layOut;
   this.capturedPieces = capturedPieces;
@@ -186,7 +186,7 @@ Board.prototype = {
   },
   positionsOccupiedByTeam: function(teamString){
     var positions = [];
-    for( i = 0; i < this.layOut.length; i++){
+    for( var i = 0; i < this.layOut.length; i++){
       var teamAt = this.teamAt(i);
       if(teamAt === teamString){
         positions.push(i)
@@ -221,7 +221,7 @@ Board.prototype = {
   kingPosition: function(teamString){
     var layout = this.layOut,
         position;
-    for(i = 0; i < layOut.length; i ++){
+    for(var i = 0; i < layOut.length; i ++){
       var teamAtPosition = this.teamAt(i),
           pieceType = this.pieceTypeAt(i);
       if(teamAtPosition === teamString && pieceType === "King"){

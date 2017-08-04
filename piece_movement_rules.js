@@ -1,7 +1,6 @@
 // even if move is illegal catches it, have viablePositions return illegal positions, such as checked castling, is gonna be problematic
 // throw error if args missing. make a reusable function, throw it in some stuff
 // tells you it's the other team's turn if you try to move from an empty square
-// search for equals, deglobalize scope slippage
 var PieceMovementRules = function(){
   var instance = {
     moveIsIllegal: function(startPosition, endPosition, board){

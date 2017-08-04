@@ -1,3 +1,4 @@
+// may want to turn pawn promotion into an additional action function
 // not loggin notation on en passant
 // i think there is an edge case where the captured pawn in en passant isn't removed yet during kingInCheck but it's removal would result in check
 // clarify difference between trying to move wrong color, and trying to move from empty space
