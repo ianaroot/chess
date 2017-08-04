@@ -1,4 +1,4 @@
-// even if move is illegal catches it, have viablePositions return illegal positions, such as checked castling, is gonna be problematic
+// even if move is illegal catches it, having viablePositions return illegal positions, such as checked castling, is gonna be problematic, like when i get to where i'm highlighting legal positions to move to
 // throw error if args missing. make a reusable function, throw it in some stuff
 // tells you it's the other team's turn if you try to move from an empty square
 var PieceMovementRules = function(){
@@ -20,7 +20,6 @@ var PieceMovementRules = function(){
       } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
         alert("what, are you trying to capture your own piece?")
         moveObject.illegal = true
-        // !PieceMovementRules.getInstance().positionViable( {startPosition: startPosition, endPosition: endPosition, board: board, pieceMovements: pieceController} )
       } else if( !viableMovement ) {
         alert("that's not how that piece moves")
         moveObject.illegal = true
@@ -34,15 +33,8 @@ var PieceMovementRules = function(){
       if( viableMovement.fullNotation ){
         moveObject.notation = viableMovement.fullNotation
       } 
-      // if( viableMovement.pieceNotation ){
-        moveObject.pieceNotation = viableMovement.pieceNotation
-      // }
-      // moveObject = {
-      //   illegal: illegal,
-      //   startPosition: startPosition,
-      //   endPosition: endPosition,
-      //   additionalActions: viableMovement.additionalActions
-      // }
+      
+      moveObject.pieceNotation = viableMovement.pieceNotation
       return moveObject
     },
     retrieveControllerForPosition: function(args){
@@ -91,18 +83,8 @@ var PieceMovementRules = function(){
           danger = true
           }
       };
-      // debugger
       return danger
     },
-    // castling  these can both refer to the previous board states to answer the question, so knowing about board states doesn't become a pieces job
-    // en passant  these can both refer to the previous board states to answer the question, so knowing about board states doesn't become a pieces job 
-    // stalemate
-
-
-
-
-
-
     positionViable: function(args){
       var board = args["board"],
         startPosition = args["startPosition"],
@@ -110,12 +92,6 @@ var PieceMovementRules = function(){
         pieceMovements = args["pieceMovements"],
         viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board} ),
         viable = false;
-      // for(var i = 0; i < viablePositions.length; i++){
-      //   if( viablePositions[i] === endPosition ){
-      //     viable = true;
-      //     break;
-      //   }
-      // };
       for( var key in viablePositions ){
         if( key == endPosition ){
           viable = viablePositions[key]
@@ -128,10 +104,7 @@ var PieceMovementRules = function(){
         board = args["board"]
         pieceController = this.retrieveControllerForPosition( { position: startPosition, layOut: board.layOut} ),
         pieceMovements = pieceController({board: board, startPosition: startPosition}),
-        // why pass in pieceMovements? this accessible given we have the board and position
         teamString = board.teamAt(startPosition),
-        // movements = this.directionalMovements(board.layOut, startPosition),
-        // viablePositions = [];
         viablePositions = {};
       for(var i = 0; i < pieceMovements.length; i++){
         var movement = pieceMovements[i],
@@ -145,10 +118,8 @@ var PieceMovementRules = function(){
             break
           }
           if ( board.positionEmpty(currentPosition) ){
-            // viablePositions.push(currentPosition)
             viablePositions[currentPosition] = movement
           } else if( board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
-            // viablePositions.push(currentPosition)
             viablePositions[currentPosition] = movement
             break 
           } else if(board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
@@ -604,7 +575,6 @@ var PieceMovementRules = function(){
             }
             movements = movements.concat(newPossibility)
           };
-          // moves.verticalDownTwoStep.rangeLimit = 2;
           return movements
         },
       },
