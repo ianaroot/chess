@@ -70,11 +70,12 @@ Board.classMethods = {
 }
 Board.prototype = {
   movePiece: function(startPosition, endPosition, additionalActions){
-    var pieceString = this.layOut[startPosition];
-    captureNotation = this.capture(endPosition)
+    var pieceString = this.layOut[startPosition],
+      captureNotation = this.capture(endPosition);
     this.emptify(startPosition)
     this.placePiece({ position: endPosition, pieceString: pieceString })
-    if( additionalActions ){ additionalActions.call(this, {position: startPosition} ) }
+    if( additionalActions ){ captureNotation = additionalActions.call(this, {position: startPosition} ) }
+
     return captureNotation
   },
   storeCurrentLayoutAsPrevious: function(){

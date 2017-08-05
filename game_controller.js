@@ -1,8 +1,5 @@
-// not loggin notation on en passant, also errors on kingside castle, haven't tested queenside
+// notation errors on kingside castle, haven't tested queenside
 // clarify difference between trying to move wrong color, and trying to move from empty space
-// moveIsLegal returns the moves occuring as an object
-// movements can have a followUpMove property which indicates any additional movements... not sure how that would accomplishment en passant, i guess instead 
-// of a position it could have "capture", or a function even. you ever feel like i'm not properly making us of functional programming?
 
 // singleton JSON stuff object that gets dependency injected into other objects
 // should have case sensitivity protection to avoid future blackPawn BlackPawn issues
@@ -112,9 +109,9 @@ var GameController = (function(){
       setTimeout( function(){ gC.move(18, 24) }, 4500)
       setTimeout( function(){ gC.move(51, 43) }, 5000)
       setTimeout( function(){ gC.move(10, 26) }, 5500)
-      setTimeout( function(){ gC.move(41, 17) }, 6000)
-      setTimeout( function(){ gC.move(26, 34) }, 6500)
-      setTimeout( function(){ gC.move(49, 33) }, 7000)
+      // setTimeout( function(){ gC.move(41, 17) }, 6000)
+      // setTimeout( function(){ gC.move(26, 34) }, 6500)
+      // setTimeout( function(){ gC.move(49, 33) }, 7000)
       
       // setTimeout( function(){ gC.move(0,  1) },  4500)
       // setTimeout( function(){ gC.move(27, 18) }, 5000)

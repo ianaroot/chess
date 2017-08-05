@@ -489,8 +489,9 @@ var PieceMovementRules = function(){
             newPossibility.rangeLimit = 1
             newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             newPossibility.additionalActions = function(args){
-              var position = args["position"];
-              this.capture(position - 1)
+              var position = args["position"],
+                captureNotation = this.capture(position - 1);
+              return captureNotation
             }
             movements = movements.concat(newPossibility)
           };
@@ -499,8 +500,9 @@ var PieceMovementRules = function(){
             newPossibility.rangeLimit = 1
             newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             newPossibility.additionalActions = function(args){
-              var position = args["position"];
-              this.capture(position + 1)
+              var position = args["position"],
+                captureNotation = this.capture(position + 1);
+              return captureNotation
             }
             movements = movements.concat(newPossibility)
           };
@@ -557,8 +559,8 @@ var PieceMovementRules = function(){
             newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             newPossibility.additionalActions = function(args){
               var position = args["position"],
-                board = args["board"];
-              board.capture(position - 1)
+                captureNotation = this.capture(position - 1);
+              return captureNotation
             }
             movements = movements.concat(newPossibility)
           };
@@ -568,8 +570,8 @@ var PieceMovementRules = function(){
             newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             newPossibility.additionalActions = function(args){
               var position = args["position"],
-                board = args["board"];
-              board.capture(position + 1)
+                captureNotation = this.capture(position + 1);
+              return captureNotation
             }
             movements = movements.concat(newPossibility)
           };
