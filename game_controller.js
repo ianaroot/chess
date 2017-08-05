@@ -1,5 +1,3 @@
-// notation errors on kingside castle, haven't tested queenside
-// clarify difference between trying to move wrong color, and trying to move from empty space
 
 // singleton JSON stuff object that gets dependency injected into other objects
 // should have case sensitivity protection to avoid future blackPawn BlackPawn issues
@@ -47,10 +45,14 @@ var GameController = (function(){
       var board = this.board,
         layOut = board.layOut,
         pieceString = layOut[startPosition],
-        team = pieceString.substring(0,5), //this gets reused a few times and seems magic and should become a function
+        team = board.teamAt(startPosition), //this gets reused a few times and seems magic and should become a function
         captureNotation,
         notation;
 
+      if( team === "empty" ){
+        alert("that tile is empty")
+        return
+      }
       if( team !== board.allowedToMove ){
         alert("other team's turn")
         return
