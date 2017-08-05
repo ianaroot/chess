@@ -23,7 +23,7 @@ var PieceMovementRules = function(){
       } else if( !viableMovement ) {
         alert("that's not how that piece moves")
         moveObject.illegal = true
-      } else if( this.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board})){
+      } else if( this.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: viableMovement.additionalActions})){
         alert("check yo king fool")
         moveObject.illegal = true
       }
@@ -51,14 +51,15 @@ var PieceMovementRules = function(){
     },
     kingInCheck: function(args){
       // can just pass in same position as start and end if you want to know whether not moving anything creates check
-      var startPosition     = args["startPosition"],
-          endPosition       = args["endPosition"]
-          board             = args["board"],
-          layOut            = board.layOut,
-          pieceString       = layOut[startPosition],
-          teamString        = board.teamAt(startPosition),
-          danger            = false,
-          newLayout         = Board.classMethods.deepCopyLayout(layOut),
+      var startPosition      = args["startPosition"],
+          endPosition        = args["endPosition"]
+          board              = args["board"],
+          additionalActions  = args["additionalActions"],
+          layOut             = board.layOut,
+          pieceString        = layOut[startPosition],
+          teamString         = board.teamAt(startPosition),
+          danger             = false,
+          newLayout          = Board.classMethods.deepCopyLayout(layOut),
           opposingTeamString = "";
 
       if( teamString === "white" ){
@@ -68,10 +69,11 @@ var PieceMovementRules = function(){
       };
 // do this in a function
 // also probably gonna wanna copy all the board stuff, like previous states
-      newLayout[startPosition] = "empty";
-      newLayout[endPosition] = pieceString;
-      var newBoard = new Board({layOut: newLayout}),
-      kingPosition = newBoard.kingPosition(teamString);
+      // newLayout[startPosition] = "empty";
+      // newLayout[endPosition] = pieceString;
+      var newBoard = new Board({layOut: newLayout});
+      newBoard.movePiece( startPosition, endPosition, additionalActions)
+      var kingPosition = newBoard.kingPosition(teamString);
 // seriously, factor it out
 
       var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);

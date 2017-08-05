@@ -1,5 +1,4 @@
-// not loggin notation on en passant
-// i think there is an edge case where the captured pawn in en passant isn't removed yet during kingInCheck but it's removal would result in check
+// not loggin notation on en passant, also errors on kingside castle, haven't tested queenside
 // clarify difference between trying to move wrong color, and trying to move from empty space
 // moveIsLegal returns the moves occuring as an object
 // movements can have a followUpMove property which indicates any additional movements... not sure how that would accomplishment en passant, i guess instead 
