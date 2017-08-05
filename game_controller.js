@@ -1,5 +1,3 @@
-
-// singleton JSON stuff object that gets dependency injected into other objects
 // should have case sensitivity protection to avoid future blackPawn BlackPawn issues
 var board1 = ChessBoard('board1');
 
@@ -40,7 +38,7 @@ var GameController = (function(){
       //  ],
 
     allowedToMove: "white"}),
-    move: function(startPosition, endPosition){
+    attemptMove: function(startPosition, endPosition){
       // attempt move is probably a better name for this func
       var board = this.board,
         layOut = board.layOut,
@@ -98,58 +96,58 @@ var GameController = (function(){
     },
     simulate: function (){
       var gC = this;
-
+// break these out to separate functions for setting up different movement tests
       gC.view.displayBoard(gC.board.layOut)
-      setTimeout( function(){ gC.move(1,  18) }, 500)
-      setTimeout( function(){ gC.move(50, 42) }, 1000)
-      setTimeout( function(){ gC.move(11, 27) }, 1500)
-      setTimeout( function(){ gC.move(59, 41) }, 2000)
-      setTimeout( function(){ gC.move(3,  19) }, 2500)
-      setTimeout( function(){ gC.move(42, 34) }, 3000)
-      setTimeout( function(){ gC.move(14, 22) }, 3500)
-      setTimeout( function(){ gC.move(34, 27) }, 4000)
-      setTimeout( function(){ gC.move(18, 24) }, 4500)
-      setTimeout( function(){ gC.move(51, 43) }, 5000)
-      setTimeout( function(){ gC.move(10, 26) }, 5500)
-      // setTimeout( function(){ gC.move(41, 17) }, 6000)
-      // setTimeout( function(){ gC.move(26, 34) }, 6500)
-      // setTimeout( function(){ gC.move(49, 33) }, 7000)
+      setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
+      setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
+      setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
+      setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
+      setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
+      setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
+      setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
+      setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
+      setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
+      setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
+      setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
+      // setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
+      // setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
+      // setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
       
-      // setTimeout( function(){ gC.move(0,  1) },  4500)
-      // setTimeout( function(){ gC.move(27, 18) }, 5000)
-      // setTimeout( function(){ gC.move(9,  18) }, 5500)
-      // setTimeout( function(){ gC.move(51, 35)},  6000)
-      // setTimeout( function(){ gC.move(15, 23)},  6500)
-      // setTimeout( function(){ gC.move(58, 23)},  7000)
+      // setTimeout( function(){ gC.attemptMove(0,  1) },  4500)
+      // setTimeout( function(){ gC.attemptMove(27, 18) }, 5000)
+      // setTimeout( function(){ gC.attemptMove(9,  18) }, 5500)
+      // setTimeout( function(){ gC.attemptMove(51, 35)},  6000)
+      // setTimeout( function(){ gC.attemptMove(15, 23)},  6500)
+      // setTimeout( function(){ gC.attemptMove(58, 23)},  7000)
 
-      // setTimeout( function(){ gC.move(14, 22)},  7500)
-      // setTimeout( function(){ gC.move(57, 42)},  8000)
-
-
-      // setTimeout( function(){ gC.move(22, 30)},  8500)
-      // setTimeout( function(){ gC.move(60, 58)},  9000)
+      // setTimeout( function(){ gC.attemptMove(14, 22)},  7500)
+      // setTimeout( function(){ gC.attemptMove(57, 42)},  8000)
 
 
+      // setTimeout( function(){ gC.attemptMove(22, 30)},  8500)
+      // setTimeout( function(){ gC.attemptMove(60, 58)},  9000)
 
 
-      // setTimeout( function(){ gC.move(19, 33)},  7500)
-      // setTimeout( function(){ gC.move(57, 42)},  8000)
-      // setTimeout( function(){ gC.move(33, 49)},  8500)
-      // setTimeout( function(){ gC.move(35, 27)},  9000)
-      // setTimeout( function(){ gC.move(49, 56)},  9500)
-      // setTimeout( function(){ gC.move(60, 51)},  10000)
-      // setTimeout( function(){ gC.move(56, 61)},  10500)
-      // setTimeout( function(){ gC.move(27, 19)},  11500)
-      // setTimeout( function(){ gC.move(61, 54)},  12000)
-      // setTimeout( function(){ gC.move(19, 11)},  12500)
-      // setTimeout( function(){ gC.move(4, 12)},  13000)
-      // setTimeout( function(){ gC.move(11, 3)},  13500)
+
+
+      // setTimeout( function(){ gC.attemptMove(19, 33)},  7500)
+      // setTimeout( function(){ gC.attemptMove(57, 42)},  8000)
+      // setTimeout( function(){ gC.attemptMove(33, 49)},  8500)
+      // setTimeout( function(){ gC.attemptMove(35, 27)},  9000)
+      // setTimeout( function(){ gC.attemptMove(49, 56)},  9500)
+      // setTimeout( function(){ gC.attemptMove(60, 51)},  10000)
+      // setTimeout( function(){ gC.attemptMove(56, 61)},  10500)
+      // setTimeout( function(){ gC.attemptMove(27, 19)},  11500)
+      // setTimeout( function(){ gC.attemptMove(61, 54)},  12000)
+      // setTimeout( function(){ gC.attemptMove(19, 11)},  12500)
+      // setTimeout( function(){ gC.attemptMove(4, 12)},  13000)
+      // setTimeout( function(){ gC.attemptMove(11, 3)},  13500)
       
     },
     testing: function(){
       var gC = this;
       gC.view.displayBoard(gC.board.layOut)
-      setTimeout( function(){ gC.move(1,  18) }, 500)
+      setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
     },
     turn: function(turnNum){
       var turnNum = turnNum || 1
