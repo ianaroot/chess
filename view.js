@@ -1,5 +1,8 @@
 var View = (function(){
   var instance = {
+    displayAlert: function(alert){
+      alert(alert)
+    },
     undisplayPiece: function(gridPosition){
       var element = document.getElementsByClassName( gridPosition )[0],
         children  = element.children;

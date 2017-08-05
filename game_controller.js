@@ -39,11 +39,10 @@ var GameController = (function(){
 
     allowedToMove: "white"}),
     attemptMove: function(startPosition, endPosition){
-      // attempt move is probably a better name for this func
       var board = this.board,
         layOut = board.layOut,
         pieceString = layOut[startPosition],
-        team = board.teamAt(startPosition), //this gets reused a few times and seems magic and should become a function
+        team = board.teamAt(startPosition),
         captureNotation,
         notation;
 
@@ -56,8 +55,8 @@ var GameController = (function(){
         return
       }
       var moveObject = this.pieceMovementRules.moveIsIllegal(startPosition, endPosition, board);
-      // could maybe pass the message back out to here instead of alerting it from the piece_movement_rules
       if( moveObject.illegal ){
+        this.view.displayAlert(moveObject.alert)
         return
       } else {
 

@@ -15,16 +15,16 @@ var PieceMovementRules = function(){
         viableMovement = PieceMovementRules.getInstance().positionViable( {startPosition: startPosition, endPosition: endPosition, board: board} );
         
       if ( !Board.classMethods.inBounds(endPosition) ){
-        alert('stay on the board, fool')
+        moveObject.alert = 'stay on the board, fool'
         moveObject.illegal = true
       } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
-        alert("what, are you trying to capture your own piece?")
+        moveObject.alert = "what, are you trying to capture your own piece?"
         moveObject.illegal = true
       } else if( !viableMovement ) {
-        alert("that's not how that piece moves")
+        moveObject.alert = "that's not how that piece moves"
         moveObject.illegal = true
       } else if( this.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: viableMovement.additionalActions})){
-        alert("check yo king fool")
+        moveObject.alert = "check yo king fool"
         moveObject.illegal = true
       }
       // now we know the move is legal
