@@ -1,4 +1,3 @@
-// may want to turn pawn promotion into an additional action function
 // not loggin notation on en passant
 // i think there is an edge case where the captured pawn in en passant isn't removed yet during kingInCheck but it's removal would result in check
 // clarify difference between trying to move wrong color, and trying to move from empty space
@@ -66,25 +65,10 @@ var GameController = (function(){
         return
       } else {
 
-        // REFACTOR MEEEEEEEEE
-        var newLayOut = Board.classMethods.deepCopyLayout( layOut );
-        board.previousLayouts.push(newLayOut)
-        var pieceString = this.board.layOut[startPosition];
-        this.board.emptify(startPosition)
-        // fo real, refac
 
-        if( !this.board.positionEmpty(endPosition) ){
-          this.board.capture(endPosition)
-          captureNotation = "x"
-        }
+        this.board.storeCurrentLayoutAsPrevious()
+        captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions)
 
-
-        this.board.placePiece({ position: endPosition, pieceString: pieceString })
-
-        if( moveObject.additionalActions ){
-          moveObject.additionalActions.call(this, {position: startPosition, board: board} )
-        }
-         
         if( moveObject.fullNotation ){
           notation = moveObject.fullNotation
         }
@@ -94,7 +78,7 @@ var GameController = (function(){
             captureNotation = captureNotation || moveObject.captureNotation || "";
           notation = pieceNotation + captureNotation + positionNotation
         }
-
+        console.log(notation)
         var stalemate = this.postMovementRules.stalemate(board);
         if( stalemate ){
           // end the game etc..

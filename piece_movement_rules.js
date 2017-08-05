@@ -409,10 +409,9 @@ var PieceMovementRules = function(){
             //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
             // explicit here and use game controller instead of this
               var position = args["position"],
-                board = args["board"],
-                pieceString = this.board.layOut[startPosition + 3];
-              this.board.emptify( startPosition + 3)
-              this.board.placePiece({ position: (startPosition + 1), pieceString: pieceString })
+                pieceString = this.layOut[startPosition + 3];
+              this.emptify( startPosition + 3)
+              this.placePiece({ position: (startPosition + 1), pieceString: pieceString })
             }
             moves.push(castle)
           };
@@ -427,10 +426,9 @@ var PieceMovementRules = function(){
               //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
               // explicit here and use game controller instead of this
               var position = args["position"],
-                board = args["board"],
-                pieceString = this.board.layOut[startPosition - 4];
-              this.board.emptify( startPosition - 4)
-              this.board.placePiece({ position: (startPosition - 1), pieceString: pieceString })
+                pieceString = this.layOut[startPosition - 4];
+              this.emptify( startPosition - 4)
+              this.placePiece({ position: (startPosition - 1), pieceString: pieceString })
             }
             moves.push(castle)
           };
@@ -489,9 +487,8 @@ var PieceMovementRules = function(){
             newPossibility.rangeLimit = 1
             newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             newPossibility.additionalActions = function(args){
-              var position = args["position"],
-                board = args["board"];
-              board.capture(position - 1)
+              var position = args["position"];
+              this.capture(position - 1)
             }
             movements = movements.concat(newPossibility)
           };
@@ -500,9 +497,8 @@ var PieceMovementRules = function(){
             newPossibility.rangeLimit = 1
             newPossibility.pieceNotation = Board.classMethods.file(startPosition)
             newPossibility.additionalActions = function(args){
-              var position = args["position"],
-                board = args["board"];
-              board.capture(position + 1)
+              var position = args["position"];
+              this.capture(position + 1)
             }
             movements = movements.concat(newPossibility)
           };

@@ -69,10 +69,27 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  movePiece: function(startPosition, endPosition, additionalActions){
+    var pieceString = this.layOut[startPosition];
+    captureNotation = this.capture(endPosition)
+    this.emptify(startPosition)
+    this.placePiece({ position: endPosition, pieceString: pieceString })
+    if( additionalActions ){ additionalActions.call(this, {position: startPosition} ) }
+    return captureNotation
+  },
+  storeCurrentLayoutAsPrevious: function(){
+    var layOutCopy = Board.classMethods.deepCopyLayout( layOut );
+    board.previousLayouts.push(layOutCopy)
+  },
   capture: function(position){
-    var pieceString = this.layOut[position];
-    this.capturedPieces.push(pieceString)
-    this.emptify(position)
+    if( !this.positionEmpty(position) ){
+      var pieceString = this.layOut[position];
+      this.capturedPieces.push(pieceString)
+      this.emptify(position)
+      return captureNotation = "x"
+    } else {
+      return ""
+    }
   },
   lastLayout: function(){
     return this.previousLayouts[this.previousLayouts.length - 1]
