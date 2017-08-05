@@ -31,7 +31,7 @@ var PieceMovementRules = function(){
 
       moveObject.additionalActions = viableMovement.additionalActions
       if( viableMovement.fullNotation ){
-        moveObject.notation = viableMovement.fullNotation
+        moveObject.fullNotation = viableMovement.fullNotation
       } 
       
       moveObject.pieceNotation = viableMovement.pieceNotation
