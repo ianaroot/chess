@@ -69,6 +69,9 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  recordNotation: function(notation){
+    this.movementNotation.push(notation)
+  },
   movePiece: function(startPosition, endPosition, additionalActions){
     var pieceString = this.layOut[startPosition],
       captureNotation = this.capture(endPosition);

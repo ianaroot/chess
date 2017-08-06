@@ -75,9 +75,9 @@ var GameController = (function(){
         }
         console.log(notation)
 
-        this.postMovementRules.pawnPromotionQuery( board ) //this nees to then alter the notation
+        this.postMovementRules.pawnPromotionQuery( board ) //this needs to then alter the notation
 
-        // this.board.recordNotation(startPosition, endPosition)
+        this.board.recordNotation(notation)
         // checkmate
         // check (like if it happens after a legal move, not prevents a move from being legal) also need to verify that for notation
 
@@ -106,9 +106,9 @@ var GameController = (function(){
       setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
       setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
       setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
-      // setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
-      // setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
-      // setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
+      setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
+      setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
+      setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
       
       // setTimeout( function(){ gC.attemptMove(0,  1) },  4500)
       // setTimeout( function(){ gC.attemptMove(27, 18) }, 5000)
