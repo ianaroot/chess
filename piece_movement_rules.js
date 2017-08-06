@@ -4,6 +4,13 @@
 var PieceMovementRules = function(){
   var instance = {
     moveIsIllegal: function(startPosition, endPosition, board){
+      if( 
+        !Board.prototype.isPrototypeOf( board ) ||
+        typeof startPosition !== "number" ||
+        typeof endPosition !== "number"
+      ){
+        throw new Error("missing params in moveIsIllegal")
+      }
       var layOut = board.layOut,
         team = board.teamAt(startPosition),
         viableMovement = {},
@@ -38,6 +45,12 @@ var PieceMovementRules = function(){
       return moveObject
     },
     retrieveControllerForPosition: function(args){
+      if( 
+        !Array.prototype.isPrototypeOf( args["layOut"] ) ||
+        typeof args["position"] !== "number"
+      ){
+        throw new Error("missing params in retrieveControllerForPosition")
+      }
       var  layOut = args["layOut"],
         position = args["position"],
         positionString = layOut[position],
@@ -50,6 +63,14 @@ var PieceMovementRules = function(){
       return pieceController
     },
     kingInCheck: function(args){
+      if( 
+        !Board.prototype.isPrototypeOf( args["board"] ) ||
+        typeof args["startPosition"] !== "number" ||
+        !(typeof args["endPosition"] !== "number" || typeof args["endPosition"] !== "string") || //not sure where this got turned into a string...
+        !(typeof args["additionalActions"] === "number" || typeof args["additionalActions"] === "undefined")
+      ){
+        throw new Error("missing params in kingInCheck")
+      }
       // can just pass in same position as start and end if you want to know whether not moving anything creates check
       var startPosition      = args["startPosition"],
           endPosition        = args["endPosition"]
@@ -88,10 +109,16 @@ var PieceMovementRules = function(){
       return danger
     },
     positionViable: function(args){
+      if( 
+        !Board.prototype.isPrototypeOf( args["board"] ) ||
+        typeof args["startPosition"] !== "number" ||
+        !(typeof args["endPosition"] !== "number" || typeof args["endPosition"] !== "string") //not sure where this got turned into a string...
+      ){
+        throw new Error("missing params in kingInCheck")
+      }
       var board = args["board"],
         startPosition = args["startPosition"],
         endPosition = args["endPosition"],
-        pieceMovements = args["pieceMovements"],
         viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board} ),
         viable = false;
       for( var key in viablePositions ){
@@ -102,6 +129,12 @@ var PieceMovementRules = function(){
       return viable
     },
     viablePositionsFrom: function(args){
+      if( 
+        !Board.prototype.isPrototypeOf( args["board"] ) ||
+        typeof args["startPosition"] !== "number" 
+      ){
+        throw new Error("missing params in kingInCheck")
+      }
       var startPosition = args["startPosition"],
         board = args["board"]
         pieceController = this.retrieveControllerForPosition( { position: startPosition, layOut: board.layOut} ),

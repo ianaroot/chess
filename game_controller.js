@@ -1,3 +1,5 @@
+// try bumping a king one horizontal spot when castling would be legal, i may have coded in a nice glitch
+// also try some wraparound cheats, they seem to be covered by the boundary checks, but i had forgotten how many of the methods that used to be pretecting them i stopped using
 // specify whether piece was trying to move through other piece or just onto position it can't hit
 // should have case sensitivity protection to avoid future blackPawn BlackPawn issues
 var board1 = ChessBoard('board1');
