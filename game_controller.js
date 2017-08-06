@@ -162,13 +162,6 @@ var GameController = (function(){
       setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
       setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
       
-      // setTimeout( function(){ gC.attemptMove(14, 22)},  7500)
-      // setTimeout( function(){ gC.attemptMove(57, 42)},  8000)
-
-
-      // setTimeout( function(){ gC.attemptMove(22, 30)},  8500)
-      // setTimeout( function(){ gC.attemptMove(60, 58)},  9000)
-      
     },
     singleMoveTest: function(){
       var gC = this;
