@@ -74,22 +74,20 @@ var GameController = (function(){
           notation = pieceNotation + captureNotation + positionNotation
         }
         console.log(notation)
-        var stalemate = this.postMovementRules.stalemate(board);
-        if( stalemate ){
-          // end the game etc..
-        // wary of this check occurring after the move is made but before allowedToMove is flipped
-        // also problematic that stalemate is announced before the piece actually moves
-          alert("stalemate!")
-        }
 
         this.postMovementRules.pawnPromotionQuery( board ) //this nees to then alter the notation
 
         // this.board.recordNotation(startPosition, endPosition)
         // checkmate
         // check (like if it happens after a legal move, not prevents a move from being legal) also need to verify that for notation
-      // if i make modular functions that move pieces and capture pieces, en passant and castling will be simpler to implement
 
         this.view.displayBoard(this.board.layOut)
+        var stalemate = this.postMovementRules.stalemate(board);
+        if( stalemate ){
+          // end the game etc..
+          var displayAlert = this.view.displayAlert
+          setTimeout( function(){ displayAlert("stalemate") }, 500)
+        }
         this.nextTurn()
       } 
     },

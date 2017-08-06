@@ -1,7 +1,7 @@
 var View = (function(){
   var instance = {
-    displayAlert: function(alert){
-      alert(alert)
+    displayAlert: function(message){
+      alert(message)
     },
     undisplayPiece: function(gridPosition){
       var element = document.getElementsByClassName( gridPosition )[0],
