@@ -164,59 +164,6 @@ var PieceMovementRules = function(){
       };
       return viablePositions
     },
-    pathIsClear: function(startPosition, endPosition, movementType, layOut){
-      var clear = true,
-        rangeLimit = movementType.rangeLimit,
-        increment = movementType.increment;
-      for( var i = 1; i <= movementType.rangeLimit && (startPosition + i * increment) < endPosition; i++){
-        var currentPosition = startPosition + i * increment;
-        if( layOut[currentPosition] !== "empty"){
-          clear = false;
-        }
-      }
-      return clear
-    },
-    wrapAroundCheat: function(startPosition, endPosition, movementType){
-      var startSquareColor = Board.classMethods.squareColor(startPosition),
-        endSquareColor = Board.classMethods.squareColor(endPosition),
-        rangeLimit = (startPosition - endPosition) / movementType.increment,
-        cheat;
-      switch(true){
-        case (this.backSlashDown === movementType):
-          if( startSquareColor === endSquareColor){ cheat = false } else { cheat = true}
-          break;
-        case (this.backSlashUp === movementType):
-          if( startSquareColor === endSquareColor){ cheat = false } else { cheat = true}
-          break;
-        case (this.forwardSlashUp === movementType):
-          if( startSquareColor === endSquareColor){ cheat = false } else { cheat = true}
-          break;
-        case (this.forwardSlashDown === movementType):
-          if( startSquareColor === endSquareColor){ cheat = false } else { cheat = true}
-          break;
-        case (this.nightVerticalLeftUp === movementType):
-          if( startSquareColor === endSquareColor){ cheat = false } else { cheat = true}
-          break;
-
-        case (this.verticalUp === movementType ):
-          cheat = orthogonalMoveSquareColorCheat(startSquareColor, endSquareColor, range)
-        case (this.verticalDown === movementType ):
-          cheat = orthogonalMoveSquareColorCheat(startSquareColor, endSquareColor, range)
-        case (this.horizontalLeft === movementType ):
-          cheat = orthogonalMoveSquareColorCheat(startSquareColor, endSquareColor, range)
-        case (this.horizontalRight === movementType ):
-          cheat = orthogonalMoveSquareColorCheat(startSquareColor, endSquareColor, range)
-      }
-    },
-    orthogonalMoveSquareColorCheat: function(startSquareColor, endSquareColor, range){
-      var cheat = true;
-      if (startSquareColor === endSquareColor && rangeLimit % 2 === 0){
-        cheat = false;
-      } else if(startSquareColor !== endSquareColor && rangeLimit % 2 === 1){
-        cheat = false;
-      }
-      return cheat
-    },
     movements: {
       generic: {
         verticalUp: function(){
@@ -611,35 +558,6 @@ var PieceMovementRules = function(){
           return movements
         },
       },
-      vagueQueries: {
-        up: function(startPosition, endPosition){
-          return startPosition < endPosition
-        },
-        down: function(startPosition, endPosition){
-          return startPosition > endPosition
-        },
-        vertical: function( startPosition, endPosition){
-          return startPosition % 8 === endPosition % 8
-        },
-        horizontal: function( startPosition, endPosition){
-          return Math.floor(startPosition / 8) === Math.floor(endPosition / 8)
-        },
-        left: function(startPosition, endPosition){
-          return startPosition > endPosition
-        },
-        right: function(startPosition, endPosition){
-          return startPosition < endPosition
-        },
-        backSlash: function(startPosition, endPosition){
-          return Math.abs( startPosition - endPosition ) % 7 === 0
-        },
-        forwardSlash: function(startPosition, endPosition){
-          return Math.abs( startPosition - endPosition ) % 9 === 0
-        },
-        nights: function(startPosition, endPosition){
-          return Math.abs( startPosition - endPosition) === 6 || Math.abs( startPosition - endPosition) === 10 || Math.abs( startPosition - endPosition) === 15 || Math.abs( startPosition - endPosition) === 17
-        },
-      }
     },
     
   }
