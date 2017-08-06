@@ -44,7 +44,9 @@ var GameController = (function(){
         pieceString = layOut[startPosition],
         team = board.teamAt(startPosition),
         captureNotation,
-        notation;
+        notation,
+        otherTeam,
+        otherTeamsKingPosition;
 
       if( team === "empty" ){
         alert("that tile is empty")
@@ -73,14 +75,20 @@ var GameController = (function(){
             captureNotation = captureNotation || moveObject.captureNotation || "";
           notation = pieceNotation + captureNotation + positionNotation
         }
-        console.log(notation)
-
         this.postMovementRules.pawnPromotionQuery( board ) //this needs to then alter the notation
-
         this.board.recordNotation(notation)
         // checkmate
         // check (like if it happens after a legal move, not prevents a move from being legal) also need to verify that for notation
-
+        if( this.board.allowedToMove === "white"){
+          otherTeam = "black"
+        } else {
+          otherTeam = "white"
+        }
+        otherTeamsKingPosition = this.board.kingPosition(otherTeam)
+        if( this.pieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
+          var displayAlert = this.view.displayAlert
+          setTimeout( function(){ displayAlert("check") }, 500)
+        }
         this.view.displayBoard(this.board.layOut)
         var stalemate = this.postMovementRules.stalemate(board);
         if( stalemate ){
