@@ -73,6 +73,13 @@ Board.prototype = {
     this.movementNotation.push(notation)
   },
   movePiece: function(startPosition, endPosition, additionalActions){
+      if( 
+        typeof startPosition !== "number" ||
+        !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
+        !(typeof additionalActions === "number" || typeof additionalActions === "undefined")
+      ){
+        throw new Error("missing params in movePiece")
+      }
     var pieceString = this.layOut[startPosition],
       captureNotation = this.capture(endPosition);
     this.emptify(startPosition)

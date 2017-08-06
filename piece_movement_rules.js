@@ -90,12 +90,9 @@ var PieceMovementRules = function(){
       };
 // do this in a function
 // also probably gonna wanna copy all the board stuff, like previous states
-      // newLayout[startPosition] = "empty";
-      // newLayout[endPosition] = pieceString;
       var newBoard = new Board({layOut: newLayout});
       newBoard.movePiece( startPosition, endPosition, additionalActions)
       var kingPosition = newBoard.kingPosition(teamString);
-// seriously, factor it out
 
       var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
       for(var i = 0; i < enemyPositions.length; i++){
@@ -114,7 +111,7 @@ var PieceMovementRules = function(){
         typeof args["startPosition"] !== "number" ||
         !(typeof args["endPosition"] !== "number" || typeof args["endPosition"] !== "string") //not sure where this got turned into a string...
       ){
-        throw new Error("missing params in kingInCheck")
+        throw new Error("missing params in positionViable")
       }
       var board = args["board"],
         startPosition = args["startPosition"],
@@ -133,10 +130,11 @@ var PieceMovementRules = function(){
         !Board.prototype.isPrototypeOf( args["board"] ) ||
         typeof args["startPosition"] !== "number" 
       ){
-        throw new Error("missing params in kingInCheck")
+        throw new Error("missing params in viablePositionsFrom")
       }
       var startPosition = args["startPosition"],
         board = args["board"]
+        // call it something other than piece Controller
         pieceController = this.retrieveControllerForPosition( { position: startPosition, layOut: board.layOut} ),
         pieceMovements = pieceController({board: board, startPosition: startPosition}),
         teamString = board.teamAt(startPosition),
