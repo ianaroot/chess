@@ -76,7 +76,7 @@ Board.prototype = {
       if( 
         typeof startPosition !== "number" ||
         !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
-        !(typeof additionalActions === "number" || typeof additionalActions === "undefined")
+        !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
       ){
         throw new Error("missing params in movePiece")
       }

@@ -67,8 +67,9 @@ var PieceMovementRules = function(){
         !Board.prototype.isPrototypeOf( args["board"] ) ||
         typeof args["startPosition"] !== "number" ||
         !(typeof args["endPosition"] !== "number" || typeof args["endPosition"] !== "string") || //not sure where this got turned into a string...
-        !(typeof args["additionalActions"] === "number" || typeof args["additionalActions"] === "undefined")
+        !(typeof args["additionalActions"] === "function" || typeof args["additionalActions"] === "undefined")
       ){
+        debugger
         throw new Error("missing params in kingInCheck")
       }
       // can just pass in same position as start and end if you want to know whether not moving anything creates check
