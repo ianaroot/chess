@@ -350,11 +350,7 @@ var PieceMovementRules = function(){
         queen: function(args){
           var board = args["board"],
             startPosition = args["startPosition"],
-          // scoping error is cause PieceMovementRules.getInstance() to be pieceSpecific, not the piececontroller when we get in the pieceSpecific.rook
-          // return PieceMovementRules.getInstance().movements.pieceSpecific.rook().concat( PieceMovementRules.getInstance().movements.pieceSpecific.bishop() )
-            moves = [PieceMovementRules.getInstance().movements.generic.horizontalRight(), PieceMovementRules.getInstance().movements.generic.horizontalLeft(), PieceMovementRules.getInstance().movements.generic.verticalUp(), PieceMovementRules.getInstance().movements.generic.verticalDown(),
-                      PieceMovementRules.getInstance().movements.generic.forwardSlashDown(), PieceMovementRules.getInstance().movements.generic.forwardSlashUp(), PieceMovementRules.getInstance().movements.generic.backSlashDown(), PieceMovementRules.getInstance().movements.generic.backSlashUp()
-                    ];
+          moves =  PieceMovementRules.getInstance().movements.pieceSpecific.rook({startPosition: startPosition, board: board}).concat( PieceMovementRules.getInstance().movements.pieceSpecific.bishop({startPosition: startPosition, board: board}) )
           for (var key in moves) {
             if (moves.hasOwnProperty(key)) {
               moves[key].rangeLimit = 7;
