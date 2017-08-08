@@ -104,71 +104,73 @@ var GameController = (function(){
         this.nextTurn()
       } 
     },
-    pawnPromotion: function(){
-      var gC = this;
-      gC.view.displayBoard(gC.board.layOut)
-      setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
-      setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
-      setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
-      setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
-      setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
-      setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
-      setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
-      setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
-      setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
-      setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
-      setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
-      setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
-      setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
-      setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
-      // could break here for en passant
-      setTimeout( function(){ gC.attemptMove(19, 33)},  7500)
-      setTimeout( function(){ gC.attemptMove(57, 42)},  8000)
-      setTimeout( function(){ gC.attemptMove(33, 49)},  8500)
-      setTimeout( function(){ gC.attemptMove(27, 19)},  9000)
-    },
-    sim2: function(){
-      var gC = this;
-      gC.view.displayBoard(gC.board.layOut)
-      setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
-      setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
-      setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
-      setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
-      setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
-      setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
-      setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
-      setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
-      setTimeout( function(){ gC.attemptMove(0,  1) },  4500)
-      setTimeout( function(){ gC.attemptMove(27, 18) }, 5000)
-      setTimeout( function(){ gC.attemptMove(9,  18) }, 5500)
-      setTimeout( function(){ gC.attemptMove(51, 35)},  6000)
-      setTimeout( function(){ gC.attemptMove(15, 23)},  6500)
-      setTimeout( function(){ gC.attemptMove(58, 23)},  7000)
+    tests: {
+      pawnPromotion: function(){
+        var gC = GameController.getInstance();
+        gC.view.displayBoard(gC.board.layOut)
+        setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
+        setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
+        setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
+        setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
+        setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
+        setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
+        setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
+        setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
+        setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
+        setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
+        setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
+        setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
+        setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
+        setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
+        // could break here for en passant
+        setTimeout( function(){ gC.attemptMove(19, 33)},  7500)
+        setTimeout( function(){ gC.attemptMove(57, 42)},  8000)
+        setTimeout( function(){ gC.attemptMove(33, 49)},  8500)
+        setTimeout( function(){ gC.attemptMove(27, 19)},  9000)
+      },
+      sim2: function(){
+        var gC = GameController.getInstance();
+        gC.view.displayBoard(gC.board.layOut)
+        setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
+        setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
+        setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
+        setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
+        setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
+        setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
+        setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
+        setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
+        setTimeout( function(){ gC.attemptMove(0,  1) },  4500)
+        setTimeout( function(){ gC.attemptMove(27, 18) }, 5000)
+        setTimeout( function(){ gC.attemptMove(9,  18) }, 5500)
+        setTimeout( function(){ gC.attemptMove(51, 35)},  6000)
+        setTimeout( function(){ gC.attemptMove(15, 23)},  6500)
+        setTimeout( function(){ gC.attemptMove(58, 23)},  7000)
 
-    },
-    whiteEnPassant: function (){
-      var gC = this;
-      gC.view.displayBoard(gC.board.layOut)
-      setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
-      setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
-      setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
-      setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
-      setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
-      setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
-      setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
-      setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
-      setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
-      setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
-      setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
-      setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
-      setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
-      setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
-      
-    },
-    singleMoveTest: function(){
-      var gC = this;
-      gC.view.displayBoard(gC.board.layOut)
-      setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
+      },
+      whiteEnPassant: function (){
+        var gC = GameController.getInstance();
+        gC.view.displayBoard(gC.board.layOut)
+        setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
+        setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
+        setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
+        setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
+        setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
+        setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
+        setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
+        setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
+        setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
+        setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
+        setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
+        // setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
+        // setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
+        // setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
+        
+      },
+      singleMoveTest: function(){
+        var gC = GameController.getInstance();
+        gC.view.displayBoard(gC.board.layOut)
+        setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
+      }
     },
     turn: function(turnNum){
       var turnNum = turnNum || 1
