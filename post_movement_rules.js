@@ -47,10 +47,8 @@ var PostMovementRules = function (pieceMovementRules) {
 
         // parts of this need to move over to the pieceMovementRules
         var startPosition = occcupiedPositions[i],
-          pieceController = pieceMovementRules.retrieveControllerForPosition({position: startPosition, layOut: board.layOut}),
-          viablePositions = pieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board, pieceMovements: pieceController});
-        for( var key in viablePositions ){
-          // only checking kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
+          viablePositions = pieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board});
+        for( var key in viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
           if( !pieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
             noLegalMoves = false
           }

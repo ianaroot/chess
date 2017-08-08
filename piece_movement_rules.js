@@ -1,3 +1,4 @@
+// viable positions from errors when called on empty position
 // even if move is illegal catches it, having viablePositions return illegal positions, such as checked castling, is gonna be problematic, like when i get to where i'm highlighting legal positions to move to
 // throw error if args missing. make a reusable function, throw it in some stuff
 // tells you it's the other team's turn if you try to move from an empty square
@@ -33,8 +34,7 @@ var PieceMovementRules = function(){
       } else if( this.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: viableMovement.additionalActions})){
         moveObject.alert = "check yo king fool"
         moveObject.illegal = true
-      }
-      // now we know the move is legal
+      } // now we know the move is legal
 
       moveObject.additionalActions = viableMovement.additionalActions
       if( viableMovement.fullNotation ){
@@ -44,25 +44,25 @@ var PieceMovementRules = function(){
       moveObject.pieceNotation = viableMovement.pieceNotation
       return moveObject
     },
-    retrieveControllerForPosition: function(args){
+    retrieveAvailableMovements: function(args){
       if( 
-        !Array.prototype.isPrototypeOf( args["layOut"] ) ||
+        !Board.prototype.isPrototypeOf( args["board"] ) ||
         typeof args["position"] !== "number"
       ){
-        throw new Error("missing params in retrieveControllerForPosition")
+        throw new Error("missing params in retrieveAvailableMovements")
       }
-      var  layOut = args["layOut"],
+      var  board = args["board"],
+        layOut = board.layOut
         position = args["position"],
         positionString = layOut[position],
         stringLength = positionString.length,
-        pieceType = positionString.substring(5, stringLength)
+        pieceType = board.pieceTypeAt(position)
         pieceType = pieceType.charAt(0).toLowerCase() + pieceType.slice(1);
       if( pieceType === "pawn" ){ pieceType = positionString }
-        // needs a new name, not pieceController
-      pieceController = PieceMovementRules.getInstance().movements.pieceSpecific[pieceType]
-      return pieceController
+      availableMovements = PieceMovementRules.getInstance().movements.pieceSpecific[pieceType]
+      return availableMovements
     },
-    kingInCheck: function(args){
+    kingInCheck: function(args){ // can just pass in same position as start and end if you want to know whether not moving anything creates check
       if( 
         !Board.prototype.isPrototypeOf( args["board"] ) ||
         typeof args["startPosition"] !== "number" ||
@@ -72,7 +72,6 @@ var PieceMovementRules = function(){
         debugger
         throw new Error("missing params in kingInCheck")
       }
-      // can just pass in same position as start and end if you want to know whether not moving anything creates check
       var startPosition      = args["startPosition"],
           endPosition        = args["endPosition"]
           board              = args["board"],
@@ -89,8 +88,7 @@ var PieceMovementRules = function(){
       } else {
         opposingTeamString = "white"
       };
-// do this in a function
-// also probably gonna wanna copy all the board stuff, like previous states
+// also probably gonna wanna copy all the board stuff, like previous states, capturedPieces, although if i copy previous states i'll end up with some infinite loops again
       var newBoard = new Board({layOut: newLayout});
       newBoard.movePiece( startPosition, endPosition, additionalActions)
       var kingPosition = newBoard.kingPosition(teamString);
@@ -98,9 +96,9 @@ var PieceMovementRules = function(){
       var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
       for(var i = 0; i < enemyPositions.length; i++){
         var enemyPosition = enemyPositions[i],
-          pieceController = this.retrieveControllerForPosition( {position: enemyPosition, layOut: board.layOut} ),
+          availableMovements = this.retrieveAvailableMovements( {position: enemyPosition, board: board} ),
           enemyPieceType = board.pieceTypeAt( enemyPosition );
-          if( enemyPieceType !== "King" && PieceMovementRules.getInstance().positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard, pieceMovements: pieceController} ) ){
+          if( enemyPieceType !== "King" && PieceMovementRules.getInstance().positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
           danger = true
           }
       };
@@ -135,9 +133,8 @@ var PieceMovementRules = function(){
       }
       var startPosition = args["startPosition"],
         board = args["board"]
-        // call it something other than piece Controller
-        pieceController = this.retrieveControllerForPosition( { position: startPosition, layOut: board.layOut} ),
-        pieceMovements = pieceController({board: board, startPosition: startPosition}),
+        availableMovements = this.retrieveAvailableMovements( { position: startPosition, board: board} ),
+        pieceMovements = availableMovements({board: board, startPosition: startPosition}),
         teamString = board.teamAt(startPosition),
         viablePositions = {};
       for(var i = 0; i < pieceMovements.length; i++){
