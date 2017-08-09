@@ -489,16 +489,14 @@ var PieceMovementRules = function(){
             var position = args["position"],
               board = args["board"]; 
             if( Board.classMethods.rank(position) === 4 && board.layOut[position + 1] === "whitePawn" && board.previousLayouts.length && board.positionEmpty(position - 15) && board.lastLayout()[position -  15] === "whitePawn" ){
-              return position + 1
-              // not making use of this number as expected, may as well return true
+              return true
             }
           };
           enPassantLeft= function(args){
             var board = args["board"],
               position = args["position"];
             if( Board.classMethods.rank(position) === 4 && board.layOut[position - 1] === "whitePawn" && board.previousLayouts.length && board.positionEmpty(position - 17) && board.lastLayout()[position -  17] === "whitePawn" ){
-              return position - 1
-              // not making use of this number as expected, may as well return true
+              return true
             }
           };
           if( Board.classMethods.ranks.isSeventh(startPosition) && board.twoSpacesDownIsEmpty(startPosition) ){
