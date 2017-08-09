@@ -15,28 +15,14 @@ var PostMovementRules = function (pieceMovementRules) {
         }
       }
     },
-    stalemate: function(board){
+    checkmate: function(args){
+      var board = args["board"],
+        kingPosition = args["kingPosition"];
+      return pieceMovementRules.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}) && this.stalemate(board)
+    },
+    noLegalMoves: function(board){
       var movingTeamString = board.allowedToMove,
-        previousLayouts = board.previousLayouts,
-        repetitions = 0,
-        threeFoldRepetition = false,
-        noLegalMoves = true,
-        currentLayOut = board.layOut
-        different;
-      for( var i = 0; i < previousLayouts.length; i++ ){
-        var comparisonLayout = previousLayouts[i],
-          different = false;
-        for( var j = 0; j < comparisonLayout.length; j++){
-          if( comparisonLayout[j] !== currentLayOut[j] ){
-            different = true
-            break
-          }
-        };
-        if( !different ){ repetitions ++ }
-      };
-      if(repetitions >= 2){
-        threeFoldRepetition = true
-      }
+        noLegalMoves = true;
       if(movingTeamString === "black"){
         var onDeckTeamString = "white"        
       } else {
@@ -52,7 +38,33 @@ var PostMovementRules = function (pieceMovementRules) {
           }
         };
       };
-      return threeFoldRepetition || noLegalMoves
+      return noLegalMoves
+    },
+    threeFoldRepetition: function(board){
+      var  previousLayouts = board.previousLayouts,
+        repetitions = 0,
+        threeFoldRepetition = false,
+        currentLayOut = board.layOut
+        different;
+
+      for( var i = 0; i < previousLayouts.length; i++ ){
+        var comparisonLayout = previousLayouts[i],
+          different = false;
+        for( var j = 0; j < comparisonLayout.length; j++){
+          if( comparisonLayout[j] !== currentLayOut[j] ){
+            different = true
+            break
+          }
+        };
+        if( !different ){ repetitions ++ }
+      };
+      if(repetitions >= 2){
+        threeFoldRepetition = true
+      }
+      return threeFoldRepetition
+    },
+    stalemate: function(board){
+      return this.threeFoldRepetition(board) || this.noLegalMoves(board)
     },
   }
   function createInstance() {

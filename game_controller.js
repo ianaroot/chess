@@ -64,11 +64,8 @@ var GameController = (function(){
         this.view.displayAlert(moveObject.alert)
         return
       } else {
-
-
         this.board.storeCurrentLayoutAsPrevious()
         captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions)
-
         promotionNotation = this.postMovementRules.pawnPromotionQuery( board ) //this needs to then alter the notation
         // i think checkmate can be determined with some combination of stalemate and check
         // checkmate
@@ -78,17 +75,17 @@ var GameController = (function(){
           otherTeam = "white"
         }
         otherTeamsKingPosition = this.board.kingPosition(otherTeam)
+        if( this.postMovementRules.checkmate({ kingPosition: otherTeamsKingPosition, board: board}) ){
+          // technically if you'd been in check three times in the same position this would make what was actually stalemate look like checkmate
+          var displayAlert = this.view.displayAlert
+          setTimeout( function(){ displayAlert("checkmate") }, 500)
+          checkNotation = "#"
+        }
         if( this.pieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
-          if( this.postMovementRules.stalemate(board) ){
-            // technically if you'd been in check three times in the same position this would make what was actually stalemate look like checkmate
-            var displayAlert = this.view.displayAlert
-            setTimeout( function(){ displayAlert("checkmate") }, 500)
-            checkNotation = "#"
-          } else{
-            var displayAlert = this.view.displayAlert
-            setTimeout( function(){ displayAlert("check") }, 500)
-            checkNotation = "+"
-          }
+          // } else{
+          var displayAlert = this.view.displayAlert
+          setTimeout( function(){ displayAlert("check") }, 500)
+          checkNotation = "+"
         }
         this.view.displayBoard(this.board.layOut)
         var stalemate = this.postMovementRules.stalemate(board);
