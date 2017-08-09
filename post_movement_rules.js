@@ -15,6 +15,21 @@ var PostMovementRules = function (pieceMovementRules) {
         }
       }
     },
+    // checkmate: function(board){ //only call this when check has been verified
+    //   var movingTeamString = board.allowedToMove,
+    //     checkmate = true,
+    //     occcupiedPositions = board.positionsOccupiedByTeam(movingTeamString);
+    //   for(var i = 0; i < occcupiedPositions.length && checkmate; i++){
+    //     var startPosition = occcupiedPositions[i],
+    //       viablePositions = pieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board});
+    //     for( var key in viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
+    //       if( !pieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
+    //         checkmate = false
+    //       }
+    //     };
+    //   };
+    //   return checkmate
+    // },
     stalemate: function(board){
       var movingTeamString = board.allowedToMove,
         previousLayouts = board.previousLayouts,
@@ -37,8 +52,6 @@ var PostMovementRules = function (pieceMovementRules) {
       if(repetitions >= 2){
         threeFoldRepetition = true
       }
-
-
       if(movingTeamString === "black"){
         var onDeckTeamString = "white"        
       } else {
@@ -46,8 +59,6 @@ var PostMovementRules = function (pieceMovementRules) {
       }
       var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
       for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
-
-        // parts of this need to move over to the pieceMovementRules
         var startPosition = occcupiedPositions[i],
           viablePositions = pieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board});
         for( var key in viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions

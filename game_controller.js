@@ -79,16 +79,23 @@ var GameController = (function(){
         }
         otherTeamsKingPosition = this.board.kingPosition(otherTeam)
         if( this.pieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
-          var displayAlert = this.view.displayAlert
-          setTimeout( function(){ displayAlert("check") }, 500)
-          checkNotation = "+"
+          if( this.postMovementRules.stalemate(board) ){
+            // technically if you'd been in check three times in the same position this would make what was actually stalemate look like checkmate
+            var displayAlert = this.view.displayAlert
+            setTimeout( function(){ displayAlert("checkmate") }, 500)
+            checkNotation = "#"
+          } else{
+            var displayAlert = this.view.displayAlert
+            setTimeout( function(){ displayAlert("check") }, 500)
+            checkNotation = "+"
+          }
         }
         this.view.displayBoard(this.board.layOut)
         var stalemate = this.postMovementRules.stalemate(board);
-        if( stalemate ){
-          // end the game etc..
+        if( stalemate && checkNotation !== "#" ){
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("stalemate") }, 500)
+
         }
         if( moveObject.fullNotation ){
           notation = moveObject.fullNotation
@@ -164,6 +171,17 @@ var GameController = (function(){
         // setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
         // setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
         
+      },
+      checkmate: function(){
+        var gC = GameController.getInstance();
+        gC.view.displayBoard(gC.board.layOut)
+        setTimeout( function(){ gC.attemptMove(12, 20) }, 500)
+        setTimeout( function(){ gC.attemptMove(57, 42) }, 1000)
+        setTimeout( function(){ gC.attemptMove(5,  26) }, 1500)
+        setTimeout( function(){ gC.attemptMove(42, 32) }, 2000)
+        setTimeout( function(){ gC.attemptMove(3,  21) }, 2500)
+        setTimeout( function(){ gC.attemptMove(32, 17) }, 3000)
+        setTimeout( function(){ gC.attemptMove(21, 53) }, 3500)
       },
       singleMoveTest: function(){
         var gC = GameController.getInstance();
