@@ -1,5 +1,3 @@
-// try bumping a king one horizontal spot when castling would be legal, i may have coded in a nice glitch
-// also try some wraparound cheats, they seem to be covered by the boundary checks, but i had forgotten how many of the methods that used to be pretecting them i stopped using
 // specify whether piece was trying to move through other piece or just onto position it can't hit
 // should have case sensitivity protection to avoid future blackPawn BlackPawn issues
 var board1 = ChessBoard('board1');
@@ -50,7 +48,8 @@ var GameController = (function(){
         notation,
         otherTeam,
         otherTeamsKingPosition,
-        checkNotation = "";
+        checkNotation = "",
+        promotionNotation ="";
 
       if( team === "empty" ){
         alert("that tile is empty")
@@ -70,7 +69,7 @@ var GameController = (function(){
         this.board.storeCurrentLayoutAsPrevious()
         captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions)
 
-        this.postMovementRules.pawnPromotionQuery( board ) //this needs to then alter the notation
+        promotionNotation = this.postMovementRules.pawnPromotionQuery( board ) //this needs to then alter the notation
         // i think checkmate can be determined with some combination of stalemate and check
         // checkmate
         if( this.board.allowedToMove === "white"){
@@ -98,7 +97,7 @@ var GameController = (function(){
           var positionNotation = Board.classMethods.gridCalculator(endPosition),
             pieceNotation = moveObject.pieceNotation,
             captureNotation = captureNotation || moveObject.captureNotation || "";
-          notation = pieceNotation + captureNotation + positionNotation + checkNotation
+          notation = pieceNotation + captureNotation + positionNotation + promotionNotation + checkNotation
         }
         this.board.recordNotation(notation)
         this.nextTurn()
@@ -119,10 +118,10 @@ var GameController = (function(){
         setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
         setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
         setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
+        // could break here for en black passant
         setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
         setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
         setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
-        // could break here for en passant
         setTimeout( function(){ gC.attemptMove(19, 33)},  7500)
         setTimeout( function(){ gC.attemptMove(57, 42)},  8000)
         setTimeout( function(){ gC.attemptMove(33, 49)},  8500)
