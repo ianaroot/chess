@@ -1,7 +1,7 @@
 function Board(options){
-  var layOut;
+  var layOut,
+    capturedPieces;
   if( options && options["layOut"]){ layOut = options["layOut"] }else{ layOut = [] };
-  var capturedPieces;
   if( options && options["capturedPieces"]){ capturedPieces = options["capturedPieces"] }else{ capturedPieces = [] };
   this.layOut = layOut;
   this.capturedPieces = capturedPieces;
@@ -24,6 +24,13 @@ Board.classMethods = {
     isSecond: function(position){
       return Math.floor(position / 8) === 1
     }
+  },
+  rank: function(position){
+    return Math.floor(position / 8) + 1
+  },
+  file: function(position){
+    var files = "abcdefgh";
+    return files[position % 8]
   },
   squareColor: function(position){
     var div = position / 8,
@@ -51,7 +58,7 @@ Board.classMethods = {
         7: "h"
       },
       x = alphaNum[x];
-    return "square-" + x + y
+    return x + y
   },
   boundaries: {
     upperLimit: 63,
@@ -62,6 +69,42 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  recordNotation: function(notation){
+    this.movementNotation.push(notation)
+  },
+  movePiece: function(startPosition, endPosition, additionalActions){
+      if( 
+        typeof startPosition !== "number" ||
+        !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
+        !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
+      ){
+        throw new Error("missing params in movePiece")
+      }
+    var pieceString = this.layOut[startPosition],
+      captureNotation = this.capture(endPosition);
+    this.emptify(startPosition)
+    this.placePiece({ position: endPosition, pieceString: pieceString })
+    if( additionalActions ){ captureNotation = additionalActions.call(this, {position: startPosition} ) }
+
+    return captureNotation
+  },
+  storeCurrentLayoutAsPrevious: function(){
+    var layOutCopy = Board.classMethods.deepCopyLayout( layOut );
+    board.previousLayouts.push(layOutCopy)
+  },
+  capture: function(position){
+    if( !this.positionEmpty(position) ){
+      var pieceString = this.layOut[position];
+      this.capturedPieces.push(pieceString)
+      this.emptify(position)
+      return captureNotation = "x"
+    } else {
+      return ""
+    }
+  },
+  lastLayout: function(){
+    return this.previousLayouts[this.previousLayouts.length - 1]
+  },
   oneSpaceDownIsEmpty: function(position){
     return this.positionEmpty(position - 8)
   },
@@ -171,7 +214,7 @@ Board.prototype = {
   },
   positionsOccupiedByTeam: function(teamString){
     var positions = [];
-    for( i = 0; i < this.layOut.length; i++){
+    for( var i = 0; i < this.layOut.length; i++){
       var teamAt = this.teamAt(i);
       if(teamAt === teamString){
         positions.push(i)
@@ -206,7 +249,7 @@ Board.prototype = {
   kingPosition: function(teamString){
     var layout = this.layOut,
         position;
-    for(i = 0; i < layOut.length; i ++){
+    for(var i = 0; i < layOut.length; i ++){
       var teamAtPosition = this.teamAt(i),
           pieceType = this.pieceTypeAt(i);
       if(teamAtPosition === teamString && pieceType === "King"){

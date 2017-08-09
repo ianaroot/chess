@@ -1,5 +1,8 @@
 var View = (function(){
   var instance = {
+    displayAlert: function(message){
+      alert(message)
+    },
     undisplayPiece: function(gridPosition){
       var element = document.getElementsByClassName( gridPosition )[0],
         children  = element.children;
@@ -19,7 +22,7 @@ var View = (function(){
     },
     displayBoard: function(layOut){
       for( var i = 0; i < layOut.length; i++){
-        var gridPosition = Board.classMethods.gridCalculator(i),
+        var gridPosition = "square-" +Board.classMethods.gridCalculator(i),
             pieceInitials = this.pieceInitials(layOut[i]);
         this.undisplayPiece(gridPosition);
         this.undisplayPiece(gridPosition);
@@ -34,7 +37,7 @@ var View = (function(){
     pieceInitials: function(string){
       var firstInitial = string[0],
         secondInitial;
-      for (i = 0; i < string.length; i++){
+      for (var i = 0; i < string.length; i++){
         if( string[i] === string[i].toUpperCase() ){ secondInitial = string[i] }
       };
       return firstInitial + secondInitial
