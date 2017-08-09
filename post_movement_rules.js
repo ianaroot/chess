@@ -5,11 +5,13 @@ var PostMovementRules = function (pieceMovementRules) {
       for(var i = 0; i < 8; i++){
         if (layOut[i] === "blackPawn" ){
           board.promotePawn(i)
+          return "=Q" //need to change this when i start allowing choice of promotion type
         }
       }
       for(var i = 56; i < 64; i++){
         if(layOut[i] === "whitePawn" ){
           board.promotePawn(i)
+          return "=Q" //need to change this when i start allowing choice of promotion type
         }
       }
     },
@@ -19,7 +21,8 @@ var PostMovementRules = function (pieceMovementRules) {
         repetitions = 0,
         threeFoldRepetition = false,
         noLegalMoves = true,
-        currentLayOut = board.layOut;
+        currentLayOut = board.layOut
+        different;
       for( var i = 0; i < previousLayouts.length; i++ ){
         var comparisonLayout = previousLayouts[i],
           different = false;
@@ -30,7 +33,6 @@ var PostMovementRules = function (pieceMovementRules) {
           }
         };
         if( !different ){ repetitions ++ }
-        // console.log("repetitions is: " + repetitions)
       };
       if(repetitions >= 2){
         threeFoldRepetition = true
@@ -38,29 +40,22 @@ var PostMovementRules = function (pieceMovementRules) {
 
 
       if(movingTeamString === "black"){
-        onDeckTeamString = "white"        
+        var onDeckTeamString = "white"        
       } else {
-        onDeckTeamString = "black"
+        var onDeckTeamString = "black"
       }
       var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
       for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
 
+        // parts of this need to move over to the pieceMovementRules
         var startPosition = occcupiedPositions[i],
-        // parts of this need to move over to the pieceMvementPostMovementRules
-        pieceController = pieceMovementRules.retrieveControllerForPosition({position: startPosition, layOut: board.layOut}),
-
-        viablePositions = pieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board, pieceMovements: pieceController});
-        // for(var j = 0; j < viablePositions.length && noLegalMoves; j++){
-        for( var key in viablePositions ){
-          // var endPosition = viablePositions[j];
-          // only checking kingCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
+          viablePositions = pieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board});
+        for( var key in viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
           if( !pieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
             noLegalMoves = false
           }
         };
       };
-      // console.log("threeFoldRepetition is: " + threeFoldRepetition)
-      // console.log("noLegalMoves is: " + noLegalMoves)
       return threeFoldRepetition || noLegalMoves
     },
   }
