@@ -50,7 +50,9 @@ var GameController = (function(){
         otherTeamsKingPosition,
         checkNotation = "",
         promotionNotation;
-
+      if( board.gameOver ){
+        return
+      }
       if( team === "empty" ){
         alert("that tile is empty")
         return
@@ -66,26 +68,24 @@ var GameController = (function(){
       } else {
         this.board.storeCurrentLayoutAsPrevious()
         captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions)
-        promotionNotation = this.postMovementRules.pawnPromotionQuery( board ) //this needs to then alter the notation
-        // i think checkmate can be determined with some combination of stalemate and check
-        // checkmate
+        promotionNotation = this.postMovementRules.pawnPromotionQuery( board )
         otherTeam = this.board.teamNotMoving()
         otherTeamsKingPosition = this.board.kingPosition(otherTeam)
         if( this.postMovementRules.checkmate( board ) ){
-          // technically if you'd been in check three times in the same position this would make what was actually stalemate look like checkmate
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("checkmate") }, 500)
           checkNotation = "#"
+          board.endGame()
         }
-        if( !this.postMovementRules.checkmate(board) && this.pieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
-          // } else{
+        if( !board.gameOver && this.pieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("check") }, 500)
           checkNotation = "+"
+          board.endGame()
         }
         this.view.displayBoard(this.board.layOut)
         var stalemate = this.postMovementRules.stalemate(board);
-        if( !this.postMovementRules.checkmate(board) && stalemate && checkNotation ){
+        if( !board.gameOver && stalemate ){
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("stalemate") }, 500)
 
@@ -100,7 +100,7 @@ var GameController = (function(){
           notation = pieceNotation + captureNotation + positionNotation + promotionNotation + checkNotation
         }
         this.board.recordNotation(notation)
-        this.nextTurn()
+        if( !board.gameOver ){ this.nextTurn() }
       } 
     },
     tests: {

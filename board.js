@@ -2,11 +2,13 @@ function Board(options){
   var layOut,
     capturedPieces;
   if( options && options["layOut"]){ layOut = options["layOut"] }else{ layOut = [] };
+  if( options && options["gameOver"]){ gameOver = options["gameOver"] }else{ gameOver = false };
   if( options && options["capturedPieces"]){ capturedPieces = options["capturedPieces"] }else{ capturedPieces = [] };
   this.layOut = layOut;
   this.capturedPieces = capturedPieces;
+  this.gameOver = gameOver;
   this.previousLayouts = [];
-  this.allowedToMove = options["allowedToMove"]
+  this.allowedToMove = options["allowedToMove"];
   this.movementNotation = [];
 };
 Board.classMethods = {
@@ -77,6 +79,9 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  endGame: function(){
+    this.gameOver = true
+  },
   teamNotMoving: function(){
     var teamNotMoving;
     if( this.allowedToMove === "white"){
