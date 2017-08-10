@@ -44,7 +44,15 @@ Board.classMethods = {
     }
     return squareColor;
   },
+  opposingTeam: function(teamString){
+    if( teamString === "white" ){
+      return "black"
+    } else {
+      return "white"
+    };
+  },
   gridCalculator: function(tile){
+    // gonna want a reverse lookup sooner or later
     var x = Math.floor(tile % 8),
         y = Math.floor(tile / 8) + 1,
       alphaNum = {
@@ -69,6 +77,15 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  teamNotMoving: function(){
+    var teamNotMoving;
+    if( this.allowedToMove === "white"){
+      teamNotMoving = "black"
+    } else {
+      teamNotMoving = "white"
+    }
+    return teamNotMoving
+  },
   recordNotation: function(notation){
     this.movementNotation.push(notation)
   },

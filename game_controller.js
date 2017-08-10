@@ -49,7 +49,7 @@ var GameController = (function(){
         otherTeam,
         otherTeamsKingPosition,
         checkNotation = "",
-        promotionNotation ="";
+        promotionNotation;
 
       if( team === "empty" ){
         alert("that tile is empty")
@@ -69,19 +69,15 @@ var GameController = (function(){
         promotionNotation = this.postMovementRules.pawnPromotionQuery( board ) //this needs to then alter the notation
         // i think checkmate can be determined with some combination of stalemate and check
         // checkmate
-        if( this.board.allowedToMove === "white"){
-          otherTeam = "black"
-        } else {
-          otherTeam = "white"
-        }
+        otherTeam = this.board.teamNotMoving()
         otherTeamsKingPosition = this.board.kingPosition(otherTeam)
-        if( this.postMovementRules.checkmate({ kingPosition: otherTeamsKingPosition, board: board}) ){
+        if( this.postMovementRules.checkmate( board ) ){
           // technically if you'd been in check three times in the same position this would make what was actually stalemate look like checkmate
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("checkmate") }, 500)
           checkNotation = "#"
         }
-        if( this.pieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
+        if( !this.postMovementRules.checkmate(board) && this.pieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
           // } else{
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("check") }, 500)
@@ -89,7 +85,7 @@ var GameController = (function(){
         }
         this.view.displayBoard(this.board.layOut)
         var stalemate = this.postMovementRules.stalemate(board);
-        if( stalemate && checkNotation !== "#" ){
+        if( !this.postMovementRules.checkmate(board) && stalemate && checkNotation ){
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("stalemate") }, 500)
 
@@ -111,7 +107,7 @@ var GameController = (function(){
       pawnPromotion: function(){
         var gC = GameController.getInstance();
         gC.view.displayBoard(gC.board.layOut)
-        setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
+        setTimeout( function(){ gC.attemptMove(1,  18) },  500)
         setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
         setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
         setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
@@ -130,6 +126,13 @@ var GameController = (function(){
         setTimeout( function(){ gC.attemptMove(57, 42)},  8000)
         setTimeout( function(){ gC.attemptMove(33, 49)},  8500)
         setTimeout( function(){ gC.attemptMove(27, 19)},  9000)
+        setTimeout( function(){ gC.attemptMove(34, 43)},  9500)
+        setTimeout( function(){ gC.attemptMove(19, 12)}, 10000)
+        setTimeout( function(){ gC.attemptMove(43, 52)}, 10500)
+        setTimeout( function(){ gC.attemptMove(12,  5)}, 11000)
+        setTimeout( function(){ gC.attemptMove(4,   5)}, 11500)
+        setTimeout( function(){ gC.attemptMove(17,  9)}, 12000)
+        setTimeout( function(){ gC.attemptMove(52, 61)}, 12500)
       },
       sim2: function(){
         var gC = GameController.getInstance();
@@ -150,7 +153,8 @@ var GameController = (function(){
         setTimeout( function(){ gC.attemptMove(58, 23)},  7000)
 
       },
-      whiteEnPassant: function (){
+      blackEnPassant: function(){
+        // should set these up to test left and right
         var gC = GameController.getInstance();
         gC.view.displayBoard(gC.board.layOut)
         setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
@@ -164,9 +168,25 @@ var GameController = (function(){
         setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
         setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
         setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
-        // setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
-        // setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
-        // setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
+      },
+      whiteEnPassant: function (){
+        // should set these up to test left and right
+        var gC = GameController.getInstance();
+        gC.view.displayBoard(gC.board.layOut)
+        setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
+        setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
+        setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
+        setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
+        setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
+        setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
+        setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
+        setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
+        setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
+        setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
+        setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
+        setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
+        setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
+        setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
         
       },
       checkmate: function(){

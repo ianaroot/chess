@@ -14,11 +14,12 @@ var PostMovementRules = function (pieceMovementRules) {
           return "=Q" //need to change this when i start allowing choice of promotion type
         }
       }
+      return ""
     },
-    checkmate: function(args){
-      var board = args["board"],
-        kingPosition = args["kingPosition"];
-      return pieceMovementRules.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}) && this.stalemate(board)
+    checkmate: function(board){
+      var otherTeam = board.teamNotMoving()
+        kingPosition = board.kingPosition(otherTeam);
+      return pieceMovementRules.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}) && this.noLegalMoves(board)
     },
     noLegalMoves: function(board){
       var movingTeamString = board.allowedToMove,
