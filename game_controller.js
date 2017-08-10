@@ -1,3 +1,4 @@
+// broke stalemate
 // specify whether piece was trying to move through other piece or just onto position it can't hit
 // should have case sensitivity protection to avoid future blackPawn BlackPawn issues
 var board1 = ChessBoard('board1');
@@ -200,16 +201,23 @@ var GameController = (function(){
         setTimeout( function(){ gC.attemptMove(32, 17) }, 3000)
         setTimeout( function(){ gC.attemptMove(21, 53) }, 3500)
       },
-      blackKingCastle: function(){
+      queensCastles: function(){
+        var gC = GameController.getInstance();
+        gC.view.displayBoard(gC.board.layOut)
+        setTimeout( function(){ gC.attemptMove(11, 19) }, 500)
+        setTimeout( function(){ gC.attemptMove(51, 43) }, 1000)
+        setTimeout( function(){ gC.attemptMove(2,  20) }, 1500)
+        setTimeout( function(){ gC.attemptMove(58, 44) }, 2000)
+        setTimeout( function(){ gC.attemptMove(3,  11) }, 2500)
+        setTimeout( function(){ gC.attemptMove(59, 51) }, 3000)
+        setTimeout( function(){ gC.attemptMove(1,  18) }, 3500)
+        setTimeout( function(){ gC.attemptMove(57, 42) }, 4000)
+        setTimeout( function(){ gC.attemptMove(4,   2) }, 4500)
+        setTimeout( function(){ gC.attemptMove(60, 58) }, 5000)
 
+        // setTimeout( function(){ gC.attemptMove(57, 42) }, 3000)
       },
-      whiteKingCastle: function(){
-
-      },
-      blackQueenCastle: function(){
-
-      },
-      whiteQueenCastle: function(){
+      kingsCastles: function(){
 
       },
       singleMoveTest: function(){
