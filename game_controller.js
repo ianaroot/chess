@@ -200,6 +200,18 @@ var GameController = (function(){
         setTimeout( function(){ gC.attemptMove(32, 17) }, 3000)
         setTimeout( function(){ gC.attemptMove(21, 53) }, 3500)
       },
+      blackKingCastle: function(){
+
+      },
+      whiteKingCastle: function(){
+
+      },
+      blackQueenCastle: function(){
+
+      },
+      whiteQueenCastle: function(){
+
+      },
       singleMoveTest: function(){
         var gC = GameController.getInstance();
         gC.view.displayBoard(gC.board.layOut)
