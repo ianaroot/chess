@@ -218,7 +218,18 @@ var GameController = (function(){
         // setTimeout( function(){ gC.attemptMove(57, 42) }, 3000)
       },
       kingsCastles: function(){
-
+        var gC = GameController.getInstance();
+        gC.view.displayBoard(gC.board.layOut)
+        setTimeout( function(){ gC.attemptMove(12, 20) }, 500)
+        setTimeout( function(){ gC.attemptMove(52, 44) }, 1000)
+        setTimeout( function(){ gC.attemptMove(5,  12) }, 1500)
+        setTimeout( function(){ gC.attemptMove(61, 43) }, 2000)
+        setTimeout( function(){ gC.attemptMove(6,  23) }, 2500)
+        setTimeout( function(){ gC.attemptMove(62, 52) }, 3000)
+        setTimeout( function(){ gC.attemptMove(4,  6) }, 3500)
+        setTimeout( function(){ gC.attemptMove(60, 62) }, 4000)
+        // setTimeout( function(){ gC.attemptMove(4,   2) }, 4500)
+        // setTimeout( function(){ gC.attemptMove(60, 58) }, 5000)
       },
       singleMoveTest: function(){
         var gC = GameController.getInstance();
