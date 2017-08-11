@@ -4,11 +4,12 @@ function Board(options){
   if( options && options["layOut"]){ layOut = options["layOut"] }else{ layOut = [] };
   if( options && options["gameOver"]){ gameOver = options["gameOver"] }else{ gameOver = false };
   if( options && options["capturedPieces"]){ capturedPieces = options["capturedPieces"] }else{ capturedPieces = [] };
+  if( options && options["allowedToMove"]){ allowedToMove = options["allowedToMove"] }else{ allowedToMove = "white" };
   this.layOut = layOut;
   this.capturedPieces = capturedPieces;
   this.gameOver = gameOver;
   this.previousLayouts = [];
-  this.allowedToMove = options["allowedToMove"];
+  this.allowedToMove = allowedToMove;
   this.movementNotation = [];
 };
 Board.classMethods = {

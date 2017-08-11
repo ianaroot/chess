@@ -5,13 +5,15 @@ var PostMovementRules = function (pieceMovementRules) {
       for(var i = 0; i < 8; i++){
         if (layOut[i] === "blackPawn" ){
           board.promotePawn(i)
-          return "=Q" //need to change this when i start allowing choice of promotion type
+          return "=Q"
+          //need to change this when i start allowing choice of promotion type
         }
       }
       for(var i = 56; i < 64; i++){
         if(layOut[i] === "whitePawn" ){
           board.promotePawn(i)
-          return "=Q" //need to change this when i start allowing choice of promotion type
+          return "=Q"
+          //need to change this when i start allowing choice of promotion type
         }
       }
       return ""

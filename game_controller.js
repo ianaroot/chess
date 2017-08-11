@@ -1,4 +1,3 @@
-// broke stalemate
 // specify whether piece was trying to move through other piece or just onto position it can't hit
 // should have case sensitivity protection to avoid future blackPawn BlackPawn issues
 var board1 = ChessBoard('board1');
@@ -8,8 +7,7 @@ var GameController = (function(){
     view: View.getInstance(),
     pieceMovementRules: PieceMovementRules.getInstance(),
     postMovementRules: PostMovementRules( PieceMovementRules.getInstance() ).getInstance() ,
-    board: new Board({layOut: 
-      
+    board: new Board({layOut:   
       ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
        "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
        "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
@@ -18,28 +16,7 @@ var GameController = (function(){
        "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
        "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
        "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",],
-
-      // ["whiteKing", "empty", "empty", "empty", "empty", "empty", "empty", "whiteQueen", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "whitePawn", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "blackPawn", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "whiteRook", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "blackKing", "empty", ],
-
-      // [
-      //  "blackRook", "blackKing", "empty", "whiteKing", "empty", "empty", "whiteBishop", "empty", 
-      //  "blackPawn", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
-      //  "empty", "empty", "whiteQueen", "empty", "empty", "empty", "whitePawn", "blackBishop", 
-      //  "whiteRook", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-      //  ],
-
-    allowedToMove: "white"}),
+    }),
     attemptMove: function(startPosition, endPosition){
       var board = this.board,
         layOut = board.layOut,
@@ -105,6 +82,43 @@ var GameController = (function(){
       } 
     },
     tests: {
+      simpleStalemate: function(){
+        var gC = GameController.getInstance();
+        newBoard = new Board({ layOut: 
+          ["whiteKing", "empty", "empty", "empty", "empty", "empty", "empty", "whiteQueen", 
+            "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+            "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+            "empty", "empty", "empty", "whitePawn", "empty", "empty", "empty", "empty", 
+            "empty", "empty", "empty", "blackPawn", "empty", "empty", "empty", "empty", 
+            "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+            "whiteRook", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+            "empty", "empty", "empty", "empty", "empty", "empty", "blackKing", "empty"
+          ],
+        })
+        gC.board = newBoard
+        gC.view.displayBoard(gC.board.layOut)
+        setTimeout( function(){ gC.attemptMove(7, 47) },  500)
+
+      },
+      complexStalemate: function(){
+        var gC = GameController.getInstance();
+        newBoard = new Board({ layOut: 
+          [
+            "blackRook", "blackKing", "empty", "whiteKing", "empty", "empty", "whiteBishop", "empty", 
+            "blackPawn", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
+            "empty", "empty", "whiteQueen", "empty", "empty", "empty", "whitePawn", "blackBishop", 
+            "whiteRook", "empty", "empty", "empty", "empty", "empty", "blackPawn", "empty", 
+             "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+            "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+            "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+            "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+          ],
+        })
+        gC.board = newBoard
+        gC.view.displayBoard(gC.board.layOut)
+        setTimeout( function(){ gC.attemptMove(24, 16) },  500)
+
+       },
       pawnPromotion: function(){
         var gC = GameController.getInstance();
         gC.view.displayBoard(gC.board.layOut)
@@ -214,8 +228,6 @@ var GameController = (function(){
         setTimeout( function(){ gC.attemptMove(57, 42) }, 4000)
         setTimeout( function(){ gC.attemptMove(4,   2) }, 4500)
         setTimeout( function(){ gC.attemptMove(60, 58) }, 5000)
-
-        // setTimeout( function(){ gC.attemptMove(57, 42) }, 3000)
       },
       kingsCastles: function(){
         var gC = GameController.getInstance();
@@ -227,10 +239,7 @@ var GameController = (function(){
         setTimeout( function(){ gC.attemptMove(6,  23) }, 2500)
         setTimeout( function(){ gC.attemptMove(62, 52) }, 3000)
         setTimeout( function(){ gC.attemptMove(4,  6) }, 3500)
-        setTimeout( function(){ gC.attemptMove(60, 62) }, 4000)
-        // setTimeout( function(){ gC.attemptMove(4,   2) }, 4500)
-        // setTimeout( function(){ gC.attemptMove(60, 58) }, 5000)
-      },
+        setTimeout( function(){ gC.attemptMove(60, 62) }, 4000)      },
       singleMoveTest: function(){
         var gC = GameController.getInstance();
         gC.view.displayBoard(gC.board.layOut)
