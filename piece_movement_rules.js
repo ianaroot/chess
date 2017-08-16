@@ -63,6 +63,8 @@ var PieceMovementRules = function(){
       return availableMovements
     },
     kingInCheck: function(args){ // can just pass in same position as start and end if you want to know whether not moving anything creates check
+      // this should be two functions, one that checks whether a king is in check from a given layout
+      // and one that checks whether making a particular layout change would result in check
       if( 
         !Board.prototype.isPrototypeOf( args["board"] ) ||
         typeof args["startPosition"] !== "number" ||
@@ -81,14 +83,7 @@ var PieceMovementRules = function(){
           teamString         = board.teamAt(startPosition),
           danger             = false,
           newLayout          = Board.classMethods.deepCopyLayout(layOut),
-          opposingTeamString = "";
-
-      if( teamString === "white" ){
-        opposingTeamString = "black"
-      } else {
-        opposingTeamString = "white"
-      };
-// also probably gonna wanna copy all the board stuff, like previous states, capturedPieces, although if i copy previous states i'll end up with some infinite loops again
+          opposingTeamString = Board.classMethods.opposingTeam(teamString);
       var newBoard = new Board({layOut: newLayout});
       newBoard.movePiece( startPosition, endPosition, additionalActions)
       var kingPosition = newBoard.kingPosition(teamString);

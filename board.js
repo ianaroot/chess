@@ -1,12 +1,25 @@
 function Board(options){
   var layOut,
     capturedPieces;
-  if( options && options["layOut"]){ layOut = options["layOut"] }else{ layOut = [] };
+    this.defaultLayOut = [
+      "whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
+      "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
+      "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
+      "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
+      "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook"
+    ]
+  if( options && options["layOut"]){ layOut = options["layOut"] }else{ layOut = Board.classMethods.deepCopyLayout( this.defaultLayOut ) };
+  if( options && options["gameOver"]){ gameOver = options["gameOver"] }else{ gameOver = false };
   if( options && options["capturedPieces"]){ capturedPieces = options["capturedPieces"] }else{ capturedPieces = [] };
+  if( options && options["allowedToMove"]){ allowedToMove = options["allowedToMove"] }else{ allowedToMove = "white" };
   this.layOut = layOut;
   this.capturedPieces = capturedPieces;
+  this.gameOver = gameOver;
   this.previousLayouts = [];
-  this.allowedToMove = options["allowedToMove"]
+  this.allowedToMove = allowedToMove;
   this.movementNotation = [];
 };
 Board.classMethods = {
@@ -44,7 +57,15 @@ Board.classMethods = {
     }
     return squareColor;
   },
+  opposingTeam: function(teamString){
+    if( teamString === "white" ){
+      return "black"
+    } else {
+      return "white"
+    };
+  },
   gridCalculator: function(tile){
+    // gonna want a reverse lookup sooner or later
     var x = Math.floor(tile % 8),
         y = Math.floor(tile / 8) + 1,
       alphaNum = {
@@ -69,6 +90,29 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  deepCopyLayout: function(){
+    Board.classMethods.deepCopyLayout(this.layOut)
+  },
+  reset: function(){
+    this.layOut = this.defaultLayOut;
+    this.capturedPieces = [];
+    this.gameOver = false;
+    this.allowedToMove = "white";
+    this.previousLayouts = [];
+    this.movementNotation = [];
+  },
+  endGame: function(){
+    this.gameOver = true
+  },
+  teamNotMoving: function(){
+    var teamNotMoving;
+    if( this.allowedToMove === "white"){
+      teamNotMoving = "black"
+    } else {
+      teamNotMoving = "white"
+    }
+    return teamNotMoving
+  },
   recordNotation: function(notation){
     this.movementNotation.push(notation)
   },
