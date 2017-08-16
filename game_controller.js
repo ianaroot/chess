@@ -7,16 +7,7 @@ var GameController = (function(){
     view: View.getInstance(),
     pieceMovementRules: PieceMovementRules.getInstance(),
     postMovementRules: PostMovementRules( PieceMovementRules.getInstance() ).getInstance() ,
-    board: new Board({layOut:   
-      ["whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
-       "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
-       "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
-       "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
-       "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook",],
-    }),
+    board: new Board(),
     attemptMove: function(startPosition, endPosition){
       var board = this.board,
         layOut = board.layOut,

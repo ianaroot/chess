@@ -1,7 +1,17 @@
 function Board(options){
   var layOut,
     capturedPieces;
-  if( options && options["layOut"]){ layOut = options["layOut"] }else{ layOut = [] };
+    this.defaultLayOut = [
+      "whiteRook", "whiteNight", "whiteBishop", "whiteQueen", "whiteKing", "whiteBishop", "whiteNight", "whiteRook",
+      "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", "whitePawn", 
+      "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty", 
+      "empty", "empty", "empty", "empty", "empty", "empty", "empty", "empty",
+      "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
+      "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook"
+    ]
+  if( options && options["layOut"]){ layOut = options["layOut"] }else{ layOut = Board.classMethods.deepCopyLayout( this.defaultLayOut ) };
   if( options && options["gameOver"]){ gameOver = options["gameOver"] }else{ gameOver = false };
   if( options && options["capturedPieces"]){ capturedPieces = options["capturedPieces"] }else{ capturedPieces = [] };
   if( options && options["allowedToMove"]){ allowedToMove = options["allowedToMove"] }else{ allowedToMove = "white" };
@@ -80,6 +90,17 @@ Board.classMethods = {
   }
 }
 Board.prototype = {
+  deepCopyLayout: function(){
+    Board.classMethods.deepCopyLayout(this.layOut)
+  },
+  reset: function(){
+    this.layOut = this.defaultLayOut;
+    this.capturedPieces = [];
+    this.gameOver = false;
+    this.allowedToMove = "white";
+    this.previousLayouts = [];
+    this.movementNotation = [];
+  },
   endGame: function(){
     this.gameOver = true
   },
