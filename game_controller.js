@@ -50,13 +50,13 @@ var GameController = (function(){
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("check") }, 500)
           checkNotation = "+"
-          board.endGame()
         }
         this.view.displayBoard(this.board.layOut)
         var stalemate = this.postMovementRules.stalemate(board);
         if( !board.gameOver && stalemate ){
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("stalemate") }, 500)
+          board.endGame()
 
         }
         if( moveObject.fullNotation ){
