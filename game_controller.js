@@ -5,8 +5,7 @@ var board1 = ChessBoard('board1');
 var GameController = (function(){
   var instance = {
     view: View.getInstance(),
-    pieceMovementRules: PieceMovementRules.getInstance(),
-    postMovementRules: PostMovementRules( PieceMovementRules.getInstance() ).getInstance() ,
+    rules: Rules.getInstance(),
     board: new Board(),
     attemptMove: function(startPosition, endPosition){
       var board = this.board,
@@ -30,29 +29,29 @@ var GameController = (function(){
         alert("other team's turn")
         return
       }
-      var moveObject = this.pieceMovementRules.moveIsIllegal(startPosition, endPosition, board);
+      var moveObject = this.rules.moveIsIllegal(startPosition, endPosition, board);
       if( moveObject.illegal ){
         this.view.displayAlert(moveObject.alert)
         return
       } else {
         this.board.storeCurrentLayoutAsPrevious()
         captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions)
-        promotionNotation = this.postMovementRules.pawnPromotionQuery( board )
+        promotionNotation = this.rules.pawnPromotionQuery( board )
         otherTeam = this.board.teamNotMoving()
         otherTeamsKingPosition = this.board.kingPosition(otherTeam)
-        if( this.postMovementRules.checkmate( board ) ){
+        if( this.rules.checkmate( board ) ){
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("checkmate") }, 500)
           checkNotation = "#"
           board.endGame()
         }
-        if( !board.gameOver && this.pieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
+        if( !board.gameOver && this.rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("check") }, 500)
           checkNotation = "+"
         }
         this.view.displayBoard(this.board.layOut)
-        var stalemate = this.postMovementRules.stalemate(board);
+        var stalemate = this.rules.stalemate(board);
         if( !board.gameOver && stalemate ){
           var displayAlert = this.view.displayAlert
           setTimeout( function(){ displayAlert("stalemate") }, 500)
