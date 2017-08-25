@@ -1,4 +1,4 @@
-function Board(options){
+var Board = function(options){
   var layOut,
     capturedPieces;
     this.defaultLayOut = [
@@ -11,10 +11,10 @@ function Board(options){
       "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn", "blackPawn",  
       "blackRook", "blackNight", "blackBishop", "blackQueen", "blackKing", "blackBishop", "blackNight", "blackRook"
     ]
-  if( options && options["layOut"]){ layOut = options["layOut"] }else{ layOut = Board.classMethods.deepCopyLayout( this.defaultLayOut ) };
-  if( options && options["gameOver"]){ gameOver = options["gameOver"] }else{ gameOver = false };
-  if( options && options["capturedPieces"]){ capturedPieces = options["capturedPieces"] }else{ capturedPieces = [] };
-  if( options && options["allowedToMove"]){ allowedToMove = options["allowedToMove"] }else{ allowedToMove = "white" };
+  if( options && options["layOut"]){ var layOut = options["layOut"] }else{ var layOut = Board.classMethods.deepCopyLayout( this.defaultLayOut ) };
+  if( options && options["gameOver"]){ var gameOver = options["gameOver"] }else{ var gameOver = false };
+  if( options && options["capturedPieces"]){ var capturedPieces = options["capturedPieces"] }else{ var capturedPieces = [] };
+  if( options && options["allowedToMove"]){ var allowedToMove = options["allowedToMove"] }else{ var allowedToMove = "white" };
   this.layOut = layOut;
   this.capturedPieces = capturedPieces;
   this.gameOver = gameOver;
