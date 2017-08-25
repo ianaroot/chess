@@ -24,7 +24,9 @@ var Rules = function(){
   checkmate = function(board){
     var otherTeam = board.teamNotMoving()
       kingPosition = board.kingPosition(otherTeam);
-    return this.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}) && this.noLegalMoves(board)
+    var noLegalMoves = this.noLegalMoves(board)
+    var kingInCheck = this.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}) 
+    return kingInCheck && noLegalMoves
   },
   noLegalMoves = function(board){
     var movingTeamString = board.allowedToMove,
