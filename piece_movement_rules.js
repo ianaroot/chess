@@ -638,7 +638,8 @@ var Rules = function(){
     pawnPromotionQuery: pawnPromotionQuery,
     checkmate: checkmate,
     kingInCheck: kingInCheck,
-    stalemate: stalemate
+    stalemate: stalemate,
+    noLegalMoves: noLegalMoves
   };
   // private
     //end private
