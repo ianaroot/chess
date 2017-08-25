@@ -89,11 +89,12 @@ Board.classMethods = {
     return position <= this.boundaries.upperLimit && position >= this.boundaries.lowerLimit
   }
 }
-Board.prototype = {
-  deepCopyLayout: function(){
+Board.prototype = function(){
+  var deepCopyLayout = function(){
     Board.classMethods.deepCopyLayout(this.layOut)
   },
-  reset: function(){
+  reset = function(){
+    // only seems to work once at a go?
     this.layOut = this.defaultLayOut;
     this.capturedPieces = [];
     this.gameOver = false;
@@ -101,10 +102,10 @@ Board.prototype = {
     this.previousLayouts = [];
     this.movementNotation = [];
   },
-  endGame: function(){
+  endGame = function(){
     this.gameOver = true
   },
-  teamNotMoving: function(){
+  teamNotMoving = function(){
     var teamNotMoving;
     if( this.allowedToMove === "white"){
       teamNotMoving = "black"
@@ -113,10 +114,10 @@ Board.prototype = {
     }
     return teamNotMoving
   },
-  recordNotation: function(notation){
+  recordNotation = function(notation){
     this.movementNotation.push(notation)
   },
-  movePiece: function(startPosition, endPosition, additionalActions){
+  movePiece = function(startPosition, endPosition, additionalActions){
       if( 
         typeof startPosition !== "number" ||
         !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
@@ -125,37 +126,37 @@ Board.prototype = {
         throw new Error("missing params in movePiece")
       }
     var pieceString = this.layOut[startPosition],
-      captureNotation = this.capture(endPosition);
-    this.emptify(startPosition)
-    this.placePiece({ position: endPosition, pieceString: pieceString })
+      captureNotation = capture.call(this, endPosition);
+    emptify.call( this, startPosition)
+    placePiece.call(this, { position: endPosition, pieceString: pieceString })
     if( additionalActions ){ captureNotation = additionalActions.call(this, {position: startPosition} ) }
 
     return captureNotation
   },
-  storeCurrentLayoutAsPrevious: function(){
+  storeCurrentLayoutAsPrevious = function(){
     var layOutCopy = Board.classMethods.deepCopyLayout( layOut );
     board.previousLayouts.push(layOutCopy)
   },
-  capture: function(position){
-    if( !this.positionEmpty(position) ){
+  capture = function(position){
+    if( !positionEmpty.call(this, position) ){
       var pieceString = this.layOut[position];
       this.capturedPieces.push(pieceString)
-      this.emptify(position)
+      emptify(position)
       return captureNotation = "x"
     } else {
       return ""
     }
   },
-  lastLayout: function(){
+  lastLayout = function(){
     return this.previousLayouts[this.previousLayouts.length - 1]
   },
-  oneSpaceDownIsEmpty: function(position){
+  oneSpaceDownIsEmpty = function(position){
     return this.positionEmpty(position - 8)
   },
-  twoSpacesDownIsEmpty: function(position){
+  twoSpacesDownIsEmpty = function(position){
     return this.positionEmpty(position - 16)
   },
-  downAndLeftIsAttackable: function(args){
+  downAndLeftIsAttackable = function(args){
     var position = args["position"],
       attackingTeamString = args["attackingTeamString"];
     if( Board.classMethods.inBounds( position - 9 )){ 
@@ -167,7 +168,7 @@ Board.prototype = {
       return false
     }
   },
-  downAndRightIsAttackable: function(args){
+  downAndRightIsAttackable = function(args){
     var position = args["position"],
       attackingTeamString = args["attackingTeamString"];
     if( Board.classMethods.inBounds( position - 7 ) ){
@@ -178,13 +179,13 @@ Board.prototype = {
       return false
     }
   },
-  twoSpacesUpIsEmpty: function(position){
+  twoSpacesUpIsEmpty = function(position){
     return this.positionEmpty( position + 16)
   },
-  oneSpaceUpIsEmpty: function(position){
+  oneSpaceUpIsEmpty = function(position){
     return this.positionEmpty( position + 8)
   },
-  upAndLeftIsAttackable: function(args){
+  upAndLeftIsAttackable = function(args){
     var position = args["position"],
       attackingTeamString = args["attackingTeamString"];
     if( Board.classMethods.inBounds( position + 7)){
@@ -195,7 +196,7 @@ Board.prototype = {
       return false
     }
   },
-  upAndRightIsAttackable: function(args){
+  upAndRightIsAttackable = function(args){
     var position = args["position"],
       attackingTeamString = args["attackingTeamString"];
     if( Board.classMethods.inBounds( position + 9)){
@@ -206,21 +207,21 @@ Board.prototype = {
       return false
     }
   },
-  kingSideCastleIsClear: function(kingPosition){
+  kingSideCastleIsClear = function(kingPosition){
     return this.positionEmpty(kingPosition + 1) && this.positionEmpty(kingPosition + 2 )
   },
-  queenSideCastleIsClear: function(kingPosition){
+  queenSideCastleIsClear = function(kingPosition){
     return this.positionEmpty(kingPosition - 1 ) && this.positionEmpty(kingPosition - 2 ) && this.positionEmpty(kingPosition - 3 )
   },
-  kingSideRookHasNotMoved: function(kingPosition){
+  kingSideRookHasNotMoved = function(kingPosition){
     var kingSideRookStartPosition = kingPosition + 3;
     return (this.pieceTypeAt( kingSideRookStartPosition ) ==="Rook") && this.pieceHasNotMovedFrom( kingSideRookStartPosition )
   },
-  queenSideRookHasNotMoved: function(kingPosition){
+  queenSideRookHasNotMoved = function(kingPosition){
     var queenSideRookStartPosition = kingPosition - 4;
     return (this.pieceTypeAt( queenSideRookStartPosition ) ==="Rook") && this.pieceHasNotMovedFrom( queenSideRookStartPosition )
   },
-  pieceHasNotMovedFrom: function(position){
+  pieceHasNotMovedFrom = function(position){
     var pieceString = this.layOut[position],
       previousLayouts = this.previousLayouts,
       pieceHasNotMoved = true;
@@ -233,21 +234,21 @@ Board.prototype = {
     };
     return pieceHasNotMoved
   },
-  emptify: function(position){
+  emptify = function(position){
     this.layOut[position] = "empty"
   },
-  placePiece: function(args){
+  placePiece = function(args){
     var position = args["position"],
       pieceString = args["pieceString"];
     this.layOut[position] = pieceString
   },
-  promotePawn: function(position){
+  promotePawn = function(position){
     // later i'll make this request input as to what piece to become
     var teamString = this.teamAt(position)
     this.layOut[position] = teamString + "Queen"
     
   },
-  teamAt: function(position){
+  teamAt = function(position){
     if( !Board.classMethods.inBounds(position) ){
       return "empty"
     };
@@ -256,7 +257,7 @@ Board.prototype = {
     ;
     return teamString
   },
-  positionsOccupiedByTeam: function(teamString){
+  positionsOccupiedByTeam = function(teamString){
     var positions = [];
     for( var i = 0; i < this.layOut.length; i++){
       var teamAt = this.teamAt(i);
@@ -266,31 +267,31 @@ Board.prototype = {
     };
     return positions
   },
-  occupiedByTeamMate: function(args){
+  occupiedByTeamMate = function(args){
     var position = args["position"],
         teamString = args["teamString"],
         occupantTeam = this.teamAt(position)
     ;
     return teamString === occupantTeam
   },
-  occupiedByOpponent: function(args){
+  occupiedByOpponent = function(args){
     var position = args["position"],
         teamString = args["teamString"],
         occupantTeam = this.teamAt(position);
     return !this.positionEmpty(position) && teamString !== occupantTeam
   },
-  pieceTypeAt: function(position){
+  pieceTypeAt = function(position){
     pieceString = this.layOut[position]
     pieceType = pieceString.substring(5,pieceString.length)
     return pieceType
   },
-  positionIsOccupiedByTeamMate: function(position, team){
+  positionIsOccupiedByTeamMate = function(position, team){
     return ( !this.positionEmpty(position) && this.teamAt(position) === team  )
   },
-  positionEmpty: function(position){
+  positionEmpty = function(position){
     return this.layOut[position] === "empty"
   },
-  kingPosition: function(teamString){
+  kingPosition = function(teamString){
     var layout = this.layOut,
         position;
     for(var i = 0; i < layOut.length; i ++){
@@ -302,5 +303,32 @@ Board.prototype = {
       }
     }
     return position
-  },
-}
+  };
+  return {
+    storeCurrentLayoutAsPrevious: storeCurrentLayoutAsPrevious,
+    teamAt: teamAt,
+    pieceTypeAt: pieceTypeAt,
+    occupiedByOpponent: occupiedByOpponent,
+    occupiedByTeamMate: occupiedByTeamMate,
+    // gameOver: gameOver,
+    // allowedToMove: allowedToMove
+    movePiece: movePiece,
+    teamNotMoving: teamNotMoving,
+    kingPosition: kingPosition,
+    endGame: endGame,
+    recordNotation: recordNotation,
+    positionEmpty: positionEmpty,
+    lastLayout: lastLayout,
+    twoSpacesDownIsEmpty: twoSpacesDownIsEmpty,
+    twoSpacesUpIsEmpty: twoSpacesUpIsEmpty,
+    oneSpaceUpIsEmpty: oneSpaceUpIsEmpty,
+    oneSpaceDownIsEmpty: oneSpaceDownIsEmpty,
+    downAndLeftIsAttackable: downAndLeftIsAttackable,
+    downAndRightIsAttackable: downAndRightIsAttackable,
+    upAndLeftIsAttackable: upAndLeftIsAttackable,
+    upAndRightIsAttackable: upAndRightIsAttackable,
+    positionsOccupiedByTeam: positionsOccupiedByTeam,
+    reset: reset
+    // capture: capture, emp
+  }
+}()

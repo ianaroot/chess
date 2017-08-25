@@ -134,6 +134,10 @@ var Rules = function(){
         newLayout          = Board.classMethods.deepCopyLayout(layOut),
         opposingTeamString = Board.classMethods.opposingTeam(teamString);
     var newBoard = new Board({layOut: newLayout});
+      console.log(board.layOut[60])
+      //called this from checkMate() line 20, only seemed to run that line once, and in between changed value to 
+      //empty, not sure how that only got called once and this is getting called seven times
+
     newBoard.movePiece( startPosition, endPosition, additionalActions)
     var kingPosition = newBoard.kingPosition(teamString);
 
