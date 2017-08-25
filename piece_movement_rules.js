@@ -24,8 +24,16 @@ var Rules = function(){
   checkmate = function(board){
     var otherTeam = board.teamNotMoving()
       kingPosition = board.kingPosition(otherTeam);
+      console.log("before no noLegalMoves")
     var noLegalMoves = this.noLegalMoves(board)
+      console.log("after no noLegalMoves")
+          // console.log(board.layOut[60])
+
     var kingInCheck = this.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}) 
+
+      console.log("after no kingInCheck")
+          // console.log(board.layOut[60])
+
     return kingInCheck && noLegalMoves
   },
   noLegalMoves = function(board){
@@ -120,7 +128,8 @@ var Rules = function(){
     if( 
       !Board.prototype.isPrototypeOf( args["board"] ) ||
       typeof args["startPosition"] !== "number" ||
-      !(typeof args["endPosition"] !== "number" || typeof args["endPosition"] !== "string") || //not sure where this got turned into a string...
+      !(typeof args["endPosition"] !== "number" || typeof args["endPosition"] !== "string") ||
+      //not sure where this got turned into a string...
       !(typeof args["additionalActions"] === "function" || typeof args["additionalActions"] === "undefined")
     ){
       throw new Error("missing params in kingInCheck")
@@ -136,11 +145,14 @@ var Rules = function(){
         newLayout          = Board.classMethods.deepCopyLayout(layOut),
         opposingTeamString = Board.classMethods.opposingTeam(teamString);
     var newBoard = new Board({layOut: newLayout});
-      console.log(board.layOut[60])
+      // console.log(board.layOut[60])
       //called this from checkMate() line 20, only seemed to run that line once, and in between changed value to 
       //empty, not sure how that only got called once and this is getting called seven times
-
+    console.log(board.layOut[60])
+    // coming in from noLegalMoves, the next function causes no problem
+    // coming in from kingInCheck it deletes the king. board reference pointers getting mixe up?
     newBoard.movePiece( startPosition, endPosition, additionalActions)
+    console.log(board.layOut[60])
     var kingPosition = newBoard.kingPosition(teamString);
 
     var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
