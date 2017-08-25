@@ -95,7 +95,7 @@ var Rules = function(){
     if ( !Board.classMethods.inBounds(endPosition) ){
       moveObject.alert = 'stay on the board, fool'
       moveObject.illegal = true
-    } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
+    } else if( board.occupiedByTeamMate({ position: endPosition, teamString: team }) ){
       moveObject.alert = "what, are you trying to capture your own piece?"
       moveObject.illegal = true
     } else if( !viableMovement ) {

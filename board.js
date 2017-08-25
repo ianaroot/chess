@@ -285,9 +285,6 @@ Board.prototype = function(){
     pieceType = pieceString.substring(5,pieceString.length)
     return pieceType
   },
-  positionIsOccupiedByTeamMate = function(position, team){
-    return ( !this.positionEmpty(position) && this.teamAt(position) === team  )
-  },
   positionEmpty = function(position){
     return this.layOut[position] === "empty"
   },
