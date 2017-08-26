@@ -4,12 +4,12 @@
 var board1 = ChessBoard('board1');
 
 var GameController = (function(){
-  view = View.getInstance(),
+  var view = View.getInstance(),
   rules = Rules.getInstance(),
-  board = new Board(),
+  board = new Board();
   attemptMove = function(startPosition, endPosition){
-    var board = this.board,
-      layOut = board.layOut,
+    // var board = this.board,
+      var layOut = board.layOut,
       pieceString = layOut[startPosition],
       team = board.teamAt(startPosition),
       captureNotation,
@@ -29,40 +29,37 @@ var GameController = (function(){
       alert("other team's turn")
       return
     }
-    var moveObject = this.rules.moveIsIllegal(startPosition, endPosition, board);
+    var moveObject = rules.moveIsIllegal(startPosition, endPosition, board);
     if( moveObject.illegal ){
       this.view.displayAlert(moveObject.alert)
       return
     } else {
 
       
-      this.board.storeCurrentLayoutAsPrevious()
-      captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions)
-      promotionNotation = this.rules.pawnPromotionQuery( board )
-      otherTeam = this.board.teamNotMoving()
-      otherTeamsKingPosition = this.board.kingPosition(otherTeam)
+      board.storeCurrentLayoutAsPrevious()
+      captureNotation = board.movePiece( startPosition, endPosition, moveObject.additionalActions)
+      promotionNotation = rules.pawnPromotionQuery( board )
+      otherTeam = board.teamNotMoving()
+      otherTeamsKingPosition = board.kingPosition(otherTeam)
 
-      // console.log(this.board.layOut[60])
+      console.log("bout to call checkmate from gameCon")
 //this function is removing the opposing team's king
-      if( this.rules.checkmate( board ) ){
+      if( rules.checkmate( board ) ){
 //
-        var displayAlert = this.view.displayAlert
+        var displayAlert = view.displayAlert
         setTimeout( function(){ displayAlert("checkmate") }, 500)
         checkNotation = "#"
         board.endGame()
       }
-
-      // console.log(this.board.layOut[60])
-
-      if( !board.gameOver && this.rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
-        var displayAlert = this.view.displayAlert
+      if( !board.gameOver && rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
+        var displayAlert = view.displayAlert
         setTimeout( function(){ displayAlert("check") }, 500)
         checkNotation = "+"
       }
-      this.view.displayBoard(this.board.layOut)
-      var stalemate = this.rules.stalemate(board);
+      view.displayBoard(board.layOut)
+      var stalemate = rules.stalemate(board);
       if( !board.gameOver && stalemate ){
-        var displayAlert = this.view.displayAlert
+        var displayAlert = view.displayAlert
         setTimeout( function(){ displayAlert("stalemate") }, 500)
         board.endGame()
 
@@ -76,7 +73,7 @@ var GameController = (function(){
           captureNotation = captureNotation || moveObject.captureNotation || "";
         notation = pieceNotation + captureNotation + positionNotation + promotionNotation + checkNotation
       }
-      this.board.recordNotation(notation)
+      board.recordNotation(notation)
       if( !board.gameOver ){ this.nextTurn() }
     } 
   },
