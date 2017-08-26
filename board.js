@@ -90,7 +90,7 @@ Board.classMethods = {
   }
 }
 Board.prototype = function(){
-  reset = function(){
+  var reset = function(){
     // only seems to work once at a go?
     this.layOut = this.defaultLayOut;
     this.capturedPieces = [];
@@ -223,7 +223,7 @@ Board.prototype = function(){
       previousLayouts = this.previousLayouts,
       pieceHasNotMoved = true;
     for(var i = 0; i < previousLayouts.length; i++){
-      var oldLayout= previousLayouts[i];
+      var oldLayout = previousLayouts[i];
       if(oldLayout[position] !== pieceString ){
         pieceHasNotMoved = false
         break;
