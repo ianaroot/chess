@@ -6,9 +6,9 @@ var board1 = ChessBoard('board1');
 var GameController = (function(){
   var view = View.getInstance(),
   rules = Rules.getInstance(),
-  board = new Board();
+  board = new Board(),
   attemptMove = function(startPosition, endPosition){
-    // var board = this.board,
+    // var board = board,
       var layOut = board.layOut,
       pieceString = layOut[startPosition],
       team = board.teamAt(startPosition),
@@ -31,7 +31,7 @@ var GameController = (function(){
     }
     var moveObject = rules.moveIsIllegal(startPosition, endPosition, board);
     if( moveObject.illegal ){
-      this.view.displayAlert(moveObject.alert)
+      view.displayAlert(moveObject.alert)
       return
     } else {
 
@@ -74,7 +74,7 @@ var GameController = (function(){
         notation = pieceNotation + captureNotation + positionNotation + promotionNotation + checkNotation
       }
       board.recordNotation(notation)
-      if( !board.gameOver ){ this.nextTurn() }
+      if( !board.gameOver ){ nextTurn() }
     } 
   },
   tests = {
@@ -292,9 +292,9 @@ var GameController = (function(){
   },
   nextTurn = function(){
     if( board.allowedToMove === "white" ){
-      this.prepareBlackTurn()
+      prepareBlackTurn()
     } else{
-      this.prepareWhiteTurn()
+      prepareWhiteTurn()
     }
   },
   prepareBlackTurn = function(){

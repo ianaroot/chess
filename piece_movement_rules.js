@@ -235,14 +235,13 @@ var Rules = function(){
       throw new Error("missing params in retrieveAvailableMovements")
     }
     var  board = args["board"],
-      layOut = board.layOut
+      layOut = board.layOut,
       position = args["position"],
       positionString = layOut[position],
       stringLength = positionString.length,
       pieceType = board.pieceTypeAt(position)
       pieceType = pieceType.charAt(0).toLowerCase() + pieceType.slice(1);
     if( pieceType === "pawn" ){ pieceType = positionString }
-      // debugger
     availableMovements = movements.pieceSpecific[pieceType]
     return availableMovements
   },
