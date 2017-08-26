@@ -90,9 +90,6 @@ Board.classMethods = {
   }
 }
 Board.prototype = function(){
-  var deepCopyLayout = function(){
-    Board.classMethods.deepCopyLayout(this.layOut)
-  },
   reset = function(){
     // only seems to work once at a go?
     this.layOut = this.defaultLayOut;
