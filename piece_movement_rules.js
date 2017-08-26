@@ -24,14 +24,14 @@ var Rules = function(){
   checkmate = function(board){
     var otherTeam = board.teamNotMoving()
       kingPosition = board.kingPosition(otherTeam);
-      console.log("before no noLegalMoves")
+      console.log("before no noLegalMoves from checkmate")
     var noLegalMoves = this.noLegalMoves(board)
-      console.log("after no noLegalMoves")
+      console.log("after no noLegalMoves from checkmate")
           // console.log(board.layOut[60])
 
     var kingInCheck = this.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}) 
 
-      console.log("after no kingInCheck")
+      console.log("after no kingInCheck from checkmate")
           // console.log(board.layOut[60])
 
     return kingInCheck && noLegalMoves
@@ -149,8 +149,13 @@ var Rules = function(){
       //called this from checkMate() line 20, only seemed to run that line once, and in between changed value to 
       //empty, not sure how that only got called once and this is getting called seven times
     console.log(board.layOut[60])
+    // debugger
     // coming in from noLegalMoves, the next function causes no problem
     // coming in from kingInCheck it deletes the king. board reference pointers getting mixe up?
+    // global scope slip:
+    // additional actions, blackMove, board, captureNotation, danger, enPassantLeft, enPassantRight, instance, kingPosition, layOut
+    // newLayout, pieceMovements, pieceString, pieceType, position, positionString, prepareWhiteTurn, prepareBlackTurn,
+    // rules, tests, turn, viablePositions, view, whiteMove, 
     newBoard.movePiece( startPosition, endPosition, additionalActions)
     console.log(board.layOut[60])
     var kingPosition = newBoard.kingPosition(teamString);
