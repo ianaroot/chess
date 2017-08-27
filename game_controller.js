@@ -49,7 +49,7 @@ var GameController = (function(){
           checkNotation = "#"
           board.endGame()
         }
-        if( !board.gameOver && rules.kingInCheck( {startPosition: otherTeamsKingPosition, board: board} ) ){
+        if( !board.gameOver && rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} ) ){
           var displayAlert = view.displayAlert
           setTimeout( function(){ displayAlert("check") }, 500)
           checkNotation = "+"
@@ -60,7 +60,6 @@ var GameController = (function(){
           var displayAlert = view.displayAlert
           setTimeout( function(){ displayAlert("stalemate") }, 500)
           board.endGame()
-          console.log("gameOver is :" + board.gameOver)
 
         }
         if( moveObject.fullNotation ){
@@ -74,51 +73,9 @@ var GameController = (function(){
         }
         board.recordNotation(notation)
         if( !board.gameOver ){ nextTurn() }
-        console.log("gameOver is :" + board.gameOver)
-      // not sure how it is that from the console gameOver is false
       } 
     },
     tests = {
-      runAll: function(){
-        // setTimeout( function(){ var = GameController.getInstance(); }, 0)
-        setTimeout( function(){ tests.simpleStalemate() }, 0)
-        setTimeout( function(){ board.reset() }, 600)
-        setTimeout( function(){ view.displayBoard( board.layOut ) }, 600)
-
-        setTimeout( function(){ tests.complexStalemate() }, 600)
-        setTimeout( function(){ board.reset() }, )
-        setTimeout( function(){ view.displayBoard( board.layOut ) }, )
-
-        setTimeout( function(){ tests.pawnPromotion() }, )
-        setTimeout( function(){ board.reset() }, )
-        setTimeout( function(){ view.displayBoard( board.layOut ) }, )
-
-        setTimeout( function(){ tests.sim2() }, )
-        setTimeout( function(){ board.reset() }, )
-        setTimeout( function(){ view.displayBoard( board.layOut ) }, )
-
-        setTimeout( function(){ tests.blackEnPassant() }, )
-        setTimeout( function(){ board.reset() }, )
-        setTimeout( function(){ view.displayBoard( board.layOut ) }, )
-
-        setTimeout( function(){ tests.whiteEnPassant() }, )
-        setTimeout( function(){ board.reset() }, )
-        setTimeout( function(){ view.displayBoard( board.layOut ) }, )
-
-        setTimeout( function(){ tests.checkmate() }, )
-        setTimeout( function(){ board.reset() }, )
-        setTimeout( function(){ view.displayBoard( board.layOut ) }, )
-
-        setTimeout( function(){ tests.queensCastles() }, )
-        setTimeout( function(){ board.reset() }, )
-        setTimeout( function(){ view.displayBoard( board.layOut ) }, )
-
-        setTimeout( function(){ tests.kingsCastles() }, )
-        setTimeout( function(){ board.reset() }, )
-        setTimeout( function(){ view.displayBoard( board.layOut ) }, )
-
-
-      },
       simpleStalemate: function(){
         // var = GameController.getInstance();
         var newBoard = new Board({ layOut: 
@@ -155,7 +112,6 @@ var GameController = (function(){
         board = newBoard
         view.displayBoard(board.layOut)
         setTimeout( function(){ attemptMove(24, 16) },  500)
-        setTimeout( function(){ console.log("complexStalemate: " + board.gameOver) }, 1000)
        },
       pawnPromotion: function(){
         // var = GameController.getInstance();
