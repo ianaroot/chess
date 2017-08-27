@@ -131,14 +131,16 @@ Board.prototype = function(){
     return captureNotation
   },
   storeCurrentLayoutAsPrevious = function(){
-    var layOutCopy = Board.classMethods.deepCopyLayout( layOut );
-    board.previousLayouts.push(layOutCopy)
+    var layOut = this.layOut
+      layOutCopy = Board.classMethods.deepCopyLayout( layOut );
+      // might need a call or something here
+    this.previousLayouts.push(layOutCopy)
   },
   capture = function(position){
     if( !positionEmpty.call(this, position) ){
       var pieceString = this.layOut[position];
       this.capturedPieces.push(pieceString)
-      emptify(position)
+      emptify.call(this, position)
       return captureNotation = "x"
     } else {
       return ""
@@ -286,7 +288,7 @@ Board.prototype = function(){
     return this.layOut[position] === "empty"
   },
   kingPosition = function(teamString){
-    var layout = this.layOut,
+    var layOut = this.layOut,
         position;
     for(var i = 0; i < layOut.length; i ++){
       var teamAtPosition = this.teamAt(i),
@@ -322,7 +324,16 @@ Board.prototype = function(){
     upAndLeftIsAttackable: upAndLeftIsAttackable,
     upAndRightIsAttackable: upAndRightIsAttackable,
     positionsOccupiedByTeam: positionsOccupiedByTeam,
-    reset: reset
-    // capture: capture, emp
+    reset: reset,
+    capture: capture,
+    emptify: emptify,
+    placePiece: placePiece,
+    pieceHasNotMovedFrom: pieceHasNotMovedFrom,
+    kingSideCastleIsClear: kingSideCastleIsClear,
+    queenSideCastleIsClear: queenSideCastleIsClear,
+    queenSideRookHasNotMoved: queenSideRookHasNotMoved,
+    kingSideRookHasNotMoved: kingSideRookHasNotMoved,
+    promotePawn: promotePawn
+    // emptify: emptify
   }
 }()
