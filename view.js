@@ -20,13 +20,13 @@ var View = (function(){
       var element = document.getElementsByClassName( gridPosition )[0];
       element.appendChild(elem)
     },
-    displayBoard: function(layOut){
+    displayLayOut: function(layOut){
       for( var i = 0; i < layOut.length; i++){
-        var gridPosition = "square-" +Board.classMethods.gridCalculator(i),
+        var gridPosition = "square-" + Board.gridCalculator(i),
             pieceInitials = this.pieceInitials(layOut[i]);
         this.undisplayPiece(gridPosition);
         this.undisplayPiece(gridPosition);
-        if( layOut[i] !== "empty" ){
+        if( JSON.parse(layOut[i]).color !== "empty" ){
           this.displayPiece({pieceInitials: pieceInitials, gridPosition: gridPosition})
         }
       }
@@ -34,12 +34,15 @@ var View = (function(){
     pieceImgSrc: function(pieceInitials){
       return "img/chesspieces/wikipedia/" + pieceInitials + ".png"
     },
-    pieceInitials: function(string){
-      var firstInitial = string[0],
-        secondInitial;
-      for (var i = 0; i < string.length; i++){
-        if( string[i] === string[i].toUpperCase() ){ secondInitial = string[i] }
-      };
+    pieceInitials: function(pieceObject){
+      var pieceObject = JSON.parse(pieceObject)
+        firstInitial = pieceObject.color[0],
+        secondInitial = pieceObject.species[0];
+      // var firstInitial = string[0],
+      //   secondInitial;
+      // for (var i = 0; i < string.length; i++){
+      //   if( string[i] === string[i].toUpperCase() ){ secondInitial = string[i] }
+      // };
       return firstInitial + secondInitial
     }
   };
