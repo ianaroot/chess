@@ -56,10 +56,10 @@ class Board {
   }
 
   static squareColor(position){
-    var div = position / 8,
+    var div = Math.floor(position / 8),
       mod   = position % 8,
       sum   = div + mod,
-      squareColor;
+      squareColor = "";
     if (sum % 2 === 0){
       squareColor = "dark"
     } else {
@@ -100,6 +100,31 @@ class Board {
 
   static parseTeam(string){
     return string.color
+  }
+
+  pieceObject(position){
+    return JSON.parse(this.layOut[position])
+  }
+
+  pieceObjectFromLastLayout(position){
+    return JSON.parse( this.lastLayout()[position] )
+  }
+
+  blackPawnAt(position){
+    return this.pieceObject(position).color === "black" && this.pieceObject(position).species === "Pawn"
+  }
+
+  whitePawnAt(position){
+    return this.pieceObject(position).color === "white" && this.pieceObject(position).species === "Pawn"  
+  }
+
+// room for refactoring wetness
+  blackPawnDoubleSteppedFrom(position){
+    return this.previousLayouts.length && this.positionEmpty(position) && this.pieceObjectFromLastLayout(position).color === "black" && this.pieceObjectFromLastLayout(position).species === "Pawn"
+  }
+
+  whitePawnDoubleSteppedFrom(position){
+    return this.previousLayouts.length && this.positionEmpty(position) && this.pieceObjectFromLastLayout(position).color === "white" && this.pieceObjectFromLastLayout(position).species === "Pawn"
   }
 
   deepCopyLayout(){
@@ -229,9 +254,9 @@ class Board {
       positionUpAndLeft = position + 7;
 
     if( Board.inBounds( positionUpAndLeft)){
-      var pieceString = this.layOut[positionUpAndLeft],
-        pieceTeam = Board.parseTeam(pieceString);
-
+      var pieceObject = JSON.parse(this.layOut[positionUpAndLeft]),
+      // there are places i'm not using parse team where i should be
+        pieceTeam = Board.parseTeam(pieceObject);
       return this.occupiedByOpponent({position: positionUpAndLeft, teamString: attackingTeamString}) && Board.squareColor(position) === Board.squareColor(positionUpAndLeft)
     } else {
       return false
@@ -304,7 +329,7 @@ class Board {
     // later i'll make this request input as to what piece to become
     var teamString = this.teamAt(position);
 
-    this.layOut[position] = "{color: " + teamString + "species: Queen}"
+    this.layOut[position] = JSON.stringify({color: teamString , species: "Queen"})
     
   }
 

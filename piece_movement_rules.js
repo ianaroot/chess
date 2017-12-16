@@ -71,7 +71,6 @@ var PieceMovementRules = function(){
         !(typeof args["endPosition"] !== "number" || typeof args["endPosition"] !== "string") || //not sure where this got turned into a string...
         !(typeof args["additionalActions"] === "function" || typeof args["additionalActions"] === "undefined")
       ){
-        debugger
         throw new Error("missing params in kingInCheck")
       }
       var startPosition      = args["startPosition"],
@@ -378,9 +377,9 @@ var PieceMovementRules = function(){
             //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
             // explicit here and use game controller instead of this
               var position = args["position"],
-                pieceString = this.layOut[startPosition + 3];
+                pieceObject = JSON.parse(this.layOut[startPosition + 3]);
               this.emptify( startPosition + 3)
-              this.placePiece({ position: (startPosition + 1), pieceString: pieceString })
+              this.placePiece({ position: (startPosition + 1), pieceString: pieceObject })
             }
             moves.push(castle)
           };
@@ -395,9 +394,9 @@ var PieceMovementRules = function(){
               //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
               // explicit here and use game controller instead of this
               var position = args["position"],
-                pieceString = this.layOut[startPosition - 4];
+                pieceObject = JSON.parse(this.layOut[startPosition - 4]);
               this.emptify( startPosition - 4)
-              this.placePiece({ position: (startPosition - 1), pieceString: pieceString })
+              this.placePiece({ position: (startPosition - 1), pieceString: pieceObject })
             }
             moves.push(castle)
           };
@@ -410,7 +409,7 @@ var PieceMovementRules = function(){
           enPassantLeft = function(args){
             var position = args["position"],
               board = args["board"]; 
-            if( Board.rank(position) === 5 && board.layOut[position - 1] === "blackPawn" && board.previousLayouts.length && board.positionEmpty(position + 15) && board.lastLayout()[position +  15] === "blackPawn" ){
+            if( Board.rank(position) === 5 && board.blackPawnAt(position - 1) && board.blackPawnDoubleSteppedFrom(position + 15) ){
               // not making use of this number as expected, may as well return true
               return position + 1
             } else {
@@ -420,7 +419,7 @@ var PieceMovementRules = function(){
           enPassantRight = function(args){
             var board = args["board"],
               position = args["position"];
-            if( Board.rank(position) === 5 && board.layOut[position + 1] === "blackPawn" && board.previousLayouts.length && board.positionEmpty(position + 17) && board.lastLayout()[position +  17] === "blackPawn" ){
+            if( Board.rank(position) === 5 && board.blackPawnAt(position + 1) && board.blackPawnDoubleSteppedFrom(position + 17) ){
               return position - 1
               // not making use of this number as expected, may as well return true
             } else {
@@ -483,14 +482,14 @@ var PieceMovementRules = function(){
           enPassantRight = function(args){
             var position = args["position"],
               board = args["board"]; 
-            if( Board.rank(position) === 4 && board.layOut[position + 1] === "whitePawn" && board.previousLayouts.length && board.positionEmpty(position - 15) && board.lastLayout()[position -  15] === "whitePawn" ){
+            if( Board.rank(position) === 4 && board.whitePawnAt(position + 1) && board.whitePawnDoubleSteppedFrom(position - 15) ){
               return true
             }
           };
           enPassantLeft= function(args){
             var board = args["board"],
               position = args["position"];
-            if( Board.rank(position) === 4 && board.layOut[position - 1] === "whitePawn" && board.previousLayouts.length && board.positionEmpty(position - 17) && board.lastLayout()[position -  17] === "whitePawn" ){
+            if( Board.rank(position) === 4 && board.whitePawnAt(position - 1) && board.whitePawnDoubleSteppedFrom(position - 17) ){
               return true
             }
           };

@@ -61,8 +61,7 @@ var GameController = (function(){
         }
         if( moveObject.fullNotation ){
           notation = moveObject.fullNotation
-        }
-         else {
+        } else {
           var positionNotation = Board.classMethods.gridCalculator(endPosition),
             pieceNotation = moveObject.pieceNotation,
             captureNotation = captureNotation || moveObject.captureNotation || "";
