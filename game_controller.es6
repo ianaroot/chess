@@ -12,7 +12,7 @@ class GameController {
 		// this.pieceMovementRules = new PieceMovementRules();
 		this.postMovementRules = PostMovementRules( PieceMovementRules.getInstance() ).getInstance()
 		// this.PostMovementRules = new PostMovementRules();
-    this.view = View.getInstance();
+	    this.view = new View();
 		// this.view = new View();
 	}
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
