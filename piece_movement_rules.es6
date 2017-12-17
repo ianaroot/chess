@@ -98,6 +98,7 @@ class PieceMovementRules {
             // explicit here and use game controller instead of this
             var position = args["position"],
               pieceObject = JSON.parse(this.layOut[startPosition - 4]);
+              // this should be telling the board to move the piece
             this.emptify( startPosition - 4)
             this.placePiece({ position: (startPosition - 1), pieceString: pieceObject })
           }
@@ -396,7 +397,7 @@ class PieceMovementRules {
     }
   }
 
-  moveIsIllegal(startPosition, endPosition, board){
+  static moveIsIllegal(startPosition, endPosition, board){
     if( 
       !Board.prototype.isPrototypeOf( board ) ||
       typeof startPosition !== "number" ||
@@ -412,7 +413,7 @@ class PieceMovementRules {
         startPosition: startPosition,
         endPosition: endPosition
       },
-      viableMovement = this.positionViable( {startPosition: startPosition, endPosition: endPosition, board: board} );
+      viableMovement = PieceMovementRules.positionViable( {startPosition: startPosition, endPosition: endPosition, board: board} );
       
     if ( !Board.inBounds(endPosition) ){
       moveObject.alert = 'stay on the board, fool'
@@ -423,7 +424,7 @@ class PieceMovementRules {
     } else if( !viableMovement ) {
       moveObject.alert = "that's not how that piece moves"
       moveObject.illegal = true
-    } else if( this.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: viableMovement.additionalActions})){
+    } else if( PieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: viableMovement.additionalActions})){
       moveObject.alert = "check yo king fool"
       moveObject.illegal = true
     } // now we know the move is legal
@@ -436,7 +437,7 @@ class PieceMovementRules {
     moveObject.pieceNotation = viableMovement.pieceNotation
     return moveObject
   }
-  retrieveAvailableMovements(args){
+  static retrieveAvailableMovements(args){
     if( 
       !Board.prototype.isPrototypeOf( args["board"] ) ||
       typeof args["position"] !== "number"
@@ -454,7 +455,7 @@ class PieceMovementRules {
     var availableMovements = PieceMovementRules.pieceSpecificMovements()[pieceType]
     return availableMovements
   }
-  kingInCheck(args){ // can just pass in same position as start and end if you want to know whether not moving anything creates check
+  static kingInCheck(args){ // can just pass in same position as start and end if you want to know whether not moving anything creates check
     // this should be two functions, one that checks whether a king is in check from a given layout
     // and one that checks whether making a particular layout change would result in check
     if( 
@@ -482,15 +483,15 @@ class PieceMovementRules {
     var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
     for(var i = 0; i < enemyPositions.length; i++){
       var enemyPosition = enemyPositions[i],
-        availableMovements = this.retrieveAvailableMovements( {position: enemyPosition, board: board} ),
+        availableMovements = PieceMovementRules.retrieveAvailableMovements( {position: enemyPosition, board: board} ),
         enemyPieceType = board.pieceTypeAt( enemyPosition );
-        if( enemyPieceType !== "King" && this.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
+        if( enemyPieceType !== "King" && PieceMovementRules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
         danger = true
         }
     };
     return danger
   }
-  positionViable(args){
+  static positionViable(args){
     if( 
       !Board.prototype.isPrototypeOf( args["board"] ) ||
       typeof args["startPosition"] !== "number" ||
@@ -501,7 +502,7 @@ class PieceMovementRules {
     var board = args["board"],
       startPosition = args["startPosition"],
       endPosition = args["endPosition"],
-      viablePositions = this.viablePositionsFrom( {startPosition: startPosition, board: board} ),
+      viablePositions = PieceMovementRules.viablePositionsFrom( {startPosition: startPosition, board: board} ),
       viable = false;
     for( var key in viablePositions ){
       if( key == endPosition ){
@@ -510,7 +511,7 @@ class PieceMovementRules {
     };
     return viable
   }
-  viablePositionsFrom(args){
+  static viablePositionsFrom(args){
     if( 
       !Board.prototype.isPrototypeOf( args["board"] ) ||
       typeof args["startPosition"] !== "number" 
@@ -519,7 +520,7 @@ class PieceMovementRules {
     }
     var startPosition = args["startPosition"],
       board = args["board"],
-      availableMovements = this.retrieveAvailableMovements( { position: startPosition, board: board} ),
+      availableMovements = PieceMovementRules.retrieveAvailableMovements( { position: startPosition, board: board} ),
       pieceMovements = availableMovements({board: board, startPosition: startPosition}),
       teamString = board.teamAt(startPosition),
       viablePositions = {};

@@ -9,9 +9,9 @@ class GameController {
 	constructor(){
 		this.board = new Board();
 		// this.pieceMovementRules = PieceMovementRules.getInstance();
-		this.pieceMovementRules = new PieceMovementRules()
+		// this.pieceMovementRules = new PieceMovementRules()
 		// this.pieceMovementRules = new PieceMovementRules();
-		this.postMovementRules = PostMovementRules( new PieceMovementRules() ).getInstance()
+		this.postMovementRules = new PostMovementRules
 		// this.PostMovementRules = new PostMovementRules();
 	    this.view = new View();
 		// this.view = new View();
@@ -37,7 +37,7 @@ class GameController {
 			alert( "other team's turn" )
 			return
 		}
-		var moveObject = this.pieceMovementRules.moveIsIllegal(startPosition, endPosition, board);
+		var moveObject = PieceMovementRules.moveIsIllegal(startPosition, endPosition, board);
 		if( moveObject.illegal ){
 			this.view.displayAlert(moveObject.alert)
 			return
@@ -53,7 +53,7 @@ class GameController {
 				checkNotation = "#"
 				board.endGame()
 			}
-			if( !board.gameOver && this.pieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
+			if( !board.gameOver && PieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
 				let displayAlert = this.view.displayAlert
 				setTimeout( function(){ displayAlert("check") }, 500 )
 				checkNotation = "+"
