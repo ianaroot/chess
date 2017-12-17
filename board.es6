@@ -102,6 +102,23 @@ class Board {
     return string.color
   }
 
+  consoleLog(){
+    for( let i = 0; i < 64; i = i + 8 ){
+      var row = ""
+      for( let j = 0; j < 8; j++){
+        let cell = JSON.parse(this.layOut[ i+ j ] )
+        if( cell.color === "empty" ){
+          var text = "  __  "
+        } else {
+          var text = "  " + cell.color[0] + cell.species[0] + "  "
+        }
+        row = row + text
+      }
+      console.log(row)
+      console.log(" ")
+    }
+  }
+
   pieceObject(position){
     return JSON.parse(this.layOut[position])
   }
