@@ -69,8 +69,8 @@ class PieceMovementRules {
           };
         };
         if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition) 
-          && !PieceMovementRules.getInstance().kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
-          && !PieceMovementRules.getInstance().kingInCheck({startPosition: (startPosition), endPosition: (startPosition + 1), board: board })
+          && !PieceMovementRules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
+          && !PieceMovementRules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition + 1), board: board })
           ){
           var castle = PieceMovementRules.genericMovements().horizontalLeft()
           castle.increment = + 2
@@ -87,8 +87,8 @@ class PieceMovementRules {
           moves.push(castle)
         };
         if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition) 
-          && !PieceMovementRules.getInstance().kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
-          && !PieceMovementRules.getInstance().kingInCheck({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
+          && !PieceMovementRules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
+          && !PieceMovementRules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
           var castle = PieceMovementRules.genericMovements().horizontalRight()
           castle.increment = - 2
           castle.rangeLimit = 1

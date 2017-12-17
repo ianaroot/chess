@@ -132,7 +132,7 @@ class Board {
   }
 
   reset(){
-    this.layOut = this.defaultLayOut;
+    this.layOut = Board.defaultLayOut();
     this.capturedPieces = [];
     this.gameOver = false;
     this.allowedToMove = "white";
