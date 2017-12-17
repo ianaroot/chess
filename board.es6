@@ -179,9 +179,9 @@ class Board {
   }
 
   storeCurrentLayoutAsPrevious(){
-    var layOutCopy = Board.deepCopyLayout( layOut );
+    var layOutCopy = Board.deepCopyLayout( this.layOut );
 
-    board.previousLayouts.push(layOutCopy)
+    this.previousLayouts.push(layOutCopy)
   }
 
   capture(position){
@@ -386,7 +386,7 @@ class Board {
   }
 
   kingPosition(teamString){
-    var layout = this.layOut,
+    var layOut = this.layOut,
       position = null;
 
     for(let i = 0; i < layOut.length; i ++){

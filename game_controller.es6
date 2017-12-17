@@ -8,9 +8,10 @@ var board1 = ChessBoard('board1');
 class GameController {
 	constructor(){
 		this.board = new Board();
-		this.pieceMovementRules = PieceMovementRules.getInstance();
+		// this.pieceMovementRules = PieceMovementRules.getInstance();
+		this.pieceMovementRules = new PieceMovementRules()
 		// this.pieceMovementRules = new PieceMovementRules();
-		this.postMovementRules = PostMovementRules( PieceMovementRules.getInstance() ).getInstance()
+		this.postMovementRules = PostMovementRules( new PieceMovementRules() ).getInstance()
 		// this.PostMovementRules = new PostMovementRules();
 	    this.view = new View();
 		// this.view = new View();
