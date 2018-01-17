@@ -19,7 +19,6 @@ the GameController then refers to postMovementRules to check whether the move ha
 if so postMovementRules will return some additional notation to append, and there may be a call to the view to display an alert
 
 
-
 the GameController is the main object. everything is run through the GameController. at very few points do any other objects reference one another
 the exceptions to this are:
 PostMovementRules calls on PieceMovementRules as part of checking whether a given position is check, checkmate, or stalemate
@@ -30,34 +29,31 @@ outside of this all calls are run from the GameController
 
 BOARD
 state:
-the notation of the game up to this point,
-the current board state
-all previous board states
-which pieces are captured
-whether the game is over
-
+  the notation of the game up to this point,
+  the current board state
+  all previous board states
+  which pieces are captured
+  whether the game is over
 class functions:
-declaring tiles out of bounds,
-making a deepCopy of the board state
-determining the rank of a given position
-determining the file of a given position
-determining the square color of a given position
-
+  declaring tiles out of bounds,
+  making a deepCopy of the board state
+  determining the rank of a given position
+  determining the file of a given position
+  determining the square color of a given position\
 instance functions:
-determining the piece type and team at a given position
-logging the board state to the console
-declaring the game gameOver
-checking whose turn it is
-recording notation
-moving pieces
-checking various previous board states relevant to the legality of things like en passant, castling, and stalemate
-promoting pawns
+  determining the piece type and team at a given position
+  logging the board state to the console
+  declaring the game gameOver
+  checking whose turn it is
+  recording notation
+  moving pieces
+  checking various previous board states relevant to the legality of things like en passant, castling, and stalemate
+  promoting pawns
 
 PIECE MOVEMENT RULES
-carries zero state. none! (this may be the result of poor design)
-
+  carries zero state. none! (this may be the result of poor design)
 class functions:
-only three of pieceMovementRules class functions are ever invoked outside of the class itself
+  only three of pieceMovementRules class functions are ever invoked outside of the class itself
 they are:
   moveIsIllegal: a very poorly named function which takes in a board, startPosition, and endPosition, and returns an object containing the following information:
     whether the move is legal
@@ -72,7 +68,6 @@ they are:
       the boundaryCheck that is used to check the move's legality (i feel like this is already checked by this point but i wrote this shit forever ago, hard to tell right now whether it's doing something i don't remember or if it's a vestige of how it used to function)
         the rangeLimit, (how many times the increment is has to move to get there)
           and the pieceNotation for the move
-
 piece movement rules has many other functions that are only used internally. they work as follows:
   starting from moveIsIllegal, a call is made to the static function positionViable, which takes input of the board, the board, startPosition, and endPosition
     positionViable then calls viablePositionsFrom with input of the board and the startPosition
@@ -82,7 +77,6 @@ piece movement rules has many other functions that are only used internally. the
     positionViable then iterates through the object of move objects to check whether the desired endPosition is listed in the viable positions, and it simply returns simply false, or an object of move objects
   moveIsIllegal then refers to board functions to see if the end position is in bounds (i think we already know this, it's more messaging clarity), whether the end position is occupied by the team moving (self capture? wtf?), and whether the move is illegal due to placing oneself in check
   it then sets some information about additionalActions and notation on the move object and finally returns the move object
-
 the biggest issue with piece Movement rules seems to be the way it tucks the genericMovements and pieceSpecificMovements into itself
   it seems like there is a better designed way to have the pieceSpecificMovements as separate objects, perhaps all inheriting from a single object, which itself contains the genericMovements information
   i think i just lost track of how to manage that with all the this'es floating absolute
@@ -101,7 +95,6 @@ postMovementRules is a set of five functions (which given the lack of state coul
 
 VIEW
 the view also carries no state, again raising the question, is that good design, or should these be static methods? there seems to be no purpose in having each game controller carry the extra weight of it's own personal view object
-
 the view consists of the following six functions :
   displayAlert, right now it just uses js's alert, but maybe that'll change
   undisplayPiece, it hides a piece from the input tile
@@ -116,16 +109,7 @@ GAMECONTROLLER
   outside of attemptMove the only functions on the GameController are three functions dedicated to changing the board state regarding whose turn it is
   perhaps everything on the GameController could be extracted over to the board?
 
-
-
-
-
   i'm feeling like move Object, or maybe just Move is an overlooked class in this program
-
-
-
-
-
 
 GameController is aware of:
   Board:
@@ -247,3 +231,6 @@ PieceMovementRules is aware:
     ______
   GameController:
     ______
+
+
+the board class is meant to store most of the state of a given game, as well as several functions that supply various pieces of information about either a generic chessboard, or the state of the board in a specific game
