@@ -1,3 +1,4 @@
+// git training
 class View{
 	// pretty sure this could be a singleton even on a server with several games running
   displayAlert(message){

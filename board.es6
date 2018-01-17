@@ -1,3 +1,4 @@
+// git training
 class Board {
   constructor(layOut, options = { capturedPieces: [], gameOver: false, allowedToMove: "white", movementNotation: [], previousLayouts: []}){
     this.layOut = layOut || Board.defaultLayOut()
@@ -132,7 +133,7 @@ class Board {
   }
 
   whitePawnAt(position){
-    return this.pieceObject(position).color === "white" && this.pieceObject(position).species === "Pawn"  
+    return this.pieceObject(position).color === "white" && this.pieceObject(position).species === "Pawn"
   }
 
 // room for refactoring wetness
@@ -177,7 +178,7 @@ class Board {
   }
 
   movePiece(startPosition, endPosition, additionalActions){
-      if( 
+      if(
         typeof startPosition !== "number" ||
         !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
         !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
@@ -231,7 +232,7 @@ class Board {
     var position = args["position"],
       attackingTeamString = args["attackingTeamString"],
       positionDownAndLeft = position - 9;
-    if( Board.inBounds( positionDownAndLeft )){ 
+    if( Board.inBounds( positionDownAndLeft )){
       var pieceString = this.layOut[positionDownAndLeft],
         pieceTeam = Board.parseTeam(pieceString);
 
@@ -347,7 +348,7 @@ class Board {
     var teamString = this.teamAt(position);
 
     this.layOut[position] = JSON.stringify({color: teamString , species: "Queen"})
-    
+
   }
 
   teamAt(position){
