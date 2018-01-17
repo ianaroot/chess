@@ -77,7 +77,6 @@ class Board {
   }
 
   static gridCalculator(tile){
-    // gonna want a reverse lookup sooner or later
     var x = Math.floor(tile % 8),
         y = Math.floor(tile / 8) + 1,
       alphaNum = {
@@ -92,6 +91,24 @@ class Board {
       },
       x = alphaNum[x];
     return x + y
+  }
+
+  static gridCalculatorReverse(tile){
+    var letter = tile[0],
+      number = tile[1],
+     alphaNum = {
+        a: 0,
+        b: 1,
+        c: 2,
+        d: 3,
+        e: 4,
+        f: 5,
+        g: 6,
+        h: 7
+      },
+      file = alphaNum[letter],
+      rank = (number - 1) * 8
+    return rank + file
   }
 
   static inBounds(position){
