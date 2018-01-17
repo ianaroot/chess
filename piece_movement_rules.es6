@@ -510,6 +510,22 @@ class PieceMovementRules {
     };
     return viable
   }
+  static viablePositionsFromKeysOnly(args){
+    if(
+      !Board.prototype.isPrototypeOf( args["board"] ) ||
+      typeof args["startPosition"] !== "number"
+    ){
+      throw new Error("missing params in viablePositionsFromKeysOnly")
+    }
+    var viablePositions = PieceMovementRules.viablePositionsFrom(args),
+      keysOnly = [];
+      for (var property in viablePositions) {
+        if (viablePositions.hasOwnProperty(property)) {
+          keysOnly.push(property)
+      }
+    }
+    return keysOnly
+  }
   static viablePositionsFrom(args){
     if(
       !Board.prototype.isPrototypeOf( args["board"] ) ||
