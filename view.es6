@@ -25,7 +25,6 @@ class View{
       var gridPosition = "square-" + Board.gridCalculator(i),
           pieceInitials = this.pieceInitials(layOut[i]);
       this.undisplayPiece(gridPosition);
-      this.undisplayPiece(gridPosition);
       if( JSON.parse(layOut[i]).color !== "empty" ){
         this.displayPiece({pieceInitials: pieceInitials, gridPosition: gridPosition})
       }
@@ -38,11 +37,6 @@ class View{
     var pieceObject = JSON.parse(pieceObject),
       firstInitial = pieceObject.color[0],
       secondInitial = pieceObject.species[0];
-    // var firstInitial = string[0],
-    //   secondInitial;
-    // for (var i = 0; i < string.length; i++){
-    //   if( string[i] === string[i].toUpperCase() ){ secondInitial = string[i] }
-    // };
     return firstInitial + secondInitial
   }
 }
