@@ -11,172 +11,147 @@
     <script src="piece_movement_rules.es6"></script>
     <script src="post_movement_rules.es6"></script>
 
-    <div id="board1" style="width: 400px">
+    <div id="board" style="width: 400px">
       <div class="chessboard-63f37">
-        <div class="board-b72b1" style="width: 392px;">
-          <div class="row-5277c">
-            <div class="square-55d63 white-1e1d7 square-a8" style="width: 49px; height: 49px" id="a8" data-square="a8">
-            </div>
-            <div class="square-55d63 black-3c85d square-b8" style="width: 49px; height: 49px" id="b8" data-square="b8">
-            </div>
-            <div class="square-55d63 white-1e1d7 square-c8" style="width: 49px; height: 49px" id="c8" data-square="c8">
-            </div>
-            <div class="square-55d63 black-3c85d square-d8" style="width: 49px; height: 49px" id="d8" data-square="d8">
-            </div>
-            <div class="square-55d63 white-1e1d7 square-e8" style="width: 49px; height: 49px" id="e8" data-square="e8">
-            </div>
-            <div class="square-55d63 black-3c85d square-f8" style="width: 49px; height: 49px" id="f8" data-square="f8">
-            </div>
-            <div class="square-55d63 white-1e1d7 square-g8" style="width: 49px; height: 49px" id="g8" data-square="g8">
-            </div>
-            <div class="square-55d63 black-3c85d square-h8" style="width: 49px; height: 49px" id="h8" data-square="h8">
-            </div>
-            <div class="clearfix-7da63">
-            </div>
+        <div class="chess-board" style="width: 392px;">
+          <div class="chess-tile  white-tile square-a8" style="width: 49px; height: 49px" id="a8" data-square="a8">
           </div>
-            <div class="row-5277c">
-              <div class="square-55d63 black-3c85d square-a7" style="width: 49px; height: 49px" id="a7" data-square="a7">
-              </div>
-              <div class="square-55d63 white-1e1d7 square-b7" style="width: 49px; height: 49px" id="b7" data-square="b7">
-              </div>
-              <div class="square-55d63 black-3c85d square-c7" style="width: 49px; height: 49px" id="c7" data-square="c7">
-              </div>
-              <div class="square-55d63 white-1e1d7 square-d7" style="width: 49px; height: 49px" id="d7" data-square="d7">
-              </div>
-              <div class="square-55d63 black-3c85d square-e7" style="width: 49px; height: 49px" id="e7" data-square="e7">
-              </div>
-              <div class="square-55d63 white-1e1d7 square-f7" style="width: 49px; height: 49px" id="f7" data-square="f7">
-              </div>
-              <div class="square-55d63 black-3c85d square-g7" style="width: 49px; height: 49px" id="g7" data-square="g7">
-              </div>
-              <div class="square-55d63 white-1e1d7 square-h7" style="width: 49px; height: 49px" id="h7" data-square="h7">
-              </div>
-              <div class="clearfix-7da63">
-              </div>
-            </div>
-              <div class="row-5277c">
-                <div class="square-55d63 white-1e1d7 square-a6" style="width: 49px; height: 49px" id="a6" data-square="a6">
-                </div>
-                <div class="square-55d63 black-3c85d square-b6" style="width: 49px; height: 49px" id="b6" data-square="b6">
-                </div>
-                <div class="square-55d63 white-1e1d7 square-c6" style="width: 49px; height: 49px" id="c6" data-square="c6">
-                </div>
-                <div class="square-55d63 black-3c85d square-d6" style="width: 49px; height: 49px" id="d6" data-square="d6">
-                </div>
-                <div class="square-55d63 white-1e1d7 square-e6" style="width: 49px; height: 49px" id="e6" data-square="e6">
-                </div>
-                <div class="square-55d63 black-3c85d square-f6" style="width: 49px; height: 49px" id="f6" data-square="f6">
-                </div>
-                <div class="square-55d63 white-1e1d7 square-g6" style="width: 49px; height: 49px" id="g6" data-square="g6">
-                </div>
-                <div class="square-55d63 black-3c85d square-h6" style="width: 49px; height: 49px" id="h6" data-square="h6">
-                </div>
-                <div class="clearfix-7da63">
-                </div>
-              </div>
-                <div class="row-5277c">
-                  <div class="square-55d63 black-3c85d square-a5" style="width: 49px; height: 49px" id="a5" data-square="a5">
-                  </div>
-                  <div class="square-55d63 white-1e1d7 square-b5" style="width: 49px; height: 49px" id="b5" data-square="b5">
-                  </div>
-                  <div class="square-55d63 black-3c85d square-c5" style="width: 49px; height: 49px" id="c5" data-square="c5">
-                  </div>
-                  <div class="square-55d63 white-1e1d7 square-d5" style="width: 49px; height: 49px" id="d5" data-square="d5">
-                  </div>
-                  <div class="square-55d63 black-3c85d square-e5" style="width: 49px; height: 49px" id="e5" data-square="e5">
-                  </div>
-                  <div class="square-55d63 white-1e1d7 square-f5" style="width: 49px; height: 49px" id="f5" data-square="f5">
-                  </div>
-                  <div class="square-55d63 black-3c85d square-g5" style="width: 49px; height: 49px" id="g5" data-square="g5">
-                  </div>
-                  <div class="square-55d63 white-1e1d7 square-h5" style="width: 49px; height: 49px" id="h5" data-square="h5">
-                  </div>
-                  <div class="clearfix-7da63">
-                  </div>
-                </div>
-                  <div class="row-5277c">
-                    <div class="square-55d63 white-1e1d7 square-a4" style="width: 49px; height: 49px" id="a4" data-square="a4">
-                    </div>
-                    <div class="square-55d63 black-3c85d square-b4" style="width: 49px; height: 49px" id="b4" data-square="b4">
-                    </div>
-                    <div class="square-55d63 white-1e1d7 square-c4" style="width: 49px; height: 49px" id="c4" data-square="c4">
-                    </div>
-                    <div class="square-55d63 black-3c85d square-d4" style="width: 49px; height: 49px" id="d4" data-square="d4">
-                    </div>
-                    <div class="square-55d63 white-1e1d7 square-e4" style="width: 49px; height: 49px" id="e4" data-square="e4">
-                    </div>
-                    <div class="square-55d63 black-3c85d square-f4" style="width: 49px; height: 49px" id="f4" data-square="f4">
-                    </div>
-                    <div class="square-55d63 white-1e1d7 square-g4" style="width: 49px; height: 49px" id="g4" data-square="g4">
-                    </div>
-                    <div class="square-55d63 black-3c85d square-h4" style="width: 49px; height: 49px" id="h4" data-square="h4">
-                    </div>
-                    <div class="clearfix-7da63">
-                    </div>
-                  </div>
-                    <div class="row-5277c">
-                      <div class="square-55d63 black-3c85d square-a3" style="width: 49px; height: 49px" id="a3" data-square="a3">
-                      </div>
-                      <div class="square-55d63 white-1e1d7 square-b3" style="width: 49px; height: 49px" id="b3" data-square="b3">
-                      </div>
-                      <div class="square-55d63 black-3c85d square-c3" style="width: 49px; height: 49px" id="c3" data-square="c3">
-                      </div>
-                      <div class="square-55d63 white-1e1d7 square-d3" style="width: 49px; height: 49px" id="d3" data-square="d3">
-                      </div>
-                      <div class="square-55d63 black-3c85d square-e3" style="width: 49px; height: 49px" id="e3" data-square="e3">
-                      </div>
-                      <div class="square-55d63 white-1e1d7 square-f3" style="width: 49px; height: 49px" id="f3" data-square="f3">
-                      </div>
-                      <div class="square-55d63 black-3c85d square-g3" style="width: 49px; height: 49px" id="g3" data-square="g3">
-                      </div>
-                      <div class="square-55d63 white-1e1d7 square-h3" style="width: 49px; height: 49px" id="h3" data-square="h3">
-                      </div>
-                      <div class="clearfix-7da63">
-                      </div>
-                    </div>
-                      <div class="row-5277c">
-                        <div class="square-55d63 white-1e1d7 square-a2" style="width: 49px; height: 49px" id="a2" data-square="a2">
-                        </div>
-                        <div class="square-55d63 black-3c85d square-b2" style="width: 49px; height: 49px" id="b2" data-square="b2">
-                        </div>
-                        <div class="square-55d63 white-1e1d7 square-c2" style="width: 49px; height: 49px" id="c2" data-square="c2">
-                        </div>
-                        <div class="square-55d63 black-3c85d square-d2" style="width: 49px; height: 49px" id="d2" data-square="d2">
-                        </div>
-                        <div class="square-55d63 white-1e1d7 square-e2" style="width: 49px; height: 49px" id="e2" data-square="e2">
-                        </div>
-                        <div class="square-55d63 black-3c85d square-f2" style="width: 49px; height: 49px" id="f2" data-square="f2">
-                        </div>
-                        <div class="square-55d63 white-1e1d7 square-g2" style="width: 49px; height: 49px" id="g2" data-square="g2">
-                        </div>
-                        <div class="square-55d63 black-3c85d square-h2" style="width: 49px; height: 49px" id="h2" data-square="h2">
-                        </div>
-                        <div class="clearfix-7da63">
-                        </div>
-                      </div>
-                        <div class="row-5277c">
-                          <div class="square-55d63 black-3c85d square-a1" style="width: 49px; height: 49px" id="a1" data-square="a1">
-                          </div>
-                          <div class="square-55d63 white-1e1d7 square-b1" style="width: 49px; height: 49px" id="b1" data-square="b1">
-                          </div>
-                          <div class="square-55d63 black-3c85d square-c1" style="width: 49px; height: 49px" id="c1" data-square="c1">
-                          </div>
-                          <div class="square-55d63 white-1e1d7 square-d1" style="width: 49px; height: 49px" id="d1" data-square="d1">
-                          </div>
-                          <div class="square-55d63 black-3c85d square-e1" style="width: 49px; height: 49px" id="e1" data-square="e1">
-                          </div>
-                          <div class="square-55d63 white-1e1d7 square-f1" style="width: 49px; height: 49px" id="f1" data-square="f1">
-                          </div>
-                          <div class="square-55d63 black-3c85d square-g1" style="width: 49px; height: 49px" id="g1" data-square="g1">
-                          </div>
-                          <div class="square-55d63 white-1e1d7 square-h1" style="width: 49px; height: 49px" id="h1" data-square="h1">
-                          </div>
-                          <div class="clearfix-7da63">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+          <div class="chess-tile  black-tile square-b8" style="width: 49px; height: 49px" id="b8" data-square="b8">
+          </div>
+          <div class="chess-tile  white-tile square-c8" style="width: 49px; height: 49px" id="c8" data-square="c8">
+          </div>
+          <div class="chess-tile  black-tile square-d8" style="width: 49px; height: 49px" id="d8" data-square="d8">
+          </div>
+          <div class="chess-tile  white-tile square-e8" style="width: 49px; height: 49px" id="e8" data-square="e8">
+          </div>
+          <div class="chess-tile  black-tile square-f8" style="width: 49px; height: 49px" id="f8" data-square="f8">
+          </div>
+          <div class="chess-tile  white-tile square-g8" style="width: 49px; height: 49px" id="g8" data-square="g8">
+          </div>
+          <div class="chess-tile  black-tile square-h8" style="width: 49px; height: 49px" id="h8" data-square="h8">
+          </div>
+
+          <div class="chess-tile  black-tile square-a7" style="width: 49px; height: 49px" id="a7" data-square="a7">
+          </div>
+          <div class="chess-tile  white-tile square-b7" style="width: 49px; height: 49px" id="b7" data-square="b7">
+          </div>
+          <div class="chess-tile  black-tile square-c7" style="width: 49px; height: 49px" id="c7" data-square="c7">
+          </div>
+          <div class="chess-tile  white-tile square-d7" style="width: 49px; height: 49px" id="d7" data-square="d7">
+          </div>
+          <div class="chess-tile  black-tile square-e7" style="width: 49px; height: 49px" id="e7" data-square="e7">
+          </div>
+          <div class="chess-tile  white-tile square-f7" style="width: 49px; height: 49px" id="f7" data-square="f7">
+          </div>
+          <div class="chess-tile  black-tile square-g7" style="width: 49px; height: 49px" id="g7" data-square="g7">
+          </div>
+          <div class="chess-tile  white-tile square-h7" style="width: 49px; height: 49px" id="h7" data-square="h7">
+          </div>
+
+          <div class="chess-tile  white-tile square-a6" style="width: 49px; height: 49px" id="a6" data-square="a6">
+          </div>
+          <div class="chess-tile  black-tile square-b6" style="width: 49px; height: 49px" id="b6" data-square="b6">
+          </div>
+          <div class="chess-tile  white-tile square-c6" style="width: 49px; height: 49px" id="c6" data-square="c6">
+          </div>
+          <div class="chess-tile  black-tile square-d6" style="width: 49px; height: 49px" id="d6" data-square="d6">
+          </div>
+          <div class="chess-tile  white-tile square-e6" style="width: 49px; height: 49px" id="e6" data-square="e6">
+          </div>
+          <div class="chess-tile  black-tile square-f6" style="width: 49px; height: 49px" id="f6" data-square="f6">
+          </div>
+          <div class="chess-tile  white-tile square-g6" style="width: 49px; height: 49px" id="g6" data-square="g6">
+          </div>
+          <div class="chess-tile  black-tile square-h6" style="width: 49px; height: 49px" id="h6" data-square="h6">
+          </div>
+
+          <div class="chess-tile  black-tile square-a5" style="width: 49px; height: 49px" id="a5" data-square="a5">
+          </div>
+          <div class="chess-tile  white-tile square-b5" style="width: 49px; height: 49px" id="b5" data-square="b5">
+          </div>
+          <div class="chess-tile  black-tile square-c5" style="width: 49px; height: 49px" id="c5" data-square="c5">
+          </div>
+          <div class="chess-tile  white-tile square-d5" style="width: 49px; height: 49px" id="d5" data-square="d5">
+          </div>
+          <div class="chess-tile  black-tile square-e5" style="width: 49px; height: 49px" id="e5" data-square="e5">
+          </div>
+          <div class="chess-tile  white-tile square-f5" style="width: 49px; height: 49px" id="f5" data-square="f5">
+          </div>
+          <div class="chess-tile  black-tile square-g5" style="width: 49px; height: 49px" id="g5" data-square="g5">
+          </div>
+          <div class="chess-tile  white-tile square-h5" style="width: 49px; height: 49px" id="h5" data-square="h5">
+          </div>
+
+          <div class="chess-tile  white-tile square-a4" style="width: 49px; height: 49px" id="a4" data-square="a4">
+          </div>
+          <div class="chess-tile  black-tile square-b4" style="width: 49px; height: 49px" id="b4" data-square="b4">
+          </div>
+          <div class="chess-tile  white-tile square-c4" style="width: 49px; height: 49px" id="c4" data-square="c4">
+          </div>
+          <div class="chess-tile  black-tile square-d4" style="width: 49px; height: 49px" id="d4" data-square="d4">
+          </div>
+          <div class="chess-tile  white-tile square-e4" style="width: 49px; height: 49px" id="e4" data-square="e4">
+          </div>
+          <div class="chess-tile  black-tile square-f4" style="width: 49px; height: 49px" id="f4" data-square="f4">
+          </div>
+          <div class="chess-tile  white-tile square-g4" style="width: 49px; height: 49px" id="g4" data-square="g4">
+          </div>
+          <div class="chess-tile  black-tile square-h4" style="width: 49px; height: 49px" id="h4" data-square="h4">
+          </div>
+
+          <div class="chess-tile  black-tile square-a3" style="width: 49px; height: 49px" id="a3" data-square="a3">
+          </div>
+          <div class="chess-tile  white-tile square-b3" style="width: 49px; height: 49px" id="b3" data-square="b3">
+          </div>
+          <div class="chess-tile  black-tile square-c3" style="width: 49px; height: 49px" id="c3" data-square="c3">
+          </div>
+          <div class="chess-tile  white-tile square-d3" style="width: 49px; height: 49px" id="d3" data-square="d3">
+          </div>
+          <div class="chess-tile  black-tile square-e3" style="width: 49px; height: 49px" id="e3" data-square="e3">
+          </div>
+          <div class="chess-tile  white-tile square-f3" style="width: 49px; height: 49px" id="f3" data-square="f3">
+          </div>
+          <div class="chess-tile  black-tile square-g3" style="width: 49px; height: 49px" id="g3" data-square="g3">
+          </div>
+          <div class="chess-tile  white-tile square-h3" style="width: 49px; height: 49px" id="h3" data-square="h3">
+          </div>
+
+          <div class="chess-tile  white-tile square-a2" style="width: 49px; height: 49px" id="a2" data-square="a2">
+          </div>
+          <div class="chess-tile  black-tile square-b2" style="width: 49px; height: 49px" id="b2" data-square="b2">
+          </div>
+          <div class="chess-tile  white-tile square-c2" style="width: 49px; height: 49px" id="c2" data-square="c2">
+          </div>
+          <div class="chess-tile  black-tile square-d2" style="width: 49px; height: 49px" id="d2" data-square="d2">
+          </div>
+          <div class="chess-tile  white-tile square-e2" style="width: 49px; height: 49px" id="e2" data-square="e2">
+          </div>
+          <div class="chess-tile  black-tile square-f2" style="width: 49px; height: 49px" id="f2" data-square="f2">
+          </div>
+          <div class="chess-tile  white-tile square-g2" style="width: 49px; height: 49px" id="g2" data-square="g2">
+          </div>
+          <div class="chess-tile  black-tile square-h2" style="width: 49px; height: 49px" id="h2" data-square="h2">
+          </div>
+
+          <div class="chess-tile  black-tile square-a1" style="width: 49px; height: 49px" id="a1" data-square="a1">
+          </div>
+          <div class="chess-tile  white-tile square-b1" style="width: 49px; height: 49px" id="b1" data-square="b1">
+          </div>
+          <div class="chess-tile  black-tile square-c1" style="width: 49px; height: 49px" id="c1" data-square="c1">
+          </div>
+          <div class="chess-tile  white-tile square-d1" style="width: 49px; height: 49px" id="d1" data-square="d1">
+          </div>
+          <div class="chess-tile  black-tile square-e1" style="width: 49px; height: 49px" id="e1" data-square="e1">
+          </div>
+          <div class="chess-tile  white-tile square-f1" style="width: 49px; height: 49px" id="f1" data-square="f1">
+          </div>
+          <div class="chess-tile  black-tile square-g1" style="width: 49px; height: 49px" id="g1" data-square="g1">
+          </div>
+          <div class="chess-tile  white-tile square-h1" style="width: 49px; height: 49px" id="h1" data-square="h1">
+          </div>
+
+      </div>
+    </div>
 
     <script src="game_controller.es6"></script>
   </body>
