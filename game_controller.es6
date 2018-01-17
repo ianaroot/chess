@@ -1,7 +1,7 @@
 const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
 // specify whether piece was trying to move through other piece or just onto position it can't hit
 // should have case sensitivity protection to avoid future blackPawn BlackPawn issues
-var board1 = ChessBoard('board1');
+// var board1 = ChessBoard('board1');
 
 class GameController {
 	constructor(){
