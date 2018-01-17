@@ -1629,42 +1629,42 @@ function mouseleaveSquare(e) {
 // Initialization
 //------------------------------------------------------------------------------
 
-function addEvents() {
-  // prevent browser "image drag"
-  $('body').on('mousedown mousemove', '.' + CSS.piece, stopDefault);
+// function addEvents() {
+//   // prevent browser "image drag"
+//   $('body').on('mousedown mousemove', '.' + CSS.piece, stopDefault);
 
-  // mouse drag pieces
-  boardEl.on('mousedown', '.' + CSS.square, mousedownSquare);
-  containerEl.on('mousedown', '.' + CSS.sparePieces + ' .' + CSS.piece,
-    mousedownSparePiece);
+//   // mouse drag pieces
+//   boardEl.on('mousedown', '.' + CSS.square, mousedownSquare);
+//   containerEl.on('mousedown', '.' + CSS.sparePieces + ' .' + CSS.piece,
+//     mousedownSparePiece);
 
-  // mouse enter / leave square
-  boardEl.on('mouseenter', '.' + CSS.square, mouseenterSquare);
-  boardEl.on('mouseleave', '.' + CSS.square, mouseleaveSquare);
+//   // mouse enter / leave square
+//   boardEl.on('mouseenter', '.' + CSS.square, mouseenterSquare);
+//   boardEl.on('mouseleave', '.' + CSS.square, mouseleaveSquare);
 
-  // IE doesn't like the events on the window object, but other browsers
-  // perform better that way
-  if (isMSIE() === true) {
-    // IE-specific prevent browser "image drag"
-    document.ondragstart = function() { return false; };
+//   // IE doesn't like the events on the window object, but other browsers
+//   // perform better that way
+//   if (isMSIE() === true) {
+//     // IE-specific prevent browser "image drag"
+//     document.ondragstart = function() { return false; };
 
-    $('body').on('mousemove', mousemoveWindow);
-    $('body').on('mouseup', mouseupWindow);
-  }
-  else {
-    $(window).on('mousemove', mousemoveWindow);
-    $(window).on('mouseup', mouseupWindow);
-  }
+//     $('body').on('mousemove', mousemoveWindow);
+//     $('body').on('mouseup', mouseupWindow);
+//   }
+//   else {
+//     $(window).on('mousemove', mousemoveWindow);
+//     $(window).on('mouseup', mouseupWindow);
+//   }
 
-  // touch drag pieces
-  if (isTouchDevice() === true) {
-    boardEl.on('touchstart', '.' + CSS.square, touchstartSquare);
-    containerEl.on('touchstart', '.' + CSS.sparePieces + ' .' + CSS.piece,
-      touchstartSparePiece);
-    $(window).on('touchmove', touchmoveWindow);
-    $(window).on('touchend', touchendWindow);
-  }
-}
+//   // touch drag pieces
+//   if (isTouchDevice() === true) {
+//     boardEl.on('touchstart', '.' + CSS.square, touchstartSquare);
+//     containerEl.on('touchstart', '.' + CSS.sparePieces + ' .' + CSS.piece,
+//       touchstartSparePiece);
+//     $(window).on('touchmove', touchmoveWindow);
+//     $(window).on('touchend', touchendWindow);
+//   }
+// }
 
 function initDom() {
   // build board and save it in memory
@@ -1693,22 +1693,22 @@ function init() {
       expandConfig() !== true) return;
 
   // create unique IDs for all the elements we will create
-  createElIds();
+  // createElIds();
 
   initDom();
-  addEvents();
+  // addEvents();
 }
 
 // go time
 init();
 
 // return the widget object
-return widget;
+// return widget;
 
 }; // end window.ChessBoard
 
 // expose util functions
-window.ChessBoard.fenToObj = fenToObj;
-window.ChessBoard.objToFen = objToFen;
+// window.ChessBoard.fenToObj = fenToObj;
+// window.ChessBoard.objToFen = objToFen;
 
 })(); // end anonymous wrapper

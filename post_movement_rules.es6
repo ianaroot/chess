@@ -25,7 +25,7 @@ class PostMovementRules {
     var movingTeamString = board.allowedToMove,
       noLegalMoves = true;
     if(movingTeamString === "black"){
-      var onDeckTeamString = "white"        
+      var onDeckTeamString = "white"
     } else {
       var onDeckTeamString = "black"
     }

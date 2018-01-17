@@ -25,7 +25,6 @@ class GameController {
 			captureNotation = "",
 			promotionNotation = "",
 			notation = "";
-			// debugger
 		if( board.gameOver ){
 			return
 		}
@@ -66,7 +65,8 @@ class GameController {
 				board.endGame()
 			}
 			if( moveObject.fullNotation ){
-				notation = moveObject.fullNotation
+        // pretty sure i was supposed to add captureNotation etc... here, but need to check
+				notation = moveObject.fullNotation + captureNotation + positionNotation + promotionNotation + checkNotation
 			} else {
 				var positionNotation = Board.gridCalculator(endPosition),
 					pieceNotation	= moveObject.pieceNotation,
@@ -176,7 +176,7 @@ tests = {
     setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
     setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
     setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
-    
+
   },
   checkmate: function(){
     gC = new GameController();
@@ -210,7 +210,7 @@ tests = {
     setTimeout( function(){ gC.attemptMove(6,  23) }, 2500)
     setTimeout( function(){ gC.attemptMove(62, 52) }, 3000)
     setTimeout( function(){ gC.attemptMove(4,  6) }, 3500)
-    setTimeout( function(){ gC.attemptMove(60, 62) }, 4000)      
+    setTimeout( function(){ gC.attemptMove(60, 62) }, 4000)
   },
   singleMoveTest: function(){
     gC = new GameController();

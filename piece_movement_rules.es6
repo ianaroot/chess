@@ -68,7 +68,7 @@ class PieceMovementRules {
             moves[key].pieceNotation = "K"
           };
         };
-        if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition) 
+        if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition)
           && !PieceMovementRules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
           && !PieceMovementRules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition + 1), board: board })
           ){
@@ -77,7 +77,7 @@ class PieceMovementRules {
           castle.rangeLimit = 1
           castle.fullNotation = "O-O"
           castle.additionalActions = function(args){
-          //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
+          //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be
           // explicit here and use game controller instead of this
             var position = args["position"],
               pieceObject = JSON.parse(this.layOut[startPosition + 3]);
@@ -86,7 +86,7 @@ class PieceMovementRules {
           }
           moves.push(castle)
         };
-        if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition) 
+        if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition)
           && !PieceMovementRules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
           && !PieceMovementRules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
           var castle = PieceMovementRules.genericMovements().horizontalRight()
@@ -94,7 +94,7 @@ class PieceMovementRules {
           castle.rangeLimit = 1
           castle.fullNotation = "O-O-O"
           castle.additionalActions = function(args){
-            //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be 
+            //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be
             // explicit here and use game controller instead of this
             var position = args["position"],
               pieceObject = JSON.parse(this.layOut[startPosition - 4]);
@@ -112,7 +112,7 @@ class PieceMovementRules {
           movements = [],
           enPassantLeft = (args) => {
             var position = args["position"],
-              board = args["board"]; 
+              board = args["board"];
             if( Board.rank(position) === 5 && board.blackPawnAt(position - 1) && board.blackPawnDoubleSteppedFrom(position + 15) ){
               // not making use of this number as expected, may as well return true
               return position + 1
@@ -185,7 +185,7 @@ class PieceMovementRules {
           movements = [],
           enPassantRight = (args) => {
             var position = args["position"],
-              board = args["board"]; 
+              board = args["board"];
             if( Board.rank(position) === 4 && board.whitePawnAt(position + 1) && board.whitePawnDoubleSteppedFrom(position - 15) ){
               return true
             }
@@ -398,7 +398,7 @@ class PieceMovementRules {
   }
 
   static moveIsIllegal(startPosition, endPosition, board){
-    if( 
+    if(
       !Board.prototype.isPrototypeOf( board ) ||
       typeof startPosition !== "number" ||
       typeof endPosition !== "number"
@@ -414,7 +414,7 @@ class PieceMovementRules {
         endPosition: endPosition
       },
       viableMovement = PieceMovementRules.positionViable( {startPosition: startPosition, endPosition: endPosition, board: board} );
-      
+
     if ( !Board.inBounds(endPosition) ){
       moveObject.alert = 'stay on the board, fool'
       moveObject.illegal = true
@@ -428,17 +428,16 @@ class PieceMovementRules {
       moveObject.alert = "check yo king fool"
       moveObject.illegal = true
     } // now we know the move is legal
-
     moveObject.additionalActions = viableMovement.additionalActions
     if( viableMovement.fullNotation ){
       moveObject.fullNotation = viableMovement.fullNotation
-    } 
-    
+    }
+
     moveObject.pieceNotation = viableMovement.pieceNotation
     return moveObject
   }
   static retrieveAvailableMovements(args){
-    if( 
+    if(
       !Board.prototype.isPrototypeOf( args["board"] ) ||
       typeof args["position"] !== "number"
     ){
@@ -458,7 +457,7 @@ class PieceMovementRules {
   static kingInCheck(args){ // can just pass in same position as start and end if you want to know whether not moving anything creates check
     // this should be two functions, one that checks whether a king is in check from a given layout
     // and one that checks whether making a particular layout change would result in check
-    if( 
+    if(
       !Board.prototype.isPrototypeOf( args["board"] ) ||
       typeof args["startPosition"] !== "number" ||
       !(typeof args["endPosition"] !== "number" || typeof args["endPosition"] !== "string") || //not sure where this got turned into a string...
@@ -492,7 +491,7 @@ class PieceMovementRules {
     return danger
   }
   static positionViable(args){
-    if( 
+    if(
       !Board.prototype.isPrototypeOf( args["board"] ) ||
       typeof args["startPosition"] !== "number" ||
       !(typeof args["endPosition"] !== "number" || typeof args["endPosition"] !== "string") //not sure where this got turned into a string...
@@ -512,9 +511,9 @@ class PieceMovementRules {
     return viable
   }
   static viablePositionsFrom(args){
-    if( 
+    if(
       !Board.prototype.isPrototypeOf( args["board"] ) ||
-      typeof args["startPosition"] !== "number" 
+      typeof args["startPosition"] !== "number"
     ){
       throw new Error("missing params in viablePositionsFrom")
     }
@@ -539,7 +538,7 @@ class PieceMovementRules {
           viablePositions[currentPosition] = movement
         } else if( board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
           viablePositions[currentPosition] = movement
-          break 
+          break
         } else if(board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
           break
         };
