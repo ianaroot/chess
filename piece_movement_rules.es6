@@ -2,7 +2,6 @@
 // even if move is illegal catches it, having viablePositions return illegal positions, such as checked castling, is gonna be problematic, like when i get to where i'm highlighting legal positions to move to
 // throw error if args missing. make a reusable function, throw it in some stuff
 // tells you it's the other team's turn if you try to move from an empty square
-// git training
 class PieceMovementRules {
   static pieceSpecificMovements(){
     return {
@@ -510,6 +509,22 @@ class PieceMovementRules {
       }
     };
     return viable
+  }
+  static viablePositionsFromKeysOnly(args){
+    if(
+      !Board.prototype.isPrototypeOf( args["board"] ) ||
+      typeof args["startPosition"] !== "number"
+    ){
+      throw new Error("missing params in viablePositionsFromKeysOnly")
+    }
+    var viablePositions = PieceMovementRules.viablePositionsFrom(args),
+      keysOnly = [];
+      for (var property in viablePositions) {
+        if (viablePositions.hasOwnProperty(property)) {
+          keysOnly.push(property)
+      }
+    }
+    return keysOnly
   }
   static viablePositionsFrom(args){
     if(

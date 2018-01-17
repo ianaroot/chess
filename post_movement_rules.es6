@@ -1,4 +1,3 @@
-// git training
 class PostMovementRules {
   pawnPromotionQuery(board){
     for(var i = 0; i < 8; i++){

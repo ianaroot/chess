@@ -1,3 +1,1 @@
-i know how to spell "knight" the misspellings are to simplify the logic for referencing the wikipedia sourced images for the pieces.
-
-this is a program i am working on with the hopes of eventually implementing a fairly rudimentary chess bot. i am not a great chess player myself, and my bot will probably be worse.
+the long term goal of this project is to be a chess app that lets you upload bots, and either play against those bots, or pit them against other bots. in the meantime it lets you play normal two player chess, and hopefully soon it will allow you to play against a poorly written bot of my own design.
