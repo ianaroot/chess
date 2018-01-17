@@ -1,4 +1,3 @@
-// git training
 class Board {
   constructor(layOut, options = { capturedPieces: [], gameOver: false, allowedToMove: "white", movementNotation: [], previousLayouts: []}){
     this.layOut = layOut || Board.defaultLayOut()
