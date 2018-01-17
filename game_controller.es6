@@ -93,6 +93,7 @@ class GameController {
   }
 
 }
+gameController = new GameController()
 
 tests = {
   pawnPromotion: function(){

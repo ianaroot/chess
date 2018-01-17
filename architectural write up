@@ -233,4 +233,18 @@ PieceMovementRules is aware:
     ______
 
 
-the board class is meant to store most of the state of a given game, as well as several functions that supply various pieces of information about either a generic chessboard, or the state of the board in a specific game
+board class is meant to store most of the state of a given game, as well as
+several functions that supply various pieces of information about either a generic
+chessboard, or the state of the board in a specific game
+
+pieceMovementRules class stores all information about how pieces move. some
+both the generic details about types of movements (orthogonal, diagonal etc.) and
+specific details about which types of motion are available to each individual pieces
+
+postMovementRules carries the rules regarding what effects may be triggered as the
+result of a given legal move
+
+view class contains all functions regarding displaying material
+
+gameController class is intended to act as the intermediary between all other classes
+to whatever degree possible, and to control the flow of a game.
