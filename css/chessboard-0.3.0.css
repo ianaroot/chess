@@ -1,6 +1,7 @@
 /* board */
 .chess-board {
-  border: 2px solid #404040;
+  margin: 40px;
+  border: 4px solid #04033d;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
@@ -40,4 +41,18 @@
 
 body {
     background-color: #720909;
+}
+
+.turn-marker {
+  /* margin-top: : 20px; */
+  margin-left: 195px;
+  padding-top: 25px;
+}
+
+.white-captures {
+  background-color: #999999
+}
+
+.black-captures {
+  background-color: #999999
 }

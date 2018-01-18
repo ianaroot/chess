@@ -27,6 +27,36 @@ var unhighlLighTiles = () => {
 
 }
 
+var updateTeamAllowedToMove = () => {
+  var span = document.getElementById("team-allowed-to-move");
+  span.innerText = gameController.board.allowedToMove
+}
+
+var updateCaptures = () => {
+  var blackCaptureDivChildren = document.getElementsByClassName("black-captures")[0].children,
+    whiteCaptureDivChildren = document.getElementsByClassName("white-captures")[0].children,
+    capturedPieces = gameController.board.capturedPieces;
+  for( let i = 0; i < blackCaptureDivChildren.length; i ++){
+    blackCaptureDivChildren[i].remove()
+  };
+  for( let i = 0; i < whiteCaptureDivChildren.length; i ++){
+    whiteCaptureDivChildren[i].remove()
+  };
+  // some kinda off by one error or something going on, no idea why i need to repeat this
+  for( let i = 0; i < blackCaptureDivChildren.length; i ++){
+    blackCaptureDivChildren[i].remove()
+  };
+  for( let i = 0; i < whiteCaptureDivChildren.length; i ++){
+    whiteCaptureDivChildren[i].remove()
+  };
+  for (i = 0; i < capturedPieces.length; i++){
+    var pieceObject = capturedPieces[i],
+      team = JSON.parse(pieceObject).color,
+      pieceInitials = gameController.view.pieceInitials(pieceObject);
+    gameController.view.displayPiece({pieceInitials: pieceInitials, gridPosition: team + "-captures"})
+  }
+}
+
 var attemptMove = () => {
   var target = event.currentTarget,
     endPosition = Board.gridCalculatorReverse( target.dataset.square ),
@@ -36,6 +66,8 @@ var attemptMove = () => {
   setClickListener()
   gameController.attemptMove(startPosition, endPosition);
   setClickListener()
+  updateTeamAllowedToMove()
+  updateCaptures()
 }
 
 var highlightTile = () => {

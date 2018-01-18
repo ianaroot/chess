@@ -13,10 +13,12 @@ class View{
   displayPiece(args){
     var elem = document.createElement("img"),
       pieceInitials = args["pieceInitials"],
+      // turns out gridPosition is more like element class, and it has to be unique, so it should probably be element id
       gridPosition = args["gridPosition"];
     elem.setAttribute("src", this.pieceImgSrc( pieceInitials ) );
     elem.setAttribute("height", "49");
     elem.setAttribute("width", "49");
+    console.log(gridPosition)
     var element = document.getElementsByClassName( gridPosition )[0];
     element.appendChild(elem)
   }
