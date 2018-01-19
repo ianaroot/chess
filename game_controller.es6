@@ -106,121 +106,14 @@ gameController.view.setClickListener()
 
 
 tests = {
-pawnPromotion: [1,  18, 50, 42, 11, 27, 59, 41, 3,  19, 42, 34, 14, 22, 34, 27, 18, 24, 51, 43, 10, 26, 41, 17, 26, 34, 49, 33, 19, 33, 57, 42, 33, 49, 27, 19, 34, 43, 19, 12, 43, 52, 12,  5, 4,   5, 17,  9, 52, 61],
-  sim2: function(){
-    gC = new GameController();
-    setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
-    setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
-    setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
-    setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
-    setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
-    setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
-    setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
-    setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
-    setTimeout( function(){ gC.attemptMove(0,  1) },  4500)
-    setTimeout( function(){ gC.attemptMove(27, 18) }, 5000)
-    setTimeout( function(){ gC.attemptMove(9,  18) }, 5500)
-    setTimeout( function(){ gC.attemptMove(51, 35)},  6000)
-    setTimeout( function(){ gC.attemptMove(15, 23)},  6500)
-    setTimeout( function(){ gC.attemptMove(58, 23)},  7000)
-
-  },
-  blackEnPassant: function(){
-    // should set these up to test left and right
-    gC = new GameController();
-    setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
-    setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
-    setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
-    setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
-    setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
-    setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
-    setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
-    setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
-    setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
-    setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
-    setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
-  },
-  whiteEnPassant: function (){
-    // should set these up to test left and right
-    gC = new GameController();
-    setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
-    setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
-    setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
-    setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
-    setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
-    setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
-    setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
-    setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
-    setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
-    setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
-    setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
-    setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
-    setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
-    setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
-
-  },
-  checkmate: function(){
-    gC = new GameController();
-    setTimeout( function(){ gC.attemptMove(12, 20) }, 500)
-    setTimeout( function(){ gC.attemptMove(57, 42) }, 1000)
-    setTimeout( function(){ gC.attemptMove(5,  26) }, 1500)
-    setTimeout( function(){ gC.attemptMove(42, 32) }, 2000)
-    setTimeout( function(){ gC.attemptMove(3,  21) }, 2500)
-    setTimeout( function(){ gC.attemptMove(32, 17) }, 3000)
-    setTimeout( function(){ gC.attemptMove(21, 53) }, 3500)
-  },
-  queensCastles: function(){
-    gC = new GameController();
-    setTimeout( function(){ gC.attemptMove(11, 19) }, 500)
-    setTimeout( function(){ gC.attemptMove(51, 43) }, 1000)
-    setTimeout( function(){ gC.attemptMove(2,  20) }, 1500)
-    setTimeout( function(){ gC.attemptMove(58, 44) }, 2000)
-    setTimeout( function(){ gC.attemptMove(3,  11) }, 2500)
-    setTimeout( function(){ gC.attemptMove(59, 51) }, 3000)
-    setTimeout( function(){ gC.attemptMove(1,  18) }, 3500)
-    setTimeout( function(){ gC.attemptMove(57, 42) }, 4000)
-    setTimeout( function(){ gC.attemptMove(4,   2) }, 4500)
-    setTimeout( function(){ gC.attemptMove(60, 58) }, 5000)
-  },
-  kingsCastles: function(){
-    gC = new GameController();
-    setTimeout( function(){ gC.attemptMove(12, 20) }, 500)
-    setTimeout( function(){ gC.attemptMove(52, 44) }, 1000)
-    setTimeout( function(){ gC.attemptMove(5,  12) }, 1500)
-    setTimeout( function(){ gC.attemptMove(61, 43) }, 2000)
-    setTimeout( function(){ gC.attemptMove(6,  23) }, 2500)
-    setTimeout( function(){ gC.attemptMove(62, 52) }, 3000)
-    setTimeout( function(){ gC.attemptMove(4,  6) }, 3500)
-    setTimeout( function(){ gC.attemptMove(60, 62) }, 4000)
-  },
-  singleMoveTest: function(){
-    gC = new GameController();
-    setTimeout( function(){ gC.attemptMove(1,  18) }, 500)
-  },
-  threeFold: function(){
-    gC = new GameController();
-    setTimeout( function(){ gC.attemptMove(1, 18) }, 500)
-    setTimeout( function(){ gC.attemptMove(62, 45) }, 1000)
-    setTimeout( function(){ gC.attemptMove(18,  1) }, 1500)
-    setTimeout( function(){ gC.attemptMove(45, 62) }, 2000)
-    setTimeout( function(){ gC.attemptMove(1, 18) }, 3000)
-    setTimeout( function(){ gC.attemptMove(62, 45) }, 3500)
-    setTimeout( function(){ gC.attemptMove(18,  1) }, 4000)
-    setTimeout( function(){ gC.attemptMove(45, 62) }, 4500)
-  },
-  notThreeFold: function(){
-    gC = new GameController();
-    setTimeout( function(){ gC.attemptMove(1, 18) }, 500)
-    setTimeout( function(){ gC.attemptMove(62, 45) }, 1000)
-    setTimeout( function(){ gC.attemptMove(18,  1) }, 1500)
-    setTimeout( function(){ gC.attemptMove(45, 62) }, 2000)
-    setTimeout( function(){ gC.attemptMove(1, 18) }, 3000)
-    setTimeout( function(){ gC.attemptMove(62, 45) }, 3500)
-    setTimeout( function(){ gC.attemptMove(18,  1) }, 4000)
-    setTimeout( function(){ gC.attemptMove(50,  42) }, 4500)
-    setTimeout( function(){ gC.attemptMove(1, 18) }, 5000)
-    setTimeout( function(){ gC.attemptMove(45, 62) }, 5500)
-    setTimeout( function(){ gC.attemptMove(18,  1) }, 6000)
-    setTimeout( function(){ gC.attemptMove(62, 45) }, 6500)
-  }
+	pawnPromotion: [1,  18, 50, 42, 11, 27, 59, 41, 3,  19, 42, 34, 14, 22, 34, 27, 18, 24, 51, 43, 10, 26, 41, 17, 26, 34, 49, 33, 19, 33, 57, 42, 33, 49, 27, 19, 34, 43, 19, 12, 43, 52, 12,  5, 4,   5, 17,  9, 52, 61 ],
+  sim2: [1,  18, 50, 42, 11, 27, 59, 41, 3,  19, 42, 34, 14, 22, 34, 27, 0,  1, 27, 18, 9,  18, 51, 35, 15, 23, 58, 23 ],
+  blackEnPassant: [1,  18, 50, 42, 11, 27, 59, 41, 3,  19, 42, 34, 14, 22, 34, 27, 18, 24, 51, 43, 10, 26],
+  whiteEnPassant: [1,  18, 50, 42, 11, 27, 59, 41, 3,  19, 42, 34, 14, 22, 34, 27, 18, 24, 51, 43, 10, 26, 41, 17, 26, 34, 49, 33],
+  checkmate: [12, 20, 57, 42, 5,  26, 42, 32, 3,  21, 32, 17, 21, 53],
+  queensCastles: [11, 19, 51, 43, 2,  20, 58, 44, 3,  11, 59, 51, 1,  18, 57, 42, 4,   2, 60, 58],
+  kingsCastles: [12, 20, 52, 44, 5,  12, 61, 43, 6,  23, 62, 52, 4,  6, 60, 62],
+  singleMoveTest: [1,  18],
+  threeFold: [1, 18, 62, 45, 18,  1, 45, 62, 1, 18, 62, 45, 18,  1, 45, 62],
+  notThreeFold: [1, 18, 62, 45, 18,  1, 45, 62, 1, 18, 62, 45, 18,  1, 50,  42, 1, 18, 45, 62, 18,  1, 62, 45]
 }

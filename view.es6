@@ -1,5 +1,6 @@
 class View{
 	// pretty sure this could be a singleton even on a server with several games running
+  // captures don't show up in the browser if the moves are made through the consoler
   constructor(){
     this.boundHighlightTile = this.highlightTile.bind(this)
     this.boundAttemptMove = this.attemptMove.bind(this)
@@ -136,6 +137,8 @@ class View{
     gameController.attemptMove(startPosition, endPosition);
     this.setClickListener()
     this.updateTeamAllowedToMove()
+    this.blackCaptureDivNeedsExpanding()
+    this.whiteCaptureDivNeedsExpanding()
     this.updateCaptures()
   }
 
@@ -150,5 +153,33 @@ class View{
     	var tile = tiles[i];
     	tile.addEventListener("click", this.boundHighlightTile );
     }
+  }
+
+  blackCaptureDivNeedsExpanding(){
+    var capturedPieces = gameController.board.capturedPieces,
+      total = 0;
+    for(let i = 0; i < capturedPieces.length; i++){
+      if (JSON.parse(capturedPieces[i]).color === "black") { total++ }
+    }
+    console.log(total)
+    if( total === 11 ){ this.expandBlackCaptureDiv() }
+  }
+
+  whiteCaptureDivNeedsExpanding(){
+    var capturedPieces = gameController.board.capturedPieces,
+      total = 0;
+    for(let i = 0; i < capturedPieces.length; i++){
+      if (JSON.parse(capturedPieces[i]).color === "white") { total++ }
+    }
+    if( total === 11 ){ this.expandWhiteCaptureDiv() }
+  }
+
+  expandWhiteCaptureDiv(){
+    var div = document.getElementsByClassName("white-captures")[0]
+    div.style.height = 98
+  }
+  expandBlackCaptureDiv(){
+    var div = document.getElementsByClassName("black-captures")[0]
+    div.style.height = 98
   }
 }
