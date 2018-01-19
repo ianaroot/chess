@@ -94,6 +94,7 @@ class GameController {
 }
 gameController = new GameController()
 gameController.view.displayLayOut(gameController.board.layOut)
+gameController.view.setClickListener()
 
 tests = {
   pawnPromotion: function(){
