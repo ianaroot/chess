@@ -1,6 +1,7 @@
 class View{
 	// pretty sure this could be a singleton even on a server with several games running
   // captures don't show up in the browser if the moves are made through the consoler
+  // clean up alternations between use of id and class, and position vs gridCalculator
   constructor(){
     this.boundHighlightTile = this.highlightTile.bind(this)
     this.boundAttemptMove = this.attemptMove.bind(this)
@@ -9,7 +10,7 @@ class View{
     alert(message)
   }
   undisplayPiece(gridPosition){
-    var element = document.getElementsByClassName( gridPosition )[0],
+    var element = document.getElementById( gridPosition ),
       children  = element.children;
     for( var i = 0; i < children.length; i ++){
       children[i].remove()
@@ -23,12 +24,12 @@ class View{
     elem.setAttribute("src", this.pieceImgSrc( pieceInitials ) );
     elem.setAttribute("height", "49");
     elem.setAttribute("width", "49");
-    var element = document.getElementsByClassName( gridPosition )[0];
+    var element = document.getElementById( gridPosition );
     element.appendChild(elem)
   }
   displayLayOut(layOut){
     for( var i = 0; i < layOut.length; i++){
-      var gridPosition = "square-" + Board.gridCalculator(i),
+      var gridPosition = Board.gridCalculator(i),
           pieceInitials = this.pieceInitials(layOut[i]);
       this.undisplayPiece(gridPosition);
       if( JSON.parse(layOut[i]).color !== "empty" ){
@@ -48,7 +49,7 @@ class View{
   highlightTile(){
     var target = event.currentTarget,
       img = target.children[0],
-      position = Board.gridCalculatorReverse( target.dataset.square ),
+      position = Board.gridCalculatorReverse( target.id ),
       team = "empty";
     this.unhighlLighTiles();
     this.setClickListener();
@@ -103,8 +104,8 @@ class View{
   }
 
   updateCaptures(){
-    var blackCaptureDivChildren = document.getElementsByClassName("black-captures")[0].children,
-      whiteCaptureDivChildren = document.getElementsByClassName("white-captures")[0].children,
+    var blackCaptureDivChildren = document.getElementById("black-captures").children,
+      whiteCaptureDivChildren = document.getElementById("white-captures").children,
       capturedPieces = gameController.board.capturedPieces;
     for( let i = 0; i < blackCaptureDivChildren.length; i ++){
       blackCaptureDivChildren[i].remove()
@@ -129,9 +130,9 @@ class View{
 
   attemptMove(){
     var target = event.currentTarget,
-      endPosition = Board.gridCalculatorReverse( target.dataset.square ),
+      endPosition = Board.gridCalculatorReverse( target.id ),
       startElement = document.getElementsByClassName("startPosition")[0],
-      startPosition = Board.gridCalculatorReverse( startElement.dataset.square );
+      startPosition = Board.gridCalculatorReverse( startElement.id );
     this.unhighlLighTiles();
     this.setClickListener();
     gameController.attemptMove(startPosition, endPosition);
@@ -175,11 +176,11 @@ class View{
   }
 
   expandWhiteCaptureDiv(){
-    var div = document.getElementsByClassName("white-captures")[0]
+    var div = document.getElementById("white-captures")
     div.style.height = 98
   }
   expandBlackCaptureDiv(){
-    var div = document.getElementsByClassName("black-captures")[0]
+    var div = document.getElementById("black-captures")
     div.style.height = 98
   }
 }
