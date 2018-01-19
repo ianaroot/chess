@@ -6,6 +6,8 @@
   border: 4px solid #04033d;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
+  width: 392;
+  height: 392;
 }
 
 .arena {
@@ -16,6 +18,8 @@
 .chess-tile {
   float: left;
   position: relative;
+  height: 49px;
+  width: 49px;
 
   /* disable any native browser highlighting */
   -webkit-touch-callout: none;

@@ -23,7 +23,6 @@ class View{
     elem.setAttribute("src", this.pieceImgSrc( pieceInitials ) );
     elem.setAttribute("height", "49");
     elem.setAttribute("width", "49");
-    console.log(gridPosition)
     var element = document.getElementsByClassName( gridPosition )[0];
     element.appendChild(elem)
   }
