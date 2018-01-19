@@ -10,10 +10,10 @@
     <script src="view.es6"></script>
     <script src="piece_movement_rules.es6"></script>
     <script src="post_movement_rules.es6"></script>
+    <div class="arena">
       <div class="turn-marker"><span id="team-allowed-to-move">white</span>'s turn</div>
-
-      <div class="white-captures" style="height: 49; width: 490"></div>
-
+      <div class="white-captures">
+      </div>
       <div class="chess-board" style="width: 392; height: 392;" >
         <div class="chess-tile  white-tile square-a8" style="width: 49px; height: 49px" id="a8" data-square="a8">
         </div>
@@ -151,8 +151,8 @@
         <div class="chess-tile  white-tile square-h1" style="width: 49px; height: 49px" id="h1" data-square="h1">
         </div>
       </div>
-
-      <div class="black-captures" style="height: 49; width: 490"></div>
+      <div class="black-captures"></div>
+    </div>
 
     <script src="listeners.es6"></script>
     <script src="game_controller.es6"></script>
