@@ -90,42 +90,23 @@ class GameController {
   prepareWhiteTurn(){
     this.board.allowedToMove = "white"
   }
-
+	runMoves(moveArray){
+		var func = this.runMoves.bind(this)
+		if (moveArray.length > 1 ) {
+			this.attemptMove( moveArray[0], moveArray[1] )
+			moveArray.shift()
+			moveArray.shift()
+			setTimeout( function(){ func(moveArray)  }, 500)
+		}
+	}
 }
 gameController = new GameController()
 gameController.view.displayLayOut(gameController.board.layOut)
 gameController.view.setClickListener()
 
+
 tests = {
-  pawnPromotion: function(){
-    gC = new GameController();
-    setTimeout( function(){ gC.attemptMove(1,  18) },  500)
-    setTimeout( function(){ gC.attemptMove(50, 42) }, 1000)
-    setTimeout( function(){ gC.attemptMove(11, 27) }, 1500)
-    setTimeout( function(){ gC.attemptMove(59, 41) }, 2000)
-    setTimeout( function(){ gC.attemptMove(3,  19) }, 2500)
-    setTimeout( function(){ gC.attemptMove(42, 34) }, 3000)
-    setTimeout( function(){ gC.attemptMove(14, 22) }, 3500)
-    setTimeout( function(){ gC.attemptMove(34, 27) }, 4000)
-    setTimeout( function(){ gC.attemptMove(18, 24) }, 4500)
-    setTimeout( function(){ gC.attemptMove(51, 43) }, 5000)
-    setTimeout( function(){ gC.attemptMove(10, 26) }, 5500)
-    // could break here for en black passant
-    setTimeout( function(){ gC.attemptMove(41, 17) }, 6000)
-    setTimeout( function(){ gC.attemptMove(26, 34) }, 6500)
-    setTimeout( function(){ gC.attemptMove(49, 33) }, 7000)
-    setTimeout( function(){ gC.attemptMove(19, 33)},  7500)
-    setTimeout( function(){ gC.attemptMove(57, 42)},  8000)
-    setTimeout( function(){ gC.attemptMove(33, 49)},  8500)
-    setTimeout( function(){ gC.attemptMove(27, 19)},  9000)
-    setTimeout( function(){ gC.attemptMove(34, 43)},  9500)
-    setTimeout( function(){ gC.attemptMove(19, 12)}, 10000)
-    setTimeout( function(){ gC.attemptMove(43, 52)}, 10500)
-    setTimeout( function(){ gC.attemptMove(12,  5)}, 11000)
-    setTimeout( function(){ gC.attemptMove(4,   5)}, 11500)
-    setTimeout( function(){ gC.attemptMove(17,  9)}, 12000)
-    setTimeout( function(){ gC.attemptMove(52, 61)}, 12500)
-  },
+pawnPromotion: [1,  18, 50, 42, 11, 27, 59, 41, 3,  19, 42, 34, 14, 22, 34, 27, 18, 24, 51, 43, 10, 26, 41, 17, 26, 34, 49, 33, 19, 33, 57, 42, 33, 49, 27, 19, 34, 43, 19, 12, 43, 52, 12,  5, 4,   5, 17,  9, 52, 61],
   sim2: function(){
     gC = new GameController();
     setTimeout( function(){ gC.attemptMove(1,  18) }, 500)

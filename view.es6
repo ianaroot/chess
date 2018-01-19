@@ -4,7 +4,6 @@ class View{
     this.boundHighlightTile = this.highlightTile.bind(this)
     this.boundAttemptMove = this.attemptMove.bind(this)
   }
-
   displayAlert(message){
     alert(message)
   }
@@ -45,8 +44,7 @@ class View{
       secondInitial = pieceObject.species[0];
     return firstInitial + secondInitial
   }
-
- highlightTile(){
+  highlightTile(){
     var target = event.currentTarget,
       img = target.children[0],
       position = Board.gridCalculatorReverse( target.dataset.square ),
@@ -73,7 +71,6 @@ class View{
   retrieveTiles(){
     return document.getElementsByClassName("chess-tile")
   }
-
   teamSet(src){
     var regex = /(\w)[A-Z]\.png$/,
       teamInitial = src.match(regex)[1];
