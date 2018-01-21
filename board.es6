@@ -119,6 +119,17 @@ class Board {
     return string.color
   }
 
+  undo(){
+    this.layOut = this.lastLayout()
+    this.previousLayouts.pop()
+    var undoneNotation = this.movementNotation.pop(),
+      captureNotationMatch = undoneNotation.match(/x/);
+    if( captureNotationMatch ){
+      this.capturedPieces.pop()
+    }
+    // could add e.p. to notation for simplification
+  }
+
   consoleLog(){
     for( let i = 0; i < 64; i = i + 8 ){
       var row = ""

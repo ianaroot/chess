@@ -1,15 +1,37 @@
 /* board */
-.chess-board {
-  margin: 40px;
+#chess-board {
+  margin-left: 40px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   border: 4px solid #04033d;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
+  width: 392;
+  height: 392;
+}
+
+#undo-button {
+  border-radius: 2px;
+  color: #000000;
+  background-color: #fce38f;
+  position: absolute;
+  left: 620px;
+  top: 300px;
+  heigh: 12px;
+  width: 40px;
+  text-align: center;
+}
+
+#arena {
+  margin-left: 80px;
 }
 
 /* square */
 .chess-tile {
   float: left;
   position: relative;
+  height: 49px;
+  width: 49px;
 
   /* disable any native browser highlighting */
   -webkit-touch-callout: none;
@@ -40,19 +62,29 @@
 }
 
 body {
-    background-color: #720909;
+    background-color: #420505;
+    color: #fce38f;
 }
 
-.turn-marker {
+#turn-marker {
   /* margin-top: : 20px; */
   margin-left: 195px;
+  margin-bottom: 15px;
   padding-top: 25px;
 }
 
-.white-captures {
-  background-color: #999999
+#white-captures {
+  background-color: #fce38f;
+  border-radius: 10px;
+  border: 2px solid #000000;
+  height: 49;
+  width: 490
 }
 
-.black-captures {
-  background-color: #999999
+#black-captures {
+  background-color: #fce38f;
+  border-radius: 10px;
+  border: 2px solid #000000;
+  height: 49;
+  width: 490
 }
