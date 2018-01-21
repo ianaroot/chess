@@ -1,7 +1,8 @@
 class View{
 	// pretty sure this could be a singleton even on a server with several games running
   // captures don't show up in the browser if the moves are made through the consoler
-  // clean up alternations between use of id and class, and position vs gridCalculator
+  // capture display occasionally bugs out and throws in extra pieceString, error is not coming from board
+  // clean up alternations position vs gridCalculator
   constructor(){
     this.boundHighlightTile = this.highlightTile.bind(this)
     this.boundAttemptMove = this.attemptMove.bind(this)
@@ -104,22 +105,11 @@ class View{
   }
 
   updateCaptures(){
-    var blackCaptureDivChildren = document.getElementById("black-captures").children,
-      whiteCaptureDivChildren = document.getElementById("white-captures").children,
+    var blackCaptureDiv = document.getElementById("black-captures"),
+      whiteCaptureDiv = document.getElementById("white-captures"),
       capturedPieces = gameController.board.capturedPieces;
-    for( let i = 0; i < blackCaptureDivChildren.length; i ++){
-      blackCaptureDivChildren[i].remove()
-    };
-    for( let i = 0; i < whiteCaptureDivChildren.length; i ++){
-      whiteCaptureDivChildren[i].remove()
-    };
-    // some kinda off by one error or something going on, no idea why i need to repeat this
-    for( let i = 0; i < blackCaptureDivChildren.length; i ++){
-      blackCaptureDivChildren[i].remove()
-    };
-    for( let i = 0; i < whiteCaptureDivChildren.length; i ++){
-      whiteCaptureDivChildren[i].remove()
-    };
+    blackCaptureDiv.innerHTML = "";
+    whiteCaptureDiv.innerHTML = "";
     for (let i = 0; i < capturedPieces.length; i++){
       var pieceObject = capturedPieces[i],
         team = JSON.parse(pieceObject).color,
@@ -162,7 +152,7 @@ class View{
     for(let i = 0; i < capturedPieces.length; i++){
       if (JSON.parse(capturedPieces[i]).color === "black") { total++ }
     }
-    console.log(total)
+    // console.log(total + " black")
     if( total === 11 ){ this.expandBlackCaptureDiv() }
   }
 
@@ -172,6 +162,7 @@ class View{
     for(let i = 0; i < capturedPieces.length; i++){
       if (JSON.parse(capturedPieces[i]).color === "white") { total++ }
     }
+    // console.log(total + " white")
     if( total === 11 ){ this.expandWhiteCaptureDiv() }
   }
 
