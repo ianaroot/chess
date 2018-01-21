@@ -37,7 +37,7 @@ class View{
         this.displayPiece({pieceInitials: pieceInitials, gridPosition: gridPosition})
       }
     }
-    this.setClickListener();
+    this.setTileClickListener();
     this.updateTeamAllowedToMove();
     this.blackCaptureDivNeedsExpanding();
     this.whiteCaptureDivNeedsExpanding();
@@ -58,7 +58,7 @@ class View{
       position = Board.gridCalculatorReverse( target.id ),
       team = "empty";
     this.unhighlLighTiles();
-    this.setClickListener();
+    this.setTileClickListener();
     if (img) {
       team = this.teamSet(img.src)
       if (team === gameController.board.allowedToMove){
@@ -90,7 +90,6 @@ class View{
       alert("error in teamSet")
     }
   }
-
   unhighlLighTiles(){
     var tiles = this.retrieveTiles();
     for(let i = 0 ; i < tiles.length ; i++ ){
@@ -101,14 +100,11 @@ class View{
     	tile.classList.remove("highlight1");
     	tile.classList.remove("highlight2");
     }
-
   }
-
   updateTeamAllowedToMove(){
     var span = document.getElementById("team-allowed-to-move");
     span.innerText = gameController.board.allowedToMove
   }
-
   updateCaptures(){
     var blackCaptureDiv = document.getElementById("black-captures"),
       whiteCaptureDiv = document.getElementById("white-captures"),
@@ -122,37 +118,28 @@ class View{
       this.displayPiece({pieceInitials: pieceInitials, gridPosition: team + "-captures"})
     }
   }
-
   attemptMove(){
     var target = event.currentTarget,
       endPosition = Board.gridCalculatorReverse( target.id ),
       startElement = document.getElementsByClassName("startPosition")[0],
       startPosition = Board.gridCalculatorReverse( startElement.id );
     this.unhighlLighTiles();
-    this.setClickListener();
+    this.setTileClickListener();
     gameController.attemptMove(startPosition, endPosition);
   }
-
-
-  clickHighlight(){
-    highlightTile();
-  }
-
-  setClickListener(){
+  setTileClickListener(){
     var tiles = this.retrieveTiles();
     for(let i = 0 ; i < tiles.length ; i++ ){
     	var tile = tiles[i];
     	tile.addEventListener("click", this.boundHighlightTile );
     }
   }
-
   blackCaptureDivNeedsExpanding(){
     var capturedPieces = gameController.board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
       if (JSON.parse(capturedPieces[i]).color === "black") { total++ }
     }
-    // console.log(total + " black")
     if( total === 11 ){ this.expandBlackCaptureDiv() }
   }
 
@@ -162,10 +149,8 @@ class View{
     for(let i = 0; i < capturedPieces.length; i++){
       if (JSON.parse(capturedPieces[i]).color === "white") { total++ }
     }
-    // console.log(total + " white")
     if( total === 11 ){ this.expandWhiteCaptureDiv() }
   }
-
   expandWhiteCaptureDiv(){
     var div = document.getElementById("white-captures")
     div.style.height = 98
@@ -173,5 +158,9 @@ class View{
   expandBlackCaptureDiv(){
     var div = document.getElementById("black-captures")
     div.style.height = 98
+  }
+  setUndoClickListener(){
+    var undoButton = document.getElementById("undo-button");
+    undoButton.addEventListener("click", gameController.undo.bind(gameController))
   }
 }

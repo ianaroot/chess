@@ -83,6 +83,15 @@ class GameController {
     }
   }
 
+	undo(){
+		if( this.board.previousLayouts.length){
+			this.board.undo()
+			this.nextTurn()
+			this.view.updateTeamAllowedToMove();
+			this.view.displayLayOut(this.board.layOut)
+		}
+	}
+
   prepareBlackTurn(){
     this.board.allowedToMove = "black"
   }
@@ -102,7 +111,9 @@ class GameController {
 }
 gameController = new GameController()
 gameController.view.displayLayOut(gameController.board.layOut)
-gameController.view.setClickListener()
+gameController.view.setTileClickListener()
+gameController.view.setUndoClickListener()
+
 
 
 tests = {

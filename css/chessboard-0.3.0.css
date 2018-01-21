@@ -10,6 +10,12 @@
   height: 392;
 }
 
+#undo-button {
+  position: absolute;
+  left: 620px;
+  top: 300px;
+}
+
 #arena {
   margin-left: 80px;
 }
