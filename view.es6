@@ -37,6 +37,11 @@ class View{
         this.displayPiece({pieceInitials: pieceInitials, gridPosition: gridPosition})
       }
     }
+    this.setClickListener();
+    this.updateTeamAllowedToMove();
+    this.blackCaptureDivNeedsExpanding();
+    this.whiteCaptureDivNeedsExpanding();
+    this.updateCaptures();
   }
   pieceImgSrc(pieceInitials){
     return "img/chesspieces/wikipedia/" + pieceInitials + ".png"
@@ -126,11 +131,6 @@ class View{
     this.unhighlLighTiles();
     this.setClickListener();
     gameController.attemptMove(startPosition, endPosition);
-    this.setClickListener()
-    this.updateTeamAllowedToMove()
-    this.blackCaptureDivNeedsExpanding()
-    this.whiteCaptureDivNeedsExpanding()
-    this.updateCaptures()
   }
 
 
