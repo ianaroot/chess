@@ -53,7 +53,7 @@ class View{
     return firstInitial + secondInitial
   }
   highlightTile(){
-    var target = event.currentTarget,
+    var target = arguments[0].currentTarget,
       img = target.children[0],
       position = Board.gridCalculatorReverse( target.id ),
       team = "empty";
@@ -119,7 +119,7 @@ class View{
     }
   }
   attemptMove(){
-    var target = event.currentTarget,
+    var target = arguments[0].currentTarget,
       endPosition = Board.gridCalculatorReverse( target.id ),
       startElement = document.getElementsByClassName("startPosition")[0],
       startPosition = Board.gridCalculatorReverse( startElement.id );
