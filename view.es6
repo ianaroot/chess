@@ -38,7 +38,6 @@ class View{
       }
     }
     this.setTileClickListener();
-    this.updateTeamAllowedToMove();
     this.blackCaptureDivNeedsExpanding();
     this.whiteCaptureDivNeedsExpanding();
     this.updateCaptures();

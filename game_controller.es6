@@ -43,22 +43,22 @@ class GameController {
 			promotionNotation = this.postMovementRules.pawnPromotionQuery( board )
 			let otherTeam = this.board.teamNotMoving()
 			let otherTeamsKingPosition = this.board.kingPosition(otherTeam)
+			var alertText = ""
 			if( this.postMovementRules.checkmate( board )){
-				let displayAlert = this.view.displayAlert
-				setTimeout( function(){ displayAlert("checkmate") }, 200)
+				alertText = "checkmate"
 				checkNotation = "#"
 				board.endGame()
 			}
 			if( !board.gameOver && PieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
 				let displayAlert = this.view.displayAlert
-				setTimeout( function(){ displayAlert("check") }, 200 )
+				alertText = "check"
 				checkNotation = "+"
 			}
 			this.view.displayLayOut(this.board.layOut)
 			var stalemate = this.postMovementRules.stalemate(board);
 			if( !board.gameOver && stalemate ){
 				let displayAlert = this.view.displayAlert
-				setTimeout( function(){ displayAlert("stalemate") }, 200 )
+				alertText = "stalemate"
 				board.endGame()
 			}
 			if( moveObject.fullNotation ){
@@ -72,6 +72,9 @@ class GameController {
 			}
 			this.board.recordNotation(notation)
 			if( !board.gameOver ){ this.nextTurn() }
+			this.view.updateTeamAllowedToMove();
+			let displayAlert = this.view.displayAlert
+			if(alertText){setTimeout( function(){ displayAlert(alertText) }, 200)}
 		}
 	}
 
