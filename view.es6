@@ -7,6 +7,9 @@ class View{
     this.boundHighlightTile = this.highlightTile.bind(this)
     this.boundAttemptMove = this.attemptMove.bind(this)
   }
+
+  static get TILE_HEIGHT() { return "49" }
+
   displayAlert(message){
     alert(message)
   }
@@ -23,8 +26,8 @@ class View{
       // turns out gridPosition is more like element class, and it has to be unique, so it should probably be element id
       gridPosition = args["gridPosition"];
     elem.setAttribute("src", this.pieceImgSrc( pieceInitials ) );
-    elem.setAttribute("height", "49");
-    elem.setAttribute("width", "49");
+    elem.setAttribute("height", View.TILE_HEIGHT);
+    elem.setAttribute("width", View.TILE_HEIGHT);
     var element = document.getElementById( gridPosition );
     element.appendChild(elem)
   }
