@@ -5,7 +5,7 @@
 class PieceMovementRules {
   static pieceSpecificMovements(){
     return {
-      night: function(args){
+      Night: function(args){
         var board = args["board"],
           startPosition = args["startPosition"],
           moves = [PieceMovementRules.genericMovements().nightHorizontalRightDown(), PieceMovementRules.genericMovements().nightHorizontalLeftDown(), PieceMovementRules.genericMovements().nightVerticalRightDown(),
@@ -20,7 +20,7 @@ class PieceMovementRules {
         };
         return  moves
       },
-      rook: function(args){
+      Rook: function(args){
         var board = args["board"],
           startPosition = args["startPosition"],
           moves = [PieceMovementRules.genericMovements().horizontalRight(), PieceMovementRules.genericMovements().horizontalLeft(), PieceMovementRules.genericMovements().verticalUp(), PieceMovementRules.genericMovements().verticalDown()]
@@ -32,7 +32,7 @@ class PieceMovementRules {
         };
         return moves
       },
-      bishop: function(args){
+      Bishop: function(args){
         var board = args["board"],
           startPosition = args["startPosition"],
           moves = [PieceMovementRules.genericMovements().forwardSlashDown(), PieceMovementRules.genericMovements().forwardSlashUp(), PieceMovementRules.genericMovements().backSlashDown(), PieceMovementRules.genericMovements().backSlashUp()]
@@ -44,10 +44,10 @@ class PieceMovementRules {
         };
         return moves
       },
-      queen: function(args){
+      Queen: function(args){
         var board = args["board"],
           startPosition = args["startPosition"],
-          moves =  PieceMovementRules.pieceSpecificMovements().rook({startPosition: startPosition, board: board}).concat( PieceMovementRules.pieceSpecificMovements().bishop({startPosition: startPosition, board: board}) )
+          moves =  PieceMovementRules.pieceSpecificMovements().Rook({startPosition: startPosition, board: board}).concat( PieceMovementRules.pieceSpecificMovements().Bishop({startPosition: startPosition, board: board}) )
         for (var key in moves) {
           if (moves.hasOwnProperty(key)) {
             moves[key].rangeLimit = 7;
@@ -56,7 +56,7 @@ class PieceMovementRules {
         };
         return moves
       },
-      king: function(args){
+      King: function(args){
         var board = args["board"],
           startPosition = args["startPosition"],
           moves = [PieceMovementRules.genericMovements().horizontalRight(), PieceMovementRules.genericMovements().horizontalLeft(), PieceMovementRules.genericMovements().verticalUp(), PieceMovementRules.genericMovements().verticalDown(),
@@ -142,13 +142,13 @@ class PieceMovementRules {
           newPossibility.pieceNotation = ""
           movements = movements.concat(newPossibility)
         };
-        if( board.upAndLeftIsAttackable({position: startPosition, attackingTeamString: "white"}) ){
+        if( board.upAndLeftIsAttackable({position: startPosition, attackingTeamString: Board.WHITE}) ){
           var newPossibility = PieceMovementRules.genericMovements().backSlashUp()
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = Board.file(startPosition)
           movements = movements.concat(newPossibility)
         };
-        if( board.upAndRightIsAttackable({position: startPosition, attackingTeamString: "white"}) ){
+        if( board.upAndRightIsAttackable({position: startPosition, attackingTeamString: Board.WHITE}) ){
           var newPossibility = PieceMovementRules.genericMovements().forwardSlashUp()
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = Board.file(startPosition)
@@ -209,13 +209,13 @@ class PieceMovementRules {
           newPossibility.pieceNotation = ""
           movements = movements.concat(newPossibility)
         };
-        if( board.downAndLeftIsAttackable({position: startPosition, attackingTeamString: "black"}) ){
+        if( board.downAndLeftIsAttackable({position: startPosition, attackingTeamString: Board.BLACK}) ){
           var newPossibility = PieceMovementRules.genericMovements().forwardSlashDown()
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = Board.file(startPosition)
           movements = movements.concat(newPossibility)
         };
-        if( board.downAndRightIsAttackable({position: startPosition, attackingTeamString: "black"}) ){
+        if( board.downAndRightIsAttackable({position: startPosition, attackingTeamString: Board.BLACK}) ){
           var newPossibility = PieceMovementRules.genericMovements().backSlashDown()
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = Board.file(startPosition)
@@ -449,8 +449,8 @@ class PieceMovementRules {
       positionString = layOut[position],
       stringLength = positionString.length,
       pieceType = board.pieceTypeAt(position)
-      pieceType = pieceType.charAt(0).toLowerCase() + pieceType.slice(1);
-    if( pieceType === "pawn" ){ pieceType = board.teamAt(position) + board.pieceTypeAt(position) }
+      pieceType = pieceType.charAt(0) + pieceType.slice(1);
+    if( pieceType === Board.PAWN ){ pieceType = board.teamAt(position) + board.pieceTypeAt(position) }
     var availableMovements = PieceMovementRules.pieceSpecificMovements()[pieceType]
     return availableMovements
   }
@@ -484,7 +484,7 @@ class PieceMovementRules {
       var enemyPosition = enemyPositions[i],
         availableMovements = PieceMovementRules.retrieveAvailableMovements( {position: enemyPosition, board: board} ),
         enemyPieceType = board.pieceTypeAt( enemyPosition );
-        if( enemyPieceType !== "King" && PieceMovementRules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
+        if( enemyPieceType !== Board.KING && PieceMovementRules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
         danger = true
         }
     };

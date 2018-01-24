@@ -25,7 +25,7 @@ class GameController {
 		if( board.gameOver ){
 			return
 		}
-		if( team == "empty" ){
+		if( team == Board.EMPTY ){
 			alert("that tile is empty")
 			return
 		}
@@ -79,7 +79,7 @@ class GameController {
 	}
 
   nextTurn(){
-    if( this.board.allowedToMove === "white" ){
+    if( this.board.allowedToMove === Board.WHITE ){
       this.prepareBlackTurn()
     } else{
       this.prepareWhiteTurn()
@@ -96,11 +96,11 @@ class GameController {
 	}
 
   prepareBlackTurn(){
-    this.board.allowedToMove = "black"
+    this.board.allowedToMove = Board.BLACK
   }
 
   prepareWhiteTurn(){
-    this.board.allowedToMove = "white"
+    this.board.allowedToMove = Board.WHITE
   }
 	runMoves(moveArray){
 		var func = this.runMoves.bind(this)

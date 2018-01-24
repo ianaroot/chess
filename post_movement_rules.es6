@@ -24,10 +24,10 @@ class PostMovementRules {
   noLegalMoves(board){
     var movingTeamString = board.allowedToMove,
       noLegalMoves = true;
-    if(movingTeamString === "black"){
-      var onDeckTeamString = "white"
+    if(movingTeamString === Board.BLACK){
+      var onDeckTeamString = Board.WHITE
     } else {
-      var onDeckTeamString = "black"
+      var onDeckTeamString = Board.BLACK
     }
     var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
     for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){

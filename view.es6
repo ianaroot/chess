@@ -33,7 +33,7 @@ class View{
       var gridPosition = Board.gridCalculator(i),
           pieceInitials = this.pieceInitials(layOut[i]);
       this.undisplayPiece(gridPosition);
-      if( JSON.parse(layOut[i]).color !== "empty" ){
+      if( JSON.parse(layOut[i]).color !== Board.EMPTY ){
         this.displayPiece({pieceInitials: pieceInitials, gridPosition: gridPosition})
       }
     }
@@ -55,7 +55,7 @@ class View{
     var target = arguments[0].currentTarget,
       img = target.children[0],
       position = Board.gridCalculatorReverse( target.id ),
-      team = "empty";
+      team = Board.EMPTY;
     this.unhighlLighTiles();
     this.setTileClickListener();
     if (img) {
@@ -82,9 +82,9 @@ class View{
     var regex = /(\w)[A-Z]\.png$/,
       teamInitial = src.match(regex)[1];
     if( teamInitial === "b"){
-      return "black";
+      return Board.BLACK;
     }else if (teamInitial === "w") {
-      return "white";
+      return Board.WHITE;
     }else {
       alert("error in teamSet")
     }
@@ -137,7 +137,7 @@ class View{
     var capturedPieces = gameController.board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
-      if (JSON.parse(capturedPieces[i]).color === "black") { total++ }
+      if (JSON.parse(capturedPieces[i]).color === Board.BLACK) { total++ }
     }
     if( total === 11 ){ this.expandBlackCaptureDiv() }
   }
@@ -146,7 +146,7 @@ class View{
     var capturedPieces = gameController.board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
-      if (JSON.parse(capturedPieces[i]).color === "white") { total++ }
+      if (JSON.parse(capturedPieces[i]).color === Board.WHITE) { total++ }
     }
     if( total === 11 ){ this.expandWhiteCaptureDiv() }
   }
