@@ -17,6 +17,8 @@ class Board {
   static get BISHOP() { return "Bishop" }
   static get QUEEN()  { return "Queen" }
   static get KING()   { return "King" }
+  static get DARK()   { return "dark" }
+  static get LIGHT()  { return "light" }
 
 
   static defaultLayOut(){
@@ -72,9 +74,9 @@ class Board {
       sum   = div + mod,
       squareColor = "";
     if (sum % 2 === 0){
-      squareColor = "dark"
+      squareColor = Board.DARK
     } else {
-      squareColor = "light"
+      squareColor = Board.LIGHT
     }
     return squareColor;
   }
