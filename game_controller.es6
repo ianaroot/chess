@@ -105,6 +105,7 @@ class GameController {
 	runMoves(moveArray){
 		var func = this.runMoves.bind(this)
 		if (moveArray.length > 1 ) {
+			console.log('move is ' + moveArray[0] + ' to ' + moveArray[1])
 			this.attemptMove( moveArray[0], moveArray[1] )
 			moveArray.shift()
 			moveArray.shift()

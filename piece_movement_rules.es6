@@ -265,7 +265,7 @@ class PieceMovementRules {
           movements = movements.concat(newPossibility)
         }
         // DOUBLESTEPBLACK
-        if (teamString === Board.BLACK && board.twoSpacesDownIsEmpty(startPosition) ){
+        if (teamString === Board.BLACK && Board.isSeventhRank(startPosition) && board.twoSpacesDownIsEmpty(startPosition) ){
           // will the twoSpaces Down check get covered later anyway?
           var newPossibility = PieceMovementRules.genericMovements().verticalDown()
           newPossibility.rangeLimit = 2
@@ -273,7 +273,7 @@ class PieceMovementRules {
           movements = movements.concat(newPossibility)
         }
         // DOUBLESTEPWHITE
-        if ( teamString === Board.WHITE && board.twoSpacesUpIsEmpty( startPosition ) ) {
+        if ( teamString === Board.WHITE && Board.isSecondRank(startPosition) && board.twoSpacesUpIsEmpty( startPosition ) ) {
           var newPossibility = PieceMovementRules.genericMovements().verticalUp()
           newPossibility.rangeLimit = 2
           newPossibility.pieceNotation = ""
