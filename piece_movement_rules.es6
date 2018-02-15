@@ -188,9 +188,7 @@ class PieceMovementRules {
           newPossibility.pieceNotation = Board.file(startPosition)
           newPossibility.additionalActions = function(args){
             var position = args["position"];
-            console.log( board.capturedPieces )
             var captureNotation = this.capture(startPosition - 1);
-            console.log( board.capturedPieces )
             return captureNotation
             // this is not really just a notation it's an action
           }
