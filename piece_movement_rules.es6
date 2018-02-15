@@ -106,267 +106,95 @@ class PieceMovementRules {
         };
         return moves
       },
-      // whitePawn: function(args){
-      //   var board = args["board"],
-      //     startPosition = args["startPosition"],
-      //     movements = [],
-      //     enPassantLeft = (args) => {
-      //       var position = args["position"],
-      //         board = args["board"];
-      //       if( Board.rank(position) === 5 && board.blackPawnAt(position - 1) && board.blackPawnDoubleSteppedFrom(position + 15) ){
-      //         // not making use of this number as expected, may as well return true
-      //         return true
-      //       }
-      //     },
-      //     enPassantRight = (args) => {
-      //       var board = args["board"],
-      //         position = args["position"];
-      //       if( Board.rank(position) === 5 && board.blackPawnAt(position + 1) && board.blackPawnDoubleSteppedFrom(position + 17) ){
-      //         return true
-      //       }
-      //     };
-      //   if( Board.isSecondRank(startPosition) && board.twoSpacesUpIsEmpty( startPosition ) ){
-      //     var newPossibility = PieceMovementRules.genericMovements().verticalUp()
-      //     newPossibility.rangeLimit = 2
-      //     newPossibility.pieceNotation = ""
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   if( board.oneSpaceUpIsEmpty(startPosition) ){
-      //     var newPossibility = PieceMovementRules.genericMovements().verticalUp()
-      //     newPossibility.rangeLimit = 1
-      //     newPossibility.pieceNotation = ""
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   if( board.upAndLeftIsAttackable({position: startPosition, attackingTeamString: Board.WHITE}) ){
-      //     var newPossibility = PieceMovementRules.genericMovements().backSlashUp()
-      //     newPossibility.rangeLimit = 1
-      //     newPossibility.pieceNotation = Board.file(startPosition)
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   if( board.upAndRightIsAttackable({position: startPosition, attackingTeamString: Board.WHITE}) ){
-      //     var newPossibility = PieceMovementRules.genericMovements().forwardSlashUp()
-      //     newPossibility.rangeLimit = 1
-      //     newPossibility.pieceNotation = Board.file(startPosition)
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   if( enPassantLeft( {position: startPosition, board: board}) ){
-      //     var newPossibility = PieceMovementRules.genericMovements().backSlashUp()
-      //     newPossibility.rangeLimit = 1
-      //     newPossibility.pieceNotation = Board.file(startPosition)
-      //     newPossibility.additionalActions = function(args){
-      //       var position = args["position"],
-      //         captureNotation = this.capture(position - 1);
-      //       return captureNotation
-      //       // this is not really just a notation it's an action
-      //     }
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   if( enPassantRight( {position: startPosition, board: board}) ){
-      //     var newPossibility = PieceMovementRules.genericMovements().forwardSlashUp()
-      //     newPossibility.rangeLimit = 1
-      //     newPossibility.pieceNotation = Board.file(startPosition)
-      //     newPossibility.additionalActions = function(args){
-      //       var position = args["position"],
-      //         captureNotation = this.capture(position + 1);
-      //       return captureNotation
-      //       // this is not really just a notation it's an action
-      //     }
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   return movements
-      // },
-      // blackPawn: function(args){
-      //   var board = args["board"],
-      //     startPosition = args["startPosition"],
-      //     enPassantTarget,
-      //     movements = [],
-      //     enPassantRight = (args) => {
-      //       var position = args["position"],
-      //         board = args["board"];
-      //       if( Board.rank(position) === 4 && board.whitePawnAt(position + 1) && board.whitePawnDoubleSteppedFrom(position - 15) ){
-      //         return true
-      //       }
-      //     },
-      //     enPassantLeft= (args) => {
-      //       var board = args["board"],
-      //         position = args["position"];
-      //       if( Board.rank(position) === 4 && board.whitePawnAt(position - 1) && board.whitePawnDoubleSteppedFrom(position - 17) ){
-      //         return true
-      //       }
-      //     };
-      //   if( Board.isSeventhRank(startPosition) && board.twoSpacesDownIsEmpty(startPosition) ){
-      //     // will the twoSpaces Down check get covered later anyway?
-      //     var newPossibility = PieceMovementRules.genericMovements().verticalDown()
-      //     newPossibility.rangeLimit = 2
-      //     newPossibility.pieceNotation = ""
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   if( board.oneSpaceDownIsEmpty(startPosition) ){
-      //     var newPossibility = PieceMovementRules.genericMovements().verticalDown()
-      //     newPossibility.rangeLimit = 1
-      //     newPossibility.pieceNotation = ""
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   if( board.downAndLeftIsAttackable({position: startPosition, attackingTeamString: Board.BLACK}) ){
-      //     var newPossibility = PieceMovementRules.genericMovements().forwardSlashDown()
-      //     newPossibility.rangeLimit = 1
-      //     newPossibility.pieceNotation = Board.file(startPosition)
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   if( board.downAndRightIsAttackable({position: startPosition, attackingTeamString: Board.BLACK}) ){
-      //     var newPossibility = PieceMovementRules.genericMovements().backSlashDown()
-      //     newPossibility.rangeLimit = 1
-      //     newPossibility.pieceNotation = Board.file(startPosition)
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   if( enPassantLeft( {position: startPosition, board: board}) ){
-      //     var newPossibility = PieceMovementRules.genericMovements().forwardSlashDown()
-      //     newPossibility.rangeLimit = 1
-      //     newPossibility.pieceNotation = Board.file(startPosition)
-      //     newPossibility.additionalActions = function(args){
-      //       var position = args["position"],
-      //         captureNotation = this.capture(position - 1);
-      //       return captureNotation
-      //       // this is not really just a notation it's an action
-      //     }
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   if( enPassantRight( {position: startPosition, board: board}) ){
-      //     var newPossibility = PieceMovementRules.genericMovements().backSlashDown()
-      //     newPossibility.rangeLimit = 1
-      //     newPossibility.pieceNotation = Board.file(startPosition)
-      //     newPossibility.additionalActions = function(args){
-      //       var position = args["position"],
-      //         captureNotation = this.capture(position + 1);
-      //       return captureNotation
-      //       // this is not really just a notation it's an action
-      //     }
-      //     movements = movements.concat(newPossibility)
-      //   };
-      //   return movements
-      // },
       Pawn: function(args){
         var board = args["board"],
-          startPosition = args["startPosition"],
-          movements = [],
-          teamString = board.teamAt(startPosition);
-        //BLACKSINGLESTEP
-        if ( teamString === Board.BLACK && board.oneSpaceDownIsEmpty(startPosition) ){
-          var newPossibility = PieceMovementRules.genericMovements().verticalDown()
+        startPosition = args["startPosition"],
+        movements = [],
+        teamString = board.teamAt(startPosition),
+          colorVars = {
+            black: {
+              startRank: 7,
+              nonAttackMove: PieceMovementRules.genericMovements().verticalDown(),
+              singleStepCheck: board.oneSpaceDownIsEmpty(startPosition),
+              doubleStepCheck: Board.isSeventhRank(startPosition) && board.twoSpacesDownIsEmpty(startPosition),
+              leftAttackCheck: board.downAndLeftIsAttackable(startPosition),
+              leftAttackMove: PieceMovementRules.genericMovements().forwardSlashDown(),
+              rightAttackCheck: board.downAndRightIsAttackable(startPosition),
+              rightAttackMove: PieceMovementRules.genericMovements().backSlashDown(),
+              rightEnPassantCheck: Board.rank(startPosition) === 4 && board.whitePawnAt(startPosition + 1) && board.whitePawnDoubleSteppedFrom(startPosition - 15),
+              leftEnPassantCheck: Board.rank(startPosition) === 4 && board.whitePawnAt(startPosition - 1) && board.whitePawnDoubleSteppedFrom(startPosition - 17),
+            },
+            white: {
+              startRank: 2,
+              nonAttackMove: PieceMovementRules.genericMovements().verticalUp(),
+              singleStepCheck: board.oneSpaceUpIsEmpty(startPosition),
+              doubleStepCheck: Board.isSecondRank(startPosition) && board.twoSpacesUpIsEmpty( startPosition ),
+              leftAttackCheck: board.upAndLeftIsAttackable(startPosition),
+              // attackChecks don't need to intake obj anymore
+              leftAttackMove: PieceMovementRules.genericMovements().backSlashUp(),
+              rightAttackCheck: board.upAndRightIsAttackable(startPosition ),
+              rightAttackMove: PieceMovementRules.genericMovements().forwardSlashUp(),
+              leftEnPassantCheck: Board.rank(startPosition) === 5 && board.blackPawnAt(startPosition - 1) && board.blackPawnDoubleSteppedFrom(startPosition + 15),
+              rightEnPassantCheck: Board.rank(startPosition) === 5 && board.blackPawnAt(startPosition + 1) && board.blackPawnDoubleSteppedFrom(startPosition + 17),
+            }
+          },
+          pawnVars = colorVars[teamString];
+        // SINGLE STEP
+        if ( pawnVars.singleStepCheck ) {
+          var newPossibility = pawnVars.nonAttackMove
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = ""
           movements = movements.concat(newPossibility)
         }
-        // WHITESINGLESTEP
-        if ( teamString === Board.WHITE && board.oneSpaceUpIsEmpty(startPosition) ) {
-          var newPossibility = PieceMovementRules.genericMovements().verticalUp()
-          newPossibility.rangeLimit = 1
-          newPossibility.pieceNotation = ""
-          movements = movements.concat(newPossibility)
-        }
-        // DOUBLESTEPBLACK
-        if (teamString === Board.BLACK && Board.isSeventhRank(startPosition) && board.twoSpacesDownIsEmpty(startPosition) ){
+        // DOUBLESTEP
+        if ( pawnVars.doubleStepCheck ){
           // will the twoSpaces Down check get covered later anyway?
-          var newPossibility = PieceMovementRules.genericMovements().verticalDown()
+            var newPossibility = pawnVars.nonAttackMove
           newPossibility.rangeLimit = 2
           newPossibility.pieceNotation = ""
           movements = movements.concat(newPossibility)
         }
-        // DOUBLESTEPWHITE
-        if ( teamString === Board.WHITE && Board.isSecondRank(startPosition) && board.twoSpacesUpIsEmpty( startPosition ) ) {
-          var newPossibility = PieceMovementRules.genericMovements().verticalUp()
-          newPossibility.rangeLimit = 2
-          newPossibility.pieceNotation = ""
+        // STANDARD ATTACKS
+        if ( pawnVars.leftAttackCheck ) {
+          var newPossibility = pawnVars.leftAttackMove
+          newPossibility.rangeLimit = 1
+          newPossibility.pieceNotation = Board.file(startPosition)
           movements = movements.concat(newPossibility)
         }
-        // BLACKATTACKS
-        if ( teamString === Board.BLACK ) {
-          if ( board.downAndLeftIsAttackable({position: startPosition, attackingTeamString: Board.BLACK}) ) {
-            var newPossibility = PieceMovementRules.genericMovements().forwardSlashDown()
-            newPossibility.rangeLimit = 1
-            newPossibility.pieceNotation = Board.file(startPosition)
-            movements = movements.concat(newPossibility)
+        if( pawnVars.rightAttackCheck ) {
+          var newPossibility = pawnVars.rightAttackMove
+          newPossibility.rangeLimit = 1
+          newPossibility.pieceNotation = Board.file(startPosition)
+          movements = movements.concat(newPossibility)
+        };
+        // EN PASSANT
+        // RIGHT
+        if( pawnVars.rightEnPassantCheck ){
+          var newPossibility = pawnVars.rightAttackMove
+          newPossibility.rangeLimit = 1
+          newPossibility.pieceNotation = Board.file(startPosition)
+          newPossibility.additionalActions = function(args){
+            var position = args["position"],
+              captureNotation = this.capture(startPosition + 1);
+            return captureNotation
+            // this is not really just a notation it's an action... or is it, i think the return is a notation, but the action is occurring right here.
           }
-          if( board.downAndRightIsAttackable({position: startPosition, attackingTeamString: Board.BLACK}) ) {
-            var newPossibility = PieceMovementRules.genericMovements().backSlashDown()
-            newPossibility.rangeLimit = 1
-            newPossibility.pieceNotation = Board.file(startPosition)
-            movements = movements.concat(newPossibility)
-          };
+          movements = movements.concat(newPossibility)
         }
-        // WHITEATTACKS
-        if ( teamString === Board.WHITE ) {
-          if( board.upAndLeftIsAttackable({position: startPosition, attackingTeamString: Board.WHITE}) ){
-            var newPossibility = PieceMovementRules.genericMovements().backSlashUp()
-            newPossibility.rangeLimit = 1
-            newPossibility.pieceNotation = Board.file(startPosition)
-            movements = movements.concat(newPossibility)
-          };
-          if( board.upAndRightIsAttackable({position: startPosition, attackingTeamString: Board.WHITE}) ){
-            var newPossibility = PieceMovementRules.genericMovements().forwardSlashUp()
-            newPossibility.rangeLimit = 1
-            newPossibility.pieceNotation = Board.file(startPosition)
-            movements = movements.concat(newPossibility)
-          };
-        }
-        // BLACKENPASSANT
-        if ( teamString === Board.BLACK ) {
-          // RIGHT
-          if( Board.rank(startPosition) === 4 && board.whitePawnAt(startPosition + 1) && board.whitePawnDoubleSteppedFrom(startPosition - 15) ){
-            var newPossibility = PieceMovementRules.genericMovements().backSlashDown()
-            newPossibility.rangeLimit = 1
-            newPossibility.pieceNotation = Board.file(startPosition)
-            newPossibility.additionalActions = function(args){
-              var position = args["position"],
-                captureNotation = this.capture(startPosition + 1);
-              return captureNotation
-              // this is not really just a notation it's an action
-            }
-            movements = movements.concat(newPossibility)
+        // LEFT
+        if( pawnVars.leftEnPassantCheck ){
+          var newPossibility = pawnVars.leftAttackMove
+          newPossibility.rangeLimit = 1
+          newPossibility.pieceNotation = Board.file(startPosition)
+          newPossibility.additionalActions = function(args){
+            var position = args["position"];
+            console.log( board.capturedPieces )
+            var captureNotation = this.capture(startPosition - 1);
+            console.log( board.capturedPieces )
+            return captureNotation
+            // this is not really just a notation it's an action
           }
-          // LEFT
-          if( Board.rank(startPosition) === 4 && board.whitePawnAt(startPosition - 1) && board.whitePawnDoubleSteppedFrom(startPosition - 17) ){
-            var newPossibility = PieceMovementRules.genericMovements().forwardSlashDown()
-            newPossibility.rangeLimit = 1
-            newPossibility.pieceNotation = Board.file(startPosition)
-            newPossibility.additionalActions = function(args){
-              var position = args["position"],
-                captureNotation = this.capture(startPosition - 1);
-              return captureNotation
-              // this is not really just a notation it's an action
-            }
-            movements = movements.concat(newPossibility)
-          }
-
-        }
-        // WHITEENPASSANT
-        if ( teamString === Board.WHITE  ) {
-          // LEFT
-          if( Board.rank(startPosition) === 5 && board.blackPawnAt(startPosition - 1) && board.blackPawnDoubleSteppedFrom(startPosition + 15) ){
-            var newPossibility = PieceMovementRules.genericMovements().backSlashUp()
-            newPossibility.rangeLimit = 1
-            newPossibility.pieceNotation = Board.file(startPosition)
-            newPossibility.additionalActions = function(args){
-              var position = args["position"],
-                captureNotation = this.capture(startPosition - 1);
-              return captureNotation
-              // this is not really just a notation it's an action
-            }
-            movements = movements.concat(newPossibility)
-          }
-          // RIGHT
-          if( Board.rank(startPosition) === 5 && board.blackPawnAt(startPosition + 1) && board.blackPawnDoubleSteppedFrom(startPosition + 17) ){
-            var newPossibility = PieceMovementRules.genericMovements().forwardSlashUp()
-            newPossibility.rangeLimit = 1
-            newPossibility.pieceNotation = Board.file(startPosition)
-            newPossibility.additionalActions = function(args){
-              var position = args["position"],
-                captureNotation = this.capture(startPosition + 1);
-              return captureNotation
-              // this is not really just a notation it's an action
-            }
-            movements = movements.concat(newPossibility)
-          }
+          movements = movements.concat(newPossibility)
         }
       return movements;
       }

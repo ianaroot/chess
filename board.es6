@@ -268,31 +268,27 @@ class Board {
     return this.positionEmpty(position - 16)
   }
 
-  downAndLeftIsAttackable(args){
-    var position = args["position"],
-      attackingTeamString = args["attackingTeamString"],
-      positionDownAndLeft = position - 9;
+  downAndLeftIsAttackable(startPosition){
+    var positionDownAndLeft = startPosition - 9;
     if( Board.inBounds( positionDownAndLeft )){
       var pieceString = this.layOut[positionDownAndLeft],
         pieceTeam = Board.parseTeam(pieceString);
 
-      return this.occupiedByOpponent({position: positionDownAndLeft, teamString: attackingTeamString}) && Board.squareColor(position) === Board.squareColor(positionDownAndLeft)
+      return this.occupiedByOpponent({position: positionDownAndLeft, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndLeft)
     } else {
       // down and left would be off board
       return false
     }
   }
 
-  downAndRightIsAttackable(args){
-    var position = args["position"],
-      attackingTeamString = args["attackingTeamString"],
-      positionDownAndRight = position - 7;
+  downAndRightIsAttackable(startPosition){
+    var positionDownAndRight = startPosition - 7;
 
     if( Board.inBounds( positionDownAndRight ) ){
       var pieceString = this.layOut[positionDownAndRight],
         pieceTeam = Board.parseTeam(pieceString);
 
-      return this.occupiedByOpponent({position: positionDownAndRight, teamString: attackingTeamString}) && Board.squareColor(position) === Board.squareColor(positionDownAndRight)
+      return this.occupiedByOpponent({position: positionDownAndRight, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndRight)
     } else {
       return false
     }
@@ -306,31 +302,27 @@ class Board {
     return this.positionEmpty( position + 8)
   }
 
-  upAndLeftIsAttackable(args){
-    var position = args["position"],
-      attackingTeamString = args["attackingTeamString"],
-      positionUpAndLeft = position + 7;
+  upAndLeftIsAttackable(startPosition){
+    var positionUpAndLeft = startPosition + 7;
 
     if( Board.inBounds( positionUpAndLeft)){
       var pieceObject = JSON.parse(this.layOut[positionUpAndLeft]),
       // there are places i'm not using parse team where i should be
         pieceTeam = Board.parseTeam(pieceObject);
-      return this.occupiedByOpponent({position: positionUpAndLeft, teamString: attackingTeamString}) && Board.squareColor(position) === Board.squareColor(positionUpAndLeft)
+      return this.occupiedByOpponent({position: positionUpAndLeft, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndLeft)
     } else {
       return false
     }
   }
 
-  upAndRightIsAttackable(args){
-    var position = args["position"],
-      attackingTeamString = args["attackingTeamString"],
-      positionUpAndRight = position + 9;
+  upAndRightIsAttackable(startPosition){
+    var positionUpAndRight = startPosition + 9;
 
     if( Board.inBounds( positionUpAndRight)){
       var pieceString = this.layOut[positionUpAndRight],
         pieceTeam = Board.parseTeam(pieceString);
 
-      return this.occupiedByOpponent({position: positionUpAndRight, teamString: attackingTeamString}) && Board.squareColor(position) === Board.squareColor(positionUpAndRight)
+      return this.occupiedByOpponent({position: positionUpAndRight, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndRight)
     } else {
       return false
     }
