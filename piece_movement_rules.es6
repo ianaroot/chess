@@ -224,7 +224,9 @@ class PieceMovementRules {
           increment: "+9",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
+            // this is the wettest line of code i've ever seen
             return (endPosition) % 8 > (startPosition % 8) && Board.inBounds(endPosition)
+            // can factor out these boundary calculations
           }
         }
       },
@@ -395,14 +397,15 @@ class PieceMovementRules {
       throw new Error("missing params in retrieveAvailableMovements")
     }
     var  board = args["board"],
-      layOut = board.layOut,
       position = args["position"],
-      positionString = layOut[position],
-      stringLength = positionString.length,
       pieceType = board.pieceTypeAt(position);
       // pieceType = pieceType.charAt(0) + pieceType.slice(1);
     // if( pieceType === Board.PAWN ){ pieceType = board.teamAt(position) + board.pieceTypeAt(position) }
     var availableMovements = PieceMovementRules.pieceSpecificMovements()[pieceType]
+    // TODO move pieceSPecificMovementRules over to MOve object
+    // back in move is illegal, make attachMoves function. move object already knows it's board and position and can
+    // calculate all the shit on it's own
+    // MOVE Object will store a dryer version of the boundary checks, the generic movements, all that cool shit
     return availableMovements
   }
   static kingInCheck(args){ // can just pass in same position as start and end if you want to know whether not moving anything creates check
