@@ -105,7 +105,7 @@ the view consists of the following six functions :
 
 GAMECONTROLLER
   the GameController sort of runs the show. it is in charge of managing the other objects to whatever degree possible, and user input and such
-  at current the GameController is basically a one trick pony. it has no state and outside of functions made to test functionality, the bulk of it is just the attemptMove function
+  at current the GameController is basically a one trick pony. it has no state and outside of functions made to test functionality (bullshit! it's injected with an instance of every other object on creation!), the bulk of it is just the attemptMove function
   outside of attemptMove the only functions on the GameController are three functions dedicated to changing the board state regarding whose turn it is
   perhaps everything on the GameController could be extracted over to the board?
 
