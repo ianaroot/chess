@@ -1,3 +1,4 @@
+// TOOD determine before highlighting whether move will lead to check and is therefore illegal.
 // viable positions from errors when called on empty position
 // even if move is illegal catches it, having viablePositions return illegal positions, such as checked castling, is gonna be problematic, like when i get to where i'm highlighting legal positions to move to
 // throw error if args missing. make a reusable function, throw it in some stuff
