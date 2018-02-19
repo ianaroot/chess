@@ -432,6 +432,7 @@ class Board {
   }
 
   positionEmpty(position){
+    console.log(position)
     return JSON.parse(this.layOut[position]).color === Board.EMPTY
   }
 

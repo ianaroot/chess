@@ -32,8 +32,8 @@ class PostMovementRules {
     var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
     for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       var startPosition = occcupiedPositions[i],
-        viablePositions = PieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board});
-      for( var key in viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
+        movesCalculator = PieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board});
+      for( var key in movesCalculator.viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
         if( !PieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
           noLegalMoves = false
         }

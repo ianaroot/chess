@@ -131,10 +131,10 @@ class PieceMovementRules {
     ){
       throw new Error("missing params in viablePositionsFromKeysOnly")
     }
-    var viablePositions = PieceMovementRules.viablePositionsFrom(args),
+    var movesCalculator = PieceMovementRules.viablePositionsFrom(args),
       keysOnly = [];
-      for (var property in viablePositions) {
-        if (viablePositions.hasOwnProperty(property)) {
+      for (var property in movesCalculator.viablePositions) {
+        if (movesCalculator.viablePositions.hasOwnProperty(property)) {
           keysOnly.push(property)
       }
     }
