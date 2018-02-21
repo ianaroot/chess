@@ -1,5 +1,5 @@
 class MovesCalculator {
-  constructor(options = {  illegal: undefined, startPosition: undefined, alert: undefined, board: undefined, moves: []
+  constructor(options = {  illegal: undefined, startPosition: undefined, alert: undefined, board: undefined, moves: [], ignoreCastles: undefined
   }){
 
     this.startPosition = options["startPosition"]
@@ -8,13 +8,14 @@ class MovesCalculator {
     this.board = options["board"]
     this.moves = []
     this.viablePositions = {}
+    this.ignoreCastles = options["ignoreCastles"]
   }
   addMoves(){
     if ( this.startPosition === undefined || !this.board){
       debugger
       throw new Error("moveObject missing startPosition or board in addMovementTypesAndBoundaryChecks")
     } else {
-      this. moves = MovesCalculator.pieceSpecificMovements()[this.board.pieceTypeAt(this.startPosition)]({startPosition: this.startPosition, board: this.board})
+      this. moves = MovesCalculator.pieceSpecificMovements()[this.board.pieceTypeAt(this.startPosition)]({startPosition: this.startPosition, board: this.board, ignoreCastles: this.ignoreCastles})
     }
   }
 
@@ -261,6 +262,7 @@ class MovesCalculator {
       King: function(args){
         var board = args["board"],
           startPosition = args["startPosition"],
+          ignoreCastles = args["ignoreCastles"],
           moves = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown(),
                     MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()
                   ];
@@ -268,8 +270,11 @@ class MovesCalculator {
           moves[i].rangeLimit = 1;
           moves[i].pieceNotation = "K"
         };
+        // if(ignoreCastles){
+          console.log("ignoreCastles is " +ignoreCastles)
+        // }
         // TODO def some big changes up in here
-        if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition)
+        if ( !ignoreCastles && board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition)
           && !PieceMovementRules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
           && !PieceMovementRules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition + 1), board: board })
           ){
@@ -287,7 +292,7 @@ class MovesCalculator {
           }
           moves.push(castle)
         };
-        if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition)
+        if ( !ignoreCastles && board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition)
           && !PieceMovementRules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
           && !PieceMovementRules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
           var castle = MovesCalculator.genericMovements().horizontalRight()

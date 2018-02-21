@@ -34,6 +34,7 @@ class GameController {
 			return
 		}
 		var moveObject = PieceMovementRules.moveIsIllegal(startPosition, endPosition, board);
+
 		if( moveObject.illegal ){
 			this.view.displayAlert(moveObject.alert)
 			return
@@ -49,7 +50,7 @@ class GameController {
 				checkNotation = "#"
 				board.endGame()
 			}
-			if( !board.gameOver && PieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
+			if( !board.gameOver && PieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board, ignoreCastles: true} )){
 				let displayAlert = this.view.displayAlert
 				alertText = "check"
 				checkNotation = "+"
@@ -105,7 +106,7 @@ class GameController {
 	runMoves(moveArray){
 		var func = this.runMoves.bind(this)
 		if (moveArray.length > 1 ) {
-			console.log('move is ' + moveArray[0] + ' to ' + moveArray[1])
+			// console.log('move is ' + moveArray[0] + ' to ' + moveArray[1])
 			this.attemptMove( moveArray[0], moveArray[1] )
 			moveArray.shift()
 			moveArray.shift()

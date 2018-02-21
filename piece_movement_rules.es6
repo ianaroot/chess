@@ -54,16 +54,9 @@ class PieceMovementRules {
     }
     var  board = args["board"],
       position = args["position"],
-      // pieceType = board.pieceTypeAt(position);
-      // pieceType = pieceType.charAt(0) + pieceType.slice(1);
-      // var availableMovements = PieceMovementRules.pieceSpecificMovements()[pieceType]
-
-      movesCalculator = new MovesCalculator({board: board, startPosition: position})
+      ignoreCastles = args["ignoreCastles"],
+      movesCalculator = new MovesCalculator({board: board, startPosition: position, ignoreCastles: ignoreCastles})
       movesCalculator.addMoves()
-    // TODO move pieceSPecificMovementRules over to MOve object
-    // back in move is illegal, make attachMoves function. move object already knows it's board and position and can
-    // calculate all the shit on it's own
-    // MOVE Object will store a dryer version of the boundary checks, the generic movements, all that cool shit
     return movesCalculator
   }
 
@@ -82,6 +75,7 @@ class PieceMovementRules {
         endPosition        = args["endPosition"],
         board              = args["board"],
         additionalActions  = args["additionalActions"],
+        ignoreCastles      = args["ignoreCastles"],
         layOut             = board.layOut,
         pieceString        = layOut[startPosition],
         teamString         = board.teamAt(startPosition),
@@ -95,7 +89,7 @@ class PieceMovementRules {
     var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
     for(var i = 0; i < enemyPositions.length; i++){
       var enemyPosition = enemyPositions[i],
-        availableMovements = PieceMovementRules.retrieveAvailableMovements( {position: enemyPosition, board: board} ),
+        availableMovements = PieceMovementRules.retrieveAvailableMovements( {position: enemyPosition, board: board, ignoreCastles: ignoreCastles} ),
         enemyPieceType = board.pieceTypeAt( enemyPosition );
         if( enemyPieceType !== Board.KING && PieceMovementRules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
         danger = true
@@ -121,7 +115,6 @@ class PieceMovementRules {
         viable = movesCalculator.viablePositions[key]
       }
     };
-    // debugger
     // TODO you could very reasonably expect this to just return false, but it's actually returning a move object
     return viable
   }
@@ -150,8 +143,8 @@ class PieceMovementRules {
     }
     var startPosition = args["startPosition"],
       board = args["board"],
-      movesCalculator = PieceMovementRules.retrieveAvailableMovements( { position: startPosition, board: board} );
-      // pieceMovements = availableMovements({board: board, startPosition: startPosition}),
+      ignoreCastles = args["ignoreCastles"],
+      movesCalculator = PieceMovementRules.retrieveAvailableMovements( { position: startPosition, board: board, ignoreCastles: ignoreCastles} );
       movesCalculator.calculateViablePositions()
     return movesCalculator
   }

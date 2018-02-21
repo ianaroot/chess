@@ -1,13 +1,13 @@
 class PostMovementRules {
   pawnPromotionQuery(board){
-    for(var i = 0; i < 8; i++){
+    for(let i = 0; i < 8; i++){
       if ( board.blackPawnAt(i) ){
         board.promotePawn(i)
         return "=Q"
         //need to change this when i start allowing choice of promotion type
       }
     }
-    for(var i = 56; i < 64; i++){
+    for(let i = 56; i < 64; i++){
       if( board.whitePawnAt(i) ){
         board.promotePawn(i)
         return "=Q"
@@ -19,7 +19,10 @@ class PostMovementRules {
   checkmate(board){
     var otherTeam = board.teamNotMoving(),
       kingPosition = board.kingPosition(otherTeam);
-    return PieceMovementRules.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}) && this.noLegalMoves(board)
+      // debugger
+      var inCheck = PieceMovementRules.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition, ignoreCastles: true});
+      var noMoves = this.noLegalMoves(board);
+    return inCheck && noMoves
   }
   noLegalMoves(board){
     var movingTeamString = board.allowedToMove,
@@ -32,9 +35,9 @@ class PostMovementRules {
     var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
     for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       var startPosition = occcupiedPositions[i],
-        movesCalculator = PieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board});
+        movesCalculator = PieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board, ignoreCastles: true});
       for( var key in movesCalculator.viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
-        if( !PieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
+        if( !PieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board, ignoreCastles: true}) ){
           noLegalMoves = false
         }
       };
