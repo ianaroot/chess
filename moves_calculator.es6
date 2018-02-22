@@ -270,9 +270,6 @@ class MovesCalculator {
           moves[i].rangeLimit = 1;
           moves[i].pieceNotation = "K"
         };
-        // if(ignoreCastles){
-          console.log("ignoreCastles is " +ignoreCastles)
-        // }
         // TODO def some big changes up in here
         if ( !ignoreCastles && board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition)
           && !PieceMovementRules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
