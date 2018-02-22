@@ -82,15 +82,15 @@ class PieceMovementRules {
         danger             = false,
         newLayout          = Board.deepCopyLayout(layOut),
         opposingTeamString = Board.opposingTeam(teamString);
-    var newBoard = new Board(newLayout);
+    var ard = new Board(newLayout);
     newBoard.movePiece( startPosition, endPosition, additionalActions)
     var kingPosition = newBoard.kingPosition(teamString);
 
     var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
     for(var i = 0; i < enemyPositions.length; i++){
       var enemyPosition = enemyPositions[i],
-        availableMovements = PieceMovementRules.retrieveAvailableMovements( {position: enemyPosition, board: board, ignoreCastles: ignoreCastles} ),
-        enemyPieceType = board.pieceTypeAt( enemyPosition );
+        availableMovements = PieceMovementRules.retrieveAvailableMovements( {position: enemyPosition, board: newBoard, ignoreCastles: ignoreCastles} ),
+        enemyPieceType = newBoard.pieceTypeAt( enemyPosition );
         if( enemyPieceType !== Board.KING && PieceMovementRules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
         danger = true
         }
