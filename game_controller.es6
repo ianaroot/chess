@@ -50,7 +50,7 @@ class GameController {
 				checkNotation = "#"
 				board.endGame()
 			}
-			if( !board.gameOver && PieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board, ignoreCastles: true} )){
+			if( !board.gameOver && PieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
 				let displayAlert = this.view.displayAlert
 				alertText = "check"
 				checkNotation = "+"

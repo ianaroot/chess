@@ -20,7 +20,7 @@ class PostMovementRules {
     var otherTeam = board.teamNotMoving(),
       kingPosition = board.kingPosition(otherTeam);
       // debugger
-      var inCheck = PieceMovementRules.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition, ignoreCastles: true});
+      var inCheck = PieceMovementRules.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition});
       var noMoves = this.noLegalMoves(board);
     return inCheck && noMoves
   }
@@ -35,9 +35,9 @@ class PostMovementRules {
     var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
     for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       var startPosition = occcupiedPositions[i],
-        movesCalculator = PieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board, ignoreCastles: true});
+        movesCalculator = PieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board});
       for( var key in movesCalculator.viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
-        if( !PieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board, ignoreCastles: true}) ){
+        if( !PieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
           noLegalMoves = false
         }
       };

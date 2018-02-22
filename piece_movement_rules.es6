@@ -54,8 +54,7 @@ class PieceMovementRules {
     }
     var  board = args["board"],
       position = args["position"],
-      ignoreCastles = args["ignoreCastles"],
-      movesCalculator = new MovesCalculator({board: board, startPosition: position, ignoreCastles: ignoreCastles})
+      movesCalculator = new MovesCalculator({board: board, startPosition: position})
       movesCalculator.addMoves()
     return movesCalculator
   }
@@ -75,21 +74,19 @@ class PieceMovementRules {
         endPosition        = args["endPosition"],
         board              = args["board"],
         additionalActions  = args["additionalActions"],
-        ignoreCastles      = args["ignoreCastles"],
         layOut             = board.layOut,
         pieceString        = layOut[startPosition],
         teamString         = board.teamAt(startPosition),
         danger             = false,
         newLayout          = Board.deepCopyLayout(layOut),
         opposingTeamString = Board.opposingTeam(teamString);
-    var ard = new Board(newLayout);
+    var newBoard = new Board(newLayout);
     newBoard.movePiece( startPosition, endPosition, additionalActions)
     var kingPosition = newBoard.kingPosition(teamString);
 
     var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
     for(var i = 0; i < enemyPositions.length; i++){
       var enemyPosition = enemyPositions[i],
-        availableMovements = PieceMovementRules.retrieveAvailableMovements( {position: enemyPosition, board: newBoard, ignoreCastles: ignoreCastles} ),
         enemyPieceType = newBoard.pieceTypeAt( enemyPosition );
         if( enemyPieceType !== Board.KING && PieceMovementRules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
         danger = true
@@ -143,8 +140,7 @@ class PieceMovementRules {
     }
     var startPosition = args["startPosition"],
       board = args["board"],
-      ignoreCastles = args["ignoreCastles"],
-      movesCalculator = PieceMovementRules.retrieveAvailableMovements( { position: startPosition, board: board, ignoreCastles: ignoreCastles} );
+      movesCalculator = PieceMovementRules.retrieveAvailableMovements( { position: startPosition, board: board} );
       movesCalculator.calculateViablePositions()
     return movesCalculator
   }
