@@ -116,13 +116,15 @@ class PieceMovementRules {
     var movesCalculator = PieceMovementRules.viablePositionsFrom(args),
       keysOnly = [];
       for (var property in movesCalculator.viablePositions) {
-        if (movesCalculator.viablePositions.hasOwnProperty(property)) {
+        if (movesCalculator.viablePositions.hasOwnProperty(property) && !this.kingInCheck(Object.assign(args, { endPosition: property })) ){
+
           keysOnly.push(property)
       }
     }
     return keysOnly
   }
   static viablePositionsFrom(args){
+    //KEYSONLY is the one the api will want. this function ignores the fact that a move is not legal if it places oneself in check
     if(
       !Board.prototype.isPrototypeOf( args["board"] ) ||
       typeof args["startPosition"] !== "number"

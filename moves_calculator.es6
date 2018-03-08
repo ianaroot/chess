@@ -17,13 +17,12 @@ class MovesCalculator {
 
   calculateViablePositions(){
     var teamString = this.board.teamAt(this.startPosition);
-    for(var i = 0; i < this.moveObjects.length; i++){
+    for(let i = 0; i < this.moveObjects.length; i++){
       var move = this.moveObjects[i],
         increment = move.increment,
         rangeLimit = move.rangeLimit,
         boundaryCheck = move.boundaryCheck;
       for(var j = 1; j <= rangeLimit; j++){
-        // this calculation should be maybe happening on the moves calculator
         var currentPosition = increment * j + this.startPosition,
             occupyingTeam = this.board.teamAt(currentPosition);
         if ( !boundaryCheck(j, increment, this.startPosition) ){
@@ -365,7 +364,7 @@ class MovesCalculator {
           moveObjects = moveObjects.concat(newPossibility)
         };
         // EN PASSANT
-        // RIGHT
+          // RIGHT
         if( pawnVars.rightEnPassantCheck ){
           var newPossibility = pawnVars.rightAttackMove
           newPossibility.rangeLimit = 1
@@ -378,7 +377,7 @@ class MovesCalculator {
           }
           moveObjects = moveObjects.concat(newPossibility)
         }
-        // LEFT
+          // LEFT
         if( pawnVars.leftEnPassantCheck ){
           var newPossibility = pawnVars.leftAttackMove
           newPossibility.rangeLimit = 1
