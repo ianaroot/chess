@@ -9,7 +9,6 @@ class MovesCalculator {
   }
   addMoves(){
     if ( this.startPosition === undefined || !this.board){
-      debugger
       throw new Error("moveObject missing startPosition or board in addMovementTypesAndBoundaryChecks")
     } else {
       this. moves = MovesCalculator.pieceSpecificMovements()[this.board.pieceTypeAt(this.startPosition)]({startPosition: this.startPosition, board: this.board})

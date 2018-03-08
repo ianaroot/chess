@@ -19,7 +19,6 @@ class PostMovementRules {
   checkmate(board){
     var otherTeam = board.teamNotMoving(),
       kingPosition = board.kingPosition(otherTeam);
-      // debugger
       var inCheck = PieceMovementRules.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition});
       var noMoves = this.noLegalMoves(board);
     return inCheck && noMoves
