@@ -306,7 +306,7 @@ class MovesCalculator {
       Pawn: function(args){
         var board = args["board"],
         startPosition = args["startPosition"],
-        movements = [],
+        moveObjects = [],
         teamString = board.teamAt(startPosition),
           colorVars = {
             black: {
@@ -341,7 +341,7 @@ class MovesCalculator {
           var newPossibility = pawnVars.nonAttackMove
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = ""
-          movements = movements.concat(newPossibility)
+          moveObjects = moveObjects.concat(newPossibility)
         }
         // DOUBLESTEP
         if ( pawnVars.doubleStepCheck ){
@@ -349,20 +349,20 @@ class MovesCalculator {
             var newPossibility = pawnVars.nonAttackMove
           newPossibility.rangeLimit = 2
           newPossibility.pieceNotation = ""
-          movements = movements.concat(newPossibility)
+          moveObjects = moveObjects.concat(newPossibility)
         }
         // STANDARD ATTACKS
         if ( pawnVars.leftAttackCheck ) {
           var newPossibility = pawnVars.leftAttackMove
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = Board.file(startPosition)
-          movements = movements.concat(newPossibility)
+          moveObjects = moveObjects.concat(newPossibility)
         }
         if( pawnVars.rightAttackCheck ) {
           var newPossibility = pawnVars.rightAttackMove
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = Board.file(startPosition)
-          movements = movements.concat(newPossibility)
+          moveObjects = moveObjects.concat(newPossibility)
         };
         // EN PASSANT
         // RIGHT
@@ -376,7 +376,7 @@ class MovesCalculator {
             return captureNotation
             // this is not really just a notation it's an action... or is it, i think the return is a notation, but the action is occurring right here.
           }
-          movements = movements.concat(newPossibility)
+          moveObjects = moveObjects.concat(newPossibility)
         }
         // LEFT
         if( pawnVars.leftEnPassantCheck ){
@@ -389,9 +389,9 @@ class MovesCalculator {
             return captureNotation
             // this is not really just a notation it's an action
           }
-          movements = movements.concat(newPossibility)
+          moveObjects = moveObjects.concat(newPossibility)
         }
-      return movements;
+      return moveObjects;
       }
     }
   }
