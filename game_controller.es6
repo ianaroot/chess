@@ -19,6 +19,8 @@ class GameController {
 		if( board.gameOver ){
 			return
 		}
+
+		// TODO maybe these things should be determined by the rules?
 		if( team == Board.EMPTY ){
 			this.view.displayAlert("that tile is empty")
 			return
