@@ -1,5 +1,4 @@
 // TODO positionViable is actually returning a moveObject, and illegal is set to true if it's not a viable move
-// likewise getMoveObject returns a moveObject with illegal set to true if the move is in fact illegal
 // kingIsinCheck really is just true or false, but might be better named kingWouldBeinCheck or something
 // retrieveAvailableMovements actually returns a movesCalculator with the moves having been calculated (in a green field sort of we didn't check if positions are blocked or cause check kind of way)
 // viablePositionsFrom calculates the viable positions in a slightly less green fieldy sort of, we still didnt' bother to look at check, kind of way
