@@ -1,5 +1,5 @@
 // TODO positionViable is actually returning a moveObject, and illegal is set to true if it's not a viable move
-// likewise moveIsIllegal returns a moveObject with illegal set to true if the move is in fact illegal
+// likewise getMoveObject returns a moveObject with illegal set to true if the move is in fact illegal
 // kingIsinCheck really is just true or false, but might be better named kingWouldBeinCheck or something
 // retrieveAvailableMovements actually returns a movesCalculator with the moves having been calculated (in a green field sort of we didn't check if positions are blocked or cause check kind of way)
 // viablePositionsFrom calculates the viable positions in a slightly less green fieldy sort of, we still didnt' bother to look at check, kind of way
@@ -8,13 +8,13 @@
 // tells you it's the other team's turn if you try to move from an empty square
 class PieceMovementRules {
 
-  static moveIsIllegal(startPosition, endPosition, board){
+  static getMoveObject(startPosition, endPosition, board){
     if(
       !Board.prototype.isPrototypeOf( board ) ||
       typeof startPosition !== "number" ||
       typeof endPosition !== "number"
     ){
-      throw new Error("missing params in moveIsIllegal")
+      throw new Error("missing params in getMoveObject")
     }
     var layOut = board.layOut,
       team = board.teamAt(startPosition),

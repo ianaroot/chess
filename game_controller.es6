@@ -27,7 +27,7 @@ class GameController {
 			this.view.displayAlert( "other team's turn" )
 			return
 		}
-		var moveObject = PieceMovementRules.moveIsIllegal(startPosition, endPosition, board);
+		var moveObject = PieceMovementRules.getMoveObject(startPosition, endPosition, board);
 
 		if( moveObject.illegal ){
 			this.view.displayAlert(moveObject.alert)
