@@ -1,7 +1,10 @@
-// TOOD determine before highlighting whether move will lead to check and is therefore illegal.
+// TODO positionViable is actually returning a moveObject, and illegal is set to true if it's not a viable move
+// likewise moveIsIllegal returns a moveObject with illegal set to true if the move is in fact illegal
+// kingIsinCheck really is just true or false, but might be better named kingWouldBeinCheck or something
+// retrieveAvailableMovements actually returns a movesCalculator with the moves having been calculated (in a green field sort of we didn't check if positions are blocked or cause check kind of way)
+// viablePositionsFrom calculates the viable positions in a slightly less green fieldy sort of, we still didnt' bother to look at check, kind of way
+// TODO determine before highlighting whether move will lead to check and is therefore illegal.
 // viable positions from errors when called on empty position
-// even if move is illegal catches it, having viablePositions return illegal positions, such as checked castling, is gonna be problematic, like when i get to where i'm highlighting legal positions to move to
-// throw error if args missing. make a reusable function, throw it in some stuff
 // tells you it's the other team's turn if you try to move from an empty square
 class PieceMovementRules {
 
@@ -16,34 +19,24 @@ class PieceMovementRules {
     var layOut = board.layOut,
       team = board.teamAt(startPosition),
       viableMovement = {},
-      moveObject = {
-        illegal: false,
-        startPosition: startPosition,
-        endPosition: endPosition
-      },
-      viableMovement = PieceMovementRules.positionViable( {startPosition: startPosition, endPosition: endPosition, board: board} );
+      move = PieceMovementRules.positionViable( {startPosition: startPosition, endPosition: endPosition, board: board} );
 
     if ( !Board.inBounds(endPosition) ){
-      moveObject.alert = 'stay on the board, fool'
-      moveObject.illegal = true
+      move.alert = 'stay on the board, fool'
+      move.illegal = true
     } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
-      moveObject.alert = "what, are you trying to capture your own piece?"
-      moveObject.illegal = true
-    } else if( !viableMovement ) {
-      moveObject.alert = "that's not how that piece moves"
+      move.alert = "what, are you trying to capture your own piece?"
+      move.illegal = true
+    } else if( move.illegal ) {
+      move.alert = "that's not how that piece moves"
       // should distinguish whether this is due to blockage or wrong form of movement
-      moveObject.illegal = true
-    } else if( PieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: viableMovement.additionalActions})){
-      moveObject.alert = "check yo king fool"
-      moveObject.illegal = true
+      move.illegal = true
+    } else if( PieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: move.additionalActions})){
+      move.alert = "check yo king fool"
+      move.illegal = true
     } // now we know the move is legal
-    moveObject.additionalActions = viableMovement.additionalActions
-    if( viableMovement.fullNotation ){
-      moveObject.fullNotation = viableMovement.fullNotation
-    }
 
-    moveObject.pieceNotation = viableMovement.pieceNotation
-    return moveObject
+    return move
   }
   static retrieveAvailableMovements(args){
     if(
@@ -88,7 +81,7 @@ class PieceMovementRules {
     for(var i = 0; i < enemyPositions.length; i++){
       var enemyPosition = enemyPositions[i],
         enemyPieceType = newBoard.pieceTypeAt( enemyPosition );
-        if( enemyPieceType !== Board.KING && PieceMovementRules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard} ) ){
+        if( enemyPieceType !== Board.KING && !PieceMovementRules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard}).illegal ){
         danger = true
         }
     };
@@ -106,7 +99,7 @@ class PieceMovementRules {
       startPosition = args["startPosition"],
       endPosition = args["endPosition"],
       movesCalculator = PieceMovementRules.viablePositionsFrom( {startPosition: startPosition, board: board} ),
-      viable = false;
+      viable = new Move({illegal: true});
     for( var key in movesCalculator.viablePositions ){
       if( key == endPosition ){
         viable = movesCalculator.viablePositions[key]

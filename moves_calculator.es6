@@ -1,10 +1,8 @@
 class MovesCalculator {
-  constructor(options = {  illegal: undefined, startPosition: undefined, alert: undefined, board: undefined, moves: [],
+  constructor(options = {  startPosition: undefined, board: undefined, moves: [],
   }){
 
     this.startPosition = options["startPosition"]
-    this.alert = options["alert"]
-    this.illegal = options["illegal"]
     this.board = options["board"]
     this.moves = []
     this.viablePositions = {}
@@ -268,7 +266,6 @@ class MovesCalculator {
           moves[i].rangeLimit = 1;
           moves[i].pieceNotation = "K"
         };
-        // TODO def some big changes up in here
         if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition)
           && !PieceMovementRules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
           && !PieceMovementRules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition + 1), board: board })
@@ -278,8 +275,8 @@ class MovesCalculator {
           castle.rangeLimit = 1
           castle.fullNotation = "O-O"
           castle.additionalActions = function(args){
-          //planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be
-          // explicit here and use game controller instead of this
+          //TODO planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be
+          // explicit here and use game controller instead of this?
             var position = args["position"],
               pieceObject = JSON.parse(this.layOut[startPosition + 3]);
             this.emptify( startPosition + 3)
@@ -397,16 +394,6 @@ class MovesCalculator {
         }
       return movements;
       }
-    }
-  }
-
-
-
-
-
-  static verticalBoundaryCheck() {
-    return function(endPosition){
-
     }
   }
 
