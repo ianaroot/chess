@@ -1,4 +1,4 @@
-class Move {
+class MoveObject {
   constructor( options = {
     boundaryCheck: undefined, endPosition: undefined,
     additionalActions: undefined, rangeLimit: undefined, pieceNotation: undefined,

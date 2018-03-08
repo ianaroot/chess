@@ -98,14 +98,13 @@ class PieceMovementRules {
       startPosition = args["startPosition"],
       endPosition = args["endPosition"],
       movesCalculator = PieceMovementRules.viablePositionsFrom( {startPosition: startPosition, board: board} ),
-      viable = new Move({illegal: true});
+      moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
     for( var key in movesCalculator.viablePositions ){
       if( key == endPosition ){
-        viable = movesCalculator.viablePositions[key]
+        moveObject = movesCalculator.viablePositions[key]
       }
     };
-    // TODO you could very reasonably expect this to just return false, but it's actually returning a move object
-    return viable
+    return moveObject
   }
   static viablePositionsFromKeysOnly(args){
     if(

@@ -44,7 +44,7 @@ class MovesCalculator {
   static genericMovements(){
     return {
       verticalUp: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "+8",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -54,7 +54,7 @@ class MovesCalculator {
         return move
       },
       verticalDown: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "-8",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -64,7 +64,7 @@ class MovesCalculator {
         return move
       },
       forwardSlashUp: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "+9",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -76,7 +76,7 @@ class MovesCalculator {
         return move
       },
       forwardSlashDown: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "-9",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -86,7 +86,7 @@ class MovesCalculator {
         return move
       },
       backSlashUp: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "+7",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -96,7 +96,7 @@ class MovesCalculator {
         return move
       },
       backSlashDown: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "-7",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -106,7 +106,7 @@ class MovesCalculator {
         return move
       },
       nightVerticalLeftUp: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "+15",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -116,7 +116,7 @@ class MovesCalculator {
         return move
       },
       nightVerticalRightUp: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "+17",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -126,7 +126,7 @@ class MovesCalculator {
         return move
       },
       nightHorizontalLeftUp: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "+6",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -136,7 +136,7 @@ class MovesCalculator {
         return move
       },
       nightHorizontalRightUp: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "+10",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -146,7 +146,7 @@ class MovesCalculator {
         return move
       },
       nightVerticalLeftDown: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "-15",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -156,7 +156,7 @@ class MovesCalculator {
         return move
       },
       nightVerticalRightDown: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "-17",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -166,7 +166,7 @@ class MovesCalculator {
         return move
       },
       nightHorizontalLeftDown: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "-6",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -176,7 +176,7 @@ class MovesCalculator {
         return move
       },
       nightHorizontalRightDown: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "-10",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -186,7 +186,7 @@ class MovesCalculator {
         return move
       },
       horizontalRight: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "+1",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
@@ -196,7 +196,7 @@ class MovesCalculator {
         return move
       },
       horizontalLeft: function(){
-        let move = new Move({
+        let move = new MoveObject({
           increment: "-1",
           boundaryCheck: function(i, increment, startPosition) {
             var endPosition = i * increment + startPosition;
