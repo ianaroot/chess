@@ -1,24 +1,24 @@
 class MovesCalculator {
-  constructor(options = {  startPosition: undefined, board: undefined, moves: [],
+  constructor(options = {  startPosition: undefined, board: undefined, moveObjects: [],
   }){
 
     this.startPosition = options["startPosition"]
     this.board = options["board"]
-    this.moves = []
+    this.moveObjects = []
     this.viablePositions = {}
   }
   addMoves(){
     if ( this.startPosition === undefined || !this.board){
       throw new Error("moveObject missing startPosition or board in addMovementTypesAndBoundaryChecks")
     } else {
-      this. moves = MovesCalculator.pieceSpecificMovements()[this.board.pieceTypeAt(this.startPosition)]({startPosition: this.startPosition, board: this.board})
+      this.moveObjects = MovesCalculator.pieceSpecificMovements()[this.board.pieceTypeAt(this.startPosition)]({startPosition: this.startPosition, board: this.board})
     }
   }
 
   calculateViablePositions(){
     var teamString = this.board.teamAt(this.startPosition);
-    for(var i = 0; i < this.moves.length; i++){
-      var move = this.moves[i],
+    for(var i = 0; i < this.moveObjects.length; i++){
+      var move = this.moveObjects[i],
         increment = move.increment,
         rangeLimit = move.rangeLimit,
         boundaryCheck = move.boundaryCheck;
@@ -215,55 +215,55 @@ class MovesCalculator {
       Night: function(args){
         var board = args["board"],
           startPosition = args["startPosition"],
-          moves = [MovesCalculator.genericMovements().nightHorizontalRightDown(), MovesCalculator.genericMovements().nightHorizontalLeftDown(), MovesCalculator.genericMovements().nightVerticalRightDown(),
+          moveObjects = [MovesCalculator.genericMovements().nightHorizontalRightDown(), MovesCalculator.genericMovements().nightHorizontalLeftDown(), MovesCalculator.genericMovements().nightVerticalRightDown(),
                     MovesCalculator.genericMovements().nightVerticalLeftDown(), MovesCalculator.genericMovements().nightHorizontalRightUp(), MovesCalculator.genericMovements().nightHorizontalLeftUp(),
                     MovesCalculator.genericMovements().nightVerticalRightUp(), MovesCalculator.genericMovements().nightVerticalLeftUp()
                   ];
-        for (let i = 0; i < moves.length; i++ ) {
-            moves[i].rangeLimit = 1;
-            moves[i].pieceNotation = "N"
+        for (let i = 0; i < moveObjects.length; i++ ) {
+            moveObjects[i].rangeLimit = 1;
+            moveObjects[i].pieceNotation = "N"
         };
-        return  moves
+        return  moveObjects
       },
       Rook: function(args){
         var board = args["board"],
           startPosition = args["startPosition"],
-          moves = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown()]
-        for (let i = 0; i < moves.length; i++ ) {
-          moves[i].rangeLimit = 7;
-          moves[i].pieceNotation = "R"
+          moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown()]
+        for (let i = 0; i < moveObjects.length; i++ ) {
+          moveObjects[i].rangeLimit = 7;
+          moveObjects[i].pieceNotation = "R"
         };
-        return moves
+        return moveObjects
       },
       Bishop: function(args){
         var board = args["board"],
           startPosition = args["startPosition"],
-          moves = [MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()]
-        for (let i = 0; i < moves.length; i++ ) {
-          moves[i].rangeLimit = 7;
-          moves[i].pieceNotation = "B"
+          moveObjects = [MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()]
+        for (let i = 0; i < moveObjects.length; i++ ) {
+          moveObjects[i].rangeLimit = 7;
+          moveObjects[i].pieceNotation = "B"
         };
-        return moves
+        return moveObjects
       },
       Queen: function(args){
         var board = args["board"],
           startPosition = args["startPosition"],
-          moves =  MovesCalculator.pieceSpecificMovements().Rook({startPosition: startPosition, board: board}).concat( MovesCalculator.pieceSpecificMovements().Bishop({startPosition: startPosition, board: board}) )
-        for (let i = 0; i < moves.length; i++ ) {
-          moves[i].rangeLimit = 7;
-          moves[i].pieceNotation = "Q"
+          moveObjects =  MovesCalculator.pieceSpecificMovements().Rook({startPosition: startPosition, board: board}).concat( MovesCalculator.pieceSpecificMovements().Bishop({startPosition: startPosition, board: board}) )
+        for (let i = 0; i < moveObjects.length; i++ ) {
+          moveObjects[i].rangeLimit = 7;
+          moveObjects[i].pieceNotation = "Q"
         };
-        return moves
+        return moveObjects
       },
       King: function(args){
         var board = args["board"],
           startPosition = args["startPosition"],
-          moves = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown(),
+          moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown(),
                     MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()
                   ];
-        for (let i = 0; i < moves.length; i++ ) {
-          moves[i].rangeLimit = 1;
-          moves[i].pieceNotation = "K"
+        for (let i = 0; i < moveObjects.length; i++ ) {
+          moveObjects[i].rangeLimit = 1;
+          moveObjects[i].pieceNotation = "K"
         };
         if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition)
           && !PieceMovementRules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
@@ -281,7 +281,7 @@ class MovesCalculator {
             this.emptify( startPosition + 3)
             this.placePiece({ position: (startPosition + 1), pieceString: pieceObject })
           }
-          moves.push(castle)
+          moveObjects.push(castle)
         };
         if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition)
           && !PieceMovementRules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
@@ -299,9 +299,9 @@ class MovesCalculator {
             this.emptify( startPosition - 4)
             this.placePiece({ position: (startPosition - 1), pieceString: pieceObject })
           }
-          moves.push(castle)
+          moveObjects.push(castle)
         };
-        return moves
+        return moveObjects
       },
       Pawn: function(args){
         var board = args["board"],
