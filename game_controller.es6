@@ -1,17 +1,11 @@
 const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
-// specify whether piece was trying to move through other piece or just onto position it can't hit
 // should have case sensitivity protection to avoid future blackPawn BlackPawn issues
 
 class GameController {
 	constructor(){
 		this.board = new Board();
-		// this.pieceMovementRules = PieceMovementRules.getInstance();
-		// this.pieceMovementRules = new PieceMovementRules()
-		// this.pieceMovementRules = new PieceMovementRules();
-		this.postMovementRules = new PostMovementRules
-		// this.PostMovementRules = new PostMovementRules();
-	    this.view = new View();
-		// this.view = new View();
+		this.postMovementRules = new PostMovementRules;
+    this.view = new View();
 	}
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
 		var board = this.board,
@@ -26,11 +20,11 @@ class GameController {
 			return
 		}
 		if( team == Board.EMPTY ){
-			alert("that tile is empty")
+			this.view.displayAlert("that tile is empty")
 			return
 		}
 		if( team !== board.allowedToMove ){
-			alert( "other team's turn" )
+			this.view.displayAlert( "other team's turn" )
 			return
 		}
 		var moveObject = PieceMovementRules.moveIsIllegal(startPosition, endPosition, board);
