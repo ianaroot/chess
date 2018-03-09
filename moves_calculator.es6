@@ -18,14 +18,14 @@ class MovesCalculator {
   }
 
   calculateViablePositions(){
-    var teamString = this.board.teamAt(this.startPosition);
+    let teamString = this.board.teamAt(this.startPosition);
     for(let i = 0; i < this.moveObjects.length; i++){
-      var move = this.moveObjects[i],
-        increment = move.increment,
-        rangeLimit = move.rangeLimit,
-        boundaryCheck = move.boundaryCheck;
-      for(var j = 1; j <= rangeLimit; j++){
-        var currentPosition = increment * j + this.startPosition,
+      let move = this.moveObjects[i],
+          increment = move.increment,
+          rangeLimit = move.rangeLimit,
+          boundaryCheck = move.boundaryCheck;
+      for(let j = 1; j <= rangeLimit; j++){
+        let currentPosition = increment * j + this.startPosition,
             occupyingTeam = this.board.teamAt(currentPosition);
         if ( !boundaryCheck(j, increment, this.startPosition) ){
           break
@@ -48,7 +48,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "+8",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Board.inBounds(endPosition)
           }
         })
@@ -58,7 +58,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "-8",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Board.inBounds(endPosition)
           }
         })
@@ -68,7 +68,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "+9",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             // this is the wettest line of code i've ever seen
             return (endPosition) % 8 > (startPosition % 8) && Board.inBounds(endPosition)
             // can factor out these boundary calculations
@@ -80,7 +80,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "-9",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return (endPosition) % 8 < (startPosition % 8) && Board.inBounds(endPosition)
           }
         })
@@ -90,7 +90,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "+7",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return (endPosition) % 8 < (startPosition % 8) && Board.inBounds(endPosition)
           }
         })
@@ -100,7 +100,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "-7",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return (endPosition) % 8 > (startPosition % 8) && Board.inBounds(endPosition)
           }
         })
@@ -110,7 +110,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "+15",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.inBounds(endPosition)
           }
         })
@@ -120,7 +120,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "+17",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.inBounds(endPosition)
           }
         })
@@ -130,7 +130,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "+6",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.inBounds(endPosition)
           }
         })
@@ -140,7 +140,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "+10",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.inBounds(endPosition)
           }
         })
@@ -150,7 +150,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "-15",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.inBounds(endPosition)
           }
         })
@@ -160,7 +160,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "-17",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.inBounds(endPosition)
           }
         })
@@ -170,7 +170,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "-6",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.inBounds(endPosition)
           }
         })
@@ -180,7 +180,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "-10",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.inBounds(endPosition)
           }
         })
@@ -190,7 +190,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "+1",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Math.floor((endPosition) / 8) === Math.floor(startPosition / 8) && Board.inBounds(endPosition)
           }
         })
@@ -200,7 +200,7 @@ class MovesCalculator {
         let moveObject = new MoveObject({
           increment: "-1",
           boundaryCheck: function(i, increment, startPosition) {
-            var endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition;
             return Math.floor((endPosition) / 8) === Math.floor(startPosition / 8) && Board.inBounds(endPosition)
           }
         })
@@ -214,7 +214,7 @@ class MovesCalculator {
   static pieceSpecificMovements(){
     return {
       Night: function(args){
-        var board = args["board"],
+        let board = args["board"],
           startPosition = args["startPosition"],
           moveObjects = [MovesCalculator.genericMovements().nightHorizontalRightDown(), MovesCalculator.genericMovements().nightHorizontalLeftDown(), MovesCalculator.genericMovements().nightVerticalRightDown(),
                     MovesCalculator.genericMovements().nightVerticalLeftDown(), MovesCalculator.genericMovements().nightHorizontalRightUp(), MovesCalculator.genericMovements().nightHorizontalLeftUp(),
@@ -227,7 +227,7 @@ class MovesCalculator {
         return  moveObjects
       },
       Rook: function(args){
-        var board = args["board"],
+        let board = args["board"],
           startPosition = args["startPosition"],
           moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown()]
         for (let i = 0; i < moveObjects.length; i++ ) {
@@ -237,7 +237,7 @@ class MovesCalculator {
         return moveObjects
       },
       Bishop: function(args){
-        var board = args["board"],
+        let board = args["board"],
           startPosition = args["startPosition"],
           moveObjects = [MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()]
         for (let i = 0; i < moveObjects.length; i++ ) {
@@ -247,7 +247,7 @@ class MovesCalculator {
         return moveObjects
       },
       Queen: function(args){
-        var board = args["board"],
+        let board = args["board"],
           startPosition = args["startPosition"],
           moveObjects =  MovesCalculator.pieceSpecificMovements().Rook({startPosition: startPosition, board: board}).concat( MovesCalculator.pieceSpecificMovements().Bishop({startPosition: startPosition, board: board}) )
         for (let i = 0; i < moveObjects.length; i++ ) {
@@ -257,7 +257,7 @@ class MovesCalculator {
         return moveObjects
       },
       King: function(args){
-        var board = args["board"],
+        let board = args["board"],
           startPosition = args["startPosition"],
           moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown(),
                     MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()
@@ -287,7 +287,7 @@ class MovesCalculator {
         if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition)
           && !Rules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
           && !Rules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
-          var castle = MovesCalculator.genericMovements().horizontalRight()
+          let castle = MovesCalculator.genericMovements().horizontalRight()
           castle.increment = - 2
           castle.rangeLimit = 1
           castle.fullNotation = "O-O-O"
@@ -305,7 +305,7 @@ class MovesCalculator {
         return moveObjects
       },
       Pawn: function(args){
-        var board = args["board"],
+        let board = args["board"],
         startPosition = args["startPosition"],
         moveObjects = [],
         teamString = board.teamAt(startPosition),
