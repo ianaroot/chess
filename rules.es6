@@ -70,7 +70,7 @@ class Rules {
         let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition});
         let moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
         for( var key in movesCalculator.viablePositions ){
-          if( key == kingPosition ){
+          if( parseInt(key) === kingPosition ){
             moveObject = movesCalculator.viablePositions[key]
           }
         };
