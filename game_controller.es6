@@ -85,7 +85,7 @@ class GameController {
 	undo(){
 		if( this.board.previousLayouts.length){
 			this.board.undo()
-			this.nextTurn()
+			this.nextTurn() //TODO this is a really jenky dangerous way to switch whose turn it is. also the board should maybe know whose turn it is
 			this.view.updateTeamAllowedToMove();
 			this.view.displayLayOut(this.board.layOut)
 		}

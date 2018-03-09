@@ -246,7 +246,7 @@ class Board {
     var captureNotation = ""
     if( !this.positionEmpty(position) ){
       var pieceString = this.layOut[position];
-// coiuld maybe switch this to store capture by color, but it should work fine
+      // could maybe switch this to store capture by color, but it should work fine
       this.capturedPieces.push(pieceString)
       this.emptify(position)
       captureNotation = "x"
@@ -376,7 +376,7 @@ class Board {
   }
 
   promotePawn(position){
-    // later i'll make this request input as to what piece to become
+    // TODO make this request input as to what piece to become
     var teamString = this.teamAt(position);
 
     this.layOut[position] = JSON.stringify({color: teamString , species: Board.QUEEN})
@@ -432,7 +432,6 @@ class Board {
   }
 
   positionEmpty(position){
-    // console.log(position)
     return JSON.parse(this.layOut[position]).color === Board.EMPTY
   }
 
