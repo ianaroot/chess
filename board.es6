@@ -143,7 +143,7 @@ class Board {
     if( captureNotationMatch ){
       this.capturedPieces.pop()
     }
-    // could add e.p. to notation for simplification UPDATe 3/8/18 no idea what this comment means
+    //TODO  could add e.p. to notation for simplification UPDATe 3/8/18 no idea what this comment means
   }
 
   consoleLog(){
@@ -179,7 +179,7 @@ class Board {
     return Board.parseTeam( this.pieceObject(position) )=== Board.WHITE && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
 
-// room for refactoring wetness
+  // TODO room for refactoring wetness
   blackPawnDoubleSteppedFrom(position){
     return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.BLACK && Board.parseSpecies( this.pieceObjectFromLastLayout(position) ) === Board.PAWN
   }
@@ -223,7 +223,7 @@ class Board {
   movePiece(startPosition, endPosition, additionalActions){
       if(
         typeof startPosition !== "number" ||
-        !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
+        !(typeof endPosition !== "number" || typeof endPosition !== "string") || // TODO not sure where this got turned into a string...
         !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
       ){
         throw new Error("missing params in movePiece")
@@ -274,10 +274,8 @@ class Board {
     if( Board.inBounds( positionDownAndLeft )){
       let pieceObject = this.layOut[positionDownAndLeft],
         pieceTeam = Board.parseTeam(pieceObject);
-
       return this.occupiedByOpponent({position: positionDownAndLeft, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndLeft)
-    } else {
-      // down and left would be off board
+    } else { // down and left would be off board
       return false
     }
   }

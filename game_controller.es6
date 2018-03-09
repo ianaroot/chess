@@ -21,46 +21,43 @@ class GameController {
 		var moveObject = Rules.getMoveObject(startPosition, endPosition, board);
 
 		if( moveObject.illegal ){
-			this.view.displayAlert(moveObject.alert)
+			this.view.displayAlert(moveObject.alerts)
 			return
 		} else {
 			this.board.storeCurrentLayoutAsPrevious()
-			captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions)
-			promotionNotation = Rules.pawnPromotionQuery( board )
-			let otherTeam = this.board.teamNotMoving()
-			let otherTeamsKingPosition = this.board.kingPosition(otherTeam)
-			var alertText = ""
+			captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions) //TODO seems wonky to set the capture notation as the return here.
+			var promotionNotation = Rules.pawnPromotionQuery( board ),
+					otherTeam = this.board.teamNotMoving(),
+					otherTeamsKingPosition = this.board.kingPosition(otherTeam);
+			moveObject.alerts.push( "" )
 			if( Rules.checkmate( board )){
-				alertText = "checkmate"
-				checkNotation = "#"
+				moveObject.alerts.push( "checkmate" )
+				var checkNotation = "#";
 				board.endGame()
 			}
 			if( !board.gameOver && Rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
-				let displayAlert = this.view.displayAlert
-				alertText = "check"
-				checkNotation = "+"
+				moveObject.alerts.push( "check" )
+				var checkNotation = "+";
 			}
 			this.view.displayLayOut(this.board.layOut)
 			var stalemate = Rules.stalemate(board);
 			if( !board.gameOver && stalemate ){
-				let displayAlert = this.view.displayAlert
-				alertText = "stalemate"
+				moveObject.alerts.push( "stalemate" )
 				board.endGame()
 			}
-			if( moveObject.fullNotation ){
-        // TODO pretty sure i was supposed to add captureNotation etc... here, but need to check
+			if( moveObject.fullNotation ){ //TODO couldn't standard notation moves calculate their own notation too?
 				notation = moveObject.fullNotation + captureNotation + positionNotation + promotionNotation + checkNotation
 			} else {
 				var positionNotation = Board.gridCalculator(endPosition),
 					pieceNotation	= moveObject.pieceNotation,
-					captureNotation = captureNotation || moveObject.captureNotation || "";
-					notation = pieceNotation + captureNotation + positionNotation + promotionNotation + checkNotation
+					captureNotation = captureNotation || moveObject.captureNotation || "",
+					notation = pieceNotation + captureNotation + positionNotation + promotionNotation + checkNotation;
 			}
 			this.board.recordNotation(notation)
 			if( !board.gameOver ){ this.nextTurn() }
 			this.view.updateTeamAllowedToMove();
 			let displayAlert = this.view.displayAlert
-			if(alertText){setTimeout( function(){ displayAlert(alertText) }, 200)}
+			if(moveObject.alerts){setTimeout( function(){ displayAlert(moveObject.alerts) }, 200)}
 		}
 	}
 

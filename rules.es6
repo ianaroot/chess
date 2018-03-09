@@ -14,11 +14,11 @@ class Rules {
         moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
 
     if( team == Board.EMPTY ){
-      moveObject.alert = ("that tile is empty")
+      moveObject.alerts.push("that tile is empty")
       return moveObject
     }
     if( team !== board.allowedToMove ){
-      moveObject.alert = ( "other team's turn" )
+      moveObject.alerts.push( "other team's turn" )
       return moveObject
     }
 
@@ -31,17 +31,17 @@ class Rules {
     };
 
     if ( !Board.inBounds(endPosition) ){
-      moveObject.alert = 'stay on the board, fool'
+      moveObject.alerts.push('stay on the board, fool')
       moveObject.illegal = true
     } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
-      moveObject.alert = "what, are you trying to capture your own piece?"
+      moveObject.alerts.push("what, are you trying to capture your own piece?")
       moveObject.illegal = true
     } else if( moveObject.illegal ) {
-      moveObject.alert = "that's not how that piece moves"
-      // should distinguish whether this is due to blockage or wrong form of movement
+      moveObject.alerts.push("that's not how that piece moves")
+      //TODO should distinguish whether this is due to blockage or wrong form of movement
       moveObject.illegal = true
     } else if( Rules.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: moveObject.additionalActions})){
-      moveObject.alert = "check yo king fool"
+      moveObject.alerts.push("check yo king fool")
       moveObject.illegal = true
     } // now we know the move is legal
 

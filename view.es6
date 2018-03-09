@@ -1,7 +1,6 @@
 class View{
-	// pretty sure this could be a singleton even on a server with several games running
-  // captures don't show up in the browser if the moves are made through the console
-  // clean up alternations position vs gridCalculator
+	//TODO pretty sure this could be a singleton even on a server with several games running
+  //TODO clean up alternations position vs gridCalculator
   constructor(){
     this.boundHighlightTile = this.highlightTile.bind(this)
     this.boundAttemptMove = this.attemptMove.bind(this)
@@ -9,27 +8,32 @@ class View{
 
   static get TILE_HEIGHT() { return "49" }
 
-  displayAlert(message){
-    alert(message)
-  }
+  displayAlert(messages){
+    for (let i = 0; i < messages.length; i++){
+      $('#notifications').text(messages[i])
+    };
+  };
+  clearAlerts(){
+    $('#notifications').text("")
+  };
   undisplayPiece(gridPosition){
     let element = document.getElementById( gridPosition ),
       children  = element.children;
     for( let i = 0; i < children.length; i ++){
       children[i].remove()
-    }
-  }
+    };
+  };
   displayPiece(args){
     let elem = document.createElement("img"),
       pieceInitials = args["pieceInitials"],
-      // turns out gridPosition is more like element class, and it has to be unique, so it should probably be element id
+      // TODO turns out gridPosition is more like element class, and it has to be unique, so it should probably be element id
       gridPosition = args["gridPosition"];
     elem.setAttribute("src", this.pieceImgSrc( pieceInitials ) );
     elem.setAttribute("height", View.TILE_HEIGHT);
     elem.setAttribute("width", View.TILE_HEIGHT);
     let element = document.getElementById( gridPosition );
     element.appendChild(elem)
-  }
+  };
   displayLayOut(layOut){
     for( let i = 0; i < layOut.length; i++){
       let gridPosition = Board.gridCalculator(i),
@@ -37,22 +41,23 @@ class View{
       this.undisplayPiece(gridPosition);
       if( Board.parseTeam( JSON.parse(layOut[i]) ) !== Board.EMPTY ){
         this.displayPiece({pieceInitials: pieceInitials, gridPosition: gridPosition})
-      }
-    }
+      };
+    };
     this.setTileClickListener();
     this.blackCaptureDivNeedsExpanding();
     this.whiteCaptureDivNeedsExpanding();
     this.updateCaptures();
-  }
+    this.clearAlerts();
+  };
   pieceImgSrc(pieceInitials){
     return "img/chesspieces/wikipedia/" + pieceInitials + ".png"
-  }
+  };
   pieceInitials(pieceObject){
     pieceObject = JSON.parse(pieceObject);
     let firstInitial = Board.parseTeam( pieceObject )[0],
       secondInitial = pieceObject.species[0];
     return firstInitial + secondInitial
-  }
+  };
   highlightTile(){
     let target = arguments[0].currentTarget,
       img = target.children[0],

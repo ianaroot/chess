@@ -346,7 +346,6 @@ class MovesCalculator {
               singleStepCheck: board.oneSpaceUpIsEmpty(startPosition),
               doubleStepCheck: Board.isSecondRank(startPosition) && board.twoSpacesUpIsEmpty( startPosition ),
               leftAttackCheck: board.upAndLeftIsAttackable(startPosition),
-              // attackChecks don't need to intake obj anymore
               leftAttackMove: MovesCalculator.genericMovements().backSlashUp(),
               rightAttackCheck: board.upAndRightIsAttackable(startPosition ),
               rightAttackMove: MovesCalculator.genericMovements().forwardSlashUp(),
@@ -364,7 +363,7 @@ class MovesCalculator {
         }
         // DOUBLESTEP
         if ( pawnVars.doubleStepCheck ){
-          // will the twoSpaces Down check get covered later anyway?
+          // TODO will the twoSpaces Down check get covered later anyway?
             let newPossibility = pawnVars.nonAttackMove
           newPossibility.rangeLimit = 2
           newPossibility.pieceNotation = ""
@@ -393,7 +392,7 @@ class MovesCalculator {
             let position = args["position"],
               captureNotation = this.capture(startPosition + 1);
             return captureNotation
-            // this is not really just a notation it's an action... or is it, i think the return is a notation, but the action is occurring right here.
+            // TODO this is not really just a notation it's an action... or is it, i think the return is a notation, but the action is occurring right here.
           }
           moveObjects = moveObjects.concat(newPossibility)
         }
@@ -406,7 +405,7 @@ class MovesCalculator {
             let position = args["position"];
             let captureNotation = this.capture(startPosition - 1);
             return captureNotation
-            // this is not really just a notation it's an action
+            // TODO this is not really just a notation it's an action
           }
           moveObjects = moveObjects.concat(newPossibility)
         }
