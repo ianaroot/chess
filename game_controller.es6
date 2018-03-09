@@ -37,11 +37,11 @@ class GameController {
 		} else {
 			this.board.storeCurrentLayoutAsPrevious()
 			captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions)
-			promotionNotation = this.postMovementRules.pawnPromotionQuery( board )
+			promotionNotation = PieceMovementRules.pawnPromotionQuery( board )
 			let otherTeam = this.board.teamNotMoving()
 			let otherTeamsKingPosition = this.board.kingPosition(otherTeam)
 			var alertText = ""
-			if( this.postMovementRules.checkmate( board )){
+			if( PieceMovementRules.checkmate( board )){
 				alertText = "checkmate"
 				checkNotation = "#"
 				board.endGame()
@@ -52,7 +52,7 @@ class GameController {
 				checkNotation = "+"
 			}
 			this.view.displayLayOut(this.board.layOut)
-			var stalemate = this.postMovementRules.stalemate(board);
+			var stalemate = PieceMovementRules.stalemate(board);
 			if( !board.gameOver && stalemate ){
 				let displayAlert = this.view.displayAlert
 				alertText = "stalemate"
