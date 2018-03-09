@@ -53,7 +53,7 @@ class Rules {
         board              = args["board"],
         additionalActions  = args["additionalActions"],
         layOut             = board.layOut,
-        pieceString        = layOut[startPosition],
+        pieceObject        = layOut[startPosition],
         teamString         = board.teamAt(startPosition),
         danger             = false,
         newLayout          = Board.deepCopyLayout(layOut),

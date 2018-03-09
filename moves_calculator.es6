@@ -280,7 +280,7 @@ class MovesCalculator {
             var position = args["position"],
               pieceObject = JSON.parse(this.layOut[startPosition + 3]);
             this.emptify( startPosition + 3)
-            this.placePiece({ position: (startPosition + 1), pieceString: pieceObject })
+            this.placePiece({ position: (startPosition + 1), pieceObject: pieceObject })
           }
           moveObjects.push(castle)
         };
@@ -298,7 +298,7 @@ class MovesCalculator {
               pieceObject = JSON.parse(this.layOut[startPosition - 4]);
               // this should be telling the board to move the piece
             this.emptify( startPosition - 4)
-            this.placePiece({ position: (startPosition - 1), pieceString: pieceObject })
+            this.placePiece({ position: (startPosition - 1), pieceObject: pieceObject })
           }
           moveObjects.push(castle)
         };

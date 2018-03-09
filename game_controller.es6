@@ -9,7 +9,7 @@ class GameController {
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
 		var board = this.board,
 			layOut = board.layOut,
-			pieceString = layOut[startPosition],
+			pieceObject = layOut[startPosition],
 			team = board.teamAt(startPosition),
 			checkNotation = "",
 			captureNotation = "",

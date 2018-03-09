@@ -1,7 +1,6 @@
 class View{
 	// pretty sure this could be a singleton even on a server with several games running
   // captures don't show up in the browser if the moves are made through the consoler
-  // capture display occasionally bugs out and throws in extra pieceString, error is not coming from board
   // clean up alternations position vs gridCalculator
   constructor(){
     this.boundHighlightTile = this.highlightTile.bind(this)

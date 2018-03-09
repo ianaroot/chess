@@ -140,7 +140,7 @@ class Board {
     if( captureNotationMatch ){
       this.capturedPieces.pop()
     }
-    // could add e.p. to notation for simplification
+    // could add e.p. to notation for simplification UPDATe 3/8/18 no idea what this comment means
   }
 
   consoleLog(){
@@ -225,12 +225,12 @@ class Board {
       ){
         throw new Error("missing params in movePiece")
       }
-      // pieceString should be pieceObject now
-    var pieceString = JSON.parse(this.layOut[startPosition]),
+      // pieceObject should be pieceObject now
+    var pieceObject = JSON.parse(this.layOut[startPosition]),
       captureNotation = this.capture(endPosition);
 
     this.emptify(startPosition)
-    this.placePiece({ position: endPosition, pieceString: pieceString })
+    this.placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ captureNotation = additionalActions.call(this, {position: startPosition} ) }
 
     return captureNotation
@@ -245,9 +245,9 @@ class Board {
   capture(position){
     var captureNotation = ""
     if( !this.positionEmpty(position) ){
-      var pieceString = this.layOut[position];
+      var pieceObject = this.layOut[position];
       // could maybe switch this to store capture by color, but it should work fine
-      this.capturedPieces.push(pieceString)
+      this.capturedPieces.push(pieceObject)
       this.emptify(position)
       captureNotation = "x"
     } else {
@@ -271,8 +271,8 @@ class Board {
   downAndLeftIsAttackable(startPosition){
     var positionDownAndLeft = startPosition - 9;
     if( Board.inBounds( positionDownAndLeft )){
-      var pieceString = this.layOut[positionDownAndLeft],
-        pieceTeam = Board.parseTeam(pieceString);
+      var pieceObject = this.layOut[positionDownAndLeft],
+        pieceTeam = Board.parseTeam(pieceObject);
 
       return this.occupiedByOpponent({position: positionDownAndLeft, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndLeft)
     } else {
@@ -285,8 +285,8 @@ class Board {
     var positionDownAndRight = startPosition - 7;
 
     if( Board.inBounds( positionDownAndRight ) ){
-      var pieceString = this.layOut[positionDownAndRight],
-        pieceTeam = Board.parseTeam(pieceString);
+      var pieceObject = this.layOut[positionDownAndRight],
+        pieceTeam = Board.parseTeam(pieceObject);
 
       return this.occupiedByOpponent({position: positionDownAndRight, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndRight)
     } else {
@@ -319,8 +319,8 @@ class Board {
     var positionUpAndRight = startPosition + 9;
 
     if( Board.inBounds( positionUpAndRight)){
-      var pieceString = this.layOut[positionUpAndRight],
-        pieceTeam = Board.parseTeam(pieceString);
+      var pieceObject = this.layOut[positionUpAndRight],
+        pieceTeam = Board.parseTeam(pieceObject);
 
       return this.occupiedByOpponent({position: positionUpAndRight, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndRight)
     } else {
@@ -349,14 +349,14 @@ class Board {
   }
 
   pieceHasNotMovedFrom(position){
-    var pieceString = this.layOut[position],
+    var pieceObject = this.layOut[position],
       previousLayouts = this.previousLayouts,
       pieceHasNotMoved = true;
 
     for(let i = 0; i < previousLayouts.length; i++){
       var oldLayout= previousLayouts[i];
 
-      if(oldLayout[position] !== pieceString ){
+      if(oldLayout[position] !== pieceObject ){
         pieceHasNotMoved = false
         break;
       };
@@ -370,9 +370,9 @@ class Board {
 
   placePiece(args){
     var position = args["position"],
-      pieceString = args["pieceString"];
+      pieceObject = args["pieceObject"];
 
-    this.layOut[position] = JSON.stringify(pieceString)
+    this.layOut[position] = JSON.stringify(pieceObject)
   }
 
   promotePawn(position){
@@ -387,8 +387,8 @@ class Board {
     if( !Board.inBounds(position) ){
       return Board.EMPTY
     };
-    var pieceString = JSON.parse(this.layOut[position]),
-      teamString = pieceString.color;
+    var pieceObject = JSON.parse(this.layOut[position]),
+      teamString = pieceObject.color;
 
     return teamString
   }
