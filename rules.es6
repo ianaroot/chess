@@ -1,5 +1,4 @@
 class Rules {
-  // TODO more lets vars
 
   static getMoveObject(startPosition, endPosition, board){
     if(
