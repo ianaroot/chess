@@ -48,7 +48,7 @@ class Rules {
     ){
       throw new Error("missing params in kingInCheck")
     }
-    var startPosition      = args["startPosition"],
+    let startPosition      = args["startPosition"],
         endPosition        = args["endPosition"],
         board              = args["board"],
         additionalActions  = args["additionalActions"],
@@ -60,24 +60,22 @@ class Rules {
         opposingTeamString = Board.opposingTeam(teamString),
         newBoard = new Board(newLayout);
     newBoard.movePiece( startPosition, endPosition, additionalActions)
-    var kingPosition = newBoard.kingPosition(teamString);
-
-    var enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
-    for(var i = 0; i < enemyPositions.length; i++){
-      var enemyPosition = enemyPositions[i],
-        enemyPieceType = newBoard.pieceTypeAt( enemyPosition );
-
-        let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition});
-        let moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
-        for( var key in movesCalculator.viablePositions ){
-          if( parseInt(key) === kingPosition ){
-            moveObject = movesCalculator.viablePositions[key]
-          }
-        };
-
-        if( enemyPieceType !== Board.KING &&  !moveObject.illegal ){ //!Rules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard}).illegal ){
-        danger = true
+    let kingPosition = newBoard.kingPosition(teamString),
+        enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
+    for(let i = 0; i < enemyPositions.length; i++){
+      let enemyPosition = enemyPositions[i],
+        enemyPieceType = newBoard.pieceTypeAt( enemyPosition ),
+        movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition}),
+        moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
+      for( let key in movesCalculator.viablePositions ){
+        if( parseInt(key) === kingPosition ){
+          moveObject = movesCalculator.viablePositions[key]
         }
+      };
+
+      if( enemyPieceType !== Board.KING &&  !moveObject.illegal ){ //!Rules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard}).illegal ){
+      danger = true
+      }
     };
     return danger
   }
