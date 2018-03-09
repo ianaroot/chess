@@ -1,5 +1,4 @@
 const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
-//TODO should have case sensitivity protection to avoid future blackPawn BlackPawn issues
 
 class GameController {
 	constructor(){
