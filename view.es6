@@ -64,7 +64,7 @@ class View{
     if (img) {
       team = this.teamSet(img.src)
       if (team === gameController.board.allowedToMove){
-        var viables = PieceMovementRules.viablePositionsFromKeysOnly( {startPosition: position, board: gameController.board } )
+        var viables = Rules.viablePositionsFromKeysOnly( {startPosition: position, board: gameController.board } )
         for (let i = 0; i < viables.length; i++){
           var tilePosition = viables[i],
            alphaNumericPosition = Board.gridCalculator(tilePosition),

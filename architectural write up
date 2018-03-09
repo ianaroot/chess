@@ -6,7 +6,7 @@ the meat and potatoes of the GameController is the attemptMove function
 attemptMove takes in a startPosition and an endPosition
 first it checks whether the game is over, then whether the tile is empty,
   and then whether the team whose piece is moving is actually the team whose turn it is
-next it will call on the poorly named PieceMovementRules class function getMoveObject
+next it will call on the poorly named Rules class function getMoveObject
 getMoveObject requires the board in question, the startPosition and the endPosition
 
 HOW
@@ -21,10 +21,10 @@ if so postMovementRules will return some additional notation to append, and ther
 
 the GameController is the main object. everything is run through the GameController. at very few points do any other objects reference one another
 the exceptions to this are:
-PostMovementRules calls on PieceMovementRules as part of checking whether a given position is check, checkmate, or stalemate
+PostMovementRules calls on Rules as part of checking whether a given position is check, checkmate, or stalemate
 PostMovementRules calls the board directly for various position checks, and to promote pawns
-PieceMovementRules creates new boards when looking at hypothetical board states as part of checking whether a given move would be illegally moving into checks
-pieceMovementRules calls the board to make various position checks
+Rules creates new boards when looking at hypothetical board states as part of checking whether a given move would be illegally moving into checks
+Rules calls the board to make various position checks
 outside of this all calls are run from the GameController
 
 BOARD
@@ -53,7 +53,7 @@ instance functions:
 PIECE MOVEMENT RULES
   carries zero state. none! (this may be the result of poor design)
 class functions:
-  only three of pieceMovementRules class functions are ever invoked outside of the class itself
+  only three of Rules class functions are ever invoked outside of the class itself
 they are:
   getMoveObject: a very poorly named function which takes in a board, startPosition, and endPosition, and returns an object containing the following information:
     whether the move is legal
@@ -81,14 +81,14 @@ the biggest issue with piece Movement rules seems to be the way it tucks the gen
   it seems like there is a better designed way to have the pieceSpecificMovements as separate objects, perhaps all inheriting from a single object, which itself contains the genericMovements information
   i think i just lost track of how to manage that with all the this'es floating absolute
   hypothetically, an ideal architecture would seem to be something along the lines of a movement rules class, which when necessary
-    calls on various piece movement rules classes, such as PawnMovementRules or RookMovementRules, each of which inherits from either ther original MovementRules class, or perhaps a separate generic PieceMovementRules class
+    calls on various piece movement rules classes, such as PawnMovementRules or RookMovementRules, each of which inherits from either ther original MovementRules class, or perhaps a separate generic Rules class
     these specific classes could also harbor the overflow of pawn information that the board is currently holding
 
 POSTMOVEMENTRULES
 state, none!
 postMovementRules is a set of five functions (which given the lack of state could very well have been static), each of which is responsible for enforcing different rules about what may happen after a legal move is made
   pawnPromotionQuery, checks whether any pawn has reached the back rank, and then promotes it accordingly. at current it automatically promotes the pawn to a queen, though it shouldn't be hard to adjust to allow user input for selecting other pieces later on
-  checkmate, utilizes PieceMovementRules's kingInCheck function and another postMovementRules function called noLegalMoves to determine whether checkmate has been achieved
+  checkmate, utilizes Rules's kingInCheck function and another postMovementRules function called noLegalMoves to determine whether checkmate has been achieved
   noLegalMoves, determines whether the team whose turn it is has any legal moves
   threeFoldRepetition, determines whether the precise current board state has just been created for the third time
   stalemate, determines whether the game has ended in stalemate due to either threeFoldRepetition or a lack of legal moves
@@ -130,10 +130,10 @@ GameController is aware of:
     board.allowedToMove === "white"
     board.allowedToMove = "black"
     board.allowedToMove = "white"
-  PieceMovementRules:
-    PieceMovementRules.getInstance();
-    PieceMovementRules.getMoveObject(startPosition, endPosition, board);
-    PieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
+  Rules:
+    Rules.getInstance();
+    Rules.getMoveObject(startPosition, endPosition, board);
+    Rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
   PostMovementRules:
     pawnPromotionQuery( board )
     postMovementRules.checkmate( board )
@@ -148,7 +148,7 @@ GameController is aware of:
 Board is aware of:
   GameController:
     _______
-  PieceMovementRules:
+  Rules:
     _______
   PostMovementRules:
     _______
@@ -167,10 +167,10 @@ PostMovementRules is aware of:
     board.positionsOccupiedByTeam(onDeckTeamString);
     board.previousLayouts,
     board.layOut
-  PieceMovementRules:
-    PieceMovementRules.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition})
-    PieceMovementRules.viablePositionsFrom({startPosition: startPosition, board: board});
-    PieceMovementRules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board})
+  Rules:
+    Rules.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition})
+    Rules.viablePositionsFrom({startPosition: startPosition, board: board});
+    Rules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board})
   View:
     _______
   GameController:
@@ -181,12 +181,12 @@ View is aware of:
     Board.gridCalculator(i)
   PostMovementRules:
     ______
-  PieceMovementRules:
+  Rules:
     ______
   GameController:
     ______
 
-PieceMovementRules is aware:
+Rules is aware:
   Board:
     board.pieceHasNotMovedFrom(startPosition)
     board.kingSideCastleIsClear(startPosition)
@@ -237,7 +237,7 @@ board class is meant to store most of the state of a given game, as well as
 several functions that supply various pieces of information about either a generic
 chessboard, or the state of the board in a specific game
 
-pieceMovementRules class stores all information about how pieces move. some
+Rules class stores all information about how pieces move. some
 both the generic details about types of movements (orthogonal, diagonal etc.) and
 specific details about which types of motion are available to each individual pieces
 

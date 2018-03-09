@@ -4,7 +4,6 @@ const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
 class GameController {
 	constructor(){
 		this.board = new Board();
-		this.postMovementRules = new PostMovementRules;
     this.view = new View();
 	}
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
@@ -29,7 +28,7 @@ class GameController {
 			this.view.displayAlert( "other team's turn" )
 			return
 		}
-		var moveObject = PieceMovementRules.getMoveObject(startPosition, endPosition, board);
+		var moveObject = Rules.getMoveObject(startPosition, endPosition, board);
 
 		if( moveObject.illegal ){
 			this.view.displayAlert(moveObject.alert)
@@ -37,22 +36,22 @@ class GameController {
 		} else {
 			this.board.storeCurrentLayoutAsPrevious()
 			captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions)
-			promotionNotation = PieceMovementRules.pawnPromotionQuery( board )
+			promotionNotation = Rules.pawnPromotionQuery( board )
 			let otherTeam = this.board.teamNotMoving()
 			let otherTeamsKingPosition = this.board.kingPosition(otherTeam)
 			var alertText = ""
-			if( PieceMovementRules.checkmate( board )){
+			if( Rules.checkmate( board )){
 				alertText = "checkmate"
 				checkNotation = "#"
 				board.endGame()
 			}
-			if( !board.gameOver && PieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
+			if( !board.gameOver && Rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
 				let displayAlert = this.view.displayAlert
 				alertText = "check"
 				checkNotation = "+"
 			}
 			this.view.displayLayOut(this.board.layOut)
-			var stalemate = PieceMovementRules.stalemate(board);
+			var stalemate = Rules.stalemate(board);
 			if( !board.gameOver && stalemate ){
 				let displayAlert = this.view.displayAlert
 				alertText = "stalemate"
