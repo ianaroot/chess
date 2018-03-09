@@ -148,10 +148,10 @@ class Board {
       var row = ""
       for( let j = 0; j < 8; j++){
         let cell = JSON.parse(this.layOut[ i+ j ] )
-        if( cell.color === Board.EMPTY ){
+        if( Board.parseTeam(cell) === Board.EMPTY ){
           var text = "  __  "
         } else {
-          var text = "  " + cell.color[0] + cell.species[0] + "  "
+          var text = "  " + Board.parseTeam(cell[0]) + cell.species[0] + "  "
         }
         row = row + text
       }
@@ -169,20 +169,20 @@ class Board {
   }
 
   blackPawnAt(position){
-    return this.pieceObject(position).color === Board.BLACK && this.pieceObject(position).species === Board.PAWN
+    return Board.parseTeam( this.pieceObject(position) )=== Board.BLACK && this.pieceObject(position).species === Board.PAWN
   }
 
   whitePawnAt(position){
-    return this.pieceObject(position).color === Board.WHITE && this.pieceObject(position).species === Board.PAWN
+    return Board.parseTeam( this.pieceObject(position) )=== Board.WHITE && this.pieceObject(position).species === Board.PAWN
   }
 
 // room for refactoring wetness
   blackPawnDoubleSteppedFrom(position){
-    return this.previousLayouts.length && this.positionEmpty(position) && this.pieceObjectFromLastLayout(position).color === Board.BLACK && this.pieceObjectFromLastLayout(position).species === Board.PAWN
+    return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.BLACK && this.pieceObjectFromLastLayout(position).species === Board.PAWN
   }
 
   whitePawnDoubleSteppedFrom(position){
-    return this.previousLayouts.length && this.positionEmpty(position) && this.pieceObjectFromLastLayout(position).color === Board.WHITE && this.pieceObjectFromLastLayout(position).species === Board.PAWN
+    return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.WHITE && this.pieceObjectFromLastLayout(position).species === Board.PAWN
   }
 
   deepCopyLayout(){
@@ -386,7 +386,7 @@ class Board {
       return Board.EMPTY
     };
     var pieceObject = JSON.parse(this.layOut[position]),
-      teamString = pieceObject.color;
+      teamString = Board.parseTeam( pieceObject );
 
     return teamString
   }
@@ -430,7 +430,7 @@ class Board {
   }
 
   positionEmpty(position){
-    return JSON.parse(this.layOut[position]).color === Board.EMPTY
+    return Board.parseTeam( JSON.parse(this.layOut[position]) ) === Board.EMPTY
   }
 
   kingPosition(teamString){

@@ -35,7 +35,7 @@ class View{
       var gridPosition = Board.gridCalculator(i),
           pieceInitials = this.pieceInitials(layOut[i]);
       this.undisplayPiece(gridPosition);
-      if( JSON.parse(layOut[i]).color !== Board.EMPTY ){
+      if( Board.parseTeam( JSON.parse(layOut[i]) ) !== Board.EMPTY ){
         this.displayPiece({pieceInitials: pieceInitials, gridPosition: gridPosition})
       }
     }
@@ -49,7 +49,7 @@ class View{
   }
   pieceInitials(pieceObject){
     var pieceObject = JSON.parse(pieceObject),
-      firstInitial = pieceObject.color[0],
+      firstInitial = Board.parseTeam( pieceObject )[0],
       secondInitial = pieceObject.species[0];
     return firstInitial + secondInitial
   }
@@ -114,7 +114,7 @@ class View{
     whiteCaptureDiv.innerHTML = "";
     for (let i = 0; i < capturedPieces.length; i++){
       var pieceObject = capturedPieces[i],
-        team = JSON.parse(pieceObject).color,
+        team = Board.parseTeam( JSON.parse(pieceObject ) ),
         pieceInitials = this.pieceInitials(pieceObject);
       this.displayPiece({pieceInitials: pieceInitials, gridPosition: team + "-captures"})
     }
@@ -139,7 +139,7 @@ class View{
     var capturedPieces = gameController.board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
-      if (JSON.parse(capturedPieces[i]).color === Board.BLACK) { total++ }
+      if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.BLACK) { total++ }
     }
     if( total === 11 ){ this.expandBlackCaptureDiv() }
   }
@@ -148,7 +148,7 @@ class View{
     var capturedPieces = gameController.board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
-      if (JSON.parse(capturedPieces[i]).color === Board.WHITE) { total++ }
+      if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.WHITE) { total++ }
     }
     if( total === 11 ){ this.expandWhiteCaptureDiv() }
   }
