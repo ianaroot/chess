@@ -1,5 +1,5 @@
 const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
-// should have case sensitivity protection to avoid future blackPawn BlackPawn issues
+//TODO should have case sensitivity protection to avoid future blackPawn BlackPawn issues
 
 class GameController {
 	constructor(){
@@ -58,7 +58,7 @@ class GameController {
 				board.endGame()
 			}
 			if( moveObject.fullNotation ){
-        // pretty sure i was supposed to add captureNotation etc... here, but need to check
+        // TODO pretty sure i was supposed to add captureNotation etc... here, but need to check
 				notation = moveObject.fullNotation + captureNotation + positionNotation + promotionNotation + checkNotation
 			} else {
 				var positionNotation = Board.gridCalculator(endPosition),

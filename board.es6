@@ -225,7 +225,6 @@ class Board {
       ){
         throw new Error("missing params in movePiece")
       }
-      // pieceObject should be pieceObject now
     var pieceObject = JSON.parse(this.layOut[startPosition]),
       captureNotation = this.capture(endPosition);
 
@@ -246,7 +245,6 @@ class Board {
     var captureNotation = ""
     if( !this.positionEmpty(position) ){
       var pieceObject = this.layOut[position];
-      // could maybe switch this to store capture by color, but it should work fine
       this.capturedPieces.push(pieceObject)
       this.emptify(position)
       captureNotation = "x"
@@ -307,7 +305,7 @@ class Board {
 
     if( Board.inBounds( positionUpAndLeft)){
       var pieceObject = JSON.parse(this.layOut[positionUpAndLeft]),
-      // there are places i'm not using parse team where i should be
+      //TODO there are places i'm not using parse team where i should be
         pieceTeam = Board.parseTeam(pieceObject);
       return this.occupiedByOpponent({position: positionUpAndLeft, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndLeft)
     } else {
