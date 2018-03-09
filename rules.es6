@@ -8,12 +8,12 @@ class Rules {
     ){
       throw new Error("missing params in getMoveObject")
     }
-    var layOut = board.layOut,
-      team = board.teamAt(startPosition),
-      viableMovement = {},
-      movesCalculator = new MovesCalculator({board: board, startPosition: startPosition});
-    var moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
-    for( var key in movesCalculator.viablePositions ){
+    let layOut = board.layOut,
+        team = board.teamAt(startPosition),
+        viableMovement = {},
+        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition}),
+        moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
+    for( let key in movesCalculator.viablePositions ){
       if( key == endPosition ){
         moveObject = movesCalculator.viablePositions[key]
       }
@@ -87,9 +87,9 @@ class Rules {
     ){
       throw new Error("missing params in viablePositionsFromKeysOnly")
     }
-    let movesCalculator = new MovesCalculator(args);
-    let keysOnly = [];
-    for (var property in movesCalculator.viablePositions) {
+    let movesCalculator = new MovesCalculator(args),
+        keysOnly = [];
+    for (let property in movesCalculator.viablePositions) {
       let newArgs = Object.assign(args, { endPosition: property });
       if (movesCalculator.viablePositions.hasOwnProperty(property) && !this.kingInCheck( newArgs ) ){
         keysOnly.push(property)
@@ -117,24 +117,24 @@ class Rules {
   }
   static checkmate(board){
     var otherTeam = board.teamNotMoving(),
-      kingPosition = board.kingPosition(otherTeam);
-      var inCheck = this.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition});
-      var noMoves = this.noLegalMoves(board);
+        kingPosition = board.kingPosition(otherTeam),
+        inCheck = this.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}),
+        noMoves = this.noLegalMoves(board);
     return inCheck && noMoves
   }
   static noLegalMoves(board){
-    var movingTeamString = board.allowedToMove,
+    let movingTeamString = board.allowedToMove,
       noLegalMoves = true;
     if(movingTeamString === Board.BLACK){
       var onDeckTeamString = Board.WHITE
     } else {
       var onDeckTeamString = Board.BLACK
     }
-    var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
-    for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
-      var startPosition = occcupiedPositions[i],
+    let occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
+    for(let i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
+      let startPosition = occcupiedPositions[i],
         movesCalculator = new MovesCalculator({board: board, startPosition: startPosition})
-      for( var key in movesCalculator.viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
+      for( let key in movesCalculator.viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
         if( !this.kingInCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
           noLegalMoves = false
         }
@@ -143,16 +143,15 @@ class Rules {
     return noLegalMoves
   }
   static threeFoldRepetition(board){
-    var  previousLayouts = board.previousLayouts,
-      repetitions = 0,
-      threeFoldRepetition = false,
-      currentLayOut = board.layOut
-      different;
+    let previousLayouts = board.previousLayouts,
+        repetitions = 0,
+        threeFoldRepetition = false,
+        currentLayOut = board.layOut;
 
-    for( var i = 0; i < previousLayouts.length; i++ ){
-      var comparisonLayout = previousLayouts[i],
+    for( let i = 0; i < previousLayouts.length; i++ ){
+      let comparisonLayout = previousLayouts[i],
         different = false;
-      for( var j = 0; j < comparisonLayout.length; j++){
+      for( let j = 0; j < comparisonLayout.length; j++){
         if( comparisonLayout[j] !== currentLayOut[j] ){
           different = true
           break
