@@ -293,12 +293,12 @@ class MovesCalculator {
           && !Rules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
           && !Rules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition + 1), board: board })
           ){
-          var castle = MovesCalculator.genericMovements().horizontalLeft()
+          let castle = MovesCalculator.genericMovements().horizontalLeft()
           castle.increment = + 2
           castle.rangeLimit = 1
           castle.fullNotation = "O-O"
           castle.additionalActions = function(args){
-            var position = args["position"],
+            let position = args["position"],
               pieceObject = JSON.parse(this.layOut[startPosition + 3]);
             this.emptify( startPosition + 3)
             this.placePiece({ position: (startPosition + 1), pieceObject: pieceObject })
@@ -313,7 +313,7 @@ class MovesCalculator {
           castle.rangeLimit = 1
           castle.fullNotation = "O-O-O"
           castle.additionalActions = function(args){
-            var position = args["position"],
+            let position = args["position"],
               pieceObject = JSON.parse(this.layOut[startPosition - 4]);
             this.emptify( startPosition - 4)
             this.placePiece({ position: (startPosition - 1), pieceObject: pieceObject })
@@ -357,7 +357,7 @@ class MovesCalculator {
           pawnVars = colorVars[teamString];
         // SINGLE STEP
         if ( pawnVars.singleStepCheck ) {
-          var newPossibility = pawnVars.nonAttackMove
+          let newPossibility = pawnVars.nonAttackMove
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = ""
           moveObjects = moveObjects.concat(newPossibility)
@@ -365,20 +365,20 @@ class MovesCalculator {
         // DOUBLESTEP
         if ( pawnVars.doubleStepCheck ){
           // will the twoSpaces Down check get covered later anyway?
-            var newPossibility = pawnVars.nonAttackMove
+            let newPossibility = pawnVars.nonAttackMove
           newPossibility.rangeLimit = 2
           newPossibility.pieceNotation = ""
           moveObjects = moveObjects.concat(newPossibility)
         }
         // STANDARD ATTACKS
         if ( pawnVars.leftAttackCheck ) {
-          var newPossibility = pawnVars.leftAttackMove
+          let newPossibility = pawnVars.leftAttackMove
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = Board.file(startPosition)
           moveObjects = moveObjects.concat(newPossibility)
         }
         if( pawnVars.rightAttackCheck ) {
-          var newPossibility = pawnVars.rightAttackMove
+          let newPossibility = pawnVars.rightAttackMove
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = Board.file(startPosition)
           moveObjects = moveObjects.concat(newPossibility)
@@ -386,11 +386,11 @@ class MovesCalculator {
         // EN PASSANT
           // RIGHT
         if( pawnVars.rightEnPassantCheck ){
-          var newPossibility = pawnVars.rightAttackMove
+          let newPossibility = pawnVars.rightAttackMove
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = Board.file(startPosition)
           newPossibility.additionalActions = function(args){
-            var position = args["position"],
+            let position = args["position"],
               captureNotation = this.capture(startPosition + 1);
             return captureNotation
             // this is not really just a notation it's an action... or is it, i think the return is a notation, but the action is occurring right here.
@@ -399,12 +399,12 @@ class MovesCalculator {
         }
           // LEFT
         if( pawnVars.leftEnPassantCheck ){
-          var newPossibility = pawnVars.leftAttackMove
+          let newPossibility = pawnVars.leftAttackMove
           newPossibility.rangeLimit = 1
           newPossibility.pieceNotation = Board.file(startPosition)
           newPossibility.additionalActions = function(args){
-            var position = args["position"];
-            var captureNotation = this.capture(startPosition - 1);
+            let position = args["position"];
+            let captureNotation = this.capture(startPosition - 1);
             return captureNotation
             // this is not really just a notation it's an action
           }

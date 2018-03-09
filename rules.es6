@@ -128,7 +128,7 @@ class Rules {
     return ""
   }
   static checkmate(board){
-    var otherTeam = board.teamNotMoving(),
+    let otherTeam = board.teamNotMoving(),
         kingPosition = board.kingPosition(otherTeam),
         inCheck = this.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}),
         noMoves = this.noLegalMoves(board);

@@ -13,26 +13,26 @@ class View{
     alert(message)
   }
   undisplayPiece(gridPosition){
-    var element = document.getElementById( gridPosition ),
+    let element = document.getElementById( gridPosition ),
       children  = element.children;
-    for( var i = 0; i < children.length; i ++){
+    for( let i = 0; i < children.length; i ++){
       children[i].remove()
     }
   }
   displayPiece(args){
-    var elem = document.createElement("img"),
+    let elem = document.createElement("img"),
       pieceInitials = args["pieceInitials"],
       // turns out gridPosition is more like element class, and it has to be unique, so it should probably be element id
       gridPosition = args["gridPosition"];
     elem.setAttribute("src", this.pieceImgSrc( pieceInitials ) );
     elem.setAttribute("height", View.TILE_HEIGHT);
     elem.setAttribute("width", View.TILE_HEIGHT);
-    var element = document.getElementById( gridPosition );
+    let element = document.getElementById( gridPosition );
     element.appendChild(elem)
   }
   displayLayOut(layOut){
-    for( var i = 0; i < layOut.length; i++){
-      var gridPosition = Board.gridCalculator(i),
+    for( let i = 0; i < layOut.length; i++){
+      let gridPosition = Board.gridCalculator(i),
           pieceInitials = this.pieceInitials(layOut[i]);
       this.undisplayPiece(gridPosition);
       if( Board.parseTeam( JSON.parse(layOut[i]) ) !== Board.EMPTY ){
@@ -48,13 +48,13 @@ class View{
     return "img/chesspieces/wikipedia/" + pieceInitials + ".png"
   }
   pieceInitials(pieceObject){
-    var pieceObject = JSON.parse(pieceObject),
-      firstInitial = Board.parseTeam( pieceObject )[0],
+    pieceObject = JSON.parse(pieceObject);
+    let firstInitial = Board.parseTeam( pieceObject )[0],
       secondInitial = pieceObject.species[0];
     return firstInitial + secondInitial
   }
   highlightTile(){
-    var target = arguments[0].currentTarget,
+    let target = arguments[0].currentTarget,
       img = target.children[0],
       position = Board.gridCalculatorReverse( target.id ),
       team = Board.EMPTY;
@@ -63,9 +63,9 @@ class View{
     if (img) {
       team = this.teamSet(img.src)
       if (team === gameController.board.allowedToMove){
-        var viables = Rules.viablePositionsFromKeysOnly( {startPosition: position, board: gameController.board } )
+        let viables = Rules.viablePositionsFromKeysOnly( {startPosition: position, board: gameController.board } )
         for (let i = 0; i < viables.length; i++){
-          var tilePosition = viables[i],
+          let tilePosition = viables[i],
            alphaNumericPosition = Board.gridCalculator(tilePosition),
            square = document.getElementById(alphaNumericPosition);
           square.classList.add("highlight2")
@@ -81,7 +81,7 @@ class View{
     return document.getElementsByClassName("chess-tile")
   }
   teamSet(src){
-    var regex = /(\w)[A-Z]\.png$/,
+    let regex = /(\w)[A-Z]\.png$/,
       teamInitial = src.match(regex)[1];
     if( teamInitial === "b"){
       return Board.BLACK;
@@ -92,7 +92,7 @@ class View{
     }
   }
   unhighlLighTiles(){
-    var tiles = this.retrieveTiles();
+    let tiles = this.retrieveTiles();
     for(let i = 0 ; i < tiles.length ; i++ ){
     	var tile = tiles[i];
       tile.removeEventListener("click", this.boundHighlightTile);
@@ -103,24 +103,24 @@ class View{
     }
   }
   updateTeamAllowedToMove(){
-    var span = document.getElementById("team-allowed-to-move");
+    let span = document.getElementById("team-allowed-to-move");
     span.innerText = gameController.board.allowedToMove
   }
   updateCaptures(){
-    var blackCaptureDiv = document.getElementById("black-captures"),
+    let blackCaptureDiv = document.getElementById("black-captures"),
       whiteCaptureDiv = document.getElementById("white-captures"),
       capturedPieces = gameController.board.capturedPieces;
     blackCaptureDiv.innerHTML = "";
     whiteCaptureDiv.innerHTML = "";
     for (let i = 0; i < capturedPieces.length; i++){
-      var pieceObject = capturedPieces[i],
+      let pieceObject = capturedPieces[i],
         team = Board.parseTeam( JSON.parse(pieceObject ) ),
         pieceInitials = this.pieceInitials(pieceObject);
       this.displayPiece({pieceInitials: pieceInitials, gridPosition: team + "-captures"})
     }
   }
   attemptMove(){
-    var target = arguments[0].currentTarget,
+    let target = arguments[0].currentTarget,
       endPosition = Board.gridCalculatorReverse( target.id ),
       startElement = document.getElementsByClassName("startPosition")[0],
       startPosition = Board.gridCalculatorReverse( startElement.id );
@@ -129,14 +129,14 @@ class View{
     gameController.attemptMove(startPosition, endPosition);
   }
   setTileClickListener(){
-    var tiles = this.retrieveTiles();
+    let tiles = this.retrieveTiles();
     for(let i = 0 ; i < tiles.length ; i++ ){
     	var tile = tiles[i];
     	tile.addEventListener("click", this.boundHighlightTile );
     }
   }
   blackCaptureDivNeedsExpanding(){
-    var capturedPieces = gameController.board.capturedPieces,
+    let capturedPieces = gameController.board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
       if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.BLACK) { total++ }
@@ -145,7 +145,7 @@ class View{
   }
 
   whiteCaptureDivNeedsExpanding(){
-    var capturedPieces = gameController.board.capturedPieces,
+    let capturedPieces = gameController.board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
       if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.WHITE) { total++ }
@@ -153,15 +153,15 @@ class View{
     if( total === 11 ){ this.expandWhiteCaptureDiv() }
   }
   expandWhiteCaptureDiv(){
-    var div = document.getElementById("white-captures")
+    let div = document.getElementById("white-captures")
     div.style.height = 98
   }
   expandBlackCaptureDiv(){
-    var div = document.getElementById("black-captures")
+    let div = document.getElementById("black-captures")
     div.style.height = 98
   }
   setUndoClickListener(){
-    var undoButton = document.getElementById("undo-button");
+    let undoButton = document.getElementById("undo-button");
     undoButton.addEventListener("click", gameController.undo.bind(gameController))
   }
 }

@@ -22,7 +22,7 @@ class Board {
 
 
   static defaultLayOut(){
-    var layOut = [
+    let layOut = [
       {color: Board.WHITE, species: Board.ROOK}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.QUEEN}, {color: Board.WHITE, species: Board.KING}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.ROOK},
       {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN},
       {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
@@ -44,7 +44,7 @@ class Board {
   }
 
   static deepCopyLayout(layOut){
-    var newLayOut = [];
+    let newLayOut = [];
     for( let i = 0; i < layOut.length; i ++){
       newLayOut.push( layOut[i] )
     }
@@ -64,12 +64,12 @@ class Board {
   }
 
   static file(position){
-    var files = "abcdefgh";
+    let files = "abcdefgh";
     return files[position % 8]
   }
 
   static squareColor(position){
-    var div = Math.floor(position / 8),
+    let div = Math.floor(position / 8),
       mod   = position % 8,
       sum   = div + mod,
       squareColor = "";
@@ -90,7 +90,7 @@ class Board {
   }
 
   static gridCalculator(tile){
-    var x = Math.floor(tile % 8),
+    let x = Math.floor(tile % 8),
         y = Math.floor(tile / 8) + 1,
       alphaNum = {
         0: "a",
@@ -101,13 +101,12 @@ class Board {
         5: "f",
         6: "g",
         7: "h"
-      },
-      x = alphaNum[x];
-    return x + y
+      };
+    return alphaNum[x] + y
   }
 
   static gridCalculatorReverse(tile){
-    var letter = tile[0],
+    let letter = tile[0],
       number = tile[1],
      alphaNum = {
         a: 0,
@@ -139,7 +138,7 @@ class Board {
   undo(){
     this.layOut = this.lastLayout()
     this.previousLayouts.pop()
-    var undoneNotation = this.movementNotation.pop(),
+    let undoneNotation = this.movementNotation.pop(),
       captureNotationMatch = undoneNotation.match(/x/);
     if( captureNotationMatch ){
       this.capturedPieces.pop()
@@ -149,13 +148,13 @@ class Board {
 
   consoleLog(){
     for( let i = 0; i < 64; i = i + 8 ){
-      var row = ""
+      let row = ""
       for( let j = 0; j < 8; j++){
         let cell = JSON.parse(this.layOut[ i+ j ] )
         if( Board.parseTeam(cell) === Board.EMPTY ){
-          var text = "  __  "
+          let text = "  __  "
         } else {
-          var text = "  " + Board.parseTeam(cell[0]) + Board.parseSpecies( cell )[0] + "  "
+          let text = "  " + Board.parseTeam(cell[0]) + Board.parseSpecies( cell )[0] + "  "
         }
         row = row + text
       }
@@ -207,7 +206,7 @@ class Board {
   }
 
   teamNotMoving(){
-    var teamNotMoving;
+    let teamNotMoving;
 
     if( this.allowedToMove === Board.WHITE){
       teamNotMoving = Board.BLACK
@@ -229,7 +228,7 @@ class Board {
       ){
         throw new Error("missing params in movePiece")
       }
-    var pieceObject = JSON.parse(this.layOut[startPosition]),
+    let pieceObject = JSON.parse(this.layOut[startPosition]),
       captureNotation = this.capture(endPosition);
 
     this.emptify(startPosition)
@@ -240,15 +239,15 @@ class Board {
   }
 
   storeCurrentLayoutAsPrevious(){
-    var layOutCopy = Board.deepCopyLayout( this.layOut );
+    let layOutCopy = Board.deepCopyLayout( this.layOut );
 
     this.previousLayouts.push(layOutCopy)
   }
 
   capture(position){
-    var captureNotation = ""
+    let captureNotation = ""
     if( !this.positionEmpty(position) ){
-      var pieceObject = this.layOut[position];
+      let pieceObject = this.layOut[position];
       this.capturedPieces.push(pieceObject)
       this.emptify(position)
       captureNotation = "x"
@@ -271,9 +270,9 @@ class Board {
   }
 
   downAndLeftIsAttackable(startPosition){
-    var positionDownAndLeft = startPosition - 9;
+    let positionDownAndLeft = startPosition - 9;
     if( Board.inBounds( positionDownAndLeft )){
-      var pieceObject = this.layOut[positionDownAndLeft],
+      let pieceObject = this.layOut[positionDownAndLeft],
         pieceTeam = Board.parseTeam(pieceObject);
 
       return this.occupiedByOpponent({position: positionDownAndLeft, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndLeft)
@@ -284,10 +283,10 @@ class Board {
   }
 
   downAndRightIsAttackable(startPosition){
-    var positionDownAndRight = startPosition - 7;
+    let positionDownAndRight = startPosition - 7;
 
     if( Board.inBounds( positionDownAndRight ) ){
-      var pieceObject = this.layOut[positionDownAndRight],
+      let pieceObject = this.layOut[positionDownAndRight],
         pieceTeam = Board.parseTeam(pieceObject);
 
       return this.occupiedByOpponent({position: positionDownAndRight, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndRight)
@@ -305,10 +304,10 @@ class Board {
   }
 
   upAndLeftIsAttackable(startPosition){
-    var positionUpAndLeft = startPosition + 7;
+    let positionUpAndLeft = startPosition + 7;
 
     if( Board.inBounds( positionUpAndLeft)){
-      var pieceObject = JSON.parse(this.layOut[positionUpAndLeft]),
+      let pieceObject = JSON.parse(this.layOut[positionUpAndLeft]),
         pieceTeam = Board.parseTeam(pieceObject);
       return this.occupiedByOpponent({position: positionUpAndLeft, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndLeft)
     } else {
@@ -317,10 +316,10 @@ class Board {
   }
 
   upAndRightIsAttackable(startPosition){
-    var positionUpAndRight = startPosition + 9;
+    let positionUpAndRight = startPosition + 9;
 
     if( Board.inBounds( positionUpAndRight)){
-      var pieceObject = this.layOut[positionUpAndRight],
+      let pieceObject = this.layOut[positionUpAndRight],
         pieceTeam = Board.parseTeam(pieceObject);
 
       return this.occupiedByOpponent({position: positionUpAndRight, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndRight)
@@ -338,24 +337,24 @@ class Board {
   }
 
   kingSideRookHasNotMoved(kingPosition){
-    var kingSideRookStartPosition = kingPosition + 3;
+    let kingSideRookStartPosition = kingPosition + 3;
 
     return (this.pieceTypeAt( kingSideRookStartPosition ) ===Board.ROOK) && this.pieceHasNotMovedFrom( kingSideRookStartPosition )
   }
 
   queenSideRookHasNotMoved(kingPosition){
-    var queenSideRookStartPosition = kingPosition - 4;
+    let queenSideRookStartPosition = kingPosition - 4;
 
     return (this.pieceTypeAt( queenSideRookStartPosition ) ===Board.ROOK) && this.pieceHasNotMovedFrom( queenSideRookStartPosition )
   }
 
   pieceHasNotMovedFrom(position){
-    var pieceObject = this.layOut[position],
+    let pieceObject = this.layOut[position],
       previousLayouts = this.previousLayouts,
       pieceHasNotMoved = true;
 
     for(let i = 0; i < previousLayouts.length; i++){
-      var oldLayout= previousLayouts[i];
+      let oldLayout= previousLayouts[i];
 
       if(oldLayout[position] !== pieceObject ){
         pieceHasNotMoved = false
@@ -370,7 +369,7 @@ class Board {
   }
 
   placePiece(args){
-    var position = args["position"],
+    let position = args["position"],
       pieceObject = args["pieceObject"];
 
     this.layOut[position] = JSON.stringify(pieceObject)
@@ -378,7 +377,7 @@ class Board {
 
   promotePawn(position){
     // TODO make this request input as to what piece to become
-    var teamString = this.teamAt(position);
+    let teamString = this.teamAt(position);
 
     this.layOut[position] = JSON.stringify({color: teamString , species: Board.QUEEN})
 
@@ -388,16 +387,16 @@ class Board {
     if( !Board.inBounds(position) ){
       return Board.EMPTY
     };
-    var pieceObject = JSON.parse(this.layOut[position]),
+    let pieceObject = JSON.parse(this.layOut[position]),
       teamString = Board.parseTeam( pieceObject );
 
     return teamString
   }
 
   positionsOccupiedByTeam(teamString){
-    var positions = [];
-    for( var i = 0; i < this.layOut.length; i++){
-      var teamAt = this.teamAt(i);
+    let positions = [];
+    for( let i = 0; i < this.layOut.length; i++){
+      let teamAt = this.teamAt(i);
       if(teamAt === teamString){
         positions.push(i)
       };
@@ -406,7 +405,7 @@ class Board {
   }
 
   occupiedByTeamMate(args){
-    var position = args["position"],
+    let position = args["position"],
       teamString = args["teamString"],
       occupantTeam = this.teamAt(position);
 
@@ -414,7 +413,7 @@ class Board {
   }
 
   occupiedByOpponent(args){
-    var position = args["position"],
+    let position = args["position"],
       teamString = args["teamString"],
       occupantTeam = this.teamAt(position);
 
@@ -422,7 +421,7 @@ class Board {
   }
 
   pieceTypeAt(position){
-    var pieceObject = JSON.parse(this.layOut[position]),
+    let pieceObject = JSON.parse(this.layOut[position]),
       pieceType = Board.parseSpecies( pieceObject );
 
     return pieceType
@@ -437,7 +436,7 @@ class Board {
   }
 
   kingPosition(teamString){
-    var layOut = this.layOut,
+    let layOut = this.layOut,
       position = null;
 
     for(let i = 0; i < layOut.length; i ++){

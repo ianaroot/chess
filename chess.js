@@ -15,7 +15,7 @@
 //   //   }
 //   // },
 //   // movementIncrement: function(position, newPosition){
-//   //   var increment;
+//   //   let increment;
 //   //   if ( this.viableMovements.isVertical(position, newPosition) && position < newPosition ){
 //   //     increment = 8
 //   //   } else if ( this.viableMovements.isVertical(position, newPosition) && position > newPosition ){
@@ -57,7 +57,7 @@
 
 
 //   // movementTypeVerifier: function(possibleMoves, currentPosition, newPosition){
-//   //   var possibleMoves = possibleMoves.replace(/cP/g, currentPosition),
+//   //   let possibleMoves = possibleMoves.replace(/cP/g, currentPosition),
 //   //     possibleMoves   = possibleMoves.replace(/nP/g, newPosition),
 //   //     acceptability   = eval(possibleMoves);
 //   //   return acceptability
@@ -73,13 +73,13 @@
 
 
 //   // pathIsBlocked: function(position, newPosition){
-//   //   var movementIncrement = this.movementIncrement(position, newPosition),
+//   //   let movementIncrement = this.movementIncrement(position, newPosition),
 //   //       possibleBlocks    = [],
 //   //       blocked           = false;
 //   //   for( i = 1; ( i * movementIncrement + position) !== newPosition ; i++ ){
 //   //     possibleBlocks.push( i * movementIncrement + position )
 //   //   }
-//   //   for( var i = 0; i < possibleBlocks.length; i++ ){
+//   //   for( let i = 0; i < possibleBlocks.length; i++ ){
 //   //     if ( board.tiles[possibleBlocks[i]] !== undefined ){
 //   //       blocked = true
 //   //     }
