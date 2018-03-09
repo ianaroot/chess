@@ -298,8 +298,6 @@ class MovesCalculator {
           castle.rangeLimit = 1
           castle.fullNotation = "O-O"
           castle.additionalActions = function(args){
-          //TODO planning to pass this to the game controller before invoking, so this should be the right object, but i wonder if i should be
-          // explicit here and use game controller instead of this?
             var position = args["position"],
               pieceObject = JSON.parse(this.layOut[startPosition + 3]);
             this.emptify( startPosition + 3)

@@ -19,15 +19,6 @@ class GameController {
 			return
 		}
 
-		// TODO maybe these things should be determined by the rules?
-		if( team == Board.EMPTY ){
-			this.view.displayAlert("that tile is empty")
-			return
-		}
-		if( team !== board.allowedToMove ){
-			this.view.displayAlert( "other team's turn" )
-			return
-		}
 		var moveObject = Rules.getMoveObject(startPosition, endPosition, board);
 
 		if( moveObject.illegal ){

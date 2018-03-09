@@ -1,4 +1,5 @@
 class Rules {
+  // TODO more lets vars
 
   static getMoveObject(startPosition, endPosition, board){
     if(
@@ -8,11 +9,22 @@ class Rules {
     ){
       throw new Error("missing params in getMoveObject")
     }
+
     let layOut = board.layOut,
         team = board.teamAt(startPosition),
-        viableMovement = {},
-        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition}),
         moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
+
+    if( team == Board.EMPTY ){
+      moveObject.alert = ("that tile is empty")
+      return moveObject
+    }
+    if( team !== board.allowedToMove ){
+      moveObject.alert = ( "other team's turn" )
+      return moveObject
+    }
+
+    let viableMovement = {},
+        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition});
     for( let key in movesCalculator.viablePositions ){
       if( key == endPosition ){
         moveObject = movesCalculator.viablePositions[key]
