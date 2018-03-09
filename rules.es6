@@ -1,7 +1,3 @@
-// TODO positionViable is actually returning a moveObject, and illegal is set to true if it's not a viable move
-// retrieveAvailableMovements actually returns a movesCalculator with the moves having been calculated (in a green field sort of we didn't check if positions are blocked or cause check kind of way)
-// viablePositionsFrom calculates the viable positions in a slightly less green fieldy sort of, we still didnt' bother to look at check, kind of way
-// viable positions from errors when called on empty position
 class Rules {
 
   static getMoveObject(startPosition, endPosition, board){
@@ -16,8 +12,6 @@ class Rules {
       team = board.teamAt(startPosition),
       viableMovement = {},
       movesCalculator = new MovesCalculator({board: board, startPosition: startPosition});
-    movesCalculator.addMoves(),
-    movesCalculator.calculateViablePositions();
     var moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
     for( var key in movesCalculator.viablePositions ){
       if( key == endPosition ){
@@ -63,8 +57,8 @@ class Rules {
         teamString         = board.teamAt(startPosition),
         danger             = false,
         newLayout          = Board.deepCopyLayout(layOut),
-        opposingTeamString = Board.opposingTeam(teamString);
-    var newBoard = new Board(newLayout);
+        opposingTeamString = Board.opposingTeam(teamString),
+        newBoard = new Board(newLayout);
     newBoard.movePiece( startPosition, endPosition, additionalActions)
     var kingPosition = newBoard.kingPosition(teamString);
 
@@ -74,8 +68,6 @@ class Rules {
         enemyPieceType = newBoard.pieceTypeAt( enemyPosition );
 
         let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition});
-        movesCalculator.addMoves()
-        movesCalculator.calculateViablePositions()
         let moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
         for( var key in movesCalculator.viablePositions ){
           if( key == kingPosition ){
@@ -97,15 +89,12 @@ class Rules {
     ){
       throw new Error("missing params in viablePositionsFromKeysOnly")
     }
-    // var movesCalculator = Rules.viablePositionsFrom(args),
-      let movesCalculator = new MovesCalculator(args);
-      movesCalculator.addMoves()
-      movesCalculator.calculateViablePositions()
-      let keysOnly = [];
-      for (var property in movesCalculator.viablePositions) {
-        if (movesCalculator.viablePositions.hasOwnProperty(property) && !this.kingInCheck(Object.assign(args, { endPosition: property })) ){
-
-          keysOnly.push(property)
+    let movesCalculator = new MovesCalculator(args);
+    let keysOnly = [];
+    for (var property in movesCalculator.viablePositions) {
+      let newArgs = Object.assign(args, { endPosition: property });
+      if (movesCalculator.viablePositions.hasOwnProperty(property) && !this.kingInCheck( newArgs ) ){
+        keysOnly.push(property)
       }
     }
     return keysOnly
@@ -146,11 +135,7 @@ class Rules {
     var occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
     for(var i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       var startPosition = occcupiedPositions[i],
-        // movesCalculator = this.viablePositionsFrom({startPosition: startPosition, board: board});
-
         movesCalculator = new MovesCalculator({board: board, startPosition: startPosition})
-        movesCalculator.addMoves()
-        movesCalculator.calculateViablePositions()
       for( var key in movesCalculator.viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
         if( !this.kingInCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
           noLegalMoves = false

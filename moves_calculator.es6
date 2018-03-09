@@ -6,6 +6,8 @@ class MovesCalculator {
     this.board = options["board"]
     this.moveObjects = []
     this.viablePositions = {}
+    this.addMoves(),
+    this.calculateViablePositions();
   }
   addMoves(){
     if ( this.startPosition === undefined || !this.board){
