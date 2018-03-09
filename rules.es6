@@ -64,15 +64,15 @@ class Rules {
         enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
     for(let i = 0; i < enemyPositions.length; i++){
       let enemyPosition = enemyPositions[i],
-        enemyPieceType = newBoard.pieceTypeAt( enemyPosition ),
-        movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition}),
-        moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
+          enemyPieceType = newBoard.pieceTypeAt( enemyPosition );
+      if( enemyPieceType === Board.KING ){ continue }
+      let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition}),
+          moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
       for( let key in movesCalculator.viablePositions ){
         if( parseInt(key) === kingPosition ){
           moveObject = movesCalculator.viablePositions[key]
         }
       };
-
       if( enemyPieceType !== Board.KING &&  !moveObject.illegal ){ //!Rules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard}).illegal ){
       danger = true
       }
