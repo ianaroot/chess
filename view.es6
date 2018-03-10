@@ -1,9 +1,10 @@
 class View{
 	//TODO pretty sure this could be a singleton even on a server with several games running
   // priority clean up alternations position vs gridCalculator
-  constructor(){
+  constructor(_gameController){
     this.boundHighlightTile = this.highlightTile.bind(this)
     this.boundAttemptMove = this.attemptMove.bind(this)
+    this._gameController = _gameController
   }
 
   static get TILE_HEIGHT() { return "49" }
@@ -34,22 +35,21 @@ class View{
     let element = document.getElementById( gridPosition );
     element.appendChild(elem)
   };
-  displayLayOut(layOut){
-    // passing in the boare would mean the capture related methods didn't need to call back to
-    // the global gamecontroller
-    // also we'd get the parse method with it
+  displayLayOut(board){
+    let layOut = board.layOut;
     for( let i = 0; i < layOut.length; i++){
       let gridPosition = Board.gridCalculator(i),
           pieceInitials = this.pieceInitials(layOut[i]);
       this.undisplayPiece(gridPosition);
-      if( Board.parseTeam( JSON.parse(layOut[i]) ) !== Board.EMPTY ){
+      let pieceObject = board.pieceObject( i )
+      if( Board.parseTeam( pieceObject) !== Board.EMPTY ){
         this.displayPiece({pieceInitials: pieceInitials, gridPosition: gridPosition})
       };
     };
     this.setTileClickListener();
-    this.blackCaptureDivNeedsExpanding();
-    this.whiteCaptureDivNeedsExpanding();
-    this.updateCaptures();
+    this.blackCaptureDivNeedsExpanding(board);
+    this.whiteCaptureDivNeedsExpanding(board);
+    this.updateCaptures(board);
     this.clearAlerts();
   };
   pieceImgSrc(pieceInitials){
@@ -70,8 +70,8 @@ class View{
     this.setTileClickListener();
     if (img) {
       team = this.teamSet(img.src)
-      if (team === gameController.board.allowedToMove){
-        let viables = Rules.viablePositionsFromKeysOnly( {startPosition: position, board: gameController.board } )
+      if (team === this._gameController.board.allowedToMove){
+        let viables = Rules.viablePositionsFromKeysOnly( {startPosition: position, board: this._gameController.board } )
         for (let i = 0; i < viables.length; i++){
           let tilePosition = viables[i],
            alphaNumericPosition = Board.gridCalculator(tilePosition),
@@ -110,15 +110,15 @@ class View{
     	tile.classList.remove("highlight2");
     }
   }
-  updateTeamAllowedToMove(){
+  updateTeamAllowedToMove(board){
     let span = document.getElementById("team-allowed-to-move");
-    span.innerText = gameController.board.allowedToMove
+    span.innerText = board.allowedToMove
   }
-  updateCaptures(){
+  updateCaptures(board){
     let blackCaptureDiv = document.getElementById("black-captures"),
       whiteCaptureDiv = document.getElementById("white-captures"),
       // board would be accessible here if it was passed into displayLayOut
-      capturedPieces = gameController.board.capturedPieces;
+      capturedPieces = board.capturedPieces;
     blackCaptureDiv.innerHTML = "";
     whiteCaptureDiv.innerHTML = "";
     for (let i = 0; i < capturedPieces.length; i++){
@@ -137,28 +137,32 @@ class View{
     this.setTileClickListener();
     // TODO not quite sure how to disentangle the global gameController here
     // maybe there's some way the gameController could inject itself when setting the click listeners?
-    gameController.attemptMove(startPosition, endPosition);
+    this._gameController.attemptMove(startPosition, endPosition);
   }
   setTileClickListener(){
+    // TODO currently needlessly passing in a gameController above,
+    // want to be able to pass it in as an argument on highlightTile
     let tiles = this.retrieveTiles();
     for(let i = 0 ; i < tiles.length ; i++ ){
     	var tile = tiles[i];
     	tile.addEventListener("click", this.boundHighlightTile );
     }
   }
-  blackCaptureDivNeedsExpanding(){
-    let capturedPieces = gameController.board.capturedPieces,
+  blackCaptureDivNeedsExpanding(board){
+    let capturedPieces = board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
+      // TODO priority make more generalized parse on board
       if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.BLACK) { total++ }
     }
     if( total === 11 ){ this.expandBlackCaptureDiv() }
   }
 
-  whiteCaptureDivNeedsExpanding(){
-    let capturedPieces = gameController.board.capturedPieces,
+  whiteCaptureDivNeedsExpanding(board){
+    let capturedPieces = board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
+      // TODO priority make more generalized parse on board
       if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.WHITE) { total++ }
     }
     if( total === 11 ){ this.expandWhiteCaptureDiv() }
@@ -171,8 +175,8 @@ class View{
     let div = document.getElementById("black-captures")
     div.style.height = 98
   }
-  setUndoClickListener(){
+  setUndoClickListener(gameConr){
     let undoButton = document.getElementById("undo-button");
-    undoButton.addEventListener("click", gameController.undo.bind(gameController))
+    undoButton.addEventListener("click", gameConr.undo.bind(gameConr))
   }
 }

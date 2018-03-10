@@ -6,7 +6,10 @@ const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
 class GameController {
 	constructor(){
 		this.board = new Board();
-    this.view = new View();
+    this.view = new View(this);
+		this.view.displayLayOut(this.board)
+		this.view.setTileClickListener(this)
+		this.view.setUndoClickListener(this)
 	}
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
 		var board = this.board,
@@ -42,7 +45,7 @@ class GameController {
 				moveObject.alerts.push( "check" )
 				var checkNotation = "+";
 			}
-			this.view.displayLayOut(this.board.layOut)
+			this.view.displayLayOut(this.board)
 			var stalemate = Rules.stalemate(board);
 			if( !board.gameOver && stalemate ){
 				moveObject.alerts.push( "stalemate" )
@@ -58,7 +61,7 @@ class GameController {
 			}
 			this.board.recordNotation(notation)
 			if( !board.gameOver ){ this.nextTurn() }
-			this.view.updateTeamAllowedToMove();
+			this.view.updateTeamAllowedToMove(this.board);
 			//TODO if the board got passed in here, the view wouldn't need the
 			// global gameController at updateTeamAllowedToMove
 			let displayAlert = this.view.displayAlert
@@ -78,8 +81,8 @@ class GameController {
 		if( this.board.previousLayouts.length){
 			this.board.undo()
 			this.nextTurn() //TODO this is a really jenky dangerous way to switch whose turn it is. also the board should maybe know whose turn it is
-			this.view.updateTeamAllowedToMove();
-			this.view.displayLayOut(this.board.layOut)
+			this.view.updateTeamAllowedToMove(this.board);
+			this.view.displayLayOut(this.board)
 		}
 	}
 
@@ -102,12 +105,6 @@ class GameController {
 	}
 }
 gameController = new GameController() //TODO this globally accessible gameController is critical to the view functioning, that seems not good
-gameController.view.displayLayOut(gameController.board.layOut)
-gameController.view.setTileClickListener()
-gameController.view.setUndoClickListener()
-// TODO if we passed the board in above here the global gameController
-// wouldn't need to be accessible from view.highlightTile
-
 
 
 tests = {
