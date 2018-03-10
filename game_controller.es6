@@ -1,4 +1,7 @@
 const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
+// TODO tiles stay highlighted if you move via console
+// if board.movePiece accepted a move object, then it could maybe mutate that move object
+// such to add the capture notation to it, and then have all notation calculated on the object
 
 class GameController {
 	constructor(){
@@ -25,7 +28,7 @@ class GameController {
 			return
 		} else {
 			this.board.storeCurrentLayoutAsPrevious()
-			captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions) //TODO seems wonky to set the capture notation as the return here.
+			captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions) //TODO secondary seems wonky to set the capture notation as the return here.
 			var promotionNotation = Rules.pawnPromotionQuery( board ),
 					otherTeam = this.board.teamNotMoving(),
 					otherTeamsKingPosition = this.board.kingPosition(otherTeam);
@@ -56,6 +59,8 @@ class GameController {
 			this.board.recordNotation(notation)
 			if( !board.gameOver ){ this.nextTurn() }
 			this.view.updateTeamAllowedToMove();
+			//TODO if the board got passed in here, the view wouldn't need the
+			// global gameController at updateTeamAllowedToMove
 			let displayAlert = this.view.displayAlert
 			if(moveObject.alerts){setTimeout( function(){ displayAlert(moveObject.alerts) }, 200)}
 		}
@@ -96,10 +101,12 @@ class GameController {
 		}
 	}
 }
-gameController = new GameController()
+gameController = new GameController() //TODO this globally accessible gameController is critical to the view functioning, that seems not good
 gameController.view.displayLayOut(gameController.board.layOut)
 gameController.view.setTileClickListener()
 gameController.view.setUndoClickListener()
+// TODO if we passed the board in above here the global gameController
+// wouldn't need to be accessible from view.highlightTile
 
 
 

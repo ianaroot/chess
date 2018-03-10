@@ -38,7 +38,7 @@ class Rules {
       moveObject.illegal = true
     } else if( moveObject.illegal ) {
       moveObject.alerts.push("that's not how that piece moves")
-      //TODO should distinguish whether this is due to blockage or wrong form of movement
+      //TODO priority should distinguish whether this is due to blockage or wrong form of movement
       moveObject.illegal = true
     } else if( Rules.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: moveObject.additionalActions})){
       moveObject.alerts.push("check yo king fool")

@@ -146,15 +146,32 @@ class Board {
     //TODO  could add e.p. to notation for simplification UPDATe 3/8/18 no idea what this comment means
   }
 
-  consoleLog(){
+  consoleLogBlackPov(){
     for( let i = 0; i < 64; i = i + 8 ){
       let row = ""
       for( let j = 0; j < 8; j++){
-        let cell = JSON.parse(this.layOut[ i+ j ] )
-        if( Board.parseTeam(cell) === Board.EMPTY ){
-          let text = "  __  "
+        let pieceObject = this.pieceObject(i + j)
+        if( Board.parseTeam(pieceObject) === Board.EMPTY ){
+          var text = "  __  "
         } else {
-          let text = "  " + Board.parseTeam(cell[0]) + Board.parseSpecies( cell )[0] + "  "
+          var text = "  " + Board.parseTeam(pieceObject)[0] + Board.parseSpecies( pieceObject )[0] + "  "
+        }
+        row = row + text
+      }
+      console.log(row)
+      console.log(" ")
+    }
+  }
+
+  consoleLogWhitePov(){
+    for( let i = 56; i > -1; i = i - 8 ){
+      let row = ""
+      for( let j = 0; j < 8; j++){
+        let pieceObject = this.pieceObject(i + j)
+        if( Board.parseTeam(pieceObject) === Board.EMPTY ){
+          var text = "  __  "
+        } else {
+          var text = "  " + Board.parseTeam(pieceObject)[0] + Board.parseSpecies( pieceObject )[0] + "  "
         }
         row = row + text
       }
@@ -228,7 +245,7 @@ class Board {
       ){
         throw new Error("missing params in movePiece")
       }
-    let pieceObject = JSON.parse(this.layOut[startPosition]),
+    let pieceObject = this.pieceObject(startPosition),
       captureNotation = this.capture(endPosition);
 
     this.emptify(startPosition)
@@ -305,7 +322,7 @@ class Board {
     let positionUpAndLeft = startPosition + 7;
 
     if( Board.inBounds( positionUpAndLeft)){
-      let pieceObject = JSON.parse(this.layOut[positionUpAndLeft]),
+      let pieceObject = this.pieceObject(positionUpAndLeft),
         pieceTeam = Board.parseTeam(pieceObject);
       return this.occupiedByOpponent({position: positionUpAndLeft, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndLeft)
     } else {
@@ -374,7 +391,7 @@ class Board {
   }
 
   promotePawn(position){
-    // TODO make this request input as to what piece to become
+    // TODO secondary make this request input as to what piece to become
     let teamString = this.teamAt(position);
 
     this.layOut[position] = JSON.stringify({color: teamString , species: Board.QUEEN})
@@ -385,7 +402,7 @@ class Board {
     if( !Board.inBounds(position) ){
       return Board.EMPTY
     };
-    let pieceObject = JSON.parse(this.layOut[position]),
+    let pieceObject = this.pieceObject(position),
       teamString = Board.parseTeam( pieceObject );
 
     return teamString
@@ -419,7 +436,7 @@ class Board {
   }
 
   pieceTypeAt(position){
-    let pieceObject = JSON.parse(this.layOut[position]),
+    let pieceObject = this.pieceObject(position),
       pieceType = Board.parseSpecies( pieceObject );
 
     return pieceType
@@ -430,7 +447,8 @@ class Board {
   }
 
   positionEmpty(position){
-    return Board.parseTeam( JSON.parse(this.layOut[position]) ) === Board.EMPTY
+    let pieceObject = this.pieceObject(position)
+    return Board.parseTeam( pieceObject ) === Board.EMPTY
   }
 
   kingPosition(teamString){

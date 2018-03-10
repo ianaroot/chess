@@ -1,6 +1,6 @@
 class View{
 	//TODO pretty sure this could be a singleton even on a server with several games running
-  //TODO clean up alternations position vs gridCalculator
+  // priority clean up alternations position vs gridCalculator
   constructor(){
     this.boundHighlightTile = this.highlightTile.bind(this)
     this.boundAttemptMove = this.attemptMove.bind(this)
@@ -35,6 +35,9 @@ class View{
     element.appendChild(elem)
   };
   displayLayOut(layOut){
+    // passing in the boare would mean the capture related methods didn't need to call back to
+    // the global gamecontroller
+    // also we'd get the parse method with it
     for( let i = 0; i < layOut.length; i++){
       let gridPosition = Board.gridCalculator(i),
           pieceInitials = this.pieceInitials(layOut[i]);
@@ -93,7 +96,7 @@ class View{
     }else if (teamInitial === "w") {
       return Board.WHITE;
     }else {
-      alert("error in teamSet")
+      throw new Error("error in teamSet")
     }
   }
   unhighlLighTiles(){
@@ -114,6 +117,7 @@ class View{
   updateCaptures(){
     let blackCaptureDiv = document.getElementById("black-captures"),
       whiteCaptureDiv = document.getElementById("white-captures"),
+      // board would be accessible here if it was passed into displayLayOut
       capturedPieces = gameController.board.capturedPieces;
     blackCaptureDiv.innerHTML = "";
     whiteCaptureDiv.innerHTML = "";
@@ -131,6 +135,8 @@ class View{
       startPosition = Board.gridCalculatorReverse( startElement.id );
     this.unhighlLighTiles();
     this.setTileClickListener();
+    // TODO not quite sure how to disentangle the global gameController here
+    // maybe there's some way the gameController could inject itself when setting the click listeners?
     gameController.attemptMove(startPosition, endPosition);
   }
   setTileClickListener(){

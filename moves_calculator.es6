@@ -1,3 +1,4 @@
+// TOO newPossibility s are all really just moveObjects
 class MovesCalculator {
   constructor(options = {  startPosition: undefined, board: undefined, moveObjects: [],
   }){
@@ -299,7 +300,7 @@ class MovesCalculator {
           castle.fullNotation = "O-O"
           castle.additionalActions = function(args){
             let position = args["position"],
-              pieceObject = JSON.parse(this.layOut[startPosition + 3]);
+                pieceObject = this.pieceObject( startPosition + 3 );
             this.emptify( startPosition + 3)
             this.placePiece({ position: (startPosition + 1), pieceObject: pieceObject })
           }
@@ -314,7 +315,7 @@ class MovesCalculator {
           castle.fullNotation = "O-O-O"
           castle.additionalActions = function(args){
             let position = args["position"],
-              pieceObject = JSON.parse(this.layOut[startPosition - 4]);
+                pieceObject = this.pieceObject( startPosition - 4 );
             this.emptify( startPosition - 4)
             this.placePiece({ position: (startPosition - 1), pieceObject: pieceObject })
           }
