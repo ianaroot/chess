@@ -62,8 +62,6 @@ class GameController {
 			this.board.recordNotation(notation)
 			if( !board.gameOver ){ this.nextTurn() }
 			this.view.updateTeamAllowedToMove(this.board);
-			//TODO if the board got passed in here, the view wouldn't need the
-			// global gameController at updateTeamAllowedToMove
 			let displayAlert = this.view.displayAlert
 			if(moveObject.alerts){setTimeout( function(){ displayAlert(moveObject.alerts) }, 200)}
 		}

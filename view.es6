@@ -1,6 +1,6 @@
 class View{
 	//TODO pretty sure this could be a singleton even on a server with several games running
-  // priority clean up alternations position vs gridCalculator
+  //TODO priority clean up alternations position vs gridCalculator
   constructor(_gameController){
     this.boundHighlightTile = this.highlightTile.bind(this)
     this.boundAttemptMove = this.attemptMove.bind(this)
