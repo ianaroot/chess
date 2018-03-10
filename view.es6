@@ -11,11 +11,13 @@ class View{
 
   displayAlert(messages){
     for (let i = 0; i < messages.length; i++){
-      $('#notifications').text(messages[i])
+      // $('#notifications').text(messages[i])
+      document.getElementById( 'notifications' ).innerHTML = messages[i];
     };
   };
   clearAlerts(){
-    $('#notifications').text("")
+    // $('#notifications').text("")
+    document.getElementById( 'notifications' ).innerHTML = "";
   };
   undisplayPiece(gridPosition){
     let element = document.getElementById( gridPosition ),
