@@ -62,26 +62,28 @@ class View{
     return firstInitial + secondInitial
   };
   highlightTile(){
-    let target = arguments[0].currentTarget,
+    if(!this._gameController.board.gameOver){
+      let target = arguments[0].currentTarget,
       img = target.children[0],
       position = Board.gridCalculatorReverse( target.id ),
       team = Board.EMPTY;
-    this.unhighlLighTiles();
-    this.setTileClickListener();
-    if (img) {
-      team = this.teamSet(img.src)
-      if (team === this._gameController.board.allowedToMove){
-        let viables = Rules.viablePositionsFromKeysOnly( {startPosition: position, board: this._gameController.board } )
-        for (let i = 0; i < viables.length; i++){
-          let tilePosition = viables[i],
-           alphaNumericPosition = Board.gridCalculator(tilePosition),
-           square = document.getElementById(alphaNumericPosition);
-          square.classList.add("highlight2")
-          square.removeEventListener("click", this.boundHighlightTile )
-          square.addEventListener("click", this.boundAttemptMove )
+      this.unhighlLighTiles();
+      this.setTileClickListener();
+      if (img) {
+        team = this.teamSet(img.src)
+        if (team === this._gameController.board.allowedToMove){
+          let viables = Rules.viablePositionsFromKeysOnly( {startPosition: position, board: this._gameController.board } )
+          for (let i = 0; i < viables.length; i++){
+            let tilePosition = viables[i],
+            alphaNumericPosition = Board.gridCalculator(tilePosition),
+            square = document.getElementById(alphaNumericPosition);
+            square.classList.add("highlight2")
+            square.removeEventListener("click", this.boundHighlightTile )
+            square.addEventListener("click", this.boundAttemptMove )
+          }
+          target.classList.add("highlight1")
+          target.classList.add("startPosition");
         }
-        target.classList.add("highlight1")
-        target.classList.add("startPosition");
       }
     }
   }
@@ -117,7 +119,6 @@ class View{
   updateCaptures(board){
     let blackCaptureDiv = document.getElementById("black-captures"),
       whiteCaptureDiv = document.getElementById("white-captures"),
-      // board would be accessible here if it was passed into displayLayOut
       capturedPieces = board.capturedPieces;
     blackCaptureDiv.innerHTML = "";
     whiteCaptureDiv.innerHTML = "";
@@ -175,8 +176,8 @@ class View{
     let div = document.getElementById("black-captures")
     div.style.height = 98
   }
-  setUndoClickListener(gameConr){
+  setUndoClickListener(gameController){
     let undoButton = document.getElementById("undo-button");
-    undoButton.addEventListener("click", gameConr.undo.bind(gameConr))
+    undoButton.addEventListener("click", gameController.undo.bind(gameController))
   }
 }
