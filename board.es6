@@ -1,5 +1,5 @@
 class Board {
-  constructor(layOut, options = { capturedPieces: [], gameOver: false, allowedToMove: "white", movementNotation: [], previousLayouts: []}){
+  constructor(layOut, options = { capturedPieces: [], gameOver: false, allowedToMove: Board.WHITE, movementNotation: [], previousLayouts: []}){
     this.layOut = layOut || Board.defaultLayOut()
     this.capturedPieces = options["capturedPieces"];
     this.gameOver = options["gameOver"];
@@ -8,16 +8,29 @@ class Board {
     this.previousLayouts = options["previousLayouts"];
   }
 
+  static get WHITE()  { return "white" }
+  static get BLACK()  { return "black" }
+  static get EMPTY()  { return "empty" }
+  static get PAWN()   { return "Pawn" }
+  static get ROOK()   { return "Rook" }
+  static get NIGHT()  { return "Night" }
+  static get BISHOP() { return "Bishop" }
+  static get QUEEN()  { return "Queen" }
+  static get KING()   { return "King" }
+  static get DARK()   { return "dark" }
+  static get LIGHT()  { return "light" }
+
+
   static defaultLayOut(){
-    var layOut = [
-      {color: "white", species: "Rook"}, {color: "white", species: "Night"}, {color: "white", species: "Bishop"}, {color: "white", species: "Queen"}, {color: "white", species: "King"}, {color: "white", species: "Bishop"}, {color: "white", species: "Night"}, {color: "white", species: "Rook"},
-      {color: "white", species: "Pawn"}, {color: "white", species: "Pawn"}, {color: "white", species: "Pawn"}, {color: "white", species: "Pawn"}, {color: "white", species: "Pawn"}, {color: "white", species: "Pawn"}, {color: "white", species: "Pawn"}, {color: "white", species: "Pawn"},
-      {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"},
-      {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"},
-      {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"},
-      {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"}, {color: "empty", species: "empty"},
-      {color: "black", species: "Pawn"}, {color: "black", species: "Pawn"}, {color: "black", species: "Pawn"}, {color: "black", species: "Pawn"}, {color: "black", species: "Pawn"}, {color: "black", species: "Pawn"}, {color: "black", species: "Pawn"}, {color: "black", species: "Pawn"},
-      {color: "black", species: "Rook"}, {color: "black", species: "Night"}, {color: "black", species: "Bishop"}, {color: "black", species: "Queen"}, {color: "black", species: "King"}, {color: "black", species: "Bishop"}, {color: "black", species: "Night"}, {color: "black", species: "Rook"}
+    let layOut = [
+      {color: Board.WHITE, species: Board.ROOK}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.QUEEN}, {color: Board.WHITE, species: Board.KING}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.ROOK},
+      {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN},
+      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+      {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN},
+      {color: Board.BLACK, species: Board.ROOK}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.QUEEN}, {color: Board.BLACK, species: Board.KING}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.ROOK}
     ];
     for(let i = 0; i < layOut.length; i ++){
       let pieceObject = layOut[i]
@@ -31,7 +44,7 @@ class Board {
   }
 
   static deepCopyLayout(layOut){
-    var newLayOut = [];
+    let newLayOut = [];
     for( let i = 0; i < layOut.length; i ++){
       newLayOut.push( layOut[i] )
     }
@@ -51,33 +64,33 @@ class Board {
   }
 
   static file(position){
-    var files = "abcdefgh";
+    let files = "abcdefgh";
     return files[position % 8]
   }
 
   static squareColor(position){
-    var div = Math.floor(position / 8),
+    let div = Math.floor(position / 8),
       mod   = position % 8,
       sum   = div + mod,
       squareColor = "";
     if (sum % 2 === 0){
-      squareColor = "dark"
+      squareColor = Board.DARK
     } else {
-      squareColor = "light"
+      squareColor = Board.LIGHT
     }
     return squareColor;
   }
 
   static opposingTeam(teamString){
-    if( teamString === "white" ){
-      return "black"
+    if( teamString === Board.WHITE ){
+      return Board.BLACK
     } else {
-      return "white"
+      return Board.WHITE
     };
   }
 
   static gridCalculator(tile){
-    var x = Math.floor(tile % 8),
+    let x = Math.floor(tile % 8),
         y = Math.floor(tile / 8) + 1,
       alphaNum = {
         0: "a",
@@ -88,13 +101,12 @@ class Board {
         5: "f",
         6: "g",
         7: "h"
-      },
-      x = alphaNum[x];
-    return x + y
+      };
+    return alphaNum[x] + y
   }
 
   static gridCalculatorReverse(tile){
-    var letter = tile[0],
+    let letter = tile[0],
       number = tile[1],
      alphaNum = {
         a: 0,
@@ -119,26 +131,47 @@ class Board {
     return string.color
   }
 
+  static parseSpecies(string){
+    return string.species
+  }
+
   undo(){
     this.layOut = this.lastLayout()
     this.previousLayouts.pop()
-    var undoneNotation = this.movementNotation.pop(),
+    let undoneNotation = this.movementNotation.pop(),
       captureNotationMatch = undoneNotation.match(/x/);
     if( captureNotationMatch ){
       this.capturedPieces.pop()
     }
-    // could add e.p. to notation for simplification
+    //TODO  could add e.p. to notation for simplification UPDATe 3/8/18 no idea what this comment means
   }
 
-  consoleLog(){
+  consoleLogBlackPov(){
     for( let i = 0; i < 64; i = i + 8 ){
-      var row = ""
+      let row = ""
       for( let j = 0; j < 8; j++){
-        let cell = JSON.parse(this.layOut[ i+ j ] )
-        if( cell.color === "empty" ){
+        let pieceObject = this.pieceObject(i + j)
+        if( Board.parseTeam(pieceObject) === Board.EMPTY ){
           var text = "  __  "
         } else {
-          var text = "  " + cell.color[0] + cell.species[0] + "  "
+          var text = "  " + Board.parseTeam(pieceObject)[0] + Board.parseSpecies( pieceObject )[0] + "  "
+        }
+        row = row + text
+      }
+      console.log(row)
+      console.log(" ")
+    }
+  }
+
+  consoleLogWhitePov(){
+    for( let i = 56; i > -1; i = i - 8 ){
+      let row = ""
+      for( let j = 0; j < 8; j++){
+        let pieceObject = this.pieceObject(i + j)
+        if( Board.parseTeam(pieceObject) === Board.EMPTY ){
+          var text = "  __  "
+        } else {
+          var text = "  " + Board.parseTeam(pieceObject)[0] + Board.parseSpecies( pieceObject )[0] + "  "
         }
         row = row + text
       }
@@ -156,20 +189,20 @@ class Board {
   }
 
   blackPawnAt(position){
-    return this.pieceObject(position).color === "black" && this.pieceObject(position).species === "Pawn"
+    return Board.parseTeam( this.pieceObject(position) )=== Board.BLACK && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
 
   whitePawnAt(position){
-    return this.pieceObject(position).color === "white" && this.pieceObject(position).species === "Pawn"
+    return Board.parseTeam( this.pieceObject(position) )=== Board.WHITE && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
 
-// room for refactoring wetness
+  // TODO room for refactoring wetness
   blackPawnDoubleSteppedFrom(position){
-    return this.previousLayouts.length && this.positionEmpty(position) && this.pieceObjectFromLastLayout(position).color === "black" && this.pieceObjectFromLastLayout(position).species === "Pawn"
+    return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.BLACK && Board.parseSpecies( this.pieceObjectFromLastLayout(position) ) === Board.PAWN
   }
 
   whitePawnDoubleSteppedFrom(position){
-    return this.previousLayouts.length && this.positionEmpty(position) && this.pieceObjectFromLastLayout(position).color === "white" && this.pieceObjectFromLastLayout(position).species === "Pawn"
+    return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.WHITE && Board.parseSpecies( this.pieceObjectFromLastLayout(position) ) === Board.PAWN
   }
 
   deepCopyLayout(){
@@ -180,7 +213,7 @@ class Board {
     this.layOut = Board.defaultLayOut();
     this.capturedPieces = [];
     this.gameOver = false;
-    this.allowedToMove = "white";
+    this.allowedToMove = Board.WHITE;
     this.previousLayouts = [];
     this.movementNotation = [];
   }
@@ -190,12 +223,12 @@ class Board {
   }
 
   teamNotMoving(){
-    var teamNotMoving;
+    let teamNotMoving;
 
-    if( this.allowedToMove === "white"){
-      teamNotMoving = "black"
+    if( this.allowedToMove === Board.WHITE){
+      teamNotMoving = Board.BLACK
     } else {
-      teamNotMoving = "white"
+      teamNotMoving = Board.WHITE
     }
     return teamNotMoving
   }
@@ -207,34 +240,32 @@ class Board {
   movePiece(startPosition, endPosition, additionalActions){
       if(
         typeof startPosition !== "number" ||
-        !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
+        !(typeof endPosition !== "number" || typeof endPosition !== "string") || // TODO not sure where this got turned into a string...
         !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
       ){
         throw new Error("missing params in movePiece")
       }
-      // pieceString should be pieceObject now
-    var pieceString = JSON.parse(this.layOut[startPosition]),
+    let pieceObject = this.pieceObject(startPosition),
       captureNotation = this.capture(endPosition);
 
     this.emptify(startPosition)
-    this.placePiece({ position: endPosition, pieceString: pieceString })
+    this.placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ captureNotation = additionalActions.call(this, {position: startPosition} ) }
 
     return captureNotation
   }
 
   storeCurrentLayoutAsPrevious(){
-    var layOutCopy = Board.deepCopyLayout( this.layOut );
+    let layOutCopy = Board.deepCopyLayout( this.layOut );
 
     this.previousLayouts.push(layOutCopy)
   }
 
   capture(position){
-    var captureNotation = ""
+    let captureNotation = ""
     if( !this.positionEmpty(position) ){
-      var pieceString = this.layOut[position];
-// coiuld maybe switch this to store capture by color, but it should work fine
-      this.capturedPieces.push(pieceString)
+      let pieceObject = this.layOut[position];
+      this.capturedPieces.push(pieceObject)
       this.emptify(position)
       captureNotation = "x"
     } else {
@@ -255,31 +286,25 @@ class Board {
     return this.positionEmpty(position - 16)
   }
 
-  downAndLeftIsAttackable(args){
-    var position = args["position"],
-      attackingTeamString = args["attackingTeamString"],
-      positionDownAndLeft = position - 9;
+  downAndLeftIsAttackable(startPosition){
+    let positionDownAndLeft = startPosition - 9;
     if( Board.inBounds( positionDownAndLeft )){
-      var pieceString = this.layOut[positionDownAndLeft],
-        pieceTeam = Board.parseTeam(pieceString);
-
-      return this.occupiedByOpponent({position: positionDownAndLeft, teamString: attackingTeamString}) && Board.squareColor(position) === Board.squareColor(positionDownAndLeft)
-    } else {
-      // down and left would be off board
+      let pieceObject = this.layOut[positionDownAndLeft],
+        pieceTeam = Board.parseTeam(pieceObject);
+      return this.occupiedByOpponent({position: positionDownAndLeft, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndLeft)
+    } else { // down and left would be off board
       return false
     }
   }
 
-  downAndRightIsAttackable(args){
-    var position = args["position"],
-      attackingTeamString = args["attackingTeamString"],
-      positionDownAndRight = position - 7;
+  downAndRightIsAttackable(startPosition){
+    let positionDownAndRight = startPosition - 7;
 
     if( Board.inBounds( positionDownAndRight ) ){
-      var pieceString = this.layOut[positionDownAndRight],
-        pieceTeam = Board.parseTeam(pieceString);
+      let pieceObject = this.layOut[positionDownAndRight],
+        pieceTeam = Board.parseTeam(pieceObject);
 
-      return this.occupiedByOpponent({position: positionDownAndRight, teamString: attackingTeamString}) && Board.squareColor(position) === Board.squareColor(positionDownAndRight)
+      return this.occupiedByOpponent({position: positionDownAndRight, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndRight)
     } else {
       return false
     }
@@ -293,31 +318,26 @@ class Board {
     return this.positionEmpty( position + 8)
   }
 
-  upAndLeftIsAttackable(args){
-    var position = args["position"],
-      attackingTeamString = args["attackingTeamString"],
-      positionUpAndLeft = position + 7;
+  upAndLeftIsAttackable(startPosition){
+    let positionUpAndLeft = startPosition + 7;
 
     if( Board.inBounds( positionUpAndLeft)){
-      var pieceObject = JSON.parse(this.layOut[positionUpAndLeft]),
-      // there are places i'm not using parse team where i should be
+      let pieceObject = this.pieceObject(positionUpAndLeft),
         pieceTeam = Board.parseTeam(pieceObject);
-      return this.occupiedByOpponent({position: positionUpAndLeft, teamString: attackingTeamString}) && Board.squareColor(position) === Board.squareColor(positionUpAndLeft)
+      return this.occupiedByOpponent({position: positionUpAndLeft, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndLeft)
     } else {
       return false
     }
   }
 
-  upAndRightIsAttackable(args){
-    var position = args["position"],
-      attackingTeamString = args["attackingTeamString"],
-      positionUpAndRight = position + 9;
+  upAndRightIsAttackable(startPosition){
+    let positionUpAndRight = startPosition + 9;
 
     if( Board.inBounds( positionUpAndRight)){
-      var pieceString = this.layOut[positionUpAndRight],
-        pieceTeam = Board.parseTeam(pieceString);
+      let pieceObject = this.layOut[positionUpAndRight],
+        pieceTeam = Board.parseTeam(pieceObject);
 
-      return this.occupiedByOpponent({position: positionUpAndRight, teamString: attackingTeamString}) && Board.squareColor(position) === Board.squareColor(positionUpAndRight)
+      return this.occupiedByOpponent({position: positionUpAndRight, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndRight)
     } else {
       return false
     }
@@ -332,26 +352,26 @@ class Board {
   }
 
   kingSideRookHasNotMoved(kingPosition){
-    var kingSideRookStartPosition = kingPosition + 3;
+    let kingSideRookStartPosition = kingPosition + 3;
 
-    return (this.pieceTypeAt( kingSideRookStartPosition ) ==="Rook") && this.pieceHasNotMovedFrom( kingSideRookStartPosition )
+    return (this.pieceTypeAt( kingSideRookStartPosition ) ===Board.ROOK) && this.pieceHasNotMovedFrom( kingSideRookStartPosition )
   }
 
   queenSideRookHasNotMoved(kingPosition){
-    var queenSideRookStartPosition = kingPosition - 4;
+    let queenSideRookStartPosition = kingPosition - 4;
 
-    return (this.pieceTypeAt( queenSideRookStartPosition ) ==="Rook") && this.pieceHasNotMovedFrom( queenSideRookStartPosition )
+    return (this.pieceTypeAt( queenSideRookStartPosition ) ===Board.ROOK) && this.pieceHasNotMovedFrom( queenSideRookStartPosition )
   }
 
   pieceHasNotMovedFrom(position){
-    var pieceString = this.layOut[position],
+    let pieceObject = this.layOut[position],
       previousLayouts = this.previousLayouts,
       pieceHasNotMoved = true;
 
     for(let i = 0; i < previousLayouts.length; i++){
-      var oldLayout= previousLayouts[i];
+      let oldLayout= previousLayouts[i];
 
-      if(oldLayout[position] !== pieceString ){
+      if(oldLayout[position] !== pieceObject ){
         pieceHasNotMoved = false
         break;
       };
@@ -360,38 +380,38 @@ class Board {
   }
 
   emptify(position){
-    this.layOut[position] = JSON.stringify({color: "empty", species: "empty"})
+    this.layOut[position] = JSON.stringify({color: Board.EMPTY, species: Board.EMPTY})
   }
 
   placePiece(args){
-    var position = args["position"],
-      pieceString = args["pieceString"];
+    let position = args["position"],
+      pieceObject = args["pieceObject"];
 
-    this.layOut[position] = JSON.stringify(pieceString)
+    this.layOut[position] = JSON.stringify(pieceObject)
   }
 
   promotePawn(position){
-    // later i'll make this request input as to what piece to become
-    var teamString = this.teamAt(position);
+    // TODO secondary make this request input as to what piece to become
+    let teamString = this.teamAt(position);
 
-    this.layOut[position] = JSON.stringify({color: teamString , species: "Queen"})
+    this.layOut[position] = JSON.stringify({color: teamString , species: Board.QUEEN})
 
   }
 
   teamAt(position){
     if( !Board.inBounds(position) ){
-      return "empty"
+      return Board.EMPTY
     };
-    var pieceString = JSON.parse(this.layOut[position]),
-      teamString = pieceString.color;
+    let pieceObject = this.pieceObject(position),
+      teamString = Board.parseTeam( pieceObject );
 
     return teamString
   }
 
   positionsOccupiedByTeam(teamString){
-    var positions = [];
-    for( var i = 0; i < this.layOut.length; i++){
-      var teamAt = this.teamAt(i);
+    let positions = [];
+    for( let i = 0; i < this.layOut.length; i++){
+      let teamAt = this.teamAt(i);
       if(teamAt === teamString){
         positions.push(i)
       };
@@ -400,7 +420,7 @@ class Board {
   }
 
   occupiedByTeamMate(args){
-    var position = args["position"],
+    let position = args["position"],
       teamString = args["teamString"],
       occupantTeam = this.teamAt(position);
 
@@ -408,7 +428,7 @@ class Board {
   }
 
   occupiedByOpponent(args){
-    var position = args["position"],
+    let position = args["position"],
       teamString = args["teamString"],
       occupantTeam = this.teamAt(position);
 
@@ -416,8 +436,8 @@ class Board {
   }
 
   pieceTypeAt(position){
-    var pieceObject = JSON.parse(this.layOut[position]),
-      pieceType = pieceObject.species;
+    let pieceObject = this.pieceObject(position),
+      pieceType = Board.parseSpecies( pieceObject );
 
     return pieceType
   }
@@ -427,18 +447,19 @@ class Board {
   }
 
   positionEmpty(position){
-    return JSON.parse(this.layOut[position]).color === "empty"
+    let pieceObject = this.pieceObject(position)
+    return Board.parseTeam( pieceObject ) === Board.EMPTY
   }
 
   kingPosition(teamString){
-    var layOut = this.layOut,
+    let layOut = this.layOut,
       position = null;
 
     for(let i = 0; i < layOut.length; i ++){
       let teamAtPosition = this.teamAt(i),
         pieceType = this.pieceTypeAt(i);
 
-      if(teamAtPosition === teamString && pieceType === "King"){
+      if(teamAtPosition === teamString && pieceType === Board.KING){
         position = i
         break
       }

@@ -1,22 +1,20 @@
 const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
-// specify whether piece was trying to move through other piece or just onto position it can't hit
-// should have case sensitivity protection to avoid future blackPawn BlackPawn issues
+// TODO tiles stay highlighted if you move via console
+// if board.movePiece accepted a move object, then it could maybe mutate that move object
+// such to add the capture notation to it, and then have all notation calculated on the object
 
 class GameController {
 	constructor(){
 		this.board = new Board();
-		// this.pieceMovementRules = PieceMovementRules.getInstance();
-		// this.pieceMovementRules = new PieceMovementRules()
-		// this.pieceMovementRules = new PieceMovementRules();
-		this.postMovementRules = new PostMovementRules
-		// this.PostMovementRules = new PostMovementRules();
-	    this.view = new View();
-		// this.view = new View();
+    this.view = new View(this);
+		this.view.displayLayOut(this.board)
+		this.view.setTileClickListener(this)
+		this.view.setUndoClickListener(this)
 	}
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
 		var board = this.board,
 			layOut = board.layOut,
-			pieceString = layOut[startPosition],
+			pieceObject = layOut[startPosition],
 			team = board.teamAt(startPosition),
 			checkNotation = "",
 			captureNotation = "",
@@ -25,61 +23,52 @@ class GameController {
 		if( board.gameOver ){
 			return
 		}
-		if( team == "empty" ){
-			alert("that tile is empty")
-			return
-		}
-		if( team !== board.allowedToMove ){
-			alert( "other team's turn" )
-			return
-		}
-		var moveObject = PieceMovementRules.moveIsIllegal(startPosition, endPosition, board);
+
+		var moveObject = Rules.getMoveObject(startPosition, endPosition, board);
+
 		if( moveObject.illegal ){
-			this.view.displayAlert(moveObject.alert)
+			this.view.displayAlert(moveObject.alerts)
 			return
 		} else {
 			this.board.storeCurrentLayoutAsPrevious()
-			captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions)
-			promotionNotation = this.postMovementRules.pawnPromotionQuery( board )
-			let otherTeam = this.board.teamNotMoving()
-			let otherTeamsKingPosition = this.board.kingPosition(otherTeam)
-			var alertText = ""
-			if( this.postMovementRules.checkmate( board )){
-				alertText = "checkmate"
-				checkNotation = "#"
+			captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions) //TODO secondary seems wonky to set the capture notation as the return here.
+			var promotionNotation = Rules.pawnPromotionQuery( board ),
+					otherTeam = this.board.teamNotMoving(),
+					otherTeamsKingPosition = this.board.kingPosition(otherTeam);
+			moveObject.alerts.push( "" )
+			if( Rules.checkmate( board )){
+				moveObject.alerts.push( "checkmate" )
+				var checkNotation = "#";
 				board.endGame()
 			}
-			if( !board.gameOver && PieceMovementRules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
-				let displayAlert = this.view.displayAlert
-				alertText = "check"
-				checkNotation = "+"
+			if( !board.gameOver && Rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
+				moveObject.alerts.push( "check" )
+				var checkNotation = "+";
 			}
-			this.view.displayLayOut(this.board.layOut)
-			var stalemate = this.postMovementRules.stalemate(board);
+			this.view.displayLayOut(this.board)
+			var stalemate = Rules.stalemate(board);
 			if( !board.gameOver && stalemate ){
-				let displayAlert = this.view.displayAlert
-				alertText = "stalemate"
+				moveObject.alerts.push( "stalemate" )
 				board.endGame()
 			}
-			if( moveObject.fullNotation ){
-        // pretty sure i was supposed to add captureNotation etc... here, but need to check
+			if( moveObject.fullNotation ){ //TODO couldn't standard notation moves calculate their own notation too?
 				notation = moveObject.fullNotation + captureNotation + positionNotation + promotionNotation + checkNotation
 			} else {
 				var positionNotation = Board.gridCalculator(endPosition),
 					pieceNotation	= moveObject.pieceNotation,
-					captureNotation = captureNotation || moveObject.captureNotation || "";
-					notation = pieceNotation + captureNotation + positionNotation + promotionNotation + checkNotation
+					captureNotation = captureNotation || moveObject.captureNotation || "",
+					notation = pieceNotation + captureNotation + positionNotation + promotionNotation + checkNotation;
 			}
 			this.board.recordNotation(notation)
 			if( !board.gameOver ){ this.nextTurn() }
-			this.view.updateTeamAllowedToMove();
+			this.view.updateTeamAllowedToMove(this.board);
 			let displayAlert = this.view.displayAlert
-			if(alertText){setTimeout( function(){ displayAlert(alertText) }, 200)}
+			if(moveObject.alerts){setTimeout( function(){ displayAlert(moveObject.alerts) }, 200)}
 		}
 	}
 
   nextTurn(){
-    if( this.board.allowedToMove === "white" ){
+    if( this.board.allowedToMove === Board.WHITE ){
       this.prepareBlackTurn()
     } else{
       this.prepareWhiteTurn()
@@ -89,22 +78,23 @@ class GameController {
 	undo(){
 		if( this.board.previousLayouts.length){
 			this.board.undo()
-			this.nextTurn()
-			this.view.updateTeamAllowedToMove();
-			this.view.displayLayOut(this.board.layOut)
+			this.nextTurn() //TODO this is a really jenky dangerous way to switch whose turn it is. also the board should maybe know whose turn it is
+			this.view.updateTeamAllowedToMove(this.board);
+			this.view.displayLayOut(this.board)
 		}
 	}
 
   prepareBlackTurn(){
-    this.board.allowedToMove = "black"
+    this.board.allowedToMove = Board.BLACK
   }
 
   prepareWhiteTurn(){
-    this.board.allowedToMove = "white"
+    this.board.allowedToMove = Board.WHITE
   }
 	runMoves(moveArray){
 		var func = this.runMoves.bind(this)
 		if (moveArray.length > 1 ) {
+			// console.log('move is ' + moveArray[0] + ' to ' + moveArray[1])
 			this.attemptMove( moveArray[0], moveArray[1] )
 			moveArray.shift()
 			moveArray.shift()
@@ -112,11 +102,7 @@ class GameController {
 		}
 	}
 }
-gameController = new GameController()
-gameController.view.displayLayOut(gameController.board.layOut)
-gameController.view.setTileClickListener()
-gameController.view.setUndoClickListener()
-
+gameController = new GameController() //TODO this globally accessible gameController is critical to the view functioning, that seems not good
 
 
 tests = {
