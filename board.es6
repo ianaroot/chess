@@ -43,12 +43,12 @@ class Board {
     return { upperLimit: 63, lowerLimit: 0 }
   }
 
-  static deepCopyLayout(layOut){
-    let newLayOut = [];
-    for( let i = 0; i < layOut.length; i ++){
-      newLayOut.push( layOut[i] )
+  static deepCopy(originalObject){
+    let newObject = [];
+    for( let i = 0; i < originalObject.length; i ++){
+      newObject.push( originalObject[i] )
     }
-    return newLayOut
+    return newObject
   }
 
   static isSeventhRank(position){
@@ -89,9 +89,9 @@ class Board {
     };
   }
 
-  static gridCalculator(tile){
-    let x = Math.floor(tile % 8),
-        y = Math.floor(tile / 8) + 1,
+  static gridCalculator(position){
+    let x = Math.floor(position % 8),
+        y = Math.floor(position / 8) + 1,
       alphaNum = {
         0: "a",
         1: "b",
@@ -105,9 +105,9 @@ class Board {
     return alphaNum[x] + y
   }
 
-  static gridCalculatorReverse(tile){
-    let letter = tile[0],
-      number = tile[1],
+  static gridCalculatorReverse(alphaNumericPosition){
+    let letter = alphaNumericPosition[0],
+      number = alphaNumericPosition[1],
      alphaNum = {
         a: 0,
         b: 1,
@@ -204,9 +204,21 @@ class Board {
   whitePawnDoubleSteppedFrom(position){
     return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.WHITE && Board.parseSpecies( this.pieceObjectFromLastLayout(position) ) === Board.PAWN
   }
+  //
+  // deepCopyLayout(){
+  //   Board.deepCopyLayout(this.layOut)
+  // }
 
-  deepCopyLayout(){
-    Board.deepCopyLayout(this.layOut)
+  deepCopy(){
+    let newLayOut = Board.deepCopy(this.layOut),
+        newCapturedPieces = Board.deepCopy(this.capturedPieces),
+        newMovementNotation = this.movementNotation,
+        newPreviousLayouts = Board.deepCopy(this.previousLayouts),
+        // NEED TO BE CAREFUL THAT PREVIOUS LAYOUTS ARE QUERIED NOT MUTATED!!!
+        newBoard = new Board( newLayOut, {capturedPieces: newCapturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts});
+    return newBoard;
+    // TODO maybe include the previous board states, will slow things down, but maybe it's not unreasonable for people to htink that a hypothetical board would still offer
+    // accurate information with regards to stalemate, also i guess you'd get inaccurate result
   }
 
   reset(){
@@ -256,7 +268,7 @@ class Board {
   }
 
   storeCurrentLayoutAsPrevious(){
-    let layOutCopy = Board.deepCopyLayout( this.layOut );
+    let layOutCopy = Board.deepCopy( this.layOut );
 
     this.previousLayouts.push(layOutCopy)
   }

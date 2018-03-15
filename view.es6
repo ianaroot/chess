@@ -1,3 +1,5 @@
+// TODO just pass the function i need access to, and the board, not the whole gameController
+// move any logic from highlightTile over to gameController. e.g. view shouldn't even know the Rules object exists
 class View{
 	//TODO pretty sure this could be a singleton even on a server with several games running
   //TODO priority clean up alternations position vs gridCalculator

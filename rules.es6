@@ -67,7 +67,7 @@ class Rules {
         pieceObject        = layOut[startPosition],
         teamString         = board.teamAt(startPosition),
         danger             = false,
-        newLayout          = Board.deepCopyLayout(layOut),
+        newLayout          = Board.deepCopy(layOut),
         opposingTeamString = Board.opposingTeam(teamString),
         newBoard = new Board(newLayout);
     newBoard.movePiece( startPosition, endPosition, additionalActions)

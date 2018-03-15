@@ -1,0 +1,5 @@
+class Bot {
+  calculateMove(){
+    w
+  }
+}

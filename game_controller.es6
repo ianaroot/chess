@@ -10,6 +10,7 @@ class GameController {
 		this.view.displayLayOut(this.board)
 		this.view.setTileClickListener(this)
 		this.view.setUndoClickListener(this)
+		this.api = new Api(this.board);
 	}
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
 		var board = this.board,
@@ -30,6 +31,8 @@ class GameController {
 			this.view.displayAlert(moveObject.alerts)
 			return
 		} else {
+			// TODO having all of these checks on the gameController makes hypothetical moves rather complicated
+			//
 			this.board.storeCurrentLayoutAsPrevious()
 			captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions) //TODO secondary seems wonky to set the capture notation as the return here.
 			var promotionNotation = Rules.pawnPromotionQuery( board ),
@@ -61,6 +64,11 @@ class GameController {
 			}
 			this.board.recordNotation(notation)
 			if( !board.gameOver ){ this.nextTurn() }
+// 36-66 can all just move over to board.movePiece, and then that function can return any necessary alerts.
+// in fact, if we passed in the moveObject, and mutated it's alerts, that should hold over here too
+
+
+
 			this.view.updateTeamAllowedToMove(this.board);
 			let displayAlert = this.view.displayAlert
 			if(moveObject.alerts){setTimeout( function(){ displayAlert(moveObject.alerts) }, 200)}
