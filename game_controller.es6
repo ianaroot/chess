@@ -32,7 +32,6 @@ class GameController {
 		} else {
 			// TODO having all of these checks on the gameController makes hypothetical moves rather complicated
 			//
-			this.board.storeCurrentLayoutAsPrevious()
 			captureNotation = this.board.movePiece( moveObject ) //TODO secondary seems wonky to set the capture notation as the return here.
 			var promotionNotation = Rules.pawnPromotionQuery( board ),
 					otherTeam = this.board.teamNotMoving(),

@@ -264,6 +264,7 @@ class Board {
       pieceObject = this.pieceObject(startPosition),
       captureNotation = this.capture(endPosition);
       // debugger
+		this.storeCurrentLayoutAsPrevious()
     this.emptify(startPosition)
     this.placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ captureNotation = additionalActions.call(this, {position: startPosition} ) }
