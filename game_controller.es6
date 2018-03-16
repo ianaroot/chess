@@ -1,9 +1,7 @@
 const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
-// TODO priority stalemate by insufficient material
+// TODO priority stalemate by insufficient material, and 50 move rule
 // TODO priority get e.p. appended to en passant notation
 // TODO tiles stay highlighted if you move via console
-// if board.movePiece accepted a move object, then it could maybe mutate that move object
-// such to add the capture notation to it, and then have all notation calculated on the object
 
 class GameController {
 	constructor(){
