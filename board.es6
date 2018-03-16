@@ -135,6 +135,22 @@ class Board {
     return string.species
   }
 
+  nextTurn(){
+    if( this.allowedToMove === Board.WHITE ){
+      this.prepareBlackTurn()
+    } else{
+      this.prepareWhiteTurn()
+    }
+  }
+
+  prepareBlackTurn(){
+    this.allowedToMove = Board.BLACK
+  }
+
+  prepareWhiteTurn(){
+    this.allowedToMove = Board.WHITE
+  }
+
   undo(){
     this.layOut = this.lastLayout()
     this.previousLayouts.pop()

@@ -30,7 +30,7 @@ class GameController {
 
 			Rules.pawnPromotionQuery({board: board, moveObject: moveObject} );
 
-			Rules.checkmateQuery({board: board, moveObject: moveObject})  //TODO rename as query
+			Rules.checkmateQuery({board: board, moveObject: moveObject})
 
 			if( !board.gameOver ){
 				var otherTeam = board.teamNotMoving(),
@@ -42,7 +42,7 @@ class GameController {
 
 			this.board.recordNotationFrom(moveObject)
 
-			if( !board.gameOver ){ this.nextTurn() }
+			if( !board.gameOver ){ board.nextTurn() }
 
 			this.view.displayLayOut({board: board, alerts: moveObject.alerts})
 
@@ -51,13 +51,7 @@ class GameController {
 		}
 	}
 
-  nextTurn(){
-    if( this.board.allowedToMove === Board.WHITE ){
-      this.prepareBlackTurn()
-    } else{
-      this.prepareWhiteTurn()
-    }
-  }
+
 
 	undo(){
 		if( this.board.previousLayouts.length){
@@ -67,14 +61,6 @@ class GameController {
 			this.view.displayLayOut(this.board)
 		}
 	}
-
-  prepareBlackTurn(){
-    this.board.allowedToMove = Board.BLACK
-  }
-
-  prepareWhiteTurn(){
-    this.board.allowedToMove = Board.WHITE
-  }
 	runMoves(moveArray){
 		var func = this.runMoves.bind(this)
 		if (moveArray.length > 1 ) {
