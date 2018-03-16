@@ -55,6 +55,7 @@ class View{
     this.whiteCaptureDivNeedsExpanding(board);
     this.updateCaptures(board);
     this.clearAlerts();
+		this.updateTeamAllowedToMove(board);
   };
   pieceImgSrc(pieceInitials){
     return "img/chesspieces/wikipedia/" + pieceInitials + ".png"

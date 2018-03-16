@@ -44,16 +44,15 @@ class GameController {
 
 			this.board.recordNotationFrom(moveObject)
 
+			if( !board.gameOver ){ this.nextTurn() }
 
 			this.view.displayLayOut(board)
 
-			if( !board.gameOver ){ this.nextTurn() }
 // 36-66 can all just move over to board.movePiece, and then that function can return any necessary alerts.
 // in fact, if we passed in the moveObject, and mutated it's alerts, that should hold over here too
 
 
 
-			this.view.updateTeamAllowedToMove(board);
 			let displayAlert = this.view.displayAlert
 			if(moveObject.alerts){setTimeout( function(){ displayAlert(moveObject.alerts) }, 200)}
 		}
