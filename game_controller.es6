@@ -9,7 +9,7 @@ class GameController {
 	constructor(){
 		this.board = new Board();
     this.view = new View(this);
-		this.view.displayLayOut(this.board)
+		this.view.displayLayOut({board: this.board, alerts: [""]})
 		this.view.setTileClickListener(this)
 		this.view.setUndoClickListener(this)
 		this.api = new Api(this.board);
@@ -46,15 +46,10 @@ class GameController {
 
 			if( !board.gameOver ){ this.nextTurn() }
 
-			this.view.displayLayOut(board)
+			this.view.displayLayOut({board: board, alerts: moveObject.alerts})
 
 // 36-66 can all just move over to board.movePiece, and then that function can return any necessary alerts.
 // in fact, if we passed in the moveObject, and mutated it's alerts, that should hold over here too
-
-
-
-			let displayAlert = this.view.displayAlert
-			if(moveObject.alerts){setTimeout( function(){ displayAlert(moveObject.alerts) }, 200)}
 		}
 	}
 

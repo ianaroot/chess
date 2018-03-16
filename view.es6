@@ -11,7 +11,7 @@ class View{
 
   static get TILE_HEIGHT() { return "49" }
 
-  displayAlert(messages){
+  displayAlerts(messages){
     for (let i = 0; i < messages.length; i++){
       // $('#notifications').text(messages[i])
       document.getElementById( 'notifications' ).innerHTML = messages[i];
@@ -39,8 +39,11 @@ class View{
     let element = document.getElementById( gridPosition );
     element.appendChild(elem)
   };
-  displayLayOut(board){
-    let layOut = board.layOut;
+  displayLayOut(args){
+
+    let board = args["board"],
+        alerts = args["alerts"],
+        layOut = board.layOut;
     for( let i = 0; i < layOut.length; i++){
       let gridPosition = Board.gridCalculator(i),
           pieceInitials = this.pieceInitials(layOut[i]);
@@ -56,6 +59,7 @@ class View{
     this.updateCaptures(board);
     this.clearAlerts();
 		this.updateTeamAllowedToMove(board);
+    this.displayAlerts(alerts)
   };
   pieceImgSrc(pieceInitials){
     return "img/chesspieces/wikipedia/" + pieceInitials + ".png"
