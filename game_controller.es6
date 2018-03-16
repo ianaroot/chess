@@ -1,4 +1,5 @@
 const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
+// TODO priority get e.p. appended to en passant notation
 // TODO tiles stay highlighted if you move via console
 // if board.movePiece accepted a move object, then it could maybe mutate that move object
 // such to add the capture notation to it, and then have all notation calculated on the object
@@ -17,9 +18,9 @@ class GameController {
 			layOut = board.layOut,
 			pieceObject = layOut[startPosition],
 			team = board.teamAt(startPosition),
-			checkNotation = "",
-			captureNotation = "",
-			promotionNotation = "",
+			// checkNotation = "",
+			// captureNotation = "",
+			// moveObject.promotionNotation = "",
 			notation = "";
 		if( board.gameOver ){
 			return
@@ -32,20 +33,20 @@ class GameController {
 		} else {
 			// TODO having all of these checks on the gameController makes hypothetical moves rather complicated
 			//
-			captureNotation = this.board.movePiece( moveObject ) //TODO secondary seems wonky to set the capture notation as the return here.
-			var promotionNotation = Rules.pawnPromotionQuery( board ),
-					otherTeam = this.board.teamNotMoving(),
+			moveObject.captureNotation = this.board.movePiece( moveObject ) //TODO secondary seems wonky to set the capture notation as the return here.
+			moveObject.promotionNotation = Rules.pawnPromotionQuery( board );
+			var otherTeam = this.board.teamNotMoving(),
 					otherTeamsKingPosition = this.board.kingPosition(otherTeam);
 			moveObject.alerts.push( "" )
 			if( Rules.checkmate( board )){
 				moveObject.alerts.push( "checkmate" )
-				var checkNotation = "#";
+				moveObject.checkNotation = "#";
 				board.endGame()
 			}
 			// KINGINCHECKMOVE
 			if( !board.gameOver && Rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
 				moveObject.alerts.push( "check" )
-				var checkNotation = "+";
+				moveObject.checkNotation = "+";
 			}
 			this.view.displayLayOut(this.board)
 			var stalemate = Rules.stalemate(board);
@@ -53,15 +54,9 @@ class GameController {
 				moveObject.alerts.push( "stalemate" )
 				board.endGame()
 			}
-			if( moveObject.fullNotation ){ //TODO couldn't standard notation moves calculate their own notation too?
-				notation = moveObject.fullNotation + captureNotation + positionNotation + promotionNotation + checkNotation
-			} else {
-				var positionNotation = Board.gridCalculator(endPosition),
-					pieceNotation	= moveObject.pieceNotation,
-					captureNotation = captureNotation || moveObject.captureNotation || "",
-					notation = pieceNotation + captureNotation + positionNotation + promotionNotation + checkNotation;
-			}
-			this.board.recordNotation(notation)
+
+			this.board.recordNotationFrom(moveObject)
+
 			if( !board.gameOver ){ this.nextTurn() }
 // 36-66 can all just move over to board.movePiece, and then that function can return any necessary alerts.
 // in fact, if we passed in the moveObject, and mutated it's alerts, that should hold over here too
@@ -111,7 +106,7 @@ class GameController {
 }
 gameController = new GameController() //TODO this globally accessible gameController is critical to the view functioning, that seems not good
 
-
+// TODO some tests just setup the move they're testing but don't perform it (enPassants)
 tests = {
 	pawnPromotion: [1,  18, 50, 42, 11, 27, 59, 41, 3,  19, 42, 34, 14, 22, 34, 27, 18, 24, 51, 43, 10, 26, 41, 17, 26, 34, 49, 33, 19, 33, 57, 42, 33, 49, 27, 19, 34, 43, 19, 12, 43, 52, 12,  5, 4,   5, 17,  9, 52, 61 ],
   sim2: [1,  18, 50, 42, 11, 27, 59, 41, 3,  19, 42, 34, 14, 22, 34, 27, 0,  1, 27, 18, 9,  18, 51, 35, 15, 23, 58, 23 ],
@@ -124,3 +119,13 @@ tests = {
   threeFold: [1, 18, 62, 45, 18,  1, 45, 62, 1, 18, 62, 45, 18,  1, 45, 62],
   notThreeFold: [1, 18, 62, 45, 18,  1, 45, 62, 1, 18, 62, 45, 18,  1, 50,  42, 1, 18, 45, 62, 18,  1, 62, 45]
 }
+
+// runAllTests= function(){
+// 	for (let property in tests) {
+// 		if (tests.hasOwnProperty(property) ){
+// 			gameController.board.reset();
+// 			console.log(tests[property])
+// 			gameController.runMoves(tests[property])
+// 		}
+// 	}
+// }

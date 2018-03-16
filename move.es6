@@ -8,11 +8,15 @@ class MoveObject {
     this.increment = options["increment"]
     this.additionalActions = options["additionalActions"]
     this.rangeLimit = options["rangeLimit"]
-    this.pieceNotation = options["pieceNotation"]
     this._endPosition = options["endPosition"]
     this.alerts = options["alerts"] || []
     this.illegal = options["illegal"]
     this.fullNotation = options["fullNotation"]
+    this.pieceNotation = options["pieceNotation"]
+    this.checkNotation = options["checkNotation"] || ""
+    this.captureNotation = options["captureNotation"] || ""
+    this.positionNotation = options["positionNotation"] || ""
+    this.promotionNotation = options["promotionNotation"] || ""
   }
   set endPosition(newEndPosition){
     this._endPosition = newEndPosition
@@ -26,5 +30,12 @@ class MoveObject {
   get startPosition(){
     return this._startPosition
   }
+
+  // set checkNotation(newCheckNotation){
+  //   this._checkNotation = newCheckNotation
+  // }
+  // get checkNotation(){
+  //   return this._checkNotation
+  // }
 
 }

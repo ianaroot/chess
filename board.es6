@@ -245,7 +245,13 @@ class Board {
     return teamNotMoving
   }
 
-  recordNotation(notation){
+  recordNotationFrom(moveObject){
+    if( moveObject.fullNotation ){ //TODO couldn't standard notation moves calculate their own notation too?
+      var notation = moveObject.fullNotation + moveObject.captureNotation + moveObject.positionNotation + moveObject.promotionNotation + moveObject.checkNotation
+    } else {
+      moveObject.positionNotation = Board.gridCalculator(moveObject.endPosition);
+      var	notation = moveObject.pieceNotation + moveObject.captureNotation + moveObject.positionNotation + moveObject.promotionNotation + moveObject.checkNotation;
+    }
     this.movementNotation.push(notation)
   }
 
@@ -269,7 +275,7 @@ class Board {
     this.placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ captureNotation = additionalActions.call(this, {position: startPosition} ) }
 
-    return captureNotation
+    return captureNotation || ""
   }
 
   storeCurrentLayoutAsPrevious(){
