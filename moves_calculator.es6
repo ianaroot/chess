@@ -422,7 +422,7 @@ class MovesCalculator {
           moveObject.pieceNotation = Board.file(startPosition)
           moveObject.additionalActions = function(args){
             let position = args["position"],
-              captureNotation = this.capture(startPosition + 1);
+              captureNotation = this.capture(startPosition + 1) + "e.p.";
             return captureNotation
             // TODO this is not really just a notation it's an action... or is it, i think the return is a notation, but the action is occurring right here.
           }
@@ -436,7 +436,7 @@ class MovesCalculator {
           moveObject.pieceNotation = Board.file(startPosition)
           moveObject.additionalActions = function(args){
             let position = args["position"];
-            let captureNotation = this.capture(startPosition - 1);
+            let captureNotation = this.capture(startPosition - 1) + "e.p.";
             return captureNotation
             // TODO this is not really just a notation it's an action
           }

@@ -271,7 +271,17 @@ class Board {
     this.movementNotation.push(notation)
   }
 
-  movePiece( moveObject ){
+  hypotheticallyMovePiece( moveObject ){
+    let startPosition = moveObject.startPosition,
+      endPosition = moveObject.endPosition,
+      additionalActions = moveObject.additionalActions,
+      pieceObject = this.pieceObject(startPosition);
+    this.emptify(startPosition)
+    this.placePiece({ position: endPosition, pieceObject: pieceObject })
+    if( additionalActions ){ additionalActions.call(this, {position: startPosition} ) }
+  }
+
+  officiallyMovePiece( moveObject ){
       // if(
       //   typeof startPosition !== "number" ||
       //   !(typeof endPosition !== "number" || typeof endPosition !== "string") || // TODO not sure where this got turned into a string...
@@ -283,14 +293,18 @@ class Board {
     let startPosition = moveObject.startPosition,
       endPosition = moveObject.endPosition,
       additionalActions = moveObject.additionalActions,
-      pieceObject = this.pieceObject(startPosition),
-      captureNotation = this.capture(endPosition);
-      // debugger
+      pieceObject = this.pieceObject(startPosition);
+    moveObject.captureNotation = this.capture(endPosition);
 		this.storeCurrentLayoutAsPrevious()
     this.emptify(startPosition)
     this.placePiece({ position: endPosition, pieceObject: pieceObject })
-    if( additionalActions ){ captureNotation = additionalActions.call(this, {position: startPosition} ) }
-    moveObject.captureNotation = captureNotation || ""
+    if( additionalActions ){ moveObject.captureNotation = additionalActions.call(this, {position: startPosition} ) }
+    // moveObject.captureNotation = captureNotation || ""
+
+    Rules.pawnPromotionQuery({board: this, moveObject: moveObject} );
+
+		Rules.checkmateQuery({board: this, moveObject: moveObject})
+
   }
 
   storeCurrentLayoutAsPrevious(){

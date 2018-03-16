@@ -26,11 +26,8 @@ class GameController {
 		} else {
 			// TODO having all of these checks on the gameController makes hypothetical moves rather complicated
 			//
-			board.movePiece( moveObject )
+			board.officiallyMovePiece( moveObject )
 
-			Rules.pawnPromotionQuery({board: board, moveObject: moveObject} );
-
-			Rules.checkmateQuery({board: board, moveObject: moveObject})
 
 			if( !board.gameOver ){
 				var otherTeam = board.teamNotMoving(),

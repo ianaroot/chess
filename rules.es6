@@ -75,7 +75,7 @@ class Rules {
         moveObject = args["moveObject"]; //TODO sometime a moveObject is being pass in and sometimes it isn't, and there probably need to be two separate kingCheckQueries
         // one of which will be used for actual moves and one for hypothetical moves
 
-    newBoard.movePiece( dummyMoveObject )
+    newBoard.hypotheticallyMovePiece( dummyMoveObject )
     let kingPosition = newBoard.kingPosition(teamString),
         enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
     for(let i = 0; i < enemyPositions.length; i++){
