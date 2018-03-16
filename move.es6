@@ -20,5 +20,11 @@ class MoveObject {
   get endPosition(){
     return this._endPosition
   }
+  set startPosition(newStartPosition){
+    this._startPosition = newStartPosition
+  }
+  get startPosition(){
+    return this._startPosition
+  }
 
 }

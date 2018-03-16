@@ -14,7 +14,9 @@ class MovesCalculator {
     if ( this.startPosition === undefined || !this.board){
       throw new Error("moveObject missing startPosition or board in addMovementTypesAndBoundaryChecks")
     } else {
-      this.moveObjects = MovesCalculator.pieceSpecificMovements()[this.board.pieceTypeAt(this.startPosition)]({startPosition: this.startPosition, board: this.board})
+      let pieceType = this.board.pieceTypeAt(this.startPosition),
+          pieceSpecificMovements = MovesCalculator.pieceSpecificMovements()[ pieceType ];
+      this.moveObjects = pieceSpecificMovements({startPosition: this.startPosition, board: this.board})
     }
   }
 
@@ -49,6 +51,7 @@ class MovesCalculator {
     return {
       verticalUp: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "+8",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -59,6 +62,7 @@ class MovesCalculator {
       },
       verticalDown: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "-8",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -69,6 +73,7 @@ class MovesCalculator {
       },
       forwardSlashUp: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "+9",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -79,6 +84,7 @@ class MovesCalculator {
       },
       forwardSlashDown: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "-9",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -89,6 +95,7 @@ class MovesCalculator {
       },
       backSlashUp: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "+7",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -99,6 +106,7 @@ class MovesCalculator {
       },
       backSlashDown: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "-7",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -109,6 +117,7 @@ class MovesCalculator {
       },
       nightVerticalLeftUp: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "+15",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -119,6 +128,7 @@ class MovesCalculator {
       },
       nightVerticalRightUp: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "+17",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -129,6 +139,7 @@ class MovesCalculator {
       },
       nightHorizontalLeftUp: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "+6",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -139,6 +150,7 @@ class MovesCalculator {
       },
       nightHorizontalRightUp: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "+10",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -149,6 +161,7 @@ class MovesCalculator {
       },
       nightVerticalLeftDown: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "-15",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -159,6 +172,7 @@ class MovesCalculator {
       },
       nightVerticalRightDown: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "-17",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -169,6 +183,7 @@ class MovesCalculator {
       },
       nightHorizontalLeftDown: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "-6",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -179,6 +194,7 @@ class MovesCalculator {
       },
       nightHorizontalRightDown: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "-10",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -189,6 +205,7 @@ class MovesCalculator {
       },
       horizontalRight: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "+1",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -199,6 +216,7 @@ class MovesCalculator {
       },
       horizontalLeft: function(){
         let moveObject = new MoveObject({
+          // startPosition: startPosition,
           increment: "-1",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -246,7 +264,8 @@ class MovesCalculator {
                   ];
         for (let i = 0; i < moveObjects.length; i++ ) {
             moveObjects[i].rangeLimit = 1;
-            moveObjects[i].pieceNotation = "N"
+            moveObjects[i].pieceNotation = "N";;
+            moveObjects[i].startPosition = startPosition
         };
         return  moveObjects
       },
@@ -256,7 +275,8 @@ class MovesCalculator {
           moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown()]
         for (let i = 0; i < moveObjects.length; i++ ) {
           moveObjects[i].rangeLimit = 7;
-          moveObjects[i].pieceNotation = "R"
+          moveObjects[i].pieceNotation = "R";
+          moveObjects[i].startPosition = startPosition
         };
         return moveObjects
       },
@@ -266,7 +286,8 @@ class MovesCalculator {
           moveObjects = [MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()]
         for (let i = 0; i < moveObjects.length; i++ ) {
           moveObjects[i].rangeLimit = 7;
-          moveObjects[i].pieceNotation = "B"
+          moveObjects[i].pieceNotation = "B";
+          moveObjects[i].startPosition = startPosition
         };
         return moveObjects
       },
@@ -276,7 +297,8 @@ class MovesCalculator {
           moveObjects =  MovesCalculator.pieceSpecificMovements().Rook({startPosition: startPosition, board: board}).concat( MovesCalculator.pieceSpecificMovements().Bishop({startPosition: startPosition, board: board}) )
         for (let i = 0; i < moveObjects.length; i++ ) {
           moveObjects[i].rangeLimit = 7;
-          moveObjects[i].pieceNotation = "Q"
+          moveObjects[i].pieceNotation = "Q";
+          moveObjects[i].startPosition = startPosition
         };
         return moveObjects
       },
@@ -288,38 +310,42 @@ class MovesCalculator {
                   ];
         for (let i = 0; i < moveObjects.length; i++ ) {
           moveObjects[i].rangeLimit = 1;
-          moveObjects[i].pieceNotation = "K"
+          moveObjects[i].pieceNotation = "K";
+          moveObjects[i].startPosition = startPosition
         };
         if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition)
+        // KINGINCHECKNOMOVE
           && !Rules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
           && !Rules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition + 1), board: board })
           ){
-          let castle = MovesCalculator.genericMovements().horizontalLeft()
-          castle.increment = + 2
-          castle.rangeLimit = 1
-          castle.fullNotation = "O-O"
-          castle.additionalActions = function(args){
+          let moveObject = MovesCalculator.genericMovements().horizontalLeft()
+          moveObject.increment = + 2
+          moveObject.rangeLimit = 1
+          moveObject.fullNotation = "O-O";
+          moveObject.startPosition = startPosition;
+          moveObject.additionalActions = function(args){
             let position = args["position"],
                 pieceObject = this.pieceObject( startPosition + 3 );
             this.emptify( startPosition + 3)
             this.placePiece({ position: (startPosition + 1), pieceObject: pieceObject })
           }
-          moveObjects.push(castle)
+          moveObjects.push(moveObject)
         };
         if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition)
           && !Rules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
           && !Rules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
-          let castle = MovesCalculator.genericMovements().horizontalRight()
-          castle.increment = - 2
-          castle.rangeLimit = 1
-          castle.fullNotation = "O-O-O"
-          castle.additionalActions = function(args){
+          let moveObject = MovesCalculator.genericMovements().horizontalRight()
+          moveObject.increment = - 2
+          moveObject.rangeLimit = 1
+          moveObject.fullNotation = "O-O-O";
+          moveObject.startPosition = startPosition;
+          moveObject.additionalActions = function(args){
             let position = args["position"],
                 pieceObject = this.pieceObject( startPosition - 4 );
             this.emptify( startPosition - 4)
             this.placePiece({ position: (startPosition - 1), pieceObject: pieceObject })
           }
-          moveObjects.push(castle)
+          moveObjects.push(moveObject)
         };
         return moveObjects
       },
@@ -357,58 +383,64 @@ class MovesCalculator {
           pawnVars = colorVars[teamString];
         // SINGLE STEP
         if ( pawnVars.singleStepCheck ) {
-          let newPossibility = pawnVars.nonAttackMove
-          newPossibility.rangeLimit = 1
-          newPossibility.pieceNotation = ""
-          moveObjects = moveObjects.concat(newPossibility)
+          let moveObject = pawnVars.nonAttackMove
+          moveObject.rangeLimit = 1
+          moveObject.pieceNotation = ""
+          moveObject.startPosition = startPosition
+          moveObjects = moveObjects.concat(moveObject)
         }
         // DOUBLESTEP
         if ( pawnVars.doubleStepCheck ){
           // TODO will the twoSpaces Down check get covered later anyway?
-            let newPossibility = pawnVars.nonAttackMove
-          newPossibility.rangeLimit = 2
-          newPossibility.pieceNotation = ""
-          moveObjects = moveObjects.concat(newPossibility)
+            let moveObject = pawnVars.nonAttackMove
+          moveObject.rangeLimit = 2
+          moveObject.pieceNotation = ""
+          moveObject.startPosition = startPosition
+          moveObjects = moveObjects.concat(moveObject)
         }
         // STANDARD ATTACKS
         if ( pawnVars.leftAttackCheck ) {
-          let newPossibility = pawnVars.leftAttackMove
-          newPossibility.rangeLimit = 1
-          newPossibility.pieceNotation = Board.file(startPosition)
-          moveObjects = moveObjects.concat(newPossibility)
+          let moveObject = pawnVars.leftAttackMove
+          moveObject.rangeLimit = 1
+          moveObject.startPosition = startPosition
+          moveObject.pieceNotation = Board.file(startPosition)
+          moveObjects = moveObjects.concat(moveObject)
         }
         if( pawnVars.rightAttackCheck ) {
-          let newPossibility = pawnVars.rightAttackMove
-          newPossibility.rangeLimit = 1
-          newPossibility.pieceNotation = Board.file(startPosition)
-          moveObjects = moveObjects.concat(newPossibility)
+          let moveObject = pawnVars.rightAttackMove
+          moveObject.rangeLimit = 1
+          moveObject.startPosition = startPosition
+          moveObject.pieceNotation = Board.file(startPosition)
+          moveObjects = moveObjects.concat(moveObject)
         };
         // EN PASSANT
           // RIGHT
         if( pawnVars.rightEnPassantCheck ){
-          let newPossibility = pawnVars.rightAttackMove
-          newPossibility.rangeLimit = 1
-          newPossibility.pieceNotation = Board.file(startPosition)
-          newPossibility.additionalActions = function(args){
+          let moveObject = pawnVars.rightAttackMove
+          moveObject.rangeLimit = 1
+          moveObject.startPosition = startPosition
+          moveObject.pieceNotation = Board.file(startPosition)
+          moveObject.additionalActions = function(args){
             let position = args["position"],
               captureNotation = this.capture(startPosition + 1);
             return captureNotation
             // TODO this is not really just a notation it's an action... or is it, i think the return is a notation, but the action is occurring right here.
           }
-          moveObjects = moveObjects.concat(newPossibility)
+          moveObjects = moveObjects.concat(moveObject)
         }
           // LEFT
         if( pawnVars.leftEnPassantCheck ){
-          let newPossibility = pawnVars.leftAttackMove
-          newPossibility.rangeLimit = 1
-          newPossibility.pieceNotation = Board.file(startPosition)
-          newPossibility.additionalActions = function(args){
+          let moveObject = pawnVars.leftAttackMove
+          moveObject.rangeLimit = 1
+          moveObject.startPosition = startPosition
+          moveObject.pieceNotation = Board.file(startPosition)
+          moveObject.additionalActions = function(args){
             let position = args["position"];
             let captureNotation = this.capture(startPosition - 1);
             return captureNotation
             // TODO this is not really just a notation it's an action
           }
-          moveObjects = moveObjects.concat(newPossibility)
+          moveObjects = moveObjects.concat(moveObject)
         }
       return moveObjects;
       }

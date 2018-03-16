@@ -249,17 +249,21 @@ class Board {
     this.movementNotation.push(notation)
   }
 
-  movePiece(startPosition, endPosition, additionalActions){
-      if(
-        typeof startPosition !== "number" ||
-        !(typeof endPosition !== "number" || typeof endPosition !== "string") || // TODO not sure where this got turned into a string...
-        !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
-      ){
-        throw new Error("missing params in movePiece")
-      }
-    let pieceObject = this.pieceObject(startPosition),
-      captureNotation = this.capture(endPosition);
+  movePiece( moveObject ){
+      // if(
+      //   typeof startPosition !== "number" ||
+      //   !(typeof endPosition !== "number" || typeof endPosition !== "string") || // TODO not sure where this got turned into a string...
+      //   !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
+      // ){
+      //   throw new Error("missing params in movePiece")
+      // }
 
+    let startPosition = moveObject.startPosition,
+      endPosition = moveObject.endPosition,
+      additionalActions = moveObject.additionalActions,
+      pieceObject = this.pieceObject(startPosition),
+      captureNotation = this.capture(endPosition);
+      // debugger
     this.emptify(startPosition)
     this.placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ captureNotation = additionalActions.call(this, {position: startPosition} ) }

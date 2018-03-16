@@ -13,7 +13,7 @@ class Rules {
         team = board.teamAt(startPosition),
         moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
 
-    if( team == Board.EMPTY ){
+    if( team == Board.EMPTY ){ // TODO does triple equals work here
       moveObject.alerts.push("that tile is empty")
       return moveObject
     }
@@ -27,6 +27,7 @@ class Rules {
     for( let key in movesCalculator.viablePositions ){
       if( key == endPosition ){
         moveObject = movesCalculator.viablePositions[key]
+        moveObject.endPosition = endPosition;
       }
     };
 
@@ -69,8 +70,9 @@ class Rules {
         danger             = false,
         newLayout          = Board.deepCopy(layOut),
         opposingTeamString = Board.opposingTeam(teamString),
-        newBoard = new Board(newLayout);
-    newBoard.movePiece( startPosition, endPosition, additionalActions)
+        newBoard = new Board(newLayout),
+        dummyMoveObject = {startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions};
+    newBoard.movePiece( dummyMoveObject )
     let kingPosition = newBoard.kingPosition(teamString),
         enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
     for(let i = 0; i < enemyPositions.length; i++){

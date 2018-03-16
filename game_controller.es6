@@ -26,7 +26,6 @@ class GameController {
 		}
 
 		var moveObject = Rules.getMoveObject(startPosition, endPosition, board);
-
 		if( moveObject.illegal ){
 			this.view.displayAlert(moveObject.alerts)
 			return
@@ -34,7 +33,7 @@ class GameController {
 			// TODO having all of these checks on the gameController makes hypothetical moves rather complicated
 			//
 			this.board.storeCurrentLayoutAsPrevious()
-			captureNotation = this.board.movePiece( startPosition, endPosition, moveObject.additionalActions) //TODO secondary seems wonky to set the capture notation as the return here.
+			captureNotation = this.board.movePiece( moveObject ) //TODO secondary seems wonky to set the capture notation as the return here.
 			var promotionNotation = Rules.pawnPromotionQuery( board ),
 					otherTeam = this.board.teamNotMoving(),
 					otherTeamsKingPosition = this.board.kingPosition(otherTeam);
@@ -44,6 +43,7 @@ class GameController {
 				var checkNotation = "#";
 				board.endGame()
 			}
+			// KINGINCHECKMOVE
 			if( !board.gameOver && Rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
 				moveObject.alerts.push( "check" )
 				var checkNotation = "+";
