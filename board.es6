@@ -282,13 +282,11 @@ class Board {
   }
 
   officiallyMovePiece( moveObject ){
-      // if(
-      //   typeof startPosition !== "number" ||
-      //   !(typeof endPosition !== "number" || typeof endPosition !== "string") || // TODO not sure where this got turned into a string...
-      //   !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
-      // ){
-      //   throw new Error("missing params in movePiece")
-      // }
+      if(
+        !MoveObject.prototype.isPrototypeOf( moveObject )
+      ){
+        throw new Error("missing params in movePiece")
+      }
 
     let startPosition = moveObject.startPosition,
       endPosition = moveObject.endPosition,
@@ -304,6 +302,18 @@ class Board {
     Rules.pawnPromotionQuery({board: this, moveObject: moveObject} );
 
 		Rules.checkmateQuery({board: this, moveObject: moveObject})
+
+    if( !this.gameOver ){
+      var otherTeam = this.teamNotMoving(),
+        otherTeamsKingPosition = this.kingPosition(otherTeam);
+        // TODO separate check query that doesn't insist on a move occuring
+      Rules.checkQuery( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: this, moveObject: moveObject} )
+      Rules.stalemateQuery({board: this, moveObject: moveObject});
+    }
+
+    this.recordNotationFrom(moveObject)
+
+    if( !this.gameOver ){ this.nextTurn() }
 
   }
 

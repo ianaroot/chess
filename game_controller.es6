@@ -28,19 +28,6 @@ class GameController {
 			//
 			board.officiallyMovePiece( moveObject )
 
-
-			if( !board.gameOver ){
-				var otherTeam = board.teamNotMoving(),
-					otherTeamsKingPosition = board.kingPosition(otherTeam);
-					// TODO separate check query that doesn't insist on a move occuring
-				Rules.checkQuery( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board, moveObject: moveObject} )
-				Rules.stalemateQuery({board: board, moveObject: moveObject});
-			}
-
-			this.board.recordNotationFrom(moveObject)
-
-			if( !board.gameOver ){ board.nextTurn() }
-
 			this.view.displayLayOut({board: board, alerts: moveObject.alerts})
 
 // 36-66 can all just move over to board.movePiece, and then that function can return any necessary alerts.
