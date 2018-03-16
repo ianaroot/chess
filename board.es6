@@ -274,8 +274,7 @@ class Board {
     this.emptify(startPosition)
     this.placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ captureNotation = additionalActions.call(this, {position: startPosition} ) }
-
-    return captureNotation || ""
+    moveObject.captureNotation = captureNotation || ""
   }
 
   storeCurrentLayoutAsPrevious(){

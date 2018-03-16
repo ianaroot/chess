@@ -71,7 +71,10 @@ class Rules {
         newLayout          = Board.deepCopy(layOut),
         opposingTeamString = Board.opposingTeam(teamString),
         newBoard = new Board(newLayout),
-        dummyMoveObject = {startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions};
+        dummyMoveObject = {startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions},
+        moveObject = args["moveObject"]; //TODO sometime a moveObject is being pass in and sometimes it isn't, and there probably need to be two separate kingCheckQueries
+        // one of which will be used for actual moves and one for hypothetical moves
+
     newBoard.movePiece( dummyMoveObject )
     let kingPosition = newBoard.kingPosition(teamString),
         enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
@@ -80,14 +83,18 @@ class Rules {
           enemyPieceType = newBoard.pieceTypeAt( enemyPosition );
       if( enemyPieceType === Board.KING ){ continue }
       let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition}),
-          moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
+          responseMoveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
       for( let key in movesCalculator.viablePositions ){
         if( parseInt(key) === kingPosition ){
-          moveObject = movesCalculator.viablePositions[key]
+          responseMoveObject = movesCalculator.viablePositions[key]
         }
       };
-      if( enemyPieceType !== Board.KING &&  !moveObject.illegal ){ //!Rules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard}).illegal ){
-      danger = true
+      if( enemyPieceType !== Board.KING &&  !responseMoveObject.illegal ){ //!Rules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard}).illegal ){
+        if (moveObject){
+          moveObject.alerts.push( "check" )
+          moveObject.checkNotation = "+";
+        }
+        danger = true
       }
     };
     return danger
@@ -111,29 +118,42 @@ class Rules {
     return keysOnly
   }
 
-  static pawnPromotionQuery(board){
+  static pawnPromotionQuery(args){
+    let board = args["board"],
+        moveObject = args["moveObject"],
+        promotionNotation = "";
     for(let i = 0; i < 8; i++){
       if ( board.blackPawnAt(i) ){
         board.promotePawn(i)
-        return "=Q"
+        promotionNotation = "=Q"
         //need to change this when i start allowing choice of promotion type
       }
     }
     for(let i = 56; i < 64; i++){
       if( board.whitePawnAt(i) ){
         board.promotePawn(i)
-        return "=Q"
+        promotionNotation = "=Q"
         //need to change this when i start allowing choice of promotion type
       }
     }
-    return ""
+    moveObject.promotionNotation = promotionNotation;
   }
-  static checkmate(board){
+  static checkmateQuery(args){
+    let board = args["board"],
+        moveObject = args["moveObject"],
+        checkNotation = "";
     let otherTeam = board.teamNotMoving(),
         kingPosition = board.kingPosition(otherTeam),
         inCheck = this.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}),
         noMoves = this.noLegalMoves(board);
-    return inCheck && noMoves
+    if (inCheck && noMoves){
+      moveObject.checkNotation = "#"
+			moveObject.alerts.push( "checkmate" )
+			board.endGame()
+      return true
+    } else {
+      return false //implicit undefined return would suffice. maybe better to be explicit though?
+    }
   }
   static noLegalMoves(board){
     let movingTeamString = board.allowedToMove,
@@ -177,7 +197,10 @@ class Rules {
     }
     return threeFoldRepetition
   }
-  static stalemate(board){
-    return this.threeFoldRepetition(board) || this.noLegalMoves(board)
+  static stalemateQuery({board: board, moveObject: moveObject}){
+    if (this.threeFoldRepetition(board) || this.noLegalMoves(board)){
+      moveObject.alerts.push( "stalemate" )
+      board.endGame()
+    }
   }
 }

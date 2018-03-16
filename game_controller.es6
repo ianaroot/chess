@@ -33,29 +33,23 @@ class GameController {
 		} else {
 			// TODO having all of these checks on the gameController makes hypothetical moves rather complicated
 			//
-			moveObject.captureNotation = this.board.movePiece( moveObject ) //TODO secondary seems wonky to set the capture notation as the return here.
-			moveObject.promotionNotation = Rules.pawnPromotionQuery( board );
-			var otherTeam = this.board.teamNotMoving(),
+			this.board.movePiece( moveObject )
+
+			Rules.pawnPromotionQuery({board: board, moveObject: moveObject} );
+
+			Rules.checkmateQuery({board: board, moveObject: moveObject})  //TODO rename as query
+
+			if( !board.gameOver ){
+				var otherTeam = this.board.teamNotMoving(),
 					otherTeamsKingPosition = this.board.kingPosition(otherTeam);
-			moveObject.alerts.push( "" )
-			if( Rules.checkmate( board )){
-				moveObject.alerts.push( "checkmate" )
-				moveObject.checkNotation = "#";
-				board.endGame()
-			}
-			// KINGINCHECKMOVE
-			if( !board.gameOver && Rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
-				moveObject.alerts.push( "check" )
-				moveObject.checkNotation = "+";
-			}
-			this.view.displayLayOut(this.board)
-			var stalemate = Rules.stalemate(board);
-			if( !board.gameOver && stalemate ){
-				moveObject.alerts.push( "stalemate" )
-				board.endGame()
+				Rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board, moveObject: moveObject} )
+				Rules.stalemateQuery({board: board, moveObject: moveObject});
 			}
 
 			this.board.recordNotationFrom(moveObject)
+
+
+			this.view.displayLayOut(this.board)
 
 			if( !board.gameOver ){ this.nextTurn() }
 // 36-66 can all just move over to board.movePiece, and then that function can return any necessary alerts.
