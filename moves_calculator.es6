@@ -314,9 +314,9 @@ class MovesCalculator {
           moveObjects[i].startPosition = startPosition
         };
         if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition)
-        // KINGINCHECKNOMOVE
-          && !Rules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
-          && !Rules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition + 1), board: board })
+        // checkQueryNOMOVE
+          && !Rules.checkQuery({startPosition: startPosition, endPosition: startPosition, board: board })
+          && !Rules.checkQuery({startPosition: (startPosition), endPosition: (startPosition + 1), board: board })
           ){
           let moveObject = MovesCalculator.genericMovements().horizontalLeft()
           moveObject.increment = + 2
@@ -332,8 +332,8 @@ class MovesCalculator {
           moveObjects.push(moveObject)
         };
         if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition)
-          && !Rules.kingInCheck({startPosition: startPosition, endPosition: startPosition, board: board })
-          && !Rules.kingInCheck({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
+          && !Rules.checkQuery({startPosition: startPosition, endPosition: startPosition, board: board })
+          && !Rules.checkQuery({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
           let moveObject = MovesCalculator.genericMovements().horizontalRight()
           moveObject.increment = - 2
           moveObject.rangeLimit = 1

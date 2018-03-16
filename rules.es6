@@ -41,7 +41,7 @@ class Rules {
       moveObject.alerts.push("that's not how that piece moves")
       //TODO priority should distinguish whether this is due to blockage or wrong form of movement
       moveObject.illegal = true
-    } else if( Rules.kingInCheck( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: moveObject.additionalActions})){
+    } else if( Rules.checkQuery( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: moveObject.additionalActions})){
       moveObject.alerts.push("check yo king fool")
       moveObject.illegal = true
     } // now we know the move is legal
@@ -49,7 +49,7 @@ class Rules {
     return moveObject
   }
 
-  static kingInCheck(args){ // can just pass in same position as start and end if you want to know whether not moving anything creates check
+  static checkQuery(args){ // can just pass in same position as start and end if you want to know whether not moving anything creates check
     // this should be two functions, one that checks whether a king is in check from a given layout
     // and one that checks whether making a particular layout change would result in check
     if(
@@ -58,7 +58,7 @@ class Rules {
       !(typeof args["endPosition"] !== "number" || typeof args["endPosition"] !== "string") || //not sure where this got turned into a string...
       !(typeof args["additionalActions"] === "function" || typeof args["additionalActions"] === "undefined")
     ){
-      throw new Error("missing params in kingInCheck")
+      throw new Error("missing params in checkQuery")
     }
     let startPosition      = args["startPosition"],
         endPosition        = args["endPosition"],
@@ -111,7 +111,7 @@ class Rules {
         keysOnly = [];
     for (let property in movesCalculator.viablePositions) {
       let newArgs = Object.assign(args, { endPosition: property });
-      if (movesCalculator.viablePositions.hasOwnProperty(property) && !this.kingInCheck( newArgs ) ){
+      if (movesCalculator.viablePositions.hasOwnProperty(property) && !this.checkQuery( newArgs ) ){
         keysOnly.push(property)
       }
     }
@@ -144,7 +144,7 @@ class Rules {
         checkNotation = "";
     let otherTeam = board.teamNotMoving(),
         kingPosition = board.kingPosition(otherTeam),
-        inCheck = this.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition}),
+        inCheck = this.checkQuery({board: board, startPosition: kingPosition, endPosition: kingPosition}),
         noMoves = this.noLegalMoves(board);
     if (inCheck && noMoves){
       moveObject.checkNotation = "#"
@@ -167,8 +167,8 @@ class Rules {
     for(let i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       let startPosition = occcupiedPositions[i],
         movesCalculator = new MovesCalculator({board: board, startPosition: startPosition})
-      for( let key in movesCalculator.viablePositions ){ // checking only kingInCheck here because everything else is guaranteed by the fact that these positions came from viablePositions
-        if( !this.kingInCheck( {startPosition: startPosition, endPosition: key, board: board}) ){
+      for( let key in movesCalculator.viablePositions ){ // checking only checkQuery here because everything else is guaranteed by the fact that these positions came from viablePositions
+        if( !this.checkQuery( {startPosition: startPosition, endPosition: key, board: board}) ){
           noLegalMoves = false
         }
       };

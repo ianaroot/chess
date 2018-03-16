@@ -21,6 +21,7 @@ class GameController {
 		}
 
 		var moveObject = Rules.getMoveObject(startPosition, endPosition, board);
+
 		if( moveObject.illegal ){
 			this.view.displayAlert(moveObject.alerts)
 			return
@@ -36,7 +37,8 @@ class GameController {
 			if( !board.gameOver ){
 				var otherTeam = board.teamNotMoving(),
 					otherTeamsKingPosition = board.kingPosition(otherTeam);
-				Rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board, moveObject: moveObject} )
+					// TODO separate check query that doesn't insist on a move occuring
+				Rules.checkQuery( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board, moveObject: moveObject} )
 				Rules.stalemateQuery({board: board, moveObject: moveObject});
 			}
 

@@ -61,7 +61,7 @@ they are:
     the additionalActions that happen as a result of the move (specifically en passant causes a capture at a different tile, and castling, which the program understands as a king moving two spaces, causes the rook to then move)
     the start and end positions
     any alerts that the user needs to be notified of regarding why the move was illegal
-  kingInCheck: which takes in a board, startPosition, endPosition, and the additionalActions triggered by the move and declares whether the king would be in check as a result
+  checkQuery: which takes in a board, startPosition, endPosition, and the additionalActions triggered by the move and declares whether the king would be in check as a result
     occasionally this method is used to check whether the king is already in check at a current board state. this is accomplished by simply inputting the king's current position as both startPosition and endPosition
   viablePositionsFrom: is a function that takes in a board and startPosition and returns an object full of move objects
     these move objects are set by the key of the position to which the piece could legally move, with values of another object that includes the increment by which the piece is moving,
@@ -88,7 +88,7 @@ POSTMOVEMENTRULES
 state, none!
 postMovementRules is a set of five functions (which given the lack of state could very well have been static), each of which is responsible for enforcing different rules about what may happen after a legal move is made
   pawnPromotionQuery, checks whether any pawn has reached the back rank, and then promotes it accordingly. at current it automatically promotes the pawn to a queen, though it shouldn't be hard to adjust to allow user input for selecting other pieces later on
-  checkmate, utilizes Rules's kingInCheck function and another postMovementRules function called noLegalMoves to determine whether checkmate has been achieved
+  checkmate, utilizes Rules's checkQuery function and another postMovementRules function called noLegalMoves to determine whether checkmate has been achieved
   noLegalMoves, determines whether the team whose turn it is has any legal moves
   threeFoldRepetition, determines whether the precise current board state has just been created for the third time
   stalemate, determines whether the game has ended in stalemate due to either threeFoldRepetition or a lack of legal moves
@@ -133,7 +133,7 @@ GameController is aware of:
   Rules:
     Rules.getInstance();
     Rules.getMoveObject(startPosition, endPosition, board);
-    Rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
+    Rules.checkQuery( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board} )){
   PostMovementRules:
     pawnPromotionQuery( board )
     postMovementRules.checkmate( board )
@@ -168,9 +168,9 @@ PostMovementRules is aware of:
     board.previousLayouts,
     board.layOut
   Rules:
-    Rules.kingInCheck({board: board, startPosition: kingPosition, endPosition: kingPosition})
+    Rules.checkQuery({board: board, startPosition: kingPosition, endPosition: kingPosition})
     Rules.viablePositionsFrom({startPosition: startPosition, board: board});
-    Rules.kingInCheck( {startPosition: startPosition, endPosition: key, board: board})
+    Rules.checkQuery( {startPosition: startPosition, endPosition: key, board: board})
   View:
     _______
   GameController:
