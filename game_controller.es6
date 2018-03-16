@@ -1,4 +1,5 @@
 const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
+// TODO priority stalemate by insufficient material
 // TODO priority get e.p. appended to en passant notation
 // TODO tiles stay highlighted if you move via console
 // if board.movePiece accepted a move object, then it could maybe mutate that move object
@@ -14,14 +15,7 @@ class GameController {
 		this.api = new Api(this.board);
 	}
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
-		var board = this.board,
-			layOut = board.layOut,
-			pieceObject = layOut[startPosition],
-			team = board.teamAt(startPosition),
-			// checkNotation = "",
-			// captureNotation = "",
-			// moveObject.promotionNotation = "",
-			notation = "";
+		var board = this.board;
 		if( board.gameOver ){
 			return
 		}
@@ -33,15 +27,15 @@ class GameController {
 		} else {
 			// TODO having all of these checks on the gameController makes hypothetical moves rather complicated
 			//
-			this.board.movePiece( moveObject )
+			board.movePiece( moveObject )
 
 			Rules.pawnPromotionQuery({board: board, moveObject: moveObject} );
 
 			Rules.checkmateQuery({board: board, moveObject: moveObject})  //TODO rename as query
 
 			if( !board.gameOver ){
-				var otherTeam = this.board.teamNotMoving(),
-					otherTeamsKingPosition = this.board.kingPosition(otherTeam);
+				var otherTeam = board.teamNotMoving(),
+					otherTeamsKingPosition = board.kingPosition(otherTeam);
 				Rules.kingInCheck( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: board, moveObject: moveObject} )
 				Rules.stalemateQuery({board: board, moveObject: moveObject});
 			}
@@ -49,7 +43,7 @@ class GameController {
 			this.board.recordNotationFrom(moveObject)
 
 
-			this.view.displayLayOut(this.board)
+			this.view.displayLayOut(board)
 
 			if( !board.gameOver ){ this.nextTurn() }
 // 36-66 can all just move over to board.movePiece, and then that function can return any necessary alerts.
@@ -57,7 +51,7 @@ class GameController {
 
 
 
-			this.view.updateTeamAllowedToMove(this.board);
+			this.view.updateTeamAllowedToMove(board);
 			let displayAlert = this.view.displayAlert
 			if(moveObject.alerts){setTimeout( function(){ displayAlert(moveObject.alerts) }, 200)}
 		}
