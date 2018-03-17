@@ -28,10 +28,11 @@ class GameController {
 		} else {
 			board.officiallyMovePiece( moveObject )
 
-			this.view.displayLayOut({board: board, alerts: moveObject.alerts})
+			this.view.displayLayOut({board: board, alerts: moveObject.alerts, startPosition: startPosition})
 
-			if(this.movingTeamHasBot()  && this.board.movementNotation.length < 5){
-				this.queryNextBotMove()
+			if(this.movingTeamHasBot() ){
+				let queryMove = this.queryNextBotMove.bind(this)
+				setTimeout( function(){  queryMove() }, 200)
 			}
 		}
 	}
