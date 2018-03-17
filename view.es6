@@ -12,10 +12,12 @@ class View{
   static get TILE_HEIGHT() { return "49" }
 
   displayAlerts(messages){
-    for (let i = 0; i < messages.length; i++){
-      // $('#notifications').text(messages[i])
-      document.getElementById( 'notifications' ).innerHTML = messages[i];
-    };
+    if(messages){
+      for (let i = 0; i < messages.length; i++){
+        // $('#notifications').text(messages[i])
+        document.getElementById( 'notifications' ).innerHTML = messages[i];
+      };
+    }
   };
   clearAlerts(){
     // $('#notifications').text("")

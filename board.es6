@@ -159,6 +159,7 @@ class Board {
     if( captureNotationMatch ){
       this.capturedPieces.pop()
     }
+    this.nextTurn()
     //TODO  could add e.p. to notation for simplification UPDATe 3/8/18 no idea what this comment means
   }
 

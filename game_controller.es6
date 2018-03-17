@@ -7,7 +7,7 @@ class GameController {
 	constructor(){
 		this.board = new Board();
     this.view = new View(this);
-		this.view.displayLayOut({board: this.board, alerts: [""]})
+		this.view.displayLayOut({board: this.board})
 		this.view.setTileClickListener(this)
 		this.view.setUndoClickListener(this)
 		this.api = new Api(this.board);
@@ -40,9 +40,7 @@ class GameController {
 	undo(){
 		if( this.board.previousLayouts.length){
 			this.board.undo()
-			this.nextTurn() //TODO this is a really jenky dangerous way to switch whose turn it is. also the board should maybe know whose turn it is
-			this.view.updateTeamAllowedToMove(this.board);
-			this.view.displayLayOut(this.board)
+			this.view.displayLayOut({board: this.board})
 		}
 	}
 	runMoves(moveArray){
