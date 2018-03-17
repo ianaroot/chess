@@ -14,7 +14,6 @@ class View{
   displayAlerts(messages){
     if(messages){
       for (let i = 0; i < messages.length; i++){
-        // $('#notifications').text(messages[i])
         document.getElementById( 'notifications' ).innerHTML = messages[i];
       };
     }

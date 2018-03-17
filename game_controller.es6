@@ -17,21 +17,13 @@ class GameController {
 		if( board.gameOver ){
 			return
 		}
-
 		var moveObject = Rules.getMoveObject(startPosition, endPosition, board);
-
 		if( moveObject.illegal ){
 			this.view.displayAlert(moveObject.alerts)
 			return
 		} else {
-			// TODO having all of these checks on the gameController makes hypothetical moves rather complicated
-			//
 			board.officiallyMovePiece( moveObject )
-
 			this.view.displayLayOut({board: board, alerts: moveObject.alerts})
-
-// 36-66 can all just move over to board.movePiece, and then that function can return any necessary alerts.
-// in fact, if we passed in the moveObject, and mutated it's alerts, that should hold over here too
 		}
 	}
 
