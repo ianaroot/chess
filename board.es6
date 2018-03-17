@@ -229,10 +229,10 @@ class Board {
   deepCopy(){
     let newLayOut = Board.deepCopy(this.layOut),
         newCapturedPieces = Board.deepCopy(this.capturedPieces),
-        newMovementNotation = this.movementNotation,
+        newMovementNotation = Board.deepCopy(this.movementNotation),
         newPreviousLayouts = Board.deepCopy(this.previousLayouts),
         // NEED TO BE CAREFUL THAT PREVIOUS LAYOUTS ARE QUERIED NOT MUTATED!!!
-        newBoard = new Board( newLayOut, {capturedPieces: newCapturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts});
+        newBoard = new Board( newLayOut, {capturedPieces: newCapturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
     return newBoard;
     // TODO maybe include the previous board states, will slow things down, but maybe it's not unreasonable for people to htink that a hypothetical board would still offer
     // accurate information with regards to stalemate, also i guess you'd get inaccurate result

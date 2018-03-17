@@ -42,7 +42,7 @@ class Api {
     let positions = board.positionsOccupiedByTeam(movingTeam),
         availableMoves = [];
     for(let i = 0; i < positions.length; i++){
-      let availableMovesFromPosition = this.availableMovesFrom(positions[i])
+      let availableMovesFromPosition = this.availableMovesFrom({position: positions[i], board: board})
       for(let j = 0; j < availableMovesFromPosition.length; j++){
         availableMoves.push([ Board.gridCalculator( positions[i] ), availableMovesFromPosition[j]])
       }
@@ -50,9 +50,9 @@ class Api {
     return availableMoves
   }
 
-  availableMovesFrom(position){
+  availableMovesFrom({position: position, board: board}){
     let alphaNumericAvailableMoves = [],
-        availableMoves = Rules.viablePositionsFromKeysOnly({board: this._board, startPosition: position});
+        availableMoves = Rules.viablePositionsFromKeysOnly({board: board, startPosition: position});
     for (let i = 0; i < availableMoves.length; i++){
       alphaNumericAvailableMoves.push( Board.gridCalculator(availableMoves[i]) )
     }
@@ -71,16 +71,20 @@ class Api {
     this._gameController.attemptMove(startPosition, endPosition)
   }
 
-  resultOfHypotheticalMove({board: board, startPosition: startPosition, endPosition: endPosition}){
+  resultOfHypotheticalMove({board: board, alphaNumericStartPosition: alphaNumericStartPosition, alphaNumericEndPosition: alphaNumericEndPosition}){
+// debugger
 
     //TODO this would be simpler and drier if attemptMove was a function on the board
-    newBoard = board.deepCopy();
-    var moveObject = Rules.getMoveObject(startPosition, endPosition, newBoard);
+    var startPosition  = Board.gridCalculatorReverse(alphaNumericStartPosition),
+      endPosition  = Board.gridCalculatorReverse(alphaNumericEndPosition),
+      newBoard = board.deepCopy(),
+      moveObject = Rules.getMoveObject(startPosition, endPosition, newBoard);
+      // debugger
     if( moveObject.illegal ){
       // this.view.displayAlerts(moveObject.alerts)
       return
     } else {
-      board.officiallyMovePiece( moveObject )
+      newBoard.officiallyMovePiece( moveObject )
     }
     return newBoard
   }

@@ -11,6 +11,9 @@ class GameController {
 		this.view.setTileClickListener()
 		this.view.setUndoClickListener(this)
 		this.api = new Api({board: this.board, gameController: this});
+		this._whiteBot = new Bot()
+		this._blackBot = new Bot()
+		if(this._whiteBot){ this.queryNextBotMove()}
 	}
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
 		var board = this.board;
@@ -24,22 +27,67 @@ class GameController {
 			return
 		} else {
 			board.officiallyMovePiece( moveObject )
+
 			this.view.displayLayOut({board: board, alerts: moveObject.alerts})
+
+			if(this.movingTeamHasBot()  && this.board.movementNotation.length < 5){
+				this.queryNextBotMove()
+			}
 		}
 	}
 
-	queryBotMove(){
-		let alphaNumericMove = this._bot.determineMove({ board: this.board, api: this.api })
-		this.api.attemptMove(alphaNumericMove[0], alphaNumericMove[1])
+	movingTeamHasBot(){
+		let movingTeam = this.board.allowedToMove
+		return ( (movingTeam === Board.WHITE) && this._whiteBot !== undefined ) || ( (movingTeam === Board.BLACK) && this._blackBot !== undefined )
 	}
 
-	get bot(){
-		this._bot
+	// nextTurn(){
+	// 	if( this.board.allowedToMove === Board.WHITE ){
+	// 		this.prepareBlackTurn()
+	// 	} else{
+	// 		this.prepareWhiteTurn()
+	// 	}
+	// }
+	//
+	// prepareBlackTurn(){
+	// 	this.board.allowedToMove = Board.BLACK
+	// }
+	//
+	// prepareWhiteTurn(){
+	// 	this.board.allowedToMove = Board.WHITE
+	// }
+
+	queryBotMove(team){
+		if( team === Board.WHITE ){
+			let alphaNumericMove = this._whiteBot.determineMove({ board: this.board, api: this.api })
+			this.api.attemptMove(alphaNumericMove[0], alphaNumericMove[1])
+			// debugger
+		} else {
+			let alphaNumericMove = this._blackBot.determineMove({ board: this.board, api: this.api })
+			this.api.attemptMove(alphaNumericMove[0], alphaNumericMove[1])
+		}
 	}
 
-	set bot(newBot){
-		this._bot =  newBot
+	queryNextBotMove(){
+		let team = this.board.allowedToMove;
+		this.queryBotMove(team);
 	}
+
+	// runBotsOnlyGame(){
+	// 	// debugger
+	// 	while( !this.board.gameOver && this.board.movementNotation.length < 50){
+	// 		this.queryNextBotMove();
+	// 	}
+	// 	this.view.displayLayOut({board: this.board})
+	// }
+
+	// get bot(){
+	// 	this._bot
+	// }
+	//
+	// set bot(newBot){
+	// 	this._bot =  newBot
+	// }
 
 
 
