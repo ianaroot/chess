@@ -10,21 +10,35 @@ class GameController {
 		this.view.displayLayOut({board: this.board})
 		this.view.setTileClickListener()
 		this.view.setUndoClickListener(this)
-		this.api = new Api(this.board);
+		this.api = new Api({board: this.board, gameController: this});
 	}
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
 		var board = this.board;
 		if( board.gameOver ){
 			return
 		}
+
 		var moveObject = Rules.getMoveObject(startPosition, endPosition, board);
 		if( moveObject.illegal ){
-			this.view.displayAlert(moveObject.alerts)
+			this.view.displayAlerts(moveObject.alerts)
 			return
 		} else {
 			board.officiallyMovePiece( moveObject )
 			this.view.displayLayOut({board: board, alerts: moveObject.alerts})
 		}
+	}
+
+	queryBotMove(){
+		let alphaNumericMove = this._bot.determineMove({ board: this.board, api: this.api })
+		this.api.attemptMove(alphaNumericMove[0], alphaNumericMove[1])
+	}
+
+	get bot(){
+		this._bot
+	}
+
+	set bot(newBot){
+		this._bot =  newBot
 	}
 
 

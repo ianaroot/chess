@@ -1,29 +1,45 @@
+// TODO more explicit error messaging for bot debugging
 class Api {
-  constructor (board){
-    this.board = board
+  constructor (args){
+    this._board = args["board"]
+    this._gameController = args["gameController"];
   }
   consoleLogBlackPov(){
-    this.board.consoleLogBlackPov()
+    this._board.consoleLogBlackPov()
   }
   consoleLogWhitePov(){
-    this.board.consoleLogWhitePov()
+    this._board.consoleLogWhitePov()
   }
   whoseTurn(){
-    return this.board.allowedToMove
+    return this._board.allowedToMove
   }
   capturedPieces(){
     var captures = []
-    for( let i = 0; i < this.board.capturedPieces.length; i++){
-      captures.push( JSON.parse(this.board.capturedPieces[i]) )
+    for( let i = 0; i < this._board.capturedPieces.length; i++){
+      captures.push( JSON.parse(this._board.capturedPieces[i]) )
     }
      return captures
   }
   movementNotation(){
-    return this.board.movementNotation
+    return this._board.movementNotation
   }
-  availableMoves(){
-    let movingTeam = this.board.allowedToMove,
-        positions = this.board.positionsOccupiedByTeam(movingTeam),
+
+  availableMovesDefault(){
+    let movingTeam = this._board.allowedToMove;
+    return this.availableMovesFor({movingTeam: movingTeam, board: this._board})
+    //     positions = this._board.positionsOccupiedByTeam(movingTeam),
+    //     availableMoves = [];
+    // for(let i = 0; i < positions.length; i++){
+    //   let availableMovesFromPosition = this.availableMovesFrom(positions[i])
+    //   for(let j = 0; j < availableMovesFromPosition.length; j++){
+    //     availableMoves.push([ Board.gridCalculator( positions[i] ), availableMovesFromPosition[j]])
+    //   }
+    // }
+    // return availableMoves
+  }
+
+  availableMovesFor({movingTeam: movingTeam, board: board}){
+    let positions = board.positionsOccupiedByTeam(movingTeam),
         availableMoves = [];
     for(let i = 0; i < positions.length; i++){
       let availableMovesFromPosition = this.availableMovesFrom(positions[i])
@@ -36,7 +52,7 @@ class Api {
 
   availableMovesFrom(position){
     let alphaNumericAvailableMoves = [],
-        availableMoves = Rules.viablePositionsFromKeysOnly({board: this.board, startPosition: position});
+        availableMoves = Rules.viablePositionsFromKeysOnly({board: this._board, startPosition: position});
     for (let i = 0; i < availableMoves.length; i++){
       alphaNumericAvailableMoves.push( Board.gridCalculator(availableMoves[i]) )
     }
@@ -46,10 +62,26 @@ class Api {
   availableMovesIf(alphaNumericMove){
     let startPosition = Board.gridCalculatorReverse(alphaNumericMove[0]),
         endPosition = Board.gridCalculatorReverse(alphaNumericMove[1]);
-    newBoard = this.board.deepCopy
+    newBoard = this._board.deepCopy
   }
 
-  attemptMove(startPosition, endPosition){
+  attemptMove(alphaNumericStartPosition, alphaNumericEndPosition){
+    let startPosition = Board.gridCalculatorReverse( alphaNumericStartPosition ),
+        endPosition = Board.gridCalculatorReverse( alphaNumericEndPosition );
+    this._gameController.attemptMove(startPosition, endPosition)
+  }
 
+  resultOfHypotheticalMove({board: board, startPosition: startPosition, endPosition: endPosition}){
+
+    //TODO this would be simpler and drier if attemptMove was a function on the board
+    newBoard = board.deepCopy();
+    var moveObject = Rules.getMoveObject(startPosition, endPosition, newBoard);
+    if( moveObject.illegal ){
+      // this.view.displayAlerts(moveObject.alerts)
+      return
+    } else {
+      board.officiallyMovePiece( moveObject )
+    }
+    return newBoard
   }
 }
