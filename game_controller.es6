@@ -8,7 +8,7 @@ class GameController {
 		this.board = new Board();
     this.view = new View(this);
 		this.view.displayLayOut({board: this.board})
-		this.view.setTileClickListener(this)
+		this.view.setTileClickListener()
 		this.view.setUndoClickListener(this)
 		this.api = new Api(this.board);
 	}

@@ -151,8 +151,6 @@ class View{
     this._gameController.attemptMove(startPosition, endPosition);
   }
   setTileClickListener(){
-    // TODO currently needlessly passing in a gameController above,
-    // want to be able to pass it in as an argument on highlightTile
     let tiles = this.retrieveTiles();
     for(let i = 0 ; i < tiles.length ; i++ ){
     	var tile = tiles[i];
