@@ -84,7 +84,7 @@ class Api {
       // this.view.displayAlerts(moveObject.alerts)
       return
     } else {
-      newBoard.officiallyMovePiece( moveObject )
+      newBoard._officiallyMovePiece( moveObject )
     }
     return newBoard
   }

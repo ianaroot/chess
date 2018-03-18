@@ -42,7 +42,7 @@ class Bot {
     let backRankPieces =  []
     for(let i = 0; i < rankTiles.length; i ++){
       let tile = rankTiles[i];
-      backRankPieces.push( this.api.pieceAt({board: board, square: rankTiles[i]})  )
+      backRankPieces.push( board  )
     }
   }
 

@@ -116,15 +116,15 @@ GameController is aware of:
     board.teamAt(startPosition),
     board.gameOver ){
     board.allowedToMove ){
-    board.storeCurrentLayoutAsPrevious()
+    board._storeCurrentLayoutAsPrevious()
     board.movePiece( startPosition, endPosition, moveObject.additionalActions)
     board.teamNotMoving()
     board.kingPosition(otherTeam)
-    board.endGame()
+    board._endGame()
     board.gameOver
     board.layOut
     board.gameOver && stalemate
-    board.endGame()
+    board._endGame()
     board.recordNotation(notation)
     board.gameOver
     board.allowedToMove === "white"
@@ -158,9 +158,9 @@ Board is aware of:
 PostMovementRules is aware of:
   board:
     board.blackPawnAt(i)
-    board.promotePawn(i)
+    board._promotePawn(i)
     board.whitePawnAt(i)
-    board.promotePawn(i)
+    board._promotePawn(i)
     board.teamNotMoving(),
     board.kingPosition(otherTeam);
     board.allowedToMove,

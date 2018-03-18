@@ -326,12 +326,14 @@ class MovesCalculator {
           moveObject.additionalActions = function(args){
             let position = args["position"],
                 pieceObject = this.pieceObject( startPosition + 3 );
-            this.emptify( startPosition + 3)
-            this.placePiece({ position: (startPosition + 1), pieceObject: pieceObject })
+            this._emptify( startPosition + 3)
+            this._placePiece({ position: (startPosition + 1), pieceObject: pieceObject })
           }
           moveObjects.push(moveObject)
         };
         if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition)
+        // ig moveObject had an additionalCheckQueries and stored these as them for later use, that might cut out the infinite loop shit?
+        // also these castle viability functions should get bundled on the board
           && !Rules.checkQuery({startPosition: startPosition, endPosition: startPosition, board: board })
           && !Rules.checkQuery({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
           let moveObject = MovesCalculator.genericMovements().horizontalRight()
@@ -342,8 +344,8 @@ class MovesCalculator {
           moveObject.additionalActions = function(args){
             let position = args["position"],
                 pieceObject = this.pieceObject( startPosition - 4 );
-            this.emptify( startPosition - 4)
-            this.placePiece({ position: (startPosition - 1), pieceObject: pieceObject })
+            this._emptify( startPosition - 4)
+            this._placePiece({ position: (startPosition - 1), pieceObject: pieceObject })
           }
           moveObjects.push(moveObject)
         };
@@ -422,7 +424,7 @@ class MovesCalculator {
           moveObject.pieceNotation = Board.file(startPosition)
           moveObject.additionalActions = function(args){
             let position = args["position"],
-              captureNotation = this.capture(startPosition + 1) + "e.p.";
+              captureNotation = this._capture(startPosition + 1) + "e.p.";
             return captureNotation
             // TODO this is not really just a notation it's an action... or is it, i think the return is a notation, but the action is occurring right here.
           }
@@ -436,7 +438,7 @@ class MovesCalculator {
           moveObject.pieceNotation = Board.file(startPosition)
           moveObject.additionalActions = function(args){
             let position = args["position"];
-            let captureNotation = this.capture(startPosition - 1) + "e.p.";
+            let captureNotation = this._capture(startPosition - 1) + "e.p.";
             return captureNotation
             // TODO this is not really just a notation it's an action
           }

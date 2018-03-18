@@ -135,19 +135,19 @@ class Board {
     return string.species
   }
 
-  nextTurn(){
+  _nextTurn(){
     if( this.allowedToMove === Board.WHITE ){
-      this.prepareBlackTurn()
+      this._prepareBlackTurn()
     } else{
-      this.prepareWhiteTurn()
+      this._prepareWhiteTurn()
     }
   }
 
-  prepareBlackTurn(){
+  _prepareBlackTurn(){
     this.allowedToMove = Board.BLACK
   }
 
-  prepareWhiteTurn(){
+  _prepareWhiteTurn(){
     this.allowedToMove = Board.WHITE
   }
 
@@ -159,7 +159,7 @@ class Board {
     if( captureNotationMatch ){
       this.capturedPieces.pop()
     }
-    this.nextTurn()
+    this._nextTurn()
     //TODO  could add e.p. to notation for simplification UPDATe 3/8/18 no idea what this comment means
   }
 
@@ -238,7 +238,7 @@ class Board {
     // accurate information with regards to stalemate, also i guess you'd get inaccurate result
   }
 
-  reset(){
+  _reset(){
     this.layOut = Board.defaultLayOut();
     this.capturedPieces = [];
     this.gameOver = false;
@@ -247,7 +247,7 @@ class Board {
     this.movementNotation = [];
   }
 
-  endGame(){
+  _endGame(){
     this.gameOver = true
   }
 
@@ -262,7 +262,7 @@ class Board {
     return teamNotMoving
   }
 
-  recordNotationFrom(moveObject){
+  _recordNotationFrom(moveObject){
     if( moveObject.fullNotation ){ //TODO couldn't standard notation moves calculate their own notation too?
       var notation = moveObject.fullNotation + moveObject.captureNotation + moveObject.positionNotation + moveObject.promotionNotation + moveObject.checkNotation
     } else {
@@ -272,17 +272,18 @@ class Board {
     this.movementNotation.push(notation)
   }
 
-  hypotheticallyMovePiece( moveObject ){
+  _hypotheticallyMovePiece( moveObject ){
+    // there's a lot of space between _officiallyMovePiece and hypothetical. eg
     let startPosition = moveObject.startPosition,
       endPosition = moveObject.endPosition,
       additionalActions = moveObject.additionalActions,
       pieceObject = this.pieceObject(startPosition);
-    this.emptify(startPosition)
-    this.placePiece({ position: endPosition, pieceObject: pieceObject })
+    this._emptify(startPosition)
+    this._placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ additionalActions.call(this, {position: startPosition} ) }
   }
 
-  officiallyMovePiece( moveObject ){
+  _officiallyMovePiece( moveObject ){
       if(
         !MoveObject.prototype.isPrototypeOf( moveObject )
       ){
@@ -293,10 +294,9 @@ class Board {
       endPosition = moveObject.endPosition,
       additionalActions = moveObject.additionalActions,
       pieceObject = this.pieceObject(startPosition);
-    moveObject.captureNotation = this.capture(endPosition);
-		this.storeCurrentLayoutAsPrevious()
-    this.emptify(startPosition)
-    this.placePiece({ position: endPosition, pieceObject: pieceObject })
+    this._storeCurrentLayoutAsPrevious()
+    moveObject.captureNotation = this._capture(endPosition);
+    this._placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ moveObject.captureNotation = additionalActions.call(this, {position: startPosition} ) }
     // moveObject.captureNotation = captureNotation || ""
 
@@ -312,24 +312,23 @@ class Board {
       Rules.stalemateQuery({board: this, moveObject: moveObject});
     }
 
-    this.recordNotationFrom(moveObject)
+    this._recordNotationFrom(moveObject)
 
-    if( !this.gameOver ){ this.nextTurn() }
-
+    if( !this.gameOver ){ this._nextTurn() }
   }
 
-  storeCurrentLayoutAsPrevious(){
+  _storeCurrentLayoutAsPrevious(){
     let layOutCopy = Board.deepCopy( this.layOut );
 
     this.previousLayouts.push(layOutCopy)
   }
 
-  capture(position){
+  _capture(position){
     let captureNotation = ""
     if( !this.positionEmpty(position) ){
       let pieceObject = this.layOut[position];
       this.capturedPieces.push(pieceObject)
-      this.emptify(position)
+      this._emptify(position)
       captureNotation = "x"
     } else {
       return captureNotation
@@ -383,7 +382,6 @@ class Board {
 
   upAndLeftIsAttackable(startPosition){
     let positionUpAndLeft = startPosition + 7;
-
     if( Board.inBounds( positionUpAndLeft)){
       let pieceObject = this.pieceObject(positionUpAndLeft),
         pieceTeam = Board.parseTeam(pieceObject);
@@ -442,18 +440,18 @@ class Board {
     return pieceHasNotMoved
   }
 
-  emptify(position){
+  _emptify(position){
     this.layOut[position] = JSON.stringify({color: Board.EMPTY, species: Board.EMPTY})
   }
 
-  placePiece(args){
+  _placePiece(args){
     let position = args["position"],
       pieceObject = args["pieceObject"];
 
     this.layOut[position] = JSON.stringify(pieceObject)
   }
 
-  promotePawn(position){
+  _promotePawn(position){
     // TODO secondary make this request input as to what piece to become
     let teamString = this.teamAt(position);
 
@@ -483,6 +481,7 @@ class Board {
   }
 
   occupiedByTeamMate(args){
+    // TODO redundancy with functions below
     let position = args["position"],
       teamString = args["teamString"],
       occupantTeam = this.teamAt(position);

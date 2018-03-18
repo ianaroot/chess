@@ -75,7 +75,7 @@ class Rules {
         moveObject = args["moveObject"]; //TODO sometime a moveObject is being pass in and sometimes it isn't, and there probably need to be two separate kingCheckQueries
         // one of which will be used for actual moves and one for hypothetical moves
 
-    newBoard.hypotheticallyMovePiece( dummyMoveObject )
+    newBoard._hypotheticallyMovePiece( dummyMoveObject )
     let kingPosition = newBoard.kingPosition(teamString),
         enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
     for(let i = 0; i < enemyPositions.length; i++){
@@ -124,14 +124,14 @@ class Rules {
         promotionNotation = "";
     for(let i = 0; i < 8; i++){
       if ( board.blackPawnAt(i) ){
-        board.promotePawn(i)
+        board._promotePawn(i)
         promotionNotation = "=Q"
         //need to change this when i start allowing choice of promotion type
       }
     }
     for(let i = 56; i < 64; i++){
       if( board.whitePawnAt(i) ){
-        board.promotePawn(i)
+        board._promotePawn(i)
         promotionNotation = "=Q"
         //need to change this when i start allowing choice of promotion type
       }
@@ -149,7 +149,7 @@ class Rules {
     if (inCheck && noMoves){
       moveObject.checkNotation = "#"
 			moveObject.alerts.push( "checkmate" )
-			board.endGame()
+			board._endGame()
       return true
     } else {
       return false //implicit undefined return would suffice. maybe better to be explicit though?
@@ -200,7 +200,7 @@ class Rules {
   static stalemateQuery({board: board, moveObject: moveObject}){
     if (this.threeFoldRepetition(board) || this.noLegalMoves(board)){
       moveObject.alerts.push( "stalemate" )
-      board.endGame()
+      board._endGame()
     }
   }
 }
