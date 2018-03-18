@@ -2,74 +2,101 @@ class Bot {
   constructor(){
 
   }
+
   determineMove(args){
+    this.api = args["api"];
     let board = args["board"],
-        api = args["api"],
-        availableMoves = api.availableMovesDefault(),
+        availableMoves = this.api.availableMovesDefault(),
         homeTeam = board.allowedToMove,
-        moveWeights = {};
-        // move = availableMoves[Math.floor(Math.random()*availableMoves.length)];
+        // gamePhase = this.calculateGamePhase({team: homeTeam, board: board}),
+        weightedMoves = this.weightMoves({moves: availableMoves, board: board, team: homeTeam});
 
-    for(let i = 0; i < availableMoves.length; i++){
-      let move = availableMoves[i],
-          newBoard = api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move[0], alphaNumericEndPosition: move[1]}),
-          newlyAvailableMoves = api.availableMovesFor({movingTeam: homeTeam, board: newBoard}),
-          potentialMoveNumber = newlyAvailableMoves.length;
-      if( moveWeights[potentialMoveNumber] ){
-      // if ( potentialMoveNumber === 21){
-        // debugger
-        moveWeights[potentialMoveNumber].push( availableMoves[i] )
-      } else {
-        moveWeights[potentialMoveNumber] = [availableMoves[i]]
-      }
 
-    }
-    let weights = [];
-    for (var property in moveWeights) {
-      if (moveWeights.hasOwnProperty(property)) {
-        weights.push(property)
-      }
-    }
-    let weightsCopy = this.copyArray(weights),
-      sortedWeights = this.sortArray(weightsCopy),
-      moveIdeas = [];
-      // debugger
-    for(let i = 0; sortedWeights.length > i && moveIdeas.length < 5; i++){
-      let weight = sortedWeights[i],
-        moves = moveWeights[weight];
-      for(let j = 0; moves.length > j; j++){
-        moveIdeas.push( moves[j] )
-      }
-    }
-    // debugger
+    let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 5)
+
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
-
-
 
     return move
 
-
   }
 
-  sortArray(array){
-    array.sort(function(a,b) {
-        if (a < b) { return 1; }
-        else if (a == b) { return 0; }
-        else { return -1; }
-    });
-    return array
+  calculateGamePhase({team: team, board: board}){
+    let gamePhase = "opening";
+    if ( this.backRankHasMinorPieces({team: team, board: board}) ){
+      debugger
+    }
   }
 
-  copyArray(array){
-    let newArray = []
-    for(let i = 0; i < array.length; i++){
-      newArray.push( array[i] )
-    };
-    return newArray
+  backRankHasMinorPieces({team: team, board: board}){
+    let backRank = this.backRank({team: team, board: board})
+  }
+
+  backRank({team: team, board: board}){
+    // TODO should the this.api have it's own white etc...
+    if( team === Board.WHITE){
+      var rankTiles = ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"]
+    } else {
+      // do i want to reverse this mimic looking at the board from black's perspective?
+      var rankTiles = ["a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"]
+    }
+    let backRankPieces =  []
+    for(let i = 0; i < rankTiles.length; i ++){
+      let tile = rankTiles[i];
+      backRankPieces.push( this.api.pieceAt({board: board, square: rankTiles[i]})  )
+    }
+  }
+
+  weightMoves({moves: moves, board: board, team: team}){
+    let weightedMoves = {}
+    for(let i = 0; i < moves.length; i++){
+      let move = moves[i],
+          newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move[0], alphaNumericEndPosition: move[1]}),
+          newlyAvailableMoves = this.api.availableMovesFor({movingTeam: team, board: newBoard}),
+          potentialMoveNumber = newlyAvailableMoves.length;
+      if( weightedMoves[potentialMoveNumber] ){
+        weightedMoves[potentialMoveNumber].push( moves[i] )
+      } else {
+        weightedMoves[potentialMoveNumber] = [moves[i]]
+      }
+    }
+    return weightedMoves
+  }
+
+  // sortArray(array){
+  //   array.sort(function(a,b) {
+  //       if (a < b) { return 1; }
+  //       else if (a == b) { return 0; }
+  //       else { return -1; }
+  //   });
+  //   return array
+  // }
+
+  // copyArray(array){
+  //   let newArray = []
+  //   for(let i = 0; i < array.length; i++){
+  //     newArray.push( array[i] )
+  //   };
+  //   return newArray
+  // }
+
+
+  pickNweightiestMovesFrom(weightedMoves, n){
+    let nWeights = [],
+      values = Object.values(weightedMoves);
+    for( let i = values.length - 1; i > -1 && nWeights.length < n; i--){
+      if(Array.isArray(values[i]) ){
+        for( let j = 0; j < values[i].length; j++){
+          nWeights.push(values[i][j])
+        }
+      } else {
+        nWeights.push(values[i])
+      }
+    }
+    return nWeights
   }
 }
 
 
 
-// bot should have a function called determineMove. it will take in a hash containing a board, and the api, and it
+// bot should have a function called determineMove. it will take in a hash containing a board, and the this.api, and it
 // will return an array, with the alphaNumeric startPosition and endPosition

@@ -2,6 +2,7 @@ const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
 // TODO priority stalemate by insufficient material, and 50 move rule
 // TODO priority get e.p. appended to en passant notation
 // TODO tiles stay highlighted if you move via console
+// TODO priority kings can attack each other, bad!
 
 class GameController {
 	constructor(){
