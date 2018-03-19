@@ -31,7 +31,7 @@ class Rules {
       }
     };
 
-    if ( !Board.inBounds(endPosition) ){
+    if ( !Board._inBounds(endPosition) ){
       moveObject.alerts.push('stay on the board, fool')
       moveObject.illegal = true
     } else if( board.occupiedByTeamMate({position: endPosition, teamString: team}) ){
@@ -68,7 +68,7 @@ class Rules {
         pieceObject        = layOut[startPosition],
         teamString         = board.teamAt(startPosition),
         danger             = false,
-        newLayout          = Board.deepCopy(layOut),
+        newLayout          = Board._deepCopy(layOut),
         opposingTeamString = Board.opposingTeam(teamString),
         newBoard = new Board(newLayout),
         dummyMoveObject = {startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions},

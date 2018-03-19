@@ -232,22 +232,22 @@ class MovesCalculator {
         endPosition = args["endPosition"]
     return {
       diagonalRight: function(){
-        return (endPosition) % 8 > (startPosition % 8) && Board.inBounds(endPosition)
+        return (endPosition) % 8 > (startPosition % 8) && Board._inBounds(endPosition)
       },
       vertical: function(){
-        return Board.inBounds(endPosition)
+        return Board._inBounds(endPosition)
       },
       diagonalLeft: function(){
-        return (endPosition) % 8 < (startPosition % 8) && Board.inBounds(endPosition)
+        return (endPosition) % 8 < (startPosition % 8) && Board._inBounds(endPosition)
       },
       nightVertical: function(){
-        return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board.inBounds(endPosition)
+        return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board._inBounds(endPosition)
       },
       nightHorizontal: function(){
-        return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board.inBounds(endPosition)
+        return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board._inBounds(endPosition)
       },
       horizontal: function(){
-        return Math.floor((endPosition) / 8) === Math.floor(startPosition / 8) && Board.inBounds(endPosition)
+        return Math.floor((endPosition) / 8) === Math.floor(startPosition / 8) && Board._inBounds(endPosition)
       }
     }
   }

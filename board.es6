@@ -3,9 +3,10 @@ class Board {
   // TODO function to translate layouts to alphanumerics
 
   constructor(layOut, options = { capturedPieces: [], gameOver: false, allowedToMove: Board.WHITE, movementNotation: [], previousLayouts: []}){
-    this.layOut = layOut || Board.defaultLayOut()
+    this.layOut = layOut || Board._defaultLayOut()
     this.capturedPieces = options["capturedPieces"];
     this.gameOver = options["gameOver"];
+    //TODO privatize gameOver
     this.allowedToMove = options["allowedToMove"];
     this.movementNotation = options["movementNotation"];
     this.previousLayouts = options["previousLayouts"];
@@ -24,7 +25,7 @@ class Board {
   static get LIGHT()  { return "light" }
 
 
-  static defaultLayOut(){
+  static _defaultLayOut(){
     let layOut = [
       {color: Board.WHITE, species: Board.ROOK}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.QUEEN}, {color: Board.WHITE, species: Board.KING}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.ROOK},
       {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN},
@@ -42,11 +43,11 @@ class Board {
     return layOut
   }
 
-  static boundaries(){
+  static _boundaries(){
     return { upperLimit: 63, lowerLimit: 0 }
   }
 
-  static deepCopy(originalObject){
+  static _deepCopy(originalObject){
     let newObject = [];
     for( let i = 0; i < originalObject.length; i ++){
       newObject.push( originalObject[i] )
@@ -55,10 +56,12 @@ class Board {
   }
 
   static isSeventhRank(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
     return Math.floor(position / 8) === 6
   }
 
   static isSecondRank(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
     return Math.floor(position / 8) === 1
   }
 
@@ -72,6 +75,7 @@ class Board {
   }
 
   static squareColor(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
     let div = Math.floor(position / 8),
       mod   = position % 8,
       sum   = div + mod,
@@ -126,8 +130,8 @@ class Board {
     return rank + file
   }
 
-  static inBounds(position){
-    return position <= this.boundaries().upperLimit && position >= this.boundaries().lowerLimit
+  static _inBounds(position){
+    return position <= this._boundaries().upperLimit && position >= this._boundaries().lowerLimit
   }
 
   static parseTeam(string){
@@ -236,10 +240,10 @@ class Board {
   }
 
   deepCopy(){
-    let newLayOut = Board.deepCopy(this.layOut),
-        newCapturedPieces = Board.deepCopy(this.capturedPieces),
-        newMovementNotation = Board.deepCopy(this.movementNotation),
-        newPreviousLayouts = Board.deepCopy(this.previousLayouts),
+    let newLayOut = Board._deepCopy(this.layOut),
+        newCapturedPieces = Board._deepCopy(this.capturedPieces),
+        newMovementNotation = Board._deepCopy(this.movementNotation),
+        newPreviousLayouts = Board._deepCopy(this.previousLayouts),
         // NEED TO BE CAREFUL THAT PREVIOUS LAYOUTS ARE QUERIED NOT MUTATED!!!
         newBoard = new Board( newLayOut, {capturedPieces: newCapturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
     return newBoard;
@@ -248,7 +252,7 @@ class Board {
   }
 
   _reset(){
-    this.layOut = Board.defaultLayOut();
+    this.layOut = Board._defaultLayOut();
     this.capturedPieces = [];
     this.gameOver = false;
     this.allowedToMove = Board.WHITE;
@@ -316,7 +320,7 @@ class Board {
   }
 
   _storeCurrentLayoutAsPrevious(){
-    let layOutCopy = Board.deepCopy( this.layOut );
+    let layOutCopy = Board._deepCopy( this.layOut );
     this.previousLayouts.push(layOutCopy)
   }
 
@@ -347,7 +351,7 @@ class Board {
 
   _downAndLeftIsAttackable(startPosition){
     let positionDownAndLeft = startPosition - 9;
-    if( Board.inBounds( positionDownAndLeft )){
+    if( Board._inBounds( positionDownAndLeft )){
       let pieceObject = this.layOut[positionDownAndLeft],
         pieceTeam = Board.parseTeam(pieceObject);
       return this.occupiedByOpponent({position: positionDownAndLeft, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndLeft)
@@ -358,7 +362,7 @@ class Board {
 
   _downAndRightIsAttackable(startPosition){
     let positionDownAndRight = startPosition - 7;
-    if( Board.inBounds( positionDownAndRight ) ){
+    if( Board._inBounds( positionDownAndRight ) ){
       let pieceObject = this.layOut[positionDownAndRight],
         pieceTeam = Board.parseTeam(pieceObject);
       return this.occupiedByOpponent({position: positionDownAndRight, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndRight)
@@ -377,7 +381,7 @@ class Board {
 
   _upAndLeftIsAttackable(startPosition){
     let positionUpAndLeft = startPosition + 7;
-    if( Board.inBounds( positionUpAndLeft)){
+    if( Board._inBounds( positionUpAndLeft)){
       let pieceObject = this.pieceObject(positionUpAndLeft),
         pieceTeam = Board.parseTeam(pieceObject);
       return this.occupiedByOpponent({position: positionUpAndLeft, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndLeft)
@@ -388,7 +392,7 @@ class Board {
 
   _upAndRightIsAttackable(startPosition){
     let positionUpAndRight = startPosition + 9;
-    if( Board.inBounds( positionUpAndRight)){
+    if( Board._inBounds( positionUpAndRight)){
       let pieceObject = this.layOut[positionUpAndRight],
         pieceTeam = Board.parseTeam(pieceObject);
       return this.occupiedByOpponent({position: positionUpAndRight, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndRight)
@@ -469,7 +473,7 @@ class Board {
 
   teamAt(position){
     position = Board.convertPositionFromAlphaNumeric(position)
-    if( !Board.inBounds(position) ){
+    if( !Board._inBounds(position) ){
       return Board.EMPTY
     };
     let pieceObject = this.pieceObject(position),
