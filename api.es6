@@ -1,4 +1,6 @@
 // TODO more explicit error messaging for bot debugging
+// function to see which pieces can attack a given position, function to see which pieces a given position can attack
+// the former allows empty spaces. the latter does not.
 class Api {
   constructor (args){
     this._board = args["board"]
@@ -27,7 +29,7 @@ class Api {
   availableMovesDefault(){
     let movingTeam = this._board.allowedToMove;
     return this.availableMovesFor({movingTeam: movingTeam, board: this._board})
-    //     positions = this._board.positionsOccupiedByTeam(movingTeam),
+    //     positions = this._board._positionsOccupiedByTeam(movingTeam),
     //     availableMoves = [];
     // for(let i = 0; i < positions.length; i++){
     //   let availableMovesFromPosition = this.availableMovesFrom(positions[i])
@@ -39,7 +41,7 @@ class Api {
   }
 
   availableMovesFor({movingTeam: movingTeam, board: board}){
-    let positions = board.positionsOccupiedByTeam(movingTeam),
+    let positions = board._positionsOccupiedByTeam(movingTeam),
         availableMoves = [];
     for(let i = 0; i < positions.length; i++){
       let availableMovesFromPosition = this.availableMovesFrom({position: positions[i], board: board})

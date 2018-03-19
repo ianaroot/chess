@@ -1,4 +1,7 @@
 class Board {
+  // TODO on endgame, declare winner
+  // TODO function to translate layouts to alphanumerics
+
   constructor(layOut, options = { capturedPieces: [], gameOver: false, allowedToMove: Board.WHITE, movementNotation: [], previousLayouts: []}){
     this.layOut = layOut || Board.defaultLayOut()
     this.capturedPieces = options["capturedPieces"];
@@ -200,7 +203,6 @@ class Board {
   static convertPositionFromAlphaNumeric(position){
     if( typeof( position ) === 'string' && position.match(/[a-z]\d/) && position.length === 2){
       return Board.gridCalculatorReverse( position )
-
     } else {
       return position
     }
@@ -220,7 +222,7 @@ class Board {
     return Board.parseTeam( this.pieceObject(position) )=== Board.BLACK && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
 
-  whitePawnAt(position){
+  _whitePawnAt(position){
     return Board.parseTeam( this.pieceObject(position) )=== Board.WHITE && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
 
@@ -232,10 +234,6 @@ class Board {
   whitePawnDoubleSteppedFrom(position){
     return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.WHITE && Board.parseSpecies( this.pieceObjectFromLastLayout(position) ) === Board.PAWN
   }
-  //
-  // deepCopyLayout(){
-  //   Board.deepCopyLayout(this.layOut)
-  // }
 
   deepCopy(){
     let newLayOut = Board.deepCopy(this.layOut),
@@ -264,7 +262,6 @@ class Board {
 
   teamNotMoving(){
     let teamNotMoving;
-
     if( this.allowedToMove === Board.WHITE){
       teamNotMoving = Board.BLACK
     } else {
@@ -295,12 +292,7 @@ class Board {
   }
 
   _officiallyMovePiece( moveObject ){
-      if(
-        !MoveObject.prototype.isPrototypeOf( moveObject )
-      ){
-        throw new Error("missing params in movePiece")
-      }
-
+    if( !MoveObject.prototype.isPrototypeOf( moveObject ) ){ throw new Error("missing params in movePiece") }
     let startPosition = moveObject.startPosition,
       endPosition = moveObject.endPosition,
       additionalActions = moveObject.additionalActions,
@@ -310,28 +302,21 @@ class Board {
     moveObject.captureNotation = this._capture(endPosition);
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ moveObject.captureNotation = additionalActions.call(this, {position: startPosition} ) }
-    // moveObject.captureNotation = captureNotation || ""
-
     Rules.pawnPromotionQuery({board: this, moveObject: moveObject} );
-
 		Rules.checkmateQuery({board: this, moveObject: moveObject})
-
     if( !this.gameOver ){
       var otherTeam = this.teamNotMoving(),
-        otherTeamsKingPosition = this.kingPosition(otherTeam);
+        otherTeamsKingPosition = this._kingPosition(otherTeam);
         // TODO separate check query that doesn't insist on a move occuring
       Rules.checkQuery( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: this, moveObject: moveObject} )
       Rules.stalemateQuery({board: this, moveObject: moveObject});
     }
-
     this._recordNotationFrom(moveObject)
-
     if( !this.gameOver ){ this._nextTurn() }
   }
 
   _storeCurrentLayoutAsPrevious(){
     let layOutCopy = Board.deepCopy( this.layOut );
-
     this.previousLayouts.push(layOutCopy)
   }
 
@@ -352,15 +337,15 @@ class Board {
     return this.previousLayouts[this.previousLayouts.length - 1]
   }
 
-  oneSpaceDownIsEmpty(position){
+  _oneSpaceDownIsEmpty(position){
     return this.positionEmpty(position - 8)
   }
 
-  twoSpacesDownIsEmpty(position){
+  _twoSpacesDownIsEmpty(position){
     return this.positionEmpty(position - 16)
   }
 
-  downAndLeftIsAttackable(startPosition){
+  _downAndLeftIsAttackable(startPosition){
     let positionDownAndLeft = startPosition - 9;
     if( Board.inBounds( positionDownAndLeft )){
       let pieceObject = this.layOut[positionDownAndLeft],
@@ -371,28 +356,26 @@ class Board {
     }
   }
 
-  downAndRightIsAttackable(startPosition){
+  _downAndRightIsAttackable(startPosition){
     let positionDownAndRight = startPosition - 7;
-
     if( Board.inBounds( positionDownAndRight ) ){
       let pieceObject = this.layOut[positionDownAndRight],
         pieceTeam = Board.parseTeam(pieceObject);
-
       return this.occupiedByOpponent({position: positionDownAndRight, teamString: Board.BLACK}) && Board.squareColor(startPosition) === Board.squareColor(positionDownAndRight)
     } else {
       return false
     }
   }
 
-  twoSpacesUpIsEmpty(position){
+  _twoSpacesUpIsEmpty(position){
     return this.positionEmpty( position + 16)
   }
 
-  oneSpaceUpIsEmpty(position){
+  _oneSpaceUpIsEmpty(position){
     return this.positionEmpty( position + 8)
   }
 
-  upAndLeftIsAttackable(startPosition){
+  _upAndLeftIsAttackable(startPosition){
     let positionUpAndLeft = startPosition + 7;
     if( Board.inBounds( positionUpAndLeft)){
       let pieceObject = this.pieceObject(positionUpAndLeft),
@@ -403,47 +386,65 @@ class Board {
     }
   }
 
-  upAndRightIsAttackable(startPosition){
+  _upAndRightIsAttackable(startPosition){
     let positionUpAndRight = startPosition + 9;
-
     if( Board.inBounds( positionUpAndRight)){
       let pieceObject = this.layOut[positionUpAndRight],
         pieceTeam = Board.parseTeam(pieceObject);
-
       return this.occupiedByOpponent({position: positionUpAndRight, teamString: Board.WHITE}) && Board.squareColor(startPosition) === Board.squareColor(positionUpAndRight)
     } else {
       return false
     }
   }
 
-  kingSideCastleIsClear(kingPosition){
+  kingSideCastleViableFrom(position){
+    return(
+      this.pieceHasNotMovedFrom(position) && this._kingSideCastleIsClear(position) && this._kingSideRookHasNotMoved(position)
+      // checkQueryNOMOVE 3/19/18 no idea what this meant
+      // if moveObject had an additionalCheckQueries and stored these as them for later use, that might cut out the infinite loop shit?
+      // also these castle viability functions should get bundled on the board
+      && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
+      && !Rules.checkQuery({startPosition: (position), endPosition: (position + 1), board: this })
+    )
+  }
+
+  queenSideCastleViableFrom(position){
+    return(
+      this.pieceHasNotMovedFrom(position) && this._queenSideCastleIsClear(position) && this._queenSideRookHasNotMoved(position)
+      // if moveObject had an additionalCheckQueries and stored these as them for later use, that might cut out the infinite loop shit?
+      // also these castle viability functions should get bundled on the board
+      && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
+      && !Rules.checkQuery({startPosition: (position), endPosition: (position - 1), board: this })
+    )
+  }
+
+
+  _kingSideCastleIsClear(kingPosition){
     return this.positionEmpty(kingPosition + 1) && this.positionEmpty(kingPosition + 2 )
   }
 
-  queenSideCastleIsClear(kingPosition){
+  _queenSideCastleIsClear(kingPosition){
     return this.positionEmpty(kingPosition - 1 ) && this.positionEmpty(kingPosition - 2 ) && this.positionEmpty(kingPosition - 3 )
   }
 
-  kingSideRookHasNotMoved(kingPosition){
+  _kingSideRookHasNotMoved(kingPosition){
     let kingSideRookStartPosition = kingPosition + 3;
-
     return (this.pieceTypeAt( kingSideRookStartPosition ) ===Board.ROOK) && this.pieceHasNotMovedFrom( kingSideRookStartPosition )
   }
 
-  queenSideRookHasNotMoved(kingPosition){
+  _queenSideRookHasNotMoved(kingPosition){
     let queenSideRookStartPosition = kingPosition - 4;
 
     return (this.pieceTypeAt( queenSideRookStartPosition ) ===Board.ROOK) && this.pieceHasNotMovedFrom( queenSideRookStartPosition )
   }
 
   pieceHasNotMovedFrom(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
     let pieceObject = this.layOut[position],
       previousLayouts = this.previousLayouts,
       pieceHasNotMoved = true;
-
     for(let i = 0; i < previousLayouts.length; i++){
       let oldLayout= previousLayouts[i];
-
       if(oldLayout[position] !== pieceObject ){
         pieceHasNotMoved = false
         break;
@@ -456,19 +457,14 @@ class Board {
     this.layOut[position] = JSON.stringify({color: Board.EMPTY, species: Board.EMPTY})
   }
 
-  _placePiece(args){
-    let position = args["position"],
-      pieceObject = args["pieceObject"];
-
+  _placePiece({position: position, pieceObject: pieceObject}){
     this.layOut[position] = JSON.stringify(pieceObject)
   }
 
   _promotePawn(position){
     // TODO secondary make this request input as to what piece to become
     let teamString = this.teamAt(position);
-
     this.layOut[position] = JSON.stringify({color: teamString , species: Board.QUEEN})
-
   }
 
   teamAt(position){
@@ -478,11 +474,19 @@ class Board {
     };
     let pieceObject = this.pieceObject(position),
       teamString = Board.parseTeam( pieceObject );
-
     return teamString
   }
 
   positionsOccupiedByTeam(teamString){
+    let positions = this._positionsOccupiedByTeam(teamString),
+    alphaNumericPositions = [];
+    for (let i = 0; i < positions.length; i++){
+      alphaNumericPositions.push( Board.gridCalculator( positions[i] ))
+    }
+    return alphaNumericPositions;
+  }
+
+  _positionsOccupiedByTeam(teamString){
     let positions = [];
     for( let i = 0; i < this.layOut.length; i++){
       let teamAt = this.teamAt(i);
@@ -493,23 +497,20 @@ class Board {
     return positions
   }
 
-  occupiedByTeamMate(args){
-    let position = args["position"],
-      teamString = args["teamString"],
-      occupantTeam = this.teamAt(position);
-
+  occupiedByTeamMate({position: position, teamString: teamString}){
+    position = Board.convertPositionFromAlphaNumeric(position)
+    let occupantTeam = this.teamAt(position);
     return teamString === occupantTeam
   }
 
-  occupiedByOpponent(args){
-    let position = args["position"],
-      teamString = args["teamString"],
-      occupantTeam = this.teamAt(position);
-
+  occupiedByOpponent({position: position, teamString: teamString}){
+    position = Board.convertPositionFromAlphaNumeric(position)
+    let occupantTeam = this.teamAt(position);
     return !this.positionEmpty(position) && teamString !== occupantTeam
   }
 
   positionEmpty(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
     let pieceObject = this.pieceObject(position)
     return Board.parseTeam( pieceObject ) === Board.EMPTY
   }
@@ -518,18 +519,20 @@ class Board {
     position = Board.convertPositionFromAlphaNumeric(position)
     let pieceObject = this.pieceObject(position),
       pieceType = Board.parseSpecies( pieceObject );
-
     return pieceType
   }
 
   kingPosition(teamString){
+    let position = this._kingPosition(teamString);
+    return Board.gridCalculator(position);
+  }
+
+  _kingPosition(teamString){
     let layOut = this.layOut,
       position = null;
-
     for(let i = 0; i < layOut.length; i ++){
       let teamAtPosition = this.teamAt(i),
         pieceType = this.pieceTypeAt(i);
-
       if(teamAtPosition === teamString && pieceType === Board.KING){
         position = i
         break

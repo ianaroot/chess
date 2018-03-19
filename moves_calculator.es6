@@ -312,11 +312,7 @@ class MovesCalculator {
           moveObjects[i].pieceNotation = "K";
           moveObjects[i].startPosition = startPosition
         };
-        if ( board.pieceHasNotMovedFrom(startPosition) && board.kingSideCastleIsClear(startPosition) && board.kingSideRookHasNotMoved(startPosition)
-        // checkQueryNOMOVE
-          && !Rules.checkQuery({startPosition: startPosition, endPosition: startPosition, board: board })
-          && !Rules.checkQuery({startPosition: (startPosition), endPosition: (startPosition + 1), board: board })
-          ){
+        if ( board.kingSideCastleViableFrom(startPosition) ){
           let moveObject = MovesCalculator.genericMovements().horizontalLeft()
           moveObject.increment = + 2
           moveObject.rangeLimit = 1
@@ -330,11 +326,7 @@ class MovesCalculator {
           }
           moveObjects.push(moveObject)
         };
-        if ( board.pieceHasNotMovedFrom(startPosition) && board.queenSideCastleIsClear(startPosition) && board.queenSideRookHasNotMoved(startPosition)
-        // ig moveObject had an additionalCheckQueries and stored these as them for later use, that might cut out the infinite loop shit?
-        // also these castle viability functions should get bundled on the board
-          && !Rules.checkQuery({startPosition: startPosition, endPosition: startPosition, board: board })
-          && !Rules.checkQuery({startPosition: (startPosition), endPosition: (startPosition - 1), board: board }) ){
+        if ( board.queenSideCastleViableFrom(startPosition) ){
           let moveObject = MovesCalculator.genericMovements().horizontalRight()
           moveObject.increment = - 2
           moveObject.rangeLimit = 1
@@ -359,23 +351,23 @@ class MovesCalculator {
             black: {
               startRank: 7,
               nonAttackMove: MovesCalculator.genericMovements().verticalDown(),
-              singleStepCheck: board.oneSpaceDownIsEmpty(startPosition),
-              doubleStepCheck: Board.isSeventhRank(startPosition) && board.twoSpacesDownIsEmpty(startPosition),
-              leftAttackCheck: board.downAndLeftIsAttackable(startPosition),
+              singleStepCheck: board._oneSpaceDownIsEmpty(startPosition),
+              doubleStepCheck: Board.isSeventhRank(startPosition) && board._twoSpacesDownIsEmpty(startPosition),
+              leftAttackCheck: board._downAndLeftIsAttackable(startPosition),
               leftAttackMove: MovesCalculator.genericMovements().forwardSlashDown(),
-              rightAttackCheck: board.downAndRightIsAttackable(startPosition),
+              rightAttackCheck: board._downAndRightIsAttackable(startPosition),
               rightAttackMove: MovesCalculator.genericMovements().backSlashDown(),
-              rightEnPassantCheck: Board.rank(startPosition) === 4 && board.whitePawnAt(startPosition + 1) && board.whitePawnDoubleSteppedFrom(startPosition - 15),
-              leftEnPassantCheck: Board.rank(startPosition) === 4 && board.whitePawnAt(startPosition - 1) && board.whitePawnDoubleSteppedFrom(startPosition - 17),
+              rightEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition + 1) && board.whitePawnDoubleSteppedFrom(startPosition - 15),
+              leftEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition - 1) && board.whitePawnDoubleSteppedFrom(startPosition - 17),
             },
             white: {
               startRank: 2,
               nonAttackMove: MovesCalculator.genericMovements().verticalUp(),
-              singleStepCheck: board.oneSpaceUpIsEmpty(startPosition),
-              doubleStepCheck: Board.isSecondRank(startPosition) && board.twoSpacesUpIsEmpty( startPosition ),
-              leftAttackCheck: board.upAndLeftIsAttackable(startPosition),
+              singleStepCheck: board._oneSpaceUpIsEmpty(startPosition),
+              doubleStepCheck: Board.isSecondRank(startPosition) && board._twoSpacesUpIsEmpty( startPosition ),
+              leftAttackCheck: board._upAndLeftIsAttackable(startPosition),
               leftAttackMove: MovesCalculator.genericMovements().backSlashUp(),
-              rightAttackCheck: board.upAndRightIsAttackable(startPosition ),
+              rightAttackCheck: board._upAndRightIsAttackable(startPosition ),
               rightAttackMove: MovesCalculator.genericMovements().forwardSlashUp(),
               leftEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition - 1) && board.blackPawnDoubleSteppedFrom(startPosition + 15),
               rightEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition + 1) && board.blackPawnDoubleSteppedFrom(startPosition + 17),

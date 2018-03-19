@@ -119,7 +119,7 @@ GameController is aware of:
     board._storeCurrentLayoutAsPrevious()
     board.movePiece( startPosition, endPosition, moveObject.additionalActions)
     board.teamNotMoving()
-    board.kingPosition(otherTeam)
+    board._kingPosition(otherTeam)
     board._endGame()
     board.gameOver
     board.layOut
@@ -157,14 +157,14 @@ Board is aware of:
 
 PostMovementRules is aware of:
   board:
-    board.blackPawnAt(i)
+    board._blackPawnAt(i)
     board._promotePawn(i)
-    board.whitePawnAt(i)
+    board._whitePawnAt(i)
     board._promotePawn(i)
     board.teamNotMoving(),
-    board.kingPosition(otherTeam);
+    board._kingPosition(otherTeam);
     board.allowedToMove,
-    board.positionsOccupiedByTeam(onDeckTeamString);
+    board._positionsOccupiedByTeam(onDeckTeamString);
     board.previousLayouts,
     board.layOut
   Rules:
@@ -189,27 +189,27 @@ View is aware of:
 Rules is aware:
   Board:
     board.pieceHasNotMovedFrom(startPosition)
-    board.kingSideCastleIsClear(startPosition)
-    board.kingSideRookHasNotMoved(startPosition)
+    board._kingSideCastleIsClear(startPosition)
+    board._kingSideRookHasNotMoved(startPosition)
     board.pieceHasNotMovedFrom(startPosition)
-    board.queenSideCastleIsClear(startPosition)
-    board.queenSideRookHasNotMoved(startPosition)
-    board.blackPawnAt(position - 1)
+    board._queenSideCastleIsClear(startPosition)
+    board._queenSideRookHasNotMoved(startPosition)
+    board._blackPawnAt(position - 1)
     board.blackPawnDoubleSteppedFrom(position + 15) ){
-    board.blackPawnAt(position + 1)
+    board._blackPawnAt(position + 1)
     board.blackPawnDoubleSteppedFrom(position + 17) ){
-    board.twoSpacesUpIsEmpty( startPosition ) ){
-    board.oneSpaceUpIsEmpty(startPosition) ){
-    board.upAndLeftIsAttackable({position: startPosition, attackingTeamString: "white"}) ){
-    board.upAndRightIsAttackable({position: startPosition, attackingTeamString: "white"}) ){
-    board.whitePawnAt(position + 1)
+    board._twoSpacesUpIsEmpty( startPosition ) ){
+    board._oneSpaceUpIsEmpty(startPosition) ){
+    board._upAndLeftIsAttackable({position: startPosition, attackingTeamString: "white"}) ){
+    board._upAndRightIsAttackable({position: startPosition, attackingTeamString: "white"}) ){
+    board._whitePawnAt(position + 1)
     board.whitePawnDoubleSteppedFrom(position - 15) ){
-    board.whitePawnAt(position - 1)
+    board._whitePawnAt(position - 1)
     board.whitePawnDoubleSteppedFrom(position - 17) ){
-    board.twoSpacesDownIsEmpty(startPosition) ){
-    board.oneSpaceDownIsEmpty(startPosition) ){
-    board.downAndLeftIsAttackable({position: startPosition, attackingTeamString: "black"}) ){
-    board.downAndRightIsAttackable({position: startPosition, attackingTeamString: "black"}) ){
+    board._twoSpacesDownIsEmpty(startPosition) ){
+    board._oneSpaceDownIsEmpty(startPosition) ){
+    board._downAndLeftIsAttackable({position: startPosition, attackingTeamString: "black"}) ){
+    board._downAndLeftIsAttackable({position: startPosition, attackingTeamString: "black"}) ){
     board.layOut,
     board.teamAt(startPosition),
     board.positionIsOccupiedByTeamMate(endPosition, team ) ){

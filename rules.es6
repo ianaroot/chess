@@ -76,8 +76,8 @@ class Rules {
         // one of which will be used for actual moves and one for hypothetical moves
 
     newBoard._hypotheticallyMovePiece( dummyMoveObject )
-    let kingPosition = newBoard.kingPosition(teamString),
-        enemyPositions = newBoard.positionsOccupiedByTeam(opposingTeamString);
+    let kingPosition = newBoard._kingPosition(teamString),
+        enemyPositions = newBoard._positionsOccupiedByTeam(opposingTeamString);
     for(let i = 0; i < enemyPositions.length; i++){
       let enemyPosition = enemyPositions[i],
           enemyPieceType = newBoard.pieceTypeAt( enemyPosition );
@@ -130,7 +130,7 @@ class Rules {
       }
     }
     for(let i = 56; i < 64; i++){
-      if( board.whitePawnAt(i) ){
+      if( board._whitePawnAt(i) ){
         board._promotePawn(i)
         promotionNotation = "=Q"
         //need to change this when i start allowing choice of promotion type
@@ -143,7 +143,7 @@ class Rules {
         moveObject = args["moveObject"],
         checkNotation = "";
     let otherTeam = board.teamNotMoving(),
-        kingPosition = board.kingPosition(otherTeam),
+        kingPosition = board._kingPosition(otherTeam),
         inCheck = this.checkQuery({board: board, startPosition: kingPosition, endPosition: kingPosition}),
         noMoves = this.noLegalMoves(board);
     if (inCheck && noMoves){
@@ -163,7 +163,7 @@ class Rules {
     } else {
       var onDeckTeamString = Board.BLACK
     }
-    let occcupiedPositions = board.positionsOccupiedByTeam(onDeckTeamString);
+    let occcupiedPositions = board._positionsOccupiedByTeam(onDeckTeamString);
     for(let i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       let startPosition = occcupiedPositions[i],
         movesCalculator = new MovesCalculator({board: board, startPosition: startPosition})
