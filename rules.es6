@@ -34,7 +34,7 @@ class Rules {
     if ( !Board.inBounds(endPosition) ){
       moveObject.alerts.push('stay on the board, fool')
       moveObject.illegal = true
-    } else if( board.positionIsOccupiedByTeamMate(endPosition, team ) ){
+    } else if( board.occupiedByTeamMate({position: endPosition, teamString: team}) ){
       moveObject.alerts.push("what, are you trying to capture your own piece?")
       moveObject.illegal = true
     } else if( moveObject.illegal ) {
@@ -123,7 +123,7 @@ class Rules {
         moveObject = args["moveObject"],
         promotionNotation = "";
     for(let i = 0; i < 8; i++){
-      if ( board.blackPawnAt(i) ){
+      if ( board._blackPawnAt(i) ){
         board._promotePawn(i)
         promotionNotation = "=Q"
         //need to change this when i start allowing choice of promotion type

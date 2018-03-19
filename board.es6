@@ -151,7 +151,7 @@ class Board {
     this.allowedToMove = Board.WHITE
   }
 
-  undo(){
+  _undo(){
     this.layOut = this.lastLayout()
     this.previousLayouts.pop()
     let undoneNotation = this.movementNotation.pop(),
@@ -197,15 +197,26 @@ class Board {
     }
   }
 
+  static convertPositionFromAlphaNumeric(position){
+    if( typeof( position ) === 'string' && position.match(/[a-z]\d/) && position.length === 2){
+      return Board.gridCalculatorReverse( position )
+
+    } else {
+      return position
+    }
+  }
+
   pieceObject(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
     return JSON.parse(this.layOut[position])
   }
 
   pieceObjectFromLastLayout(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
     return JSON.parse( this.lastLayout()[position] )
   }
 
-  blackPawnAt(position){
+  _blackPawnAt(position){
     return Board.parseTeam( this.pieceObject(position) )=== Board.BLACK && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
 
@@ -295,6 +306,7 @@ class Board {
       additionalActions = moveObject.additionalActions,
       pieceObject = this.pieceObject(startPosition);
     this._storeCurrentLayoutAsPrevious()
+    this._emptify(startPosition)
     moveObject.captureNotation = this._capture(endPosition);
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ moveObject.captureNotation = additionalActions.call(this, {position: startPosition} ) }
@@ -460,6 +472,7 @@ class Board {
   }
 
   teamAt(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
     if( !Board.inBounds(position) ){
       return Board.EMPTY
     };
@@ -481,7 +494,6 @@ class Board {
   }
 
   occupiedByTeamMate(args){
-    // TODO redundancy with functions below
     let position = args["position"],
       teamString = args["teamString"],
       occupantTeam = this.teamAt(position);
@@ -497,20 +509,17 @@ class Board {
     return !this.positionEmpty(position) && teamString !== occupantTeam
   }
 
+  positionEmpty(position){
+    let pieceObject = this.pieceObject(position)
+    return Board.parseTeam( pieceObject ) === Board.EMPTY
+  }
+
   pieceTypeAt(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
     let pieceObject = this.pieceObject(position),
       pieceType = Board.parseSpecies( pieceObject );
 
     return pieceType
-  }
-
-  positionIsOccupiedByTeamMate(position, team){
-    return ( !this.positionEmpty(position) && this.teamAt(position) === team  )
-  }
-
-  positionEmpty(position){
-    let pieceObject = this.pieceObject(position)
-    return Board.parseTeam( pieceObject ) === Board.EMPTY
   }
 
   kingPosition(teamString){

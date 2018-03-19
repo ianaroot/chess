@@ -28,8 +28,7 @@ class MovesCalculator {
           rangeLimit = move.rangeLimit,
           boundaryCheck = move.boundaryCheck;
       for(let j = 1; j <= rangeLimit; j++){
-        let currentPosition = increment * j + this.startPosition,
-            occupyingTeam = this.board.teamAt(currentPosition);
+        let currentPosition = increment * j + this.startPosition;
         if ( !boundaryCheck(j, increment, this.startPosition) ){
           break
         }
@@ -378,8 +377,8 @@ class MovesCalculator {
               leftAttackMove: MovesCalculator.genericMovements().backSlashUp(),
               rightAttackCheck: board.upAndRightIsAttackable(startPosition ),
               rightAttackMove: MovesCalculator.genericMovements().forwardSlashUp(),
-              leftEnPassantCheck: Board.rank(startPosition) === 5 && board.blackPawnAt(startPosition - 1) && board.blackPawnDoubleSteppedFrom(startPosition + 15),
-              rightEnPassantCheck: Board.rank(startPosition) === 5 && board.blackPawnAt(startPosition + 1) && board.blackPawnDoubleSteppedFrom(startPosition + 17),
+              leftEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition - 1) && board.blackPawnDoubleSteppedFrom(startPosition + 15),
+              rightEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition + 1) && board.blackPawnDoubleSteppedFrom(startPosition + 17),
             }
           },
           pawnVars = colorVars[teamString];

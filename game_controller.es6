@@ -1,5 +1,4 @@
 const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
-// TODO priority, undo no longer uncaptures
 // TODO priority a move that would make it so both kings have potential to castle causes stack too deep
 // TODO make means to either have bots go step by step on command, or just run
 // TODO priority stalemate by insufficient material, and 50 move rule
@@ -98,7 +97,7 @@ class GameController {
 
 	undo(){
 		if( this.board.previousLayouts.length){
-			this.board.undo()
+			this.board._undo()
 			this.view.displayLayOut({board: this.board})
 		}
 	}
