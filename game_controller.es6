@@ -10,13 +10,19 @@ class GameController {
 	constructor(){
 		this.board = new Board();
     this.view = new View(this);
+		this._paused = false
 		this.view.displayLayOut({board: this.board})
 		this.view.setTileClickListener()
 		this.view.setUndoClickListener(this)
+		this.view.setPauseClickListener(this)
 		this.api = new Api({board: this.board, gameController: this});
 		this._whiteBot = new Bot()
 		this._blackBot = new Bot()
 		if(this._whiteBot){ this.queryNextBotMove()}
+	}
+
+	pause(){
+		this._paused = true
 	}
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
 		var board = this.board;
@@ -33,9 +39,9 @@ class GameController {
 
 			this.view.displayLayOut({board: board, alerts: moveObject.alerts, startPosition: startPosition})
 
-			if(this.movingTeamHasBot() ){
+			if(this.movingTeamHasBot() && !this._paused ){
 				let queryMove = this.queryNextBotMove.bind(this)
-				setTimeout( function(){  queryMove() }, 200)
+				setTimeout( function(){  queryMove() }, 500)
 			}
 		}
 	}

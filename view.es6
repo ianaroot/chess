@@ -188,4 +188,8 @@ class View{
     let undoButton = document.getElementById("undo-button");
     undoButton.addEventListener("click", gameController.undo.bind(gameController))
   }
+  setPauseClickListener(gameController){
+    let pauseButton = document.getElementById("pause-button");
+    pauseButton.addEventListener("click", gameController.pause.bind(gameController))
+  }
 }

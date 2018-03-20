@@ -21,6 +21,17 @@
   width: 40px;
   text-align: center;
 }
+#pause-button {
+  border-radius: 2px;
+  color: #000000;
+  background-color: #fce38f;
+  position: absolute;
+  left: 620px;
+  top: 350px;
+  heigh: 12px;
+  width: 40px;
+  text-align: center;
+}
 
 #arena {
   margin-left: 80px;
