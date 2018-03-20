@@ -11,16 +11,42 @@ class Bot {
     let board = args["board"],
         availableMoves = this.api.availableMovesDefault(),
         homeTeam = board.allowedToMove,
-        // gamePhase = this.calculateGamePhase({team: homeTeam, board: board}),
-        weightedMoves = this.weightMoves({moves: availableMoves, board: board, team: homeTeam});
+        gamePhase = this.calculateGamePhase({team: homeTeam, board: board}),
+        weightMoves = this.gamePhasePriorities[gamePhase],
+        weightedMoves = weightMoves({moves: availableMoves, board: board, team: homeTeam});
+
+        // console.log("weightedMoves")
+        // console.log(weightedMoves)
 
 
+        // console.log(move)
     let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 5)
-
+    // console.log("moveIdeas below")
+    // console.log(moveIdeas)
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
-
+    // console.log(move)
     return move
 
+  }
+
+  selectRandomMove(){
+    let availableMoves = this.api.availableMovesDefault(),
+      move = availableMoves[Math.floor(Math.random()*availableMoves.length)];
+      // console.log("inside random " + move)
+    return move
+  }
+
+  pretendRandomMoveIsWeighted(){
+    let move = this.selectRandomMove()
+    return {1: [move]} //this is the data structure necesary to mimic the return of weightedMoves
+  }
+
+  get gamePhasePriorities(){
+    return {
+      opening: this.weightMovesForOpening.bind(this),
+      middle: this.pretendRandomMoveIsWeighted.bind(this),
+      end: this.pretendRandomMoveIsWeighted.bind(this),
+    }
   }
 
   calculateGamePhase({team: team, board: board}){
@@ -62,17 +88,20 @@ class Bot {
     return backRankPieces
   }
 
-  weightMoves({moves: moves, board: board, team: team}){
+  weightMovesForOpening({moves: moves, board: board, team: team}){
     let weightedMoves = {}
     for(let i = 0; i < moves.length; i++){
       let move = moves[i],
+          weight = 0
           newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move[0], alphaNumericEndPosition: move[1]}),
           newlyAvailableMoves = this.api.availableMovesFor({movingTeam: team, board: newBoard}),
           potentialMoveNumber = newlyAvailableMoves.length;
-      if( weightedMoves[potentialMoveNumber] ){
-        weightedMoves[potentialMoveNumber].push( moves[i] )
+          
+
+      if( weightedMoves[weight] ){
+        weightedMoves[weight].push( moves[i] )
       } else {
-        weightedMoves[potentialMoveNumber] = [moves[i]]
+        weightedMoves[weight] = [moves[i]]
       }
     }
     return weightedMoves
@@ -97,6 +126,7 @@ class Bot {
 
 
   pickNweightiestMovesFrom(weightedMoves, n){
+    // if (weightedMoves[1]){debugger}
     let nWeights = [],
       values = Object.values(weightedMoves);
     for( let i = values.length - 1; i > -1 && nWeights.length < n; i--){
@@ -108,6 +138,8 @@ class Bot {
         nWeights.push(values[i])
       }
     }
+    // console.log("nWeights")
+    // console.log(nWeights)
     return nWeights
   }
 }
