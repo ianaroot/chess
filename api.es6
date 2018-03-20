@@ -108,6 +108,7 @@ class Api {
 
   }
   undefendedPiecesAttackableByTeam(teamString){
-    
+
   }
+
 }

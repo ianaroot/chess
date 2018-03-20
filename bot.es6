@@ -1,4 +1,7 @@
 class Bot {
+  // undo doesn't query bot move
+  // TODO urgent, just got killed by a pawn stepping forward.
+  // it was from start, killing a queen.
   constructor(){
 
   }
@@ -22,28 +25,41 @@ class Bot {
 
   calculateGamePhase({team: team, board: board}){
     let gamePhase = "opening";
-    if ( this.backRankHasMinorPieces({team: team, board: board}) ){
-      debugger
+    if ( board.remainingPieceValueFor( Board.opposingTeam(team) ) <= 13 ) {
+      return "end";
+    } else if ( this.backRankHasMinorPieces({team: team, board: board}) ){
+      return gamePhase;
+    } else {
+      gamePhase = "middle";
+      return gamePhase;
     }
   }
 
   backRankHasMinorPieces({team: team, board: board}){
     let backRank = this.backRank({team: team, board: board})
+    // response = false //going to otherwise use implicit return of undefined
+    for( let i = 0; i < backRank.length; i++){
+      let pieceObject = backRank[i],
+          pieceSpecies = Board.parseSpecies( pieceObject ),
+          pieceTeam = Board.parseTeam( pieceObject );
+      if( pieceTeam === team && Board.MINOR_PIECES.includes(pieceSpecies) ){ return true}
+    }
   }
 
   backRank({team: team, board: board}){
     // TODO should the this.api have it's own white etc...
     if( team === Board.WHITE){
-      var rankTiles = ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"]
+      var squares = ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"]
     } else {
       // do i want to reverse this mimic looking at the board from black's perspective?
-      var rankTiles = ["a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"]
+      var squares = ["a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"]
     }
     let backRankPieces =  []
-    for(let i = 0; i < rankTiles.length; i ++){
-      let tile = rankTiles[i];
-      backRankPieces.push( board  )
+    for(let i = 0; i < squares.length; i ++){
+      let square = squares[i];
+      backRankPieces.push( board.pieceObject(square)  )
     }
+    return backRankPieces
   }
 
   weightMoves({moves: moves, board: board, team: team}){

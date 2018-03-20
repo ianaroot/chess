@@ -23,6 +23,9 @@ class Board {
   static get KING()   { return "King" }
   static get DARK()   { return "dark" }
   static get LIGHT()  { return "light" }
+  static get MINOR_PIECES() { return [Board.NIGHT, Board.BISHOP] }
+  static get MAJOR_PIECES() { return [Board.ROOK, Board.QUEEN]}
+
 
 
   static _defaultLayOut(){
@@ -159,6 +162,7 @@ class Board {
   }
 
   _undo(){
+    // TODO think undo has to move back to the gameController for bots query to be called
     this.layOut = this.lastLayout()
     this.previousLayouts.pop()
     let undoneNotation = this.movementNotation.pop(),
@@ -168,6 +172,29 @@ class Board {
     }
     this._nextTurn()
     //TODO  could add e.p. to notation for simplification UPDATe 3/8/18 no idea what this comment means
+  }
+
+  remainingPieceValueFor(team){
+    let subtractedValue = 0,
+        captures = this.capturedPieces;
+    for( let i = 0; i < captures.length; i++){
+      let piece = JSON.parse( captures[i] );
+      if( Board.parseTeam( piece ) === team ){
+        subtractedValue = subtractedValue + Board.pieceValues()[ Board.parseSpecies( piece ) ]
+      }
+    }
+    return 39 - subtractedValue;
+  }
+
+  static pieceValues(){
+    let values = {};
+    values[Board.PAWN] = 1;
+    values[Board.NIGHT] = 3;
+    values[Board.BISHOP] = 3;
+    values[Board.ROOK] = 5;
+    values[Board.QUEEN] = 9;
+    values[Board.KING] = 0;
+    return values;
   }
 
   consoleLogBlackPov(){
