@@ -37,9 +37,10 @@ class Api {
     for(let i = 0; i < positions.length; i++){
       let availableMovesFromPosition = this.availableMovesFrom({position: positions[i], board: board})
       for(let j = 0; j < availableMovesFromPosition.length; j++){
-        availableMoves.push([ Board.gridCalculator( positions[i] ), availableMovesFromPosition[j]])
+        availableMoves.push({ startPosition: Board.gridCalculator( positions[i] ), endPosition: availableMovesFromPosition[j]} )
       }
     }
+    // console.log(availableMoves)
     return availableMoves
   }
 
@@ -53,8 +54,8 @@ class Api {
   }
 
   availableMovesIf(alphaNumericMove){
-    let startPosition = Board.gridCalculatorReverse(alphaNumericMove[0]),
-        endPosition = Board.gridCalculatorReverse(alphaNumericMove[1]);
+    let startPosition = Board.gridCalculatorReverse(alphaNumericMove.startPosition),
+        endPosition = Board.gridCalculatorReverse(alphaNumericMove.endPosition);
     newBoard = this._board.deepCopy
   }
 

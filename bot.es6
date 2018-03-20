@@ -15,8 +15,8 @@ class Bot {
         weightMoves = this.gamePhasePriorities[gamePhase],
         weightedMoves = weightMoves({moves: availableMoves, board: board, team: homeTeam});
 
-        // console.log("weightedMoves")
-        // console.log(weightedMoves)
+        console.log("weightedMoves")
+        console.log(weightedMoves)
 
 
         // console.log(move)
@@ -92,11 +92,11 @@ class Bot {
     let weightedMoves = {}
     for(let i = 0; i < moves.length; i++){
       let move = moves[i],
-          weight = 0
-          newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move[0], alphaNumericEndPosition: move[1]}),
+          weight = 0,
+          newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition}),
           newlyAvailableMoves = this.api.availableMovesFor({movingTeam: team, board: newBoard}),
           potentialMoveNumber = newlyAvailableMoves.length;
-          
+          weight = weight + potentialMoveNumber
 
       if( weightedMoves[weight] ){
         weightedMoves[weight].push( moves[i] )

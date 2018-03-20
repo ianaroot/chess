@@ -14,8 +14,8 @@ class GameController {
 		this.view.setTileClickListener()
 		this.view.setUndoClickListener(this)
 		this.api = new Api({board: this.board, gameController: this});
-		// this._whiteBot = new Bot()
-		// this._blackBot = new Bot()
+		this._whiteBot = new Bot()
+		this._blackBot = new Bot()
 		if(this._whiteBot){ this.queryNextBotMove()}
 	}
 	attemptMove(startPosition = throwIfMissing("startPosition"), endPosition = throwIfMissing("endPosition")) {
@@ -48,11 +48,11 @@ class GameController {
 	queryBotMove(team){
 		if( team === Board.WHITE ){
 			let alphaNumericMove = this._whiteBot.determineMove({ board: this.board, api: this.api })
-			this.api.attemptMove(alphaNumericMove[0], alphaNumericMove[1])
+			this.api.attemptMove(alphaNumericMove.startPosition, alphaNumericMove.endPosition)
 			// debugger
 		} else {
 			let alphaNumericMove = this._blackBot.determineMove({ board: this.board, api: this.api })
-			this.api.attemptMove(alphaNumericMove[0], alphaNumericMove[1])
+			this.api.attemptMove(alphaNumericMove.startPosition, alphaNumericMove.endPosition)
 		}
 	}
 
