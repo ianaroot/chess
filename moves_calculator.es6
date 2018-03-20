@@ -2,7 +2,6 @@
 class MovesCalculator {
   constructor(options = {  startPosition: undefined, board: undefined, moveObjects: [], ignoreCastles: false
   }){
-    // console.log(options)
     this.startPosition = options["startPosition"];
     this.board = options["board"];
     this.moveObjects = [];
@@ -10,10 +9,8 @@ class MovesCalculator {
     this.ignoreCastles = options["ignoreCastles"];
     this.addMoves();
     this.calculateViablePositions();
-    // console.log('in the constructor ' + this.ignoreCastles)
   }
   addMoves(){
-    // console.log('in addMoves ' + this.ignoreCastles)
     if ( this.startPosition === undefined || !this.board){
       throw new Error("moveObject missing startPosition or board in addMovementTypesAndBoundaryChecks")
     } else {
@@ -53,7 +50,6 @@ class MovesCalculator {
     return {
       verticalUp: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "+8",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -64,7 +60,6 @@ class MovesCalculator {
       },
       verticalDown: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "-8",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -75,7 +70,6 @@ class MovesCalculator {
       },
       forwardSlashUp: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "+9",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -86,7 +80,6 @@ class MovesCalculator {
       },
       forwardSlashDown: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "-9",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -97,7 +90,6 @@ class MovesCalculator {
       },
       backSlashUp: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "+7",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -108,7 +100,6 @@ class MovesCalculator {
       },
       backSlashDown: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "-7",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -119,7 +110,6 @@ class MovesCalculator {
       },
       nightVerticalLeftUp: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "+15",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -130,7 +120,6 @@ class MovesCalculator {
       },
       nightVerticalRightUp: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "+17",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -141,7 +130,6 @@ class MovesCalculator {
       },
       nightHorizontalLeftUp: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "+6",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -152,7 +140,6 @@ class MovesCalculator {
       },
       nightHorizontalRightUp: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "+10",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -163,7 +150,6 @@ class MovesCalculator {
       },
       nightVerticalLeftDown: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "-15",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -174,7 +160,6 @@ class MovesCalculator {
       },
       nightVerticalRightDown: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "-17",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -185,7 +170,6 @@ class MovesCalculator {
       },
       nightHorizontalLeftDown: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "-6",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -196,7 +180,6 @@ class MovesCalculator {
       },
       nightHorizontalRightDown: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "-10",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -207,7 +190,6 @@ class MovesCalculator {
       },
       horizontalRight: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "+1",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
@@ -218,7 +200,6 @@ class MovesCalculator {
       },
       horizontalLeft: function(){
         let moveObject = new MoveObject({
-          // startPosition: startPosition,
           increment: "-1",
           boundaryCheck: function(i, increment, startPosition) {
             let endPosition = i * increment + startPosition;
