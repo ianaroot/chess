@@ -1,22 +1,25 @@
 // TOO newPossibility s are all really just moveObjects
 class MovesCalculator {
-  constructor(options = {  startPosition: undefined, board: undefined, moveObjects: [],
+  constructor(options = {  startPosition: undefined, board: undefined, moveObjects: [], ignoreCastles: false
   }){
-
-    this.startPosition = options["startPosition"]
-    this.board = options["board"]
-    this.moveObjects = []
-    this.viablePositions = {}
-    this.addMoves(),
+    // console.log(options)
+    this.startPosition = options["startPosition"];
+    this.board = options["board"];
+    this.moveObjects = [];
+    this.viablePositions = {};
+    this.ignoreCastles = options["ignoreCastles"];
+    this.addMoves();
     this.calculateViablePositions();
+    // console.log('in the constructor ' + this.ignoreCastles)
   }
   addMoves(){
+    // console.log('in addMoves ' + this.ignoreCastles)
     if ( this.startPosition === undefined || !this.board){
       throw new Error("moveObject missing startPosition or board in addMovementTypesAndBoundaryChecks")
     } else {
       let pieceType = this.board.pieceTypeAt(this.startPosition),
           pieceSpecificMovements = MovesCalculator.pieceSpecificMovements()[ pieceType ];
-      this.moveObjects = pieceSpecificMovements({startPosition: this.startPosition, board: this.board})
+      this.moveObjects = pieceSpecificMovements({startPosition: this.startPosition, board: this.board, ignoreCastles: this.ignoreCastles})
     }
   }
 
@@ -254,10 +257,8 @@ class MovesCalculator {
 
   static pieceSpecificMovements(){
     return {
-      Night: function(args){
-        let board = args["board"],
-          startPosition = args["startPosition"],
-          moveObjects = [MovesCalculator.genericMovements().nightHorizontalRightDown(), MovesCalculator.genericMovements().nightHorizontalLeftDown(), MovesCalculator.genericMovements().nightVerticalRightDown(),
+      Night: function({board: board, startPosition: startPosition}){
+        let moveObjects = [MovesCalculator.genericMovements().nightHorizontalRightDown(), MovesCalculator.genericMovements().nightHorizontalLeftDown(), MovesCalculator.genericMovements().nightVerticalRightDown(),
                     MovesCalculator.genericMovements().nightVerticalLeftDown(), MovesCalculator.genericMovements().nightHorizontalRightUp(), MovesCalculator.genericMovements().nightHorizontalLeftUp(),
                     MovesCalculator.genericMovements().nightVerticalRightUp(), MovesCalculator.genericMovements().nightVerticalLeftUp()
                   ];
@@ -268,10 +269,8 @@ class MovesCalculator {
         };
         return  moveObjects
       },
-      Rook: function(args){
-        let board = args["board"],
-          startPosition = args["startPosition"],
-          moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown()]
+      Rook: function({board: board, startPosition: startPosition}){
+        let moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown()]
         for (let i = 0; i < moveObjects.length; i++ ) {
           moveObjects[i].rangeLimit = 7;
           moveObjects[i].pieceNotation = "R";
@@ -279,10 +278,8 @@ class MovesCalculator {
         };
         return moveObjects
       },
-      Bishop: function(args){
-        let board = args["board"],
-          startPosition = args["startPosition"],
-          moveObjects = [MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()]
+      Bishop: function({board: board, startPosition: startPosition}){
+        let moveObjects = [MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()]
         for (let i = 0; i < moveObjects.length; i++ ) {
           moveObjects[i].rangeLimit = 7;
           moveObjects[i].pieceNotation = "B";
@@ -290,10 +287,8 @@ class MovesCalculator {
         };
         return moveObjects
       },
-      Queen: function(args){
-        let board = args["board"],
-          startPosition = args["startPosition"],
-          moveObjects =  MovesCalculator.pieceSpecificMovements().Rook({startPosition: startPosition, board: board}).concat( MovesCalculator.pieceSpecificMovements().Bishop({startPosition: startPosition, board: board}) )
+      Queen: function({board: board, startPosition: startPosition}){
+        let moveObjects =  MovesCalculator.pieceSpecificMovements().Rook({startPosition: startPosition, board: board}).concat( MovesCalculator.pieceSpecificMovements().Bishop({startPosition: startPosition, board: board}) )
         for (let i = 0; i < moveObjects.length; i++ ) {
           moveObjects[i].rangeLimit = 7;
           moveObjects[i].pieceNotation = "Q";
@@ -301,10 +296,8 @@ class MovesCalculator {
         };
         return moveObjects
       },
-      King: function(args){
-        let board = args["board"],
-          startPosition = args["startPosition"],
-          moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown(),
+      King: function({board: board, startPosition: startPosition, ignoreCastles: ignoreCastles}){
+        let moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown(),
                     MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()
                   ];
         for (let i = 0; i < moveObjects.length; i++ ) {
@@ -312,7 +305,8 @@ class MovesCalculator {
           moveObjects[i].pieceNotation = "K";
           moveObjects[i].startPosition = startPosition
         };
-        if ( board.kingSideCastleViableFrom(startPosition) ){
+        // if(ignoreCastles === true){ debugger }
+        if ( !ignoreCastles && board.kingSideCastleViableFrom(startPosition) ){
           let moveObject = MovesCalculator.genericMovements().horizontalLeft()
           moveObject.increment = + 2
           moveObject.rangeLimit = 1
@@ -326,7 +320,7 @@ class MovesCalculator {
           }
           moveObjects.push(moveObject)
         };
-        if ( board.queenSideCastleViableFrom(startPosition) ){
+        if ( !ignoreCastles && board.queenSideCastleViableFrom(startPosition) ){
           let moveObject = MovesCalculator.genericMovements().horizontalRight()
           moveObject.increment = - 2
           moveObject.rangeLimit = 1
@@ -342,11 +336,9 @@ class MovesCalculator {
         };
         return moveObjects
       },
-      Pawn: function(args){
-        let board = args["board"],
-        startPosition = args["startPosition"],
-        moveObjects = [],
-        teamString = board.teamAt(startPosition),
+      Pawn: function({board: board, startPosition: startPosition}){
+        let moveObjects = [],
+          teamString = board.teamAt(startPosition),
           colorVars = {
             black: {
               startRank: 7,

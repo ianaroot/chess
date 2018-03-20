@@ -45,22 +45,6 @@ class GameController {
 		return ( (movingTeam === Board.WHITE) && this._whiteBot !== undefined ) || ( (movingTeam === Board.BLACK) && this._blackBot !== undefined )
 	}
 
-	// _nextTurn(){
-	// 	if( this.board.allowedToMove === Board.WHITE ){
-	// 		this._prepareBlackTurn()
-	// 	} else{
-	// 		this._prepareWhiteTurn()
-	// 	}
-	// }
-	//
-	// _prepareBlackTurn(){
-	// 	this.board.allowedToMove = Board.BLACK
-	// }
-	//
-	// _prepareWhiteTurn(){
-	// 	this.board.allowedToMove = Board.WHITE
-	// }
-
 	queryBotMove(team){
 		if( team === Board.WHITE ){
 			let alphaNumericMove = this._whiteBot.determineMove({ board: this.board, api: this.api })
@@ -126,7 +110,8 @@ tests = {
   singleMoveTest: [1, 18],
   threeFold: 			[1,18, 62,45, 18,1, 45,62, 1, 18, 62, 45, 18,  1, 45, 62],
   notThreeFold: 	[1,18, 62,45, 18,1, 45,62, 1, 18, 62, 45, 18,  1, 50,  42, 1, 18, 45, 62, 18,  1, 62, 45],
-	touchKings: 		[12,28, 51,35, 28,35, 60,51, 4,12, 51, 43, 12,20, 43,36, 20,28]
+	touchKings: 		[12,28, 51,35, 28,35, 60,51, 4,12, 51, 43, 12,20, 43,36, 20,28],
+  check: 					[12,20, 57,42, 3,21, 42,32, 21,53, 32,17, ],
 }
 
 // runAllTests= function(){
