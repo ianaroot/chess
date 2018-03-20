@@ -24,7 +24,8 @@ class Bot {
     // console.log("moveIdeas below")
     // console.log(moveIdeas)
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
-    // console.log(move)
+    console.log(homeTeam)
+    console.log(move)
     return move
 
   }
@@ -95,8 +96,9 @@ class Bot {
           weight = 0,
           newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition}),
           newlyAvailableMoves = this.api.availableMovesFor({movingTeam: team, board: newBoard}),
+          accessibleSquaresWeight = this.weightAccessibleSquares(newlyAvailableMoves),
           potentialMoveNumber = newlyAvailableMoves.length;
-          weight = weight + potentialMoveNumber
+      weight = weight + accessibleSquaresWeight
 
       if( weightedMoves[weight] ){
         weightedMoves[weight].push( moves[i] )
@@ -107,14 +109,97 @@ class Bot {
     return weightedMoves
   }
 
-  // sortArray(array){
-  //   array.sort(function(a,b) {
-  //       if (a < b) { return 1; }
-  //       else if (a == b) { return 0; }
-  //       else { return -1; }
-  //   });
-  //   return array
-  // }
+  weightAccessibleSquares(moves){
+    let squareValues = 0;
+    for( let i = 0; i < moves.length; i++){
+      let square = moves[i].endPosition,
+        squareValue = Bot.SQUAREWEIGHTS[square];
+      squareValues = squareValues + squareValue
+    }
+    // console.log(squareValues)
+    squareValues = Math.round( squareValues * 100 )/100
+    return squareValues
+  }
+
+  static get SQUAREWEIGHTS() {
+    return {
+      d5: 1,
+      d4: 1,
+      e5: 1,
+      e4: 1,
+
+      c3: .8,
+      c4: .8,
+      c5: .8,
+      c6: .8,
+      d3: .8,
+      d6: .8,
+      e3: .8,
+      e6: .8,
+      f3: .8,
+      f4: .8,
+      f5: .8,
+      f6: .8,
+
+      b2: .6,
+      b3: .6,
+      b4: .6,
+      b5: .6,
+      b6: .6,
+      b7: .6,
+      c2: .6,
+      c7: .6,
+      d2: .6,
+      d7: .6,
+      e2: .6,
+      e7: .6,
+      f2: .6,
+      f7: .6,
+      g2: .6,
+      g3: .6,
+      g4: .6,
+      g5: .6,
+      g6: .6,
+      g7: .6,
+
+      a1: .4,
+      a2: .4,
+      a3: .4,
+      a4: .4,
+      a5: .4,
+      a6: .4,
+      a7: .4,
+      a8: .4,
+      b1: .4,
+      b8: .4,
+      c1: .4,
+      c8: .4,
+      d1: .4,
+      d8: .4,
+      e1: .4,
+      e8: .4,
+      f1: .4,
+      f8: .4,
+      g1: .4,
+      g8: .4,
+      h1: .4,
+      h2: .4,
+      h3: .4,
+      h4: .4,
+      h5: .4,
+      h6: .4,
+      h7: .4,
+      h8: .4
+    }
+  }
+  sortArray(array){
+    array.sort(function(a,b) {
+        if (a < b) { return 1; }
+        else if (a == b) { return 0; }
+        else { return -1; }
+    });
+    return array
+  }
 
   // copyArray(array){
   //   let newArray = []
@@ -128,16 +213,29 @@ class Bot {
   pickNweightiestMovesFrom(weightedMoves, n){
     // if (weightedMoves[1]){debugger}
     let nWeights = [],
-      values = Object.values(weightedMoves);
-    for( let i = values.length - 1; i > -1 && nWeights.length < n; i--){
-      if(Array.isArray(values[i]) ){
-        for( let j = 0; j < values[i].length; j++){
-          nWeights.push(values[i][j])
-        }
-      } else {
-        nWeights.push(values[i])
+      weights = Object.keys(weightedMoves),
+      sortedWeights = this.sortArray(weights);
+      // values = Object.values(weightedMoves);
+      // debugger
+    for(let i = 0; i < sortedWeights.length && nWeights.length < n; i++){
+      let weight = sortedWeights[i],
+        moves = weightedMoves[weight];
+      for( let j = 0; j < moves.length; j++){
+        nWeights.push(moves[j])
       }
     }
+
+
+
+    // for( let i = values.length - 1; i > -1 && nWeights.length < n; i--){
+    //   if(Array.isArray(values[i]) ){
+    //     for( let j = 0; j < values[i].length; j++){
+    //       nWeights.push(values[i][j])
+    //     }
+    //   } else {
+    //     nWeights.push(values[i])
+    //   }
+    // }
     // console.log("nWeights")
     // console.log(nWeights)
     return nWeights
