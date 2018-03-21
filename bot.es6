@@ -2,6 +2,8 @@ class Bot {
   // undo doesn't query bot move
   // TODO urgent, just got killed by a pawn stepping forward.
   // it was from start, killing a queen.
+  // TODO add castle check to calculateGamePhase
+  // TODO occasional parse error in stackDeckForCastle
   constructor(){
 
   }
@@ -97,8 +99,12 @@ class Bot {
           newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition}),
           newlyAvailableMoves = this.api.availableMovesFor({movingTeam: team, board: newBoard}),
           accessibleSquaresWeight = this.weightAccessibleSquares(newlyAvailableMoves),
-          potentialMoveNumber = newlyAvailableMoves.length;
-      weight = weight + accessibleSquaresWeight
+          potentialMoveNumber = newlyAvailableMoves.length,
+          stackDeckForCastle = this.stackDeckForCastle( board, move ),
+          limitNonCastleMoves = this.limitNonCastleMoves( board, move ),
+          discourageEarlyQueenMovement = this.discourageEarlyQueenMovement( board, move );
+      weight = weight + accessibleSquaresWeight + stackDeckForCastle + limitNonCastleMoves + discourageEarlyQueenMovement
+      weight = Math.round( weight * 100 )/100
 
       if( weightedMoves[weight] ){
         weightedMoves[weight].push( moves[i] )
@@ -107,6 +113,46 @@ class Bot {
       }
     }
     return weightedMoves
+  }
+
+  discourageEarlyQueenMovement(board, move){
+    let pieceType = board.pieceTypeAt(move.startPosition);
+    if( pieceType === Board.QUEEN ){
+      return - 10
+    } else {
+      return 0
+    }
+
+  }
+
+  limitNonCastleMoves(board, move){
+    let pieceType = board.pieceTypeAt(move.startPosition);
+    if( pieceType === Board.KING && !Bot.CASTLEENDPOSITIONS.includes(move.endPosition) ){
+      return - 10
+    } else {
+      return 0
+    }
+  }
+
+  static get CASTLEENDPOSITIONS() {
+    // TODO organize this shit by team
+    return ['c1', 'g1', 'c8', 'g8']
+  }
+
+  static get KINGSTARTPOSITIONS(){
+    return ['e1', 'e8']
+  }
+
+  stackDeckForCastle(board, move){
+    let pieceType = board.pieceTypeAt(move.startPosition);
+    console.log("stackDeckForCastle " + move)
+    if( pieceType === Board.KING && Bot.KINGSTARTPOSITIONS.includes(move.startPosition) &&
+    (board.queenSideCastleViableFrom(move.startPosition) || board.kingSideCastleViableFrom(move.startPosition)) && Bot.CASTLEENDPOSITIONS.includes(move.endPosition)      ) {
+      return 20
+    }
+    else {
+      return 0
+    }
   }
 
   weightAccessibleSquares(moves){
@@ -193,12 +239,19 @@ class Bot {
     }
   }
   sortArray(array){
-    array.sort(function(a,b) {
-        if (a < b) { return 1; }
-        else if (a == b) { return 0; }
-        else { return -1; }
-    });
-    return array
+    // array.sort(function(a,b) {
+    //     if (a < b) { return 1; }
+    //     else if (a == b) { return 0; }
+    //     else { return -1; }
+    // });
+    // return array
+    let sortNumber = function(a,b) {
+        return a - b;
+    }
+
+    return array.sort(sortNumber);
+
+    // return (array.join(","));
   }
 
   // copyArray(array){
@@ -215,9 +268,12 @@ class Bot {
     let nWeights = [],
       weights = Object.keys(weightedMoves),
       sortedWeights = this.sortArray(weights);
+      console.log("sortedWeights");
+      console.log(sortedWeights);
       // values = Object.values(weightedMoves);
       // debugger
-    for(let i = 0; i < sortedWeights.length && nWeights.length < n; i++){
+    // for(let i = 0; i < sortedWeights.length && nWeights.length < n; i++){
+    for(let i = sortedWeights.length -1 ; i > -1 && nWeights.length < n; i--){
       let weight = sortedWeights[i],
         moves = weightedMoves[weight];
       for( let j = 0; j < moves.length; j++){
@@ -236,8 +292,8 @@ class Bot {
     //     nWeights.push(values[i])
     //   }
     // }
-    // console.log("nWeights")
-    // console.log(nWeights)
+    console.log("nWeights")
+    console.log(nWeights)
     return nWeights
   }
 }

@@ -429,6 +429,7 @@ class Board {
   }
 
   kingSideCastleViableFrom(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
     return(
       this.pieceHasNotMovedFrom(position) && this._kingSideCastleIsClear(position) && this._kingSideRookHasNotMoved(position)
       // checkQueryNOMOVE 3/19/18 no idea what this meant
@@ -440,6 +441,7 @@ class Board {
   }
 
   queenSideCastleViableFrom(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
     return(
       this.pieceHasNotMovedFrom(position) && this._queenSideCastleIsClear(position) && this._queenSideRookHasNotMoved(position)
       // if moveObject had an additionalCheckQueries and stored these as them for later use, that might cut out the infinite loop shit?
