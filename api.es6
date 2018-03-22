@@ -77,12 +77,24 @@ class Api {
     } else {
       newBoard._officiallyMovePiece( moveObject )
     }
+    if( newBoard === undefined ){ debugger}
     return newBoard
   }
 
-  piecesAttackableByPieceAt(square){
+  piecesAttackableByPieceAt(board, square){
+    // TODO this will not include pieces attacked by pinned pieces etc.
     // TODO tile, alphaNum etc... should be square
-
+    let startPosition = Board.convertPositionFromAlphaNumeric(square);
+    console.log(startPosition)
+    let  viablePositions = Rules.viablePositionsFromKeysOnly({board: board, startPosition: startPosition}),
+      attackedPositions = {}
+    for(let i = 0; i < viablePositions.length; i++){
+      let position = viablePositions[i];
+      if( !board.positionEmpty( position ) ){
+        attackedPositions[Board.gridCalculator(position)] = board.pieceTypeAt(position)
+      }
+    }
+    return attackedPositions
   }
 
   piecesDefendedByPieceAt(square){
@@ -93,8 +105,20 @@ class Api {
 
   }
 
-  piecesAttacking(square){
-
+  piecesAttacking(board, square){
+    // TODO this will not include pieces attacked by pinned pieces etc.
+    let queryPositionString = String( Board.gridCalculatorReverse(square) ),
+      team = board.teamAt(square),
+      enemyPositions = board._positionsOccupiedByOpponentOf(team),
+      attackers = {};
+    for(let i = 0; i < enemyPositions.length; i++){
+      let position = enemyPositions[i],
+        attackedPositions = Rules.viablePositionsFromKeysOnly({board: board, startPosition: position});
+      if( attackedPositions.includes( queryPositionString )){
+        attackers[Board.gridCalculator(position)] = board.pieceTypeAt(position)
+      }
+    }
+    return attackers
   }
 
   piecesHypotheticallyAttackableFromBy(square, pieceObject){
@@ -105,11 +129,50 @@ class Api {
 
   }
 
-  piecesAttackableByTeam(teamString){
-
+  piecesAttackableByTeam(board, teamString){
+  let positions = board._positionsOccupiedByTeam(teamString),
+    attackedPositions = {};
+    for(let i = 0; i < positions.length; i++){
+      let position = positions[i],
+        subsetOfAttackedPositions = this.piecesAttackableByPieceAt(board, position);
+      Object.assign(attackedPositions, subsetOfAttackedPositions)
+    }
+    return attackedPositions;
   }
   undefendedPiecesAttackableByTeam(teamString){
 
   }
 
+
+  positionsHypotheticallyAttackablBy(){
+    // like squares a pawn could attack if occupied
+  }
+
+  // value of pieces for team on board
+
+  // maybe
+
+  // move is castle
+
+  // move is en passant
+
+  // move abandons defended position
+
+  // move abandons attacking position (verify that it's not doing to for capture of said attack)
+
+  // something to compare values of 
+
+  // move captures
+
+  // move is defended
+
+  // move is attacked
+
+  // move creates new attacks
+
+  // move creates new threats
+
+  // positionsCurrentlyAttackedBy(team) doesn't care whether pawn attack position is occupied
+
+  // maybe some of these are things that could be stored on the actual move object??
 }

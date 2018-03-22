@@ -100,17 +100,18 @@ class Rules {
     return danger
   }
 
-  static viablePositionsFromKeysOnly(args){
+  static viablePositionsFromKeysOnly({board: board, startPosition: startPosition}){
     if(
-      !Board.prototype.isPrototypeOf( args["board"] ) ||
-      typeof args["startPosition"] !== "number"
+      !Board.prototype.isPrototypeOf( board ) ||
+      typeof startPosition !== "number"
     ){
       throw new Error("missing params in viablePositionsFromKeysOnly")
     }
-    let movesCalculator = new MovesCalculator(args),
+
+    let movesCalculator = new MovesCalculator({board: board, startPosition: startPosition}),
         keysOnly = [];
     for (let property in movesCalculator.viablePositions) {
-      let newArgs = Object.assign(args, { endPosition: property });
+      let newArgs = {board: board, startPosition: startPosition, endPosition: property };
       if (movesCalculator.viablePositions.hasOwnProperty(property) && !this.checkQuery( newArgs ) ){
         keysOnly.push(property)
       }
@@ -138,18 +139,17 @@ class Rules {
     }
     moveObject.promotionNotation = promotionNotation;
   }
-  static checkmateQuery(args){
-    let board = args["board"],
-        moveObject = args["moveObject"],
-        checkNotation = "";
-    let otherTeam = board.teamNotMoving(),
+  static checkmateQuery({board: board, moveObject: moveObject}){
+    let checkNotation = "",
+        otherTeam = board.teamNotMoving(),
+        attackingTeam = Board.opposingTeam(otherTeam),
         kingPosition = board._kingPosition(otherTeam),
         inCheck = this.checkQuery({board: board, startPosition: kingPosition, endPosition: kingPosition}),
         noMoves = this.noLegalMoves(board);
     if (inCheck && noMoves){
       moveObject.checkNotation = "#"
 			moveObject.alerts.push( "checkmate" )
-			board._endGame()
+			board._endGame(attackingTeam)
       return true
     } else {
       return false //implicit undefined return would suffice. maybe better to be explicit though?

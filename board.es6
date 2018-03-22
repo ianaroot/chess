@@ -29,16 +29,29 @@ class Board {
 
 
   static _defaultLayOut(){
-    let layOut = [
-      {color: Board.WHITE, species: Board.ROOK}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.QUEEN}, {color: Board.WHITE, species: Board.KING}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.ROOK},
-      {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN},
-      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-      {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN},
-      {color: Board.BLACK, species: Board.ROOK}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.QUEEN}, {color: Board.BLACK, species: Board.KING}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.ROOK}
-    ];
+    // let layOut = [
+    //   {color: Board.WHITE, species: Board.ROOK}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.QUEEN}, {color: Board.WHITE, species: Board.KING}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.ROOK},
+    //   {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN},
+    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+    //   {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN},
+    //   {color: Board.BLACK, species: Board.ROOK}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.QUEEN}, {color: Board.BLACK, species: Board.KING}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.ROOK}
+    // ];
+
+    let layOut = [{color: "white", species: "Rook"},{color: "empty", species: "empty"},{color: "white", species: "Bishop"},{color: "white", species: "Queen"},{color: "white", species: "King"},{color: "white", species: "Bishop"},
+      {color: "white", species: "Night"},{color: "white", species: "Rook"},{color: "white", species: "Pawn"},
+      {color: "white", species: "Pawn"},{color: "white", species: "Pawn"},{color: "white", species: "Pawn"},{color: "empty", species: "empty"},{color: "white", species: "Pawn"},{color: "white", species: "Pawn"},
+      {color: "white", species: "Pawn"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "white", species: "Night"},{color: "empty", species: "empty"},{color: "white", species: "Pawn"},
+      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
+      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
+      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
+      {color: "empty", species: "empty"},{color: "black", species: "Night"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
+      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},
+      {color: "black", species: "Pawn"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Rook"},
+      {color: "empty", species: "empty"},{color: "black", species: "Bishop"},{color: "black", species: "Queen"},{color: "black", species: "King"},{color: "black", species: "Bishop"},{color: "black", species: "Night"},
+      {color: "black", species: "Rook"}]; //approachingMate
     for(let i = 0; i < layOut.length; i ++){
       let pieceObject = layOut[i]
       layOut[i] = JSON.stringify(pieceObject)
@@ -274,7 +287,7 @@ class Board {
         // NEED TO BE CAREFUL THAT PREVIOUS LAYOUTS ARE QUERIED NOT MUTATED!!!
         newBoard = new Board( newLayOut, {capturedPieces: newCapturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
     return newBoard;
-    // TODO maybe include the previous board states, will slow things down, but maybe it's not unreasonable for people to htink that a hypothetical board would still offer
+    // TODO urgent include the previous board states, will slow things down, but maybe it's not unreasonable for people to htink that a hypothetical board would still offer
     // accurate information with regards to stalemate, also i guess you'd get inaccurate result
   }
 
@@ -287,8 +300,9 @@ class Board {
     this.movementNotation = [];
   }
 
-  _endGame(){
+  _endGame(team){
     this.gameOver = true
+    this._winner = team
   }
 
   teamNotMoving(){
@@ -517,6 +531,11 @@ class Board {
       alphaNumericPositions.push( Board.gridCalculator( positions[i] ))
     }
     return alphaNumericPositions;
+  }
+
+  _positionsOccupiedByOpponentOf(teamString){
+    let opposingTeam = Board.opposingTeam(teamString);
+    return this._positionsOccupiedByTeam(opposingTeam)
   }
 
   _positionsOccupiedByTeam(teamString){

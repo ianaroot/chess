@@ -12,8 +12,9 @@ class Bot {
     this.api = args["api"];
     let board = args["board"],
         availableMoves = this.api.availableMovesDefault(),
-        homeTeam = board.allowedToMove,
-        gamePhase = this.calculateGamePhase({team: homeTeam, board: board}),
+        homeTeam = board.allowedToMove;
+    this.team = homeTeam;
+    let gamePhase = this.calculateGamePhase({team: homeTeam, board: board}),
         weightMoves = this.gamePhasePriorities[gamePhase],
         weightedMoves = weightMoves({moves: availableMoves, board: board, team: homeTeam});
 
@@ -22,7 +23,7 @@ class Bot {
 
 
         // console.log(move)
-    let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 5)
+    let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 3)
     // console.log("moveIdeas below")
     // console.log(moveIdeas)
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
@@ -47,21 +48,27 @@ class Bot {
   get gamePhasePriorities(){
     return {
       opening: this.weightMovesForOpening.bind(this),
-      middle: this.pretendRandomMoveIsWeighted.bind(this),
+      middle: this.weightMovesForMiddle.bind(this),
       end: this.pretendRandomMoveIsWeighted.bind(this),
     }
   }
 
   calculateGamePhase({team: team, board: board}){
-    let gamePhase = "opening";
+    // let gamePhase = "opening";
+    let kingPosition = board.kingPosition(team);
     if ( board.remainingPieceValueFor( Board.opposingTeam(team) ) <= 13 ) {
       return "end";
-    } else if ( this.backRankHasMinorPieces({team: team, board: board}) ){
-      return gamePhase;
+    } else if ( !this.backRankHasMinorPieces({team: team, board: board})) {
+      return "middle";
     } else {
-      gamePhase = "middle";
-      return gamePhase;
+      return "opening";
     }
+    // } else if ( this.backRankHasMinorPieces({team: team, board: board}) && board.pieceHasNotMovedFrom(kingPosition) ){
+    //   return "opening";
+    // } else {
+    //   gamePhase = "middle";
+    //   return gamePhase;
+    // }
   }
 
   backRankHasMinorPieces({team: team, board: board}){
@@ -91,6 +98,24 @@ class Bot {
     return backRankPieces
   }
 
+  weightMovesForMiddle({moves: moves, board: board, team: team}){
+    let weightedMoves = {}
+    for(let i = 0; i < moves.length; i++){
+      let move = moves[i],
+        weight = 0,
+        stackDeckForCastle = this.stackDeckForCastle( board, move, 40 );
+      weight = weight + stackDeckForCastle
+      weight = Math.round( weight * 100 )/100
+
+      if( weightedMoves[weight] ){
+        weightedMoves[weight].push( moves[i] )
+      } else {
+        weightedMoves[weight] = [moves[i]]
+      }
+    }
+   return weightedMoves
+  }
+
   weightMovesForOpening({moves: moves, board: board, team: team}){
     let weightedMoves = {}
     for(let i = 0; i < moves.length; i++){
@@ -98,12 +123,15 @@ class Bot {
           weight = 0,
           newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition}),
           newlyAvailableMoves = this.api.availableMovesFor({movingTeam: team, board: newBoard}),
-          accessibleSquaresWeight = this.weightAccessibleSquares(newlyAvailableMoves),
-          potentialMoveNumber = newlyAvailableMoves.length,
-          stackDeckForCastle = this.stackDeckForCastle( board, move ),
-          limitNonCastleMoves = this.limitNonCastleMoves( board, move ),
-          discourageEarlyQueenMovement = this.discourageEarlyQueenMovement( board, move );
-      weight = weight + accessibleSquaresWeight + stackDeckForCastle + limitNonCastleMoves + discourageEarlyQueenMovement
+          accessibleSquaresWeight = this.weightAccessibleSquares(newlyAvailableMoves) - this.weightAccessibleSquares(moves),
+          seekCheckMate = this.seekCheckMate(board, move, team),
+          avoidCheckMate = this.avoidCheckMate(board, move, team),// passing in newBoard seibnce we want to see the opponents possible responses
+          stackDeckForCastle = this.stackDeckForCastle( board, move, 20 ),
+          limitNonCastleKingMoves = this.limitNonCastleKingMoves( board, move ),
+          discourageEarlyQueenMovement = this.discourageEarlyQueenMovement( board, move ),
+          doubleMoveInOpeningPenalty = this. doubleMoveInOpeningPenalty( board, move );
+      // if (move.startPosition === 'g1'){debugger} TODO what the fuck does it have against g1 -> f3???
+      weight = weight + accessibleSquaresWeight + stackDeckForCastle + limitNonCastleKingMoves + discourageEarlyQueenMovement + doubleMoveInOpeningPenalty + seekCheckMate
       weight = Math.round( weight * 100 )/100
 
       if( weightedMoves[weight] ){
@@ -113,6 +141,111 @@ class Bot {
       }
     }
     return weightedMoves
+  }
+
+  avoidCheckMate(board, move, team){
+
+  }
+
+  projectNmovesDeep({board: board, move: move, n: n,currentDepth}){
+
+    // weight things, distinguishing whether move is homeTeam or opponent
+    // good oppenent move is negatively weighted but is a branch you want to continue
+    // bad oppenent is dead branch unless they don't have better options
+    // return if game is over
+    // return if move is already deemed winning
+    // return if move is already deemed losing
+    // return if depth exceeds n
+    // otherwise
+    // could work in a condition that i doesn't increase if number of options is low enough
+
+    if( n > currentDepth ){ return value }
+
+
+
+  }
+
+
+  seekCheckMateRecursively({board: board, move: move, team: team, value: value, depth: depth, iteration: iteration}){
+    if (iteration > depth){
+      // console.log(iteration);
+      // console.log(board.movementNotation)
+      return value
+    }
+    // if(move.endPosition === 'f7'){debugger}
+    // if(move.startPosition === 'f3'){debugger}
+    let newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition});
+    // if( newBoard === undefined ){ debugger}
+    if( newBoard._winner === this.team){
+      value = value + 1000
+      console.log(newBoard.movementNotation)
+      console.log('if')
+      return value
+    } else if ( newBoard._winner === Board.opposingTeam(this.team) ){
+      value = value - 1000
+      console.log('else if')
+      console.log(newBoard.movementNotation)
+      return value
+    } else {
+      let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
+      // let newlyAvailableMoves = this.api.availableMovesDefault();
+          // oldMoves = this.api.availableMovesFor({movingTeam: team, board: board});
+          // debugger
+      // console.log("else")
+      // console.log(newlyAvailableMoves.length)
+      iteration++
+      for( let i = 0; i < newlyAvailableMoves.length; i++){
+        // console.log('iterating ' + i)
+        value = value + this.seekCheckMateRecursively({board: newBoard, move: newlyAvailableMoves[i], team: team, value: value, depth: depth, iteration: iteration})
+      }
+    }
+    return value
+  }
+
+  curs(number, othernumber, value, i){
+    i++
+    // 	console.log("i is " + i)
+    // 	console.log("number is " + number)
+    // 	console.log("othernumber is " + othernumber)
+    // 	console.log("value is " + value)
+    if( i === 10 ){
+  	return value
+    }
+    if(number === othernumber){
+      value = value + 1
+  console.log('if ' + value)
+  	return value
+    }else if(number === 3){
+      value = value -1
+  console.log('else if ' + value)
+  	return value
+    } else{
+  	console.log('else ' + value)
+  	numbers = [Math.floor(Math.random()*10), Math.floor(Math.random()*10), Math.floor(Math.random()*10)]
+  	for(j = 0; j < numbers.length; j++){
+      	value = value + curs( numbers[j], othernumber, value, i )
+      }
+    }
+  	return value
+  }
+
+	seekCheckMate(board, move, team){
+    let newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition})
+    // TODO public functions don't need to explicitly refer to startPosition as alphaNumeric
+    if( board._winner === team){
+      return 1000
+    } else {
+      return 0
+    }
+  }
+
+
+  doubleMoveInOpeningPenalty(board, move){
+    if( !board.pieceHasNotMovedFrom(move.startPosition)){
+      return -5
+    } else {
+      return 0
+    }
   }
 
   discourageEarlyQueenMovement(board, move){
@@ -125,7 +258,7 @@ class Bot {
 
   }
 
-  limitNonCastleMoves(board, move){
+  limitNonCastleKingMoves(board, move){
     let pieceType = board.pieceTypeAt(move.startPosition);
     if( pieceType === Board.KING && !Bot.CASTLEENDPOSITIONS.includes(move.endPosition) ){
       return - 10
@@ -143,12 +276,12 @@ class Bot {
     return ['e1', 'e8']
   }
 
-  stackDeckForCastle(board, move){
+  stackDeckForCastle(board, move, weight){
     let pieceType = board.pieceTypeAt(move.startPosition);
-    console.log("stackDeckForCastle " + move)
+    // console.log("stackDeckForCastle " + move)
     if( pieceType === Board.KING && Bot.KINGSTARTPOSITIONS.includes(move.startPosition) &&
     (board.queenSideCastleViableFrom(move.startPosition) || board.kingSideCastleViableFrom(move.startPosition)) && Bot.CASTLEENDPOSITIONS.includes(move.endPosition)      ) {
-      return 20
+      return weight
     }
     else {
       return 0
@@ -169,10 +302,10 @@ class Bot {
 
   static get SQUAREWEIGHTS() {
     return {
-      d5: 1,
-      d4: 1,
-      e5: 1,
-      e4: 1,
+      d5: 1.6,
+      d4: 1.6,
+      e5: 1.6,
+      e4: 1.6,
 
       c3: .8,
       c4: .8,
@@ -187,55 +320,55 @@ class Bot {
       f5: .8,
       f6: .8,
 
-      b2: .6,
-      b3: .6,
-      b4: .6,
-      b5: .6,
-      b6: .6,
-      b7: .6,
-      c2: .6,
-      c7: .6,
-      d2: .6,
-      d7: .6,
-      e2: .6,
-      e7: .6,
-      f2: .6,
-      f7: .6,
-      g2: .6,
-      g3: .6,
-      g4: .6,
-      g5: .6,
-      g6: .6,
-      g7: .6,
+      b2: .2,
+      b3: .2,
+      b4: .2,
+      b5: .2,
+      b6: .2,
+      b7: .2,
+      c2: .2,
+      c7: .2,
+      d2: .2,
+      d7: .2,
+      e2: .2,
+      e7: .2,
+      f2: .2,
+      f7: .2,
+      g2: .2,
+      g3: .2,
+      g4: .2,
+      g5: .2,
+      g6: .2,
+      g7: .2,
 
-      a1: .4,
-      a2: .4,
-      a3: .4,
-      a4: .4,
-      a5: .4,
-      a6: .4,
-      a7: .4,
-      a8: .4,
-      b1: .4,
-      b8: .4,
-      c1: .4,
-      c8: .4,
-      d1: .4,
-      d8: .4,
-      e1: .4,
-      e8: .4,
-      f1: .4,
-      f8: .4,
-      g1: .4,
-      g8: .4,
-      h1: .4,
-      h2: .4,
-      h3: .4,
-      h4: .4,
-      h5: .4,
-      h6: .4,
-      h7: .4,
-      h8: .4
+      a1: .1,
+      a2: .1,
+      a3: .1,
+      a4: .1,
+      a5: .1,
+      a6: .1,
+      a7: .1,
+      a8: .1,
+      b1: .1,
+      b8: .1,
+      c1: .1,
+      c8: .1,
+      d1: .1,
+      d8: .1,
+      e1: .1,
+      e8: .1,
+      f1: .1,
+      f8: .1,
+      g1: .1,
+      g8: .1,
+      h1: .1,
+      h2: .1,
+      h3: .1,
+      h4: .1,
+      h5: .1,
+      h6: .1,
+      h7: .1,
+      h8: .1
     }
   }
   sortArray(array){
@@ -264,14 +397,10 @@ class Bot {
 
 
   pickNweightiestMovesFrom(weightedMoves, n){
-    // if (weightedMoves[1]){debugger}
     let nWeights = [],
       weights = Object.keys(weightedMoves),
       sortedWeights = this.sortArray(weights);
-      console.log("sortedWeights");
-      console.log(sortedWeights);
       // values = Object.values(weightedMoves);
-      // debugger
     // for(let i = 0; i < sortedWeights.length && nWeights.length < n; i++){
     for(let i = sortedWeights.length -1 ; i > -1 && nWeights.length < n; i--){
       let weight = sortedWeights[i],
@@ -280,22 +409,14 @@ class Bot {
         nWeights.push(moves[j])
       }
     }
-
-
-
-    // for( let i = values.length - 1; i > -1 && nWeights.length < n; i--){
-    //   if(Array.isArray(values[i]) ){
-    //     for( let j = 0; j < values[i].length; j++){
-    //       nWeights.push(values[i][j])
-    //     }
-    //   } else {
-    //     nWeights.push(values[i])
-    //   }
-    // }
     console.log("nWeights")
     console.log(nWeights)
     return nWeights
   }
+
+
+
+
 }
 
 
