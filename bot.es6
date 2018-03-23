@@ -1,9 +1,4 @@
 class Bot {
-  // undo doesn't query bot move
-  // TODO urgent, just got killed by a pawn stepping forward.
-  // it was from start, killing a queen.
-  // TODO add castle check to calculateGamePhase
-  // TODO occasional parse error in stackDeckForCastle
   constructor(){
 
   }
@@ -21,11 +16,7 @@ class Bot {
         console.log("weightedMoves")
         console.log(weightedMoves)
 
-
-        // console.log(move)
     let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 3)
-    // console.log("moveIdeas below")
-    // console.log(moveIdeas)
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
     console.log(homeTeam)
     console.log(move)
@@ -36,7 +27,6 @@ class Bot {
   selectRandomMove(){
     let availableMoves = this.api.availableMovesDefault(),
       move = availableMoves[Math.floor(Math.random()*availableMoves.length)];
-      // console.log("inside random " + move)
     return move
   }
 
@@ -54,7 +44,6 @@ class Bot {
   }
 
   calculateGamePhase({team: team, board: board}){
-    // let gamePhase = "opening";
     let kingPosition = board.kingPosition(team);
     if ( board.remainingPieceValueFor( Board.opposingTeam(team) ) <= 13 ) {
       return "end";
@@ -65,15 +54,10 @@ class Bot {
     }
     // } else if ( this.backRankHasMinorPieces({team: team, board: board}) && board.pieceHasNotMovedFrom(kingPosition) ){
     //   return "opening";
-    // } else {
-    //   gamePhase = "middle";
-    //   return gamePhase;
-    // }
   }
 
   backRankHasMinorPieces({team: team, board: board}){
     let backRank = this.backRank({team: team, board: board})
-    // response = false //going to otherwise use implicit return of undefined
     for( let i = 0; i < backRank.length; i++){
       let pieceObject = backRank[i],
           pieceSpecies = Board.parseSpecies( pieceObject ),
@@ -83,11 +67,10 @@ class Bot {
   }
 
   backRank({team: team, board: board}){
-    // TODO should the this.api have it's own white etc...
     if( team === Board.WHITE){
       var squares = ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"]
     } else {
-      // do i want to reverse this mimic looking at the board from black's perspective?
+      // do i want to reverse this to mimic looking at the board from black's perspective? computer doesn't care, but human user might appreciate? that's me.. this is my bot not the api
       var squares = ["a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"]
     }
     let backRankPieces =  []
@@ -130,7 +113,6 @@ class Bot {
           limitNonCastleKingMoves = this.limitNonCastleKingMoves( board, move ),
           discourageEarlyQueenMovement = this.discourageEarlyQueenMovement( board, move ),
           doubleMoveInOpeningPenalty = this. doubleMoveInOpeningPenalty( board, move );
-      // if (move.startPosition === 'g1'){debugger} TODO what the fuck does it have against g1 -> f3???
       weight = weight + accessibleSquaresWeight + stackDeckForCastle + limitNonCastleKingMoves + discourageEarlyQueenMovement + doubleMoveInOpeningPenalty + seekCheckMate
       weight = Math.round( weight * 100 )/100
 
@@ -168,70 +150,33 @@ class Bot {
 
   seekCheckMateRecursively({board: board, move: move, team: team, value: value, depth: depth, iteration: iteration}){
     if (iteration > depth){
-      // console.log(iteration);
-      // console.log(board.movementNotation)
       return value
     }
-    // if(move.endPosition === 'f7'){debugger}
-    // if(move.startPosition === 'f3'){debugger}
     let newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition});
-    // if( newBoard === undefined ){ debugger}
     if( newBoard._winner === this.team){
       value = value + 1000
       console.log(newBoard.movementNotation)
-      console.log('if')
+      console.log('good checkmate')
       return value
     } else if ( newBoard._winner === Board.opposingTeam(this.team) ){
       value = value - 1000
-      console.log('else if')
+      console.log('bad checkmate')
       console.log(newBoard.movementNotation)
       return value
     } else {
       let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
-      // let newlyAvailableMoves = this.api.availableMovesDefault();
-          // oldMoves = this.api.availableMovesFor({movingTeam: team, board: board});
-          // debugger
-      // console.log("else")
-      // console.log(newlyAvailableMoves.length)
       iteration++
       for( let i = 0; i < newlyAvailableMoves.length; i++){
-        // console.log('iterating ' + i)
         value = value + this.seekCheckMateRecursively({board: newBoard, move: newlyAvailableMoves[i], team: team, value: value, depth: depth, iteration: iteration})
       }
     }
     return value
   }
 
-  curs(number, othernumber, value, i){
-    i++
-    // 	console.log("i is " + i)
-    // 	console.log("number is " + number)
-    // 	console.log("othernumber is " + othernumber)
-    // 	console.log("value is " + value)
-    if( i === 10 ){
-  	return value
-    }
-    if(number === othernumber){
-      value = value + 1
-  console.log('if ' + value)
-  	return value
-    }else if(number === 3){
-      value = value -1
-  console.log('else if ' + value)
-  	return value
-    } else{
-  	console.log('else ' + value)
-  	numbers = [Math.floor(Math.random()*10), Math.floor(Math.random()*10), Math.floor(Math.random()*10)]
-  	for(j = 0; j < numbers.length; j++){
-      	value = value + curs( numbers[j], othernumber, value, i )
-      }
-    }
-  	return value
-  }
+
 
 	seekCheckMate(board, move, team){
     let newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition})
-    // TODO public functions don't need to explicitly refer to startPosition as alphaNumeric
     if( board._winner === team){
       return 1000
     } else {
@@ -268,7 +213,6 @@ class Bot {
   }
 
   static get CASTLEENDPOSITIONS() {
-    // TODO organize this shit by team
     return ['c1', 'g1', 'c8', 'g8']
   }
 
@@ -278,7 +222,6 @@ class Bot {
 
   stackDeckForCastle(board, move, weight){
     let pieceType = board.pieceTypeAt(move.startPosition);
-    // console.log("stackDeckForCastle " + move)
     if( pieceType === Board.KING && Bot.KINGSTARTPOSITIONS.includes(move.startPosition) &&
     (board.queenSideCastleViableFrom(move.startPosition) || board.kingSideCastleViableFrom(move.startPosition)) && Bot.CASTLEENDPOSITIONS.includes(move.endPosition)      ) {
       return weight
@@ -295,7 +238,6 @@ class Bot {
         squareValue = Bot.SQUAREWEIGHTS[square];
       squareValues = squareValues + squareValue
     }
-    // console.log(squareValues)
     squareValues = Math.round( squareValues * 100 )/100
     return squareValues
   }
@@ -372,19 +314,10 @@ class Bot {
     }
   }
   sortArray(array){
-    // array.sort(function(a,b) {
-    //     if (a < b) { return 1; }
-    //     else if (a == b) { return 0; }
-    //     else { return -1; }
-    // });
-    // return array
     let sortNumber = function(a,b) {
         return a - b;
     }
-
     return array.sort(sortNumber);
-
-    // return (array.join(","));
   }
 
   // copyArray(array){
@@ -400,8 +333,6 @@ class Bot {
     let nWeights = [],
       weights = Object.keys(weightedMoves),
       sortedWeights = this.sortArray(weights);
-      // values = Object.values(weightedMoves);
-    // for(let i = 0; i < sortedWeights.length && nWeights.length < n; i++){
     for(let i = sortedWeights.length -1 ; i > -1 && nWeights.length < n; i--){
       let weight = sortedWeights[i],
         moves = weightedMoves[weight];
@@ -409,8 +340,6 @@ class Bot {
         nWeights.push(moves[j])
       }
     }
-    console.log("nWeights")
-    console.log(nWeights)
     return nWeights
   }
 
@@ -420,6 +349,6 @@ class Bot {
 }
 
 
-
+// documentation
 // bot should have a function called determineMove. it will take in a hash containing a board, and the this.api, and it
 // will return an array, with the alphaNumeric startPosition and endPosition

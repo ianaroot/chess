@@ -1,8 +1,4 @@
-// TODO just pass the function i need access to, and the board, not the whole gameController
-// move any logic from highlightTile over to gameController. e.g. view shouldn't even know the Rules object exists
 class View{
-	//TODO pretty sure this could be a singleton even on a server with several games running
-  //TODO priority clean up alternations position vs gridCalculator
   constructor(_gameController){
     this.boundHighlightTile = this.highlightTile.bind(this)
     this.boundAttemptMove = this.attemptMove.bind(this)
@@ -19,7 +15,6 @@ class View{
     }
   };
   clearAlerts(){
-    // $('#notifications').text("")
     document.getElementById( 'notifications' ).innerHTML = "";
   };
   undisplayPiece(gridPosition){
@@ -32,7 +27,6 @@ class View{
   displayPiece(args){
     let elem = document.createElement("img"),
       pieceInitials = args["pieceInitials"],
-      // TODO turns out gridPosition is more like element class, and it has to be unique, so it should probably be element id
       gridPosition = args["gridPosition"];
     elem.setAttribute("src", this.pieceImgSrc( pieceInitials ) );
     elem.setAttribute("height", View.TILE_HEIGHT);
@@ -146,8 +140,6 @@ class View{
       startPosition = Board.gridCalculatorReverse( startElement.id );
     this.unhighlLighTiles();
     this.setTileClickListener();
-    // TODO not quite sure how to disentangle the global gameController here
-    // maybe there's some way the gameController could inject itself when setting the click listeners?
     this._gameController.attemptMove(startPosition, endPosition);
   }
   setTileClickListener(){
@@ -161,7 +153,6 @@ class View{
     let capturedPieces = board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
-      // TODO priority make more generalized parse on board
       if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.BLACK) { total++ }
     }
     if( total === 11 ){ this.expandBlackCaptureDiv() }
@@ -171,7 +162,6 @@ class View{
     let capturedPieces = board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
-      // TODO priority make more generalized parse on board
       if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.WHITE) { total++ }
     }
     if( total === 11 ){ this.expandWhiteCaptureDiv() }

@@ -1,12 +1,9 @@
 class Board {
-  // TODO on endgame, declare winner
-  // TODO function to translate layouts to alphanumerics
 
   constructor(layOut, options = { capturedPieces: [], gameOver: false, allowedToMove: Board.WHITE, movementNotation: [], previousLayouts: []}){
     this.layOut = layOut || Board._defaultLayOut()
     this.capturedPieces = options["capturedPieces"];
     this.gameOver = options["gameOver"];
-    //TODO privatize gameOver
     this.allowedToMove = options["allowedToMove"];
     this.movementNotation = options["movementNotation"];
     this.previousLayouts = options["previousLayouts"];
@@ -51,7 +48,8 @@ class Board {
       {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},
       {color: "black", species: "Pawn"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Rook"},
       {color: "empty", species: "empty"},{color: "black", species: "Bishop"},{color: "black", species: "Queen"},{color: "black", species: "King"},{color: "black", species: "Bishop"},{color: "black", species: "Night"},
-      {color: "black", species: "Rook"}]; //approachingMate
+      {color: "black", species: "Rook"}]; //approachingMate used for training bot to seek mate
+
     for(let i = 0; i < layOut.length; i ++){
       let pieceObject = layOut[i]
       layOut[i] = JSON.stringify(pieceObject)
@@ -175,7 +173,6 @@ class Board {
   }
 
   _undo(){
-    // TODO think undo has to move back to the gameController for bots query to be called
     this.layOut = this.lastLayout()
     this.previousLayouts.pop()
     let undoneNotation = this.movementNotation.pop(),
@@ -184,7 +181,6 @@ class Board {
       this.capturedPieces.pop()
     }
     this._nextTurn()
-    //TODO  could add e.p. to notation for simplification UPDATe 3/8/18 no idea what this comment means
   }
 
   remainingPieceValueFor(team){
@@ -270,7 +266,6 @@ class Board {
     return Board.parseTeam( this.pieceObject(position) )=== Board.WHITE && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
 
-  // TODO room for refactoring wetness
   blackPawnDoubleSteppedFrom(position){
     return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.BLACK && Board.parseSpecies( this.pieceObjectFromLastLayout(position) ) === Board.PAWN
   }
@@ -284,11 +279,9 @@ class Board {
         newCapturedPieces = Board._deepCopy(this.capturedPieces),
         newMovementNotation = Board._deepCopy(this.movementNotation),
         newPreviousLayouts = Board._deepCopy(this.previousLayouts),
-        // NEED TO BE CAREFUL THAT PREVIOUS LAYOUTS ARE QUERIED NOT MUTATED!!!
+
         newBoard = new Board( newLayOut, {capturedPieces: newCapturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
     return newBoard;
-    // TODO urgent include the previous board states, will slow things down, but maybe it's not unreasonable for people to htink that a hypothetical board would still offer
-    // accurate information with regards to stalemate, also i guess you'd get inaccurate result
   }
 
   _reset(){
@@ -316,7 +309,7 @@ class Board {
   }
 
   _recordNotationFrom(moveObject){
-    if( moveObject.fullNotation ){ //TODO couldn't standard notation moves calculate their own notation too?
+    if( moveObject.fullNotation ){
       var notation = moveObject.fullNotation + moveObject.captureNotation + moveObject.positionNotation + moveObject.promotionNotation + moveObject.checkNotation
     } else {
       moveObject.positionNotation = Board.gridCalculator(moveObject.endPosition);
@@ -326,7 +319,7 @@ class Board {
   }
 
   _hypotheticallyMovePiece( moveObject ){
-    // there's a lot of space between _officiallyMovePiece and hypothetical. eg
+    // there's a lot of space between _officiallyMovePiece and hypothetical. eg  not recording any data on hypothetical moves
     let startPosition = moveObject.startPosition,
       endPosition = moveObject.endPosition,
       additionalActions = moveObject.additionalActions,
@@ -352,7 +345,6 @@ class Board {
     if( !this.gameOver ){
       var otherTeam = this.teamNotMoving(),
         otherTeamsKingPosition = this._kingPosition(otherTeam);
-        // TODO separate check query that doesn't insist on a move occuring
       Rules.checkQuery( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: this, moveObject: moveObject} )
       Rules.stalemateQuery({board: this, moveObject: moveObject});
     }
@@ -446,9 +438,6 @@ class Board {
     position = Board.convertPositionFromAlphaNumeric(position)
     return(
       this.pieceHasNotMovedFrom(position) && this._kingSideCastleIsClear(position) && this._kingSideRookHasNotMoved(position)
-      // checkQueryNOMOVE 3/19/18 no idea what this meant
-      // if moveObject had an additionalCheckQueries and stored these as them for later use, that might cut out the infinite loop shit?
-      // also these castle viability functions should get bundled on the board
       && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
       && !Rules.checkQuery({startPosition: (position), endPosition: (position + 1), board: this })
     )
@@ -458,8 +447,6 @@ class Board {
     position = Board.convertPositionFromAlphaNumeric(position)
     return(
       this.pieceHasNotMovedFrom(position) && this._queenSideCastleIsClear(position) && this._queenSideRookHasNotMoved(position)
-      // if moveObject had an additionalCheckQueries and stored these as them for later use, that might cut out the infinite loop shit?
-      // also these castle viability functions should get bundled on the board
       && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
       && !Rules.checkQuery({startPosition: (position), endPosition: (position - 1), board: this })
     )
@@ -509,7 +496,6 @@ class Board {
   }
 
   _promotePawn(position){
-    // TODO secondary make this request input as to what piece to become
     let teamString = this.teamAt(position);
     this.layOut[position] = JSON.stringify({color: teamString , species: Board.QUEEN})
   }

@@ -13,7 +13,7 @@ class Rules {
         team = board.teamAt(startPosition),
         moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
 
-    if( team == Board.EMPTY ){ // TODO does triple equals work here
+    if( team === Board.EMPTY ){
       moveObject.alerts.push("that tile is empty")
       return moveObject
     }
@@ -39,41 +39,32 @@ class Rules {
       moveObject.illegal = true
     } else if( moveObject.illegal ) {
       moveObject.alerts.push("that's not how that piece moves")
-      //TODO priority should distinguish whether this is due to blockage or wrong form of movement
       moveObject.illegal = true
     } else if( Rules.checkQuery( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: moveObject.additionalActions})){
       moveObject.alerts.push("check yo king fool")
       moveObject.illegal = true
-    } // now we know the move is legal
+    }
 
     return moveObject
   }
 
-  static checkQuery(args){ // can just pass in same position as start and end if you want to know whether not moving anything creates check
-    // this should be two functions, one that checks whether a king is in check from a given layout
-    // and one that checks whether making a particular layout change would result in check
+  static checkQuery({board: board, startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions, moveObject: moveObject}){
     if(
       !Board.prototype.isPrototypeOf( args["board"] ) ||
-      typeof args["startPosition"] !== "number" ||
-      !(typeof args["endPosition"] !== "number" || typeof args["endPosition"] !== "string") || //not sure where this got turned into a string...
-      !(typeof args["additionalActions"] === "function" || typeof args["additionalActions"] === "undefined")
+      typeof startPosition !== "number" ||
+      !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
+      !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
     ){
       throw new Error("missing params in checkQuery")
     }
-    let startPosition      = args["startPosition"],
-        endPosition        = args["endPosition"],
-        board              = args["board"],
-        additionalActions  = args["additionalActions"],
-        layOut             = board.layOut,
+    let layOut             = board.layOut,
         pieceObject        = layOut[startPosition],
         teamString         = board.teamAt(startPosition),
         danger             = false,
         newLayout          = Board._deepCopy(layOut),
         opposingTeamString = Board.opposingTeam(teamString),
         newBoard = new Board(newLayout),
-        dummyMoveObject = {startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions},
-        moveObject = args["moveObject"]; //TODO sometime a moveObject is being pass in and sometimes it isn't, and there probably need to be two separate kingCheckQueries
-        // one of which will be used for actual moves and one for hypothetical moves
+        dummyMoveObject = {startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions};
 
     newBoard._hypotheticallyMovePiece( dummyMoveObject )
     let kingPosition = newBoard._kingPosition(teamString),
@@ -81,7 +72,6 @@ class Rules {
     for(let i = 0; i < enemyPositions.length; i++){
       let enemyPosition = enemyPositions[i],
           enemyPieceType = newBoard.pieceTypeAt( enemyPosition );
-      // if( enemyPieceType === Board.KING ){ continue }
       let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition, ignoreCastles: true}),
           responseMoveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
       for( let key in movesCalculator.viablePositions ){
@@ -89,7 +79,7 @@ class Rules {
           responseMoveObject = movesCalculator.viablePositions[key]
         }
       };
-      if( !responseMoveObject.illegal ){ //!Rules.positionViable({startPosition: enemyPosition, endPosition: kingPosition, board: newBoard}).illegal ){
+      if( !responseMoveObject.illegal ){
         if (moveObject){
           moveObject.alerts.push( "check" )
           moveObject.checkNotation = "+";
@@ -127,14 +117,12 @@ class Rules {
       if ( board._blackPawnAt(i) ){
         board._promotePawn(i)
         promotionNotation = "=Q"
-        //need to change this when i start allowing choice of promotion type
       }
     }
     for(let i = 56; i < 64; i++){
       if( board._whitePawnAt(i) ){
         board._promotePawn(i)
         promotionNotation = "=Q"
-        //need to change this when i start allowing choice of promotion type
       }
     }
     moveObject.promotionNotation = promotionNotation;
@@ -152,7 +140,7 @@ class Rules {
 			board._endGame(attackingTeam)
       return true
     } else {
-      return false //implicit undefined return would suffice. maybe better to be explicit though?
+      return false
     }
   }
   static noLegalMoves(board){
@@ -167,7 +155,7 @@ class Rules {
     for(let i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       let startPosition = occcupiedPositions[i],
         movesCalculator = new MovesCalculator({board: board, startPosition: startPosition})
-      for( let key in movesCalculator.viablePositions ){ // checking only checkQuery here because everything else is guaranteed by the fact that these positions came from viablePositions
+      for( let key in movesCalculator.viablePositions ){
         if( !this.checkQuery( {startPosition: startPosition, endPosition: key, board: board}) ){
           noLegalMoves = false
         }

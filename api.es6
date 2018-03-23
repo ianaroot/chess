@@ -1,6 +1,3 @@
-// TODO more explicit error messaging for bot debugging
-// function to see which pieces can attack a given position, function to see which pieces a given position can attack
-// the former allows empty spaces. the latter does not.
 class Api {
   constructor (args){
     this._board = args["board"]
@@ -40,7 +37,6 @@ class Api {
         availableMoves.push({ startPosition: Board.gridCalculator( positions[i] ), endPosition: availableMovesFromPosition[j]} )
       }
     }
-    // console.log(availableMoves)
     return availableMoves
   }
 
@@ -66,26 +62,23 @@ class Api {
   }
 
   resultOfHypotheticalMove({board: board, alphaNumericStartPosition: alphaNumericStartPosition, alphaNumericEndPosition: alphaNumericEndPosition}){
-    //TODO this would be simpler and drier if attemptMove was a function on the board
     var startPosition  = Board.gridCalculatorReverse(alphaNumericStartPosition),
       endPosition  = Board.gridCalculatorReverse(alphaNumericEndPosition),
       newBoard = board.deepCopy(),
       moveObject = Rules.getMoveObject(startPosition, endPosition, newBoard);
     if( moveObject.illegal ){
-      // this.view.displayAlerts(moveObject.alerts)
+      // LEAVING THIS COMMENT SO I REMEMBER TO INCLUDE THIS LINE  IF REFACTOR HOW THIS OPERATES this.view.displayAlerts(moveObject.alerts)
+      alert('you have passed an illegal move to resultOfHypotheticalMove. the move in question was ' + alphaNumericStartPosition + ' to ' + alphaNumericEndPosition)
       return
     } else {
       newBoard._officiallyMovePiece( moveObject )
     }
-    if( newBoard === undefined ){ debugger}
+    alert('you have passed an illegal move to resultOfHypotheticalMove. at least i think so. anyway, the board about to be returned is undefined. the move in question was ' + alphaNumericStartPosition + ' to ' + alphaNumericEndPosition)
     return newBoard
   }
 
   piecesAttackableByPieceAt(board, square){
-    // TODO this will not include pieces attacked by pinned pieces etc.
-    // TODO tile, alphaNum etc... should be square
     let startPosition = Board.convertPositionFromAlphaNumeric(square);
-    console.log(startPosition)
     let  viablePositions = Rules.viablePositionsFromKeysOnly({board: board, startPosition: startPosition}),
       attackedPositions = {}
     for(let i = 0; i < viablePositions.length; i++){
@@ -106,7 +99,6 @@ class Api {
   }
 
   piecesAttacking(board, square){
-    // TODO this will not include pieces attacked by pinned pieces etc.
     let queryPositionString = String( Board.gridCalculatorReverse(square) ),
       team = board.teamAt(square),
       enemyPositions = board._positionsOccupiedByOpponentOf(team),
@@ -150,8 +142,6 @@ class Api {
 
   // value of pieces for team on board
 
-  // maybe
-
   // move is castle
 
   // move is en passant
@@ -160,7 +150,7 @@ class Api {
 
   // move abandons attacking position (verify that it's not doing to for capture of said attack)
 
-  // something to compare values of 
+  // something to compare values of
 
   // move captures
 
@@ -173,6 +163,4 @@ class Api {
   // move creates new threats
 
   // positionsCurrentlyAttackedBy(team) doesn't care whether pawn attack position is occupied
-
-  // maybe some of these are things that could be stored on the actual move object??
 }

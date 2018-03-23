@@ -1,4 +1,3 @@
-// TOO newPossibility s are all really just moveObjects
 class MovesCalculator {
   constructor(options = {  startPosition: undefined, board: undefined, moveObjects: [], ignoreCastles: false
   }){
@@ -10,6 +9,10 @@ class MovesCalculator {
     this.addMoves();
     this.calculateViablePositions();
   }
+// calculate form of motion by div modding start and end
+// check whether the piece at the start is in the list of pieces allowed to make such a movement
+// have some conditions under which pawns can move
+// also conditions for castling
   addMoves(){
     if ( this.startPosition === undefined || !this.board){
       throw new Error("moveObject missing startPosition or board in addMovementTypesAndBoundaryChecks")
@@ -286,7 +289,6 @@ class MovesCalculator {
           moveObjects[i].pieceNotation = "K";
           moveObjects[i].startPosition = startPosition
         };
-        // if(ignoreCastles === true){ debugger }
         if ( !ignoreCastles && board.kingSideCastleViableFrom(startPosition) ){
           let moveObject = MovesCalculator.genericMovements().horizontalLeft()
           moveObject.increment = + 2
@@ -347,7 +349,6 @@ class MovesCalculator {
             }
           },
           pawnVars = colorVars[teamString];
-        // SINGLE STEP
         if ( pawnVars.singleStepCheck ) {
           let moveObject = pawnVars.nonAttackMove
           moveObject.rangeLimit = 1
@@ -355,16 +356,13 @@ class MovesCalculator {
           moveObject.startPosition = startPosition
           moveObjects = moveObjects.concat(moveObject)
         }
-        // DOUBLESTEP
         if ( pawnVars.doubleStepCheck ){
-          // TODO will the twoSpaces Down check get covered later anyway?
             let moveObject = pawnVars.nonAttackMove
           moveObject.rangeLimit = 2
           moveObject.pieceNotation = ""
           moveObject.startPosition = startPosition
           moveObjects = moveObjects.concat(moveObject)
         }
-        // STANDARD ATTACKS
         if ( pawnVars.leftAttackCheck ) {
           let moveObject = pawnVars.leftAttackMove
           moveObject.rangeLimit = 1
@@ -379,8 +377,6 @@ class MovesCalculator {
           moveObject.pieceNotation = Board.file(startPosition)
           moveObjects = moveObjects.concat(moveObject)
         };
-        // EN PASSANT
-          // RIGHT
         if( pawnVars.rightEnPassantCheck ){
           let moveObject = pawnVars.rightAttackMove
           moveObject.rangeLimit = 1
@@ -390,11 +386,9 @@ class MovesCalculator {
             let position = args["position"],
               captureNotation = this._capture(startPosition + 1) + "e.p.";
             return captureNotation
-            // TODO this is not really just a notation it's an action... or is it, i think the return is a notation, but the action is occurring right here.
           }
           moveObjects = moveObjects.concat(moveObject)
         }
-          // LEFT
         if( pawnVars.leftEnPassantCheck ){
           let moveObject = pawnVars.leftAttackMove
           moveObject.rangeLimit = 1
@@ -404,7 +398,6 @@ class MovesCalculator {
             let position = args["position"];
             let captureNotation = this._capture(startPosition - 1) + "e.p.";
             return captureNotation
-            // TODO this is not really just a notation it's an action
           }
           moveObjects = moveObjects.concat(moveObject)
         }

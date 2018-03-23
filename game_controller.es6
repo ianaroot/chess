@@ -1,10 +1,4 @@
 const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
-// TODO priority a move that would make it so both kings have potential to castle causes stack too deep
-// TODO make means to either have bots go step by step on command, or just run
-// TODO priority stalemate by insufficient material, and 50 move rule
-// TODO priority get e.p. appended to en passant notation
-// TODO View Bug: tiles stay highlighted if you move via console
-// TODO priority kings can attack each other, bad!
 
 class GameController {
 	constructor(){
@@ -16,8 +10,8 @@ class GameController {
 		this.view.setUndoClickListener(this)
 		this.view.setPauseClickListener(this)
 		this.api = new Api({board: this.board, gameController: this});
-			this._whiteBot = new Bot()
-			this._blackBot = new Bot()
+		this._whiteBot = new Bot()
+		this._blackBot = new Bot()
 		if(this._whiteBot){ this.queryNextBotMove()}
 	}
 
@@ -55,7 +49,6 @@ class GameController {
 		if( team === Board.WHITE ){
 			let alphaNumericMove = this._whiteBot.determineMove({ board: this.board, api: this.api })
 			this.api.attemptMove(alphaNumericMove.startPosition, alphaNumericMove.endPosition)
-			// debugger
 		} else {
 			let alphaNumericMove = this._blackBot.determineMove({ board: this.board, api: this.api })
 			this.api.attemptMove(alphaNumericMove.startPosition, alphaNumericMove.endPosition)
@@ -68,7 +61,6 @@ class GameController {
 	}
 
 	// runBotsOnlyGame(){
-	// 	// debugger
 	// 	while( !this.board.gameOver && this.board.movementNotation.length < 50){
 	// 		this.queryNextBotMove();
 	// 	}
@@ -102,9 +94,8 @@ class GameController {
 		}
 	}
 }
-gameController = new GameController() //TODO this globally accessible gameController is critical to the view functioning, that seems not good
+gameController = new GameController()
 
-// TODO some tests just setup the move they're testing but don't perform it (enPassants)
 tests = {
 	pawnPromotion: 	[1,18, 50,42, 11,27, 59,41, 3,19, 42,34, 14,22, 34,27, 18,24, 51, 43, 10, 26, 41, 17, 26, 34, 49, 33, 19, 33, 57, 42, 33, 49, 27, 19, 34, 43, 19, 12, 43, 52, 12,  5, 4,   5, 17,  9, 52, 61 ],
   sim2: 					[1,18, 50,42, 11,27, 59,41, 3,19, 42,34, 14,22, 34,27, 0,1,   27, 18, 9,  18, 51, 35, 15, 23, 58, 23 ],

@@ -31,11 +31,4 @@ class MoveObject {
     return this._startPosition
   }
 
-  // set checkNotation(newCheckNotation){
-  //   this._checkNotation = newCheckNotation
-  // }
-  // get checkNotation(){
-  //   return this._checkNotation
-  // }
-
 }
