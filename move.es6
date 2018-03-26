@@ -17,6 +17,11 @@ class MoveObject {
     this.captureNotation = options["captureNotation"] || ""
     this.positionNotation = options["positionNotation"] || ""
     this.promotionNotation = options["promotionNotation"] || ""
+    this.isCastle = false;
+    this.isQueenSideCastle = false;
+    this.isKingSideCastle = false;
+    this.attackedPositions = {};
+    this.defendedPositions = {};
   }
   set endPosition(newEndPosition){
     this._endPosition = newEndPosition

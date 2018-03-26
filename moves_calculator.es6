@@ -38,9 +38,11 @@ class MovesCalculator {
         if ( this.board.positionEmpty(currentPosition) ){
           this.viablePositions[currentPosition] = move
         } else if( this.board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
+          // this.attackedPositions[currentPosition] = this.board.pieceObject(currentPosition)
           this.viablePositions[currentPosition] = move
           break
         } else if( this.board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
+          // this.defendedPositions[currentPosition] = this.board.pieceObject(currentPosition)
           break
         };
       };
@@ -294,6 +296,8 @@ class MovesCalculator {
           moveObject.increment = + 2
           moveObject.rangeLimit = 1
           moveObject.fullNotation = "O-O";
+          moveObject.isCastle = true;
+          moveObject.isKingSideCastle = true;
           moveObject.startPosition = startPosition;
           moveObject.additionalActions = function(args){
             let position = args["position"],
@@ -308,6 +312,8 @@ class MovesCalculator {
           moveObject.increment = - 2
           moveObject.rangeLimit = 1
           moveObject.fullNotation = "O-O-O";
+          moveObject.isCastle = true;
+          moveObject.isQueenSideCastle = true;
           moveObject.startPosition = startPosition;
           moveObject.additionalActions = function(args){
             let position = args["position"],

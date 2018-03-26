@@ -50,7 +50,7 @@ class Rules {
 
   static checkQuery({board: board, startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions, moveObject: moveObject}){
     if(
-      !Board.prototype.isPrototypeOf( args["board"] ) ||
+      !Board.prototype.isPrototypeOf( board ) ||
       typeof startPosition !== "number" ||
       !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
       !(typeof additionalActions === "function" || typeof additionalActions === "undefined")

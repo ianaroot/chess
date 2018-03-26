@@ -73,7 +73,6 @@ class Api {
     } else {
       newBoard._officiallyMovePiece( moveObject )
     }
-    alert('you have passed an illegal move to resultOfHypotheticalMove. at least i think so. anyway, the board about to be returned is undefined. the move in question was ' + alphaNumericStartPosition + ' to ' + alphaNumericEndPosition)
     return newBoard
   }
 

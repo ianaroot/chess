@@ -20,6 +20,7 @@ class Bot {
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
     console.log(homeTeam)
     console.log(move)
+
     return move
 
   }
