@@ -1,8 +1,8 @@
 class View{
-  constructor(_gameController){
+  constructor(_game){
     this.boundHighlightTile = this.highlightTile.bind(this)
     this.boundAttemptMove = this.attemptMove.bind(this)
-    this._gameController = _gameController
+    this._game = _game
   }
 
   static get TILE_HEIGHT() { return "49" }
@@ -49,9 +49,9 @@ class View{
       };
     };
     this.setTileClickListener();
-    this.blackCaptureDivNeedsExpanding(board);
-    this.whiteCaptureDivNeedsExpanding(board);
-    this.updateCaptures(board);
+    this.blackCaptureDivNeedsExpanding(this._game.capturedPieces);
+    this.whiteCaptureDivNeedsExpanding(this._game.capturedPieces);
+    this.updateCaptures(this._game.capturedPieces);
     this.clearAlerts();
 		this.updateTeamAllowedToMove(board);
     this.displayAlerts(alerts)
@@ -66,7 +66,7 @@ class View{
     return firstInitial + secondInitial
   };
   highlightTile(){
-    if(!this._gameController.board.gameOver){
+    if(!this._game.board.gameOver){
       let target = arguments[0].currentTarget,
       img = target.children[0],
       position = Board.gridCalculatorReverse( target.id ),
@@ -75,8 +75,8 @@ class View{
       this.setTileClickListener();
       if (img) {
         team = this.teamSet(img.src)
-        if (team === this._gameController.board.allowedToMove){
-          let viables = Rules.viablePositionsFromKeysOnly( {startPosition: position, board: this._gameController.board } )
+        if (team === this._game.allowedToMove){
+          let viables = Rules.viablePositionsFromKeysOnly( {startPosition: position, board: this._game.board } )
           for (let i = 0; i < viables.length; i++){
             let tilePosition = viables[i],
             alphaNumericPosition = Board.gridCalculator(tilePosition),
@@ -118,12 +118,11 @@ class View{
   }
   updateTeamAllowedToMove(board){
     let span = document.getElementById("team-allowed-to-move");
-    span.innerText = board.allowedToMove
+    span.innerText = this._game.allowedToMove
   }
-  updateCaptures(board){
+  updateCaptures(capturedPieces){
     let blackCaptureDiv = document.getElementById("black-captures"),
-      whiteCaptureDiv = document.getElementById("white-captures"),
-      capturedPieces = board.capturedPieces;
+      whiteCaptureDiv = document.getElementById("white-captures");
     blackCaptureDiv.innerHTML = "";
     whiteCaptureDiv.innerHTML = "";
     for (let i = 0; i < capturedPieces.length; i++){
@@ -140,7 +139,7 @@ class View{
       startPosition = Board.gridCalculatorReverse( startElement.id );
     this.unhighlLighTiles();
     this.setTileClickListener();
-    this._gameController.attemptMove(startPosition, endPosition);
+    this._game.attemptMove(startPosition, endPosition);
   }
   setTileClickListener(){
     let tiles = this.retrieveTiles();
@@ -149,18 +148,16 @@ class View{
     	tile.addEventListener("click", this.boundHighlightTile );
     }
   }
-  blackCaptureDivNeedsExpanding(board){
-    let capturedPieces = board.capturedPieces,
-      total = 0;
+  blackCaptureDivNeedsExpanding(capturedPieces){
+    let total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
-      if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.BLACK) { total++ }
+      if ( Board.parseTeam( capturedPieces[i] ) === Board.BLACK) { total++ }
     }
     if( total === 11 ){ this.expandBlackCaptureDiv() }
   }
 
-  whiteCaptureDivNeedsExpanding(board){
-    let capturedPieces = board.capturedPieces,
-      total = 0;
+  whiteCaptureDivNeedsExpanding(capturedPieces){
+    let total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
       if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.WHITE) { total++ }
     }
@@ -174,12 +171,12 @@ class View{
     let div = document.getElementById("black-captures")
     div.style.height = 98
   }
-  setUndoClickListener(gameController){
+  setUndoClickListener(game){
     let undoButton = document.getElementById("undo-button");
-    undoButton.addEventListener("click", gameController.undo.bind(gameController))
+    undoButton.addEventListener("click", game.undo.bind(game))
   }
-  setPauseClickListener(gameController){
+  setPauseClickListener(game){
     let pauseButton = document.getElementById("pause-button");
-    pauseButton.addEventListener("click", gameController.pause.bind(gameController))
+    pauseButton.addEventListener("click", game.pause.bind(game))
   }
 }

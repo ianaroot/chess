@@ -1,6 +1,6 @@
 class Rules {
 
-  static getMoveObject(startPosition, endPosition, board){
+  static getMoveObject({startPosition: startPosition, endPosition: endPosition, board: board, allowedToMove: allowedToMove}){
     if(
       !Board.prototype.isPrototypeOf( board ) ||
       typeof startPosition !== "number" ||
@@ -17,7 +17,7 @@ class Rules {
       moveObject.alerts.push("that tile is empty")
       return moveObject
     }
-    if( team !== board.allowedToMove ){
+    if( team !== allowedToMove ){
       moveObject.alerts.push( "other team's turn" )
       return moveObject
     }
@@ -50,7 +50,7 @@ class Rules {
 
   static checkQuery({board: board, startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions, moveObject: moveObject}){
     if(
-      !Board.prototype.isPrototypeOf( args["board"] ) ||
+      !Board.prototype.isPrototypeOf( board ) ||
       typeof startPosition !== "number" ||
       !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
       !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
@@ -163,14 +163,14 @@ class Rules {
     };
     return noLegalMoves
   }
-  static threeFoldRepetition(board){
-    let previousLayouts = board.previousLayouts,
-        repetitions = 0,
+  static threeFoldRepetition({board: board, previousBoards: previousBoards}){
+    // let previousLayouts = board.previousLayouts,
+      let repetitions = 0,
         threeFoldRepetition = false,
         currentLayOut = board.layOut;
 
-    for( let i = 0; i < previousLayouts.length; i++ ){
-      let comparisonLayout = previousLayouts[i],
+    for( let i = 0; i < previousBoards.length; i++ ){
+      let comparisonLayout = previousBoards[i].layOut,
         different = false;
       for( let j = 0; j < comparisonLayout.length; j++){
         if( comparisonLayout[j] !== currentLayOut[j] ){
@@ -185,8 +185,8 @@ class Rules {
     }
     return threeFoldRepetition
   }
-  static stalemateQuery({board: board, moveObject: moveObject}){
-    if (this.threeFoldRepetition(board) || this.noLegalMoves(board)){
+  static stalemateQuery({board: board, moveObject: moveObject, previousBoards: previousBoards}){
+    if (this.threeFoldRepetition({board: board, previousBoards: previousBoards}) || this.noLegalMoves(board)){
       moveObject.alerts.push( "stalemate" )
       board._endGame()
     }

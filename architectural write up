@@ -1,8 +1,8 @@
 architectural breakdown
 
-the action starts with the instantiation of a new GameController
-the new GameController creates it's own instances of Board, PostMovementRules, and View
-the meat and potatoes of the GameController is the attemptMove function
+the action starts with the instantiation of a new Game
+the new Game creates it's own instances of Board, PostMovementRules, and View
+the meat and potatoes of the Game is the attemptMove function
 attemptMove takes in a startPosition and an endPosition
 first it checks whether the game is over, then whether the tile is empty,
   and then whether the team whose piece is moving is actually the team whose turn it is
@@ -14,18 +14,18 @@ HOW
 getMoveObject returns an object that contains the following: is the move legal, what notation represents the movement,
   what additional actions happen as a result of the movement (e.g. en passant causes a capture at a different square, moving a king to castle causes the rook to move),
   and any alerts, generally reasons the move is not legal
-the GameController then refers to postMovementRules to check whether the move has an exciting additional impacts such as:
+the Game then refers to postMovementRules to check whether the move has an exciting additional impacts such as:
   pawn promotion, check, checkmate, or stalemate.
 if so postMovementRules will return some additional notation to append, and there may be a call to the view to display an alert
 
 
-the GameController is the main object. everything is run through the GameController. at very few points do any other objects reference one another
+the Game is the main object. everything is run through the Game. at very few points do any other objects reference one another
 the exceptions to this are:
 PostMovementRules calls on Rules as part of checking whether a given position is check, checkmate, or stalemate
 PostMovementRules calls the board directly for various position checks, and to promote pawns
 Rules creates new boards when looking at hypothetical board states as part of checking whether a given move would be illegally moving into checks
 Rules calls the board to make various position checks
-outside of this all calls are run from the GameController
+outside of this all calls are run from the Game
 
 BOARD
 state:
@@ -104,14 +104,14 @@ the view consists of the following six functions :
   pieceInitials, translates a piece object into a set of initials so the pieceImgSrc can have the initials
 
 GAMECONTROLLER
-  the GameController sort of runs the show. it is in charge of managing the other objects to whatever degree possible, and user input and such
-  at current the GameController is basically a one trick pony. it has no state (bullshit! it's injected with an instance of every other object on creation!) and outside of functions made to test functionality, the bulk of it is just the attemptMove function
-  outside of attemptMove the only functions on the GameController are three functions dedicated to changing the board state regarding whose turn it is
-  perhaps everything on the GameController could be extracted over to the board?
+  the Game sort of runs the show. it is in charge of managing the other objects to whatever degree possible, and user input and such
+  at current the Game is basically a one trick pony. it has no state (bullshit! it's injected with an instance of every other object on creation!) and outside of functions made to test functionality, the bulk of it is just the attemptMove function
+  outside of attemptMove the only functions on the Game are three functions dedicated to changing the board state regarding whose turn it is
+  perhaps everything on the Game could be extracted over to the board?
 
   i'm feeling like move Object, or maybe just Move is an overlooked class in this program
 
-GameController is aware of:
+Game is aware of:
   Board:
   Rules:
   MovesCalculator:
@@ -132,5 +132,5 @@ result of a given legal move
 
 view class contains all functions regarding displaying material
 
-gameController class is intended to act as the intermediary between all other classes
+game class is intended to act as the intermediary between all other classes
 to whatever degree possible, and to control the flow of a game.

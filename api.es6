@@ -1,7 +1,7 @@
 class Api {
   constructor (args){
     this._board = args["board"]
-    this._gameController = args["gameController"];
+    this._game = args["game"];
   }
   consoleLogBlackPov(){
     this._board.consoleLogBlackPov()
@@ -58,7 +58,7 @@ class Api {
   attemptMove(alphaNumericStartPosition, alphaNumericEndPosition){
     let startPosition = Board.gridCalculatorReverse( alphaNumericStartPosition ),
         endPosition = Board.gridCalculatorReverse( alphaNumericEndPosition );
-    this._gameController.attemptMove(startPosition, endPosition)
+    this._game.attemptMove(startPosition, endPosition)
   }
 
   resultOfHypotheticalMove({board: board, alphaNumericStartPosition: alphaNumericStartPosition, alphaNumericEndPosition: alphaNumericEndPosition}){
@@ -73,7 +73,6 @@ class Api {
     } else {
       newBoard._officiallyMovePiece( moveObject )
     }
-    alert('you have passed an illegal move to resultOfHypotheticalMove. at least i think so. anyway, the board about to be returned is undefined. the move in question was ' + alphaNumericStartPosition + ' to ' + alphaNumericEndPosition)
     return newBoard
   }
 
