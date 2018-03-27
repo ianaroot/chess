@@ -10,8 +10,8 @@ class GameController {
 		this.view.setUndoClickListener(this)
 		this.view.setPauseClickListener(this)
 		this.api = new Api({board: this.board, gameController: this});
-		this._whiteBot = new Bot()
-		this._blackBot = new Bot()
+		// this._whiteBot = new Bot()
+		// this._blackBot = new Bot()
 		if(this._whiteBot){ this.queryNextBotMove()}
 	}
 
