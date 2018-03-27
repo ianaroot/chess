@@ -170,6 +170,7 @@ class Bot {
         value = value + this.seekCheckMateRecursively({board: newBoard, move: newlyAvailableMoves[i], team: team, value: value, depth: depth, iteration: iteration})
       }
     }
+
     return value
   }
 

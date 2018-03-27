@@ -1,11 +1,12 @@
 class MovesCalculator {
-  constructor(options = {  startPosition: undefined, board: undefined, moveObjects: [], ignoreCastles: false
+  constructor({  startPosition: startPosition, board: board, moveObjects: moveObjects, ignoreCastles: ignoreCastles, endPosition: endPosition
   }){
-    this.startPosition = options["startPosition"];
-    this.board = options["board"];
-    this.moveObjects = [];
+    this.startPosition = startPosition;
+    this.board = board;
+    this.moveObjects = moveObjects || [];
     this.viablePositions = {};
-    this.ignoreCastles = options["ignoreCastles"];
+    this.ignoreCastles = ignoreCastles || false;
+    this.endPosition = endPosition;
     this.addMoves();
     this.calculateViablePositions();
   }
@@ -37,8 +38,10 @@ class MovesCalculator {
         }
         if ( this.board.positionEmpty(currentPosition) ){
           this.viablePositions[currentPosition] = move
+          if( this.endPosition === currentPosition){ return }
         } else if( this.board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
           this.viablePositions[currentPosition] = move
+          if( this.endPosition === currentPosition){ return }
           break
         } else if( this.board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
           break

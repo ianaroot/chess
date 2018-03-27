@@ -10,8 +10,8 @@ class GameController {
 		this.view.setUndoClickListener(this)
 		this.view.setPauseClickListener(this)
 		this.api = new Api({board: this.board, gameController: this});
-		// this._whiteBot = new Bot()
-		// this._blackBot = new Bot()
+		this._whiteBot = new Bot()
+		this._blackBot = new Bot()
 		if(this._whiteBot){ this.queryNextBotMove()}
 	}
 
@@ -105,7 +105,7 @@ tests = {
   queensCastles: 	[11,19, 51,43, 2,20, 58,44, 3,11, 59,51, 1,18, 57,42, 4,2, 60,58],
   kingsCastles: 	[12,20, 52,44, 5,12, 61,43, 6,23, 62,52, 4,6, 60,62],
   singleMoveTest: [1, 18],
-  threeFold: 			[1,18, 62,45, 18,1, 45,62, 1, 18, 62, 45, 18,  1, 45, 62],
+  threeFold: 			[1,18, 62,45, 18,1, 45,62, 1,18, 62,45, 18,1, 45,62],
   notThreeFold: 	[1,18, 62,45, 18,1, 45,62, 1, 18, 62, 45, 18,  1, 50,  42, 1, 18, 45, 62, 18,  1, 62, 45],
 	touchKings: 		[12,28, 51,35, 28,35, 60,51, 4,12, 51, 43, 12,20, 43,36, 20,28],
   check: 					[12,20, 57,42, 3,21, 42,32, 21,53, 32,17, ],
