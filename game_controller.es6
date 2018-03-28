@@ -78,7 +78,7 @@ class GameController {
 
 
 	undo(){
-		if( this.board.previousLayouts.length){
+		if( JSON.parse( this.board.previousLayouts ).length){
 			this.board._undo()
 			this.view.displayLayOut({board: this.board})
 		}
