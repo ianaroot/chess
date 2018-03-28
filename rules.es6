@@ -163,27 +163,74 @@ class Rules {
     };
     return noLegalMoves
   }
-  static threeFoldRepetition(board){
-    let previousLayouts = board.previousLayouts,
-        repetitions = 0,
-        threeFoldRepetition = false,
-        currentLayOut = board.layOut;
 
-    for( let i = 0; i < previousLayouts.length; i++ ){
-      let comparisonLayout = previousLayouts[i],
-        different = false;
-      for( let j = 0; j < comparisonLayout.length; j++){
-        if( comparisonLayout[j] !== currentLayOut[j] ){
-          different = true
-          break
-        }
-      };
-      if( !different ){ repetitions ++ }
-    };
-    if(repetitions >= 2){
-      threeFoldRepetition = true
+  static getDuplicatesForThreeFold( arr ) {
+    var all = {};
+    return arr.reduce(function( duplicates, value ) {
+      // strip out clarifying rank or file letter
+      //TODO record clarifying rank or file letter
+      //
+      value = value.replace(/=[QRNB]/, "")
+      value = value.replace(/\+/, "")
+      if( /[RNBQ][a-h1-8][a-h]/.exec(value) ){
+        value = value.replace(/[a-h1-8]/, "")
+      }
+      if( all[value] ) {
+        duplicates.push(value);
+        all[value] = false;
+      } else if( typeof all[value] == "undefined" ) {
+        all[value] = true;
+      }
+      return duplicates;
+    }, []);
+  }
+
+
+  static threeFoldRepetition(board){
+    let notations = board.movementNotation,
+      notationsSinceCaptureOrPromotion = []
+    for(let i = notations.length -1; i > 0; i --){
+      let notation = notations[i];
+      notationsSinceCaptureOrPromotion.push( notation )
+      if( /x/.exec(notation) || /=/.exec(notation) ){
+        break
+      }
+    // let movingTeam = board.allowedToMove,
+    //   nonMovingTeam = board.opposingTeam(movingTeam),
+    //   movingTeamMovesSinceCaptureOrPromotion = [],
+    //   nonMovingTeamMovesSinceCaptureOrPromotion = [];
+    //   for( let i = notationsSinceCaptureOrPromotion.length - 1; i > 0; i --){
+    //
+    //   }
+
+
     }
-    return threeFoldRepetition
+    let duplicates = Rules.getDuplicatesForThreeFold(notationsSinceCaptureOrPromotion)
+    if( duplicates.length < 2 ){
+      return false
+    } else {
+      debugger
+    }
+    // let previousLayouts = board.previousLayouts,
+    //     repetitions = 0,
+    //     threeFoldRepetition = false,
+    //     currentLayOut = board.layOut;
+    //
+    // for( let i = 0; i < previousLayouts.length; i++ ){
+    //   let comparisonLayout = previousLayouts[i],
+    //     different = false;
+    //   for( let j = 0; j < comparisonLayout.length; j++){
+    //     if( comparisonLayout[j] !== currentLayOut[j] ){
+    //       different = true
+    //       break
+    //     }
+    //   };
+    //   if( !different ){ repetitions ++ }
+    // };
+    // if(repetitions >= 2){
+    //   threeFoldRepetition = true
+    // }
+    // return threeFoldRepetition
   }
   static stalemateQuery({board: board, moveObject: moveObject}){
     if (this.threeFoldRepetition(board) || this.noLegalMoves(board)){
