@@ -1,13 +1,30 @@
 class Board {
 
   constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation, previousLayouts: previousLayouts}){
-    this._layOut = JSON.stringify(layOut) || Board._defaultLayOut()
-    this._capturedPieces = JSON.stringify(capturedPieces || []);
+    if( layOut ){
+      this.layOut = JSON.parse(layOut)
+    } else {
+      this.layOut = Board._defaultLayOut()
+    }
+    if ( capturedPieces ){
+      this.capturedPieces = JSON.parse(capturedPieces)
+    } else {
+      this.capturedPieces = [];
+    }
     this.gameOver = gameOver || false;
     this.allowedToMove = allowedToMove || Board.WHITE;
     // TODO stringify notation and previousLayouts
-    this.movementNotation = movementNotation || [];
-    this.previousLayouts = previousLayouts || [];
+    if (movementNotation){
+      this.movementNotation = JSON.parse(movementNotation)
+    } else {
+      this.movementNotation = [];
+    }
+    if ( previousLayouts ){
+      // this.previousLayouts = JSON.parse(previousLayouts)
+      this.previousLayouts = previousLayouts
+    } else {
+      this.previousLayouts = JSON.stringify([]);
+    }
   }
 
   static get WHITE()  { return "white" }
@@ -27,44 +44,45 @@ class Board {
 
 
   static _defaultLayOut(){
-    let layOut = [
-      {color: Board.WHITE, species: Board.ROOK}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.QUEEN}, {color: Board.WHITE, species: Board.KING}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.ROOK},
-      {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN},
-      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-      {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN},
-      {color: Board.BLACK, species: Board.ROOK}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.QUEEN}, {color: Board.BLACK, species: Board.KING}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.ROOK}
-    ];
+    // let layOut = [
+    //   {color: Board.WHITE, species: Board.ROOK}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.QUEEN}, {color: Board.WHITE, species: Board.KING}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.ROOK},
+    //   {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN},
+    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+    //   {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN},
+    //   {color: Board.BLACK, species: Board.ROOK}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.QUEEN}, {color: Board.BLACK, species: Board.KING}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.ROOK}
+    // ];
 
-    // let layOut = [{color: "white", species: "Rook"},{color: "empty", species: "empty"},{color: "white", species: "Bishop"},{color: "white", species: "Queen"},{color: "white", species: "King"},{color: "white", species: "Bishop"},
-    //   {color: "white", species: "Night"},{color: "white", species: "Rook"},{color: "white", species: "Pawn"},
-    //   {color: "white", species: "Pawn"},{color: "white", species: "Pawn"},{color: "white", species: "Pawn"},{color: "empty", species: "empty"},{color: "white", species: "Pawn"},{color: "white", species: "Pawn"},
-    //   {color: "white", species: "Pawn"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "white", species: "Night"},{color: "empty", species: "empty"},{color: "white", species: "Pawn"},
-    //   {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-    //   {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-    //   {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-    //   {color: "empty", species: "empty"},{color: "black", species: "Night"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-    //   {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},
-    //   {color: "black", species: "Pawn"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Rook"},
-    //   {color: "empty", species: "empty"},{color: "black", species: "Bishop"},{color: "black", species: "Queen"},{color: "black", species: "King"},{color: "black", species: "Bishop"},{color: "black", species: "Night"},
-    //   {color: "black", species: "Rook"}]; //approachingMate used for training bot to seek mate
+    let layOut = [{color: "white", species: "Rook"},{color: "empty", species: "empty"},{color: "white", species: "Bishop"},{color: "white", species: "Queen"},{color: "white", species: "King"},{color: "white", species: "Bishop"},
+      {color: "white", species: "Night"},{color: "white", species: "Rook"},{color: "white", species: "Pawn"},
+      {color: "white", species: "Pawn"},{color: "white", species: "Pawn"},{color: "white", species: "Pawn"},{color: "empty", species: "empty"},{color: "white", species: "Pawn"},{color: "white", species: "Pawn"},
+      {color: "white", species: "Pawn"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "white", species: "Night"},{color: "empty", species: "empty"},{color: "white", species: "Pawn"},
+      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
+      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
+      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
+      {color: "empty", species: "empty"},{color: "black", species: "Night"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
+      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},
+      {color: "black", species: "Pawn"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Rook"},
+      {color: "empty", species: "empty"},{color: "black", species: "Bishop"},{color: "black", species: "Queen"},{color: "black", species: "King"},{color: "black", species: "Bishop"},{color: "black", species: "Night"},
+      {color: "black", species: "Rook"}]; //approachingMate used for training bot to seek mate
 
     // for(let i = 0; i < layOut.length; i ++){
     //   let pieceObject = layOut[i]
     //   layOut[i] = JSON.stringify(pieceObject)
     // }
-    return JSON.stringify(layOut)
+    // return JSON.stringify(layOut)
+    return layOut
   }
 
-  get layOut() {
-    return JSON.parse(this._layOut)
-  }
+  // get layOut() {
+  //   return JSON.parse(this._layOut)
+  // }
 
-  get capturedPieces(){
-    return JSON.parse(this._capturedPieces)
-  }
+  // get capturedPieces(){
+  //   return JSON.parse(this._capturedPieces)
+  // }
 
   static _boundaries(){
     return { upperLimit: 63, lowerLimit: 0 }
@@ -183,7 +201,9 @@ class Board {
 
   _undo(){
     this.layOut = this.lastLayout()
-    this.previousLayouts.pop()
+    let parsedPrevious = JSON.parse(this.previousLayouts);
+    parsedPrevious.pop();
+    this.previousLayouts = JSON.stringify(parsedPrevious)
     let undoneNotation = this.movementNotation.pop(),
       captureNotationMatch = undoneNotation.match(/x/);
     if( captureNotationMatch ){
@@ -341,12 +361,14 @@ class Board {
   }
 
   deepCopy(){
-    // let newLayOut = Board._deepCopy(this.layOut),
-    //     newCapturedPieces = Board._deepCopy(this.capturedPieces),
-      let newMovementNotation = Board._deepCopy(this.movementNotation),
-        newPreviousLayouts = Board._deepCopy(this.previousLayouts),
+    let stringLayOut = JSON.stringify(this.layOut),
+        stringCaptures = JSON.stringify(this.capturedPieces),
+        newMovementNotation = JSON.stringify(this.movementNotation),
+        newPreviousLayouts = JSON.stringify(this.previousLayouts),
+        // newMovementNotation = Board._deepCopy(this.movementNotation),
+        // newPreviousLayouts = Board._deepCopy(this.previousLayouts),
 
-        newBoard = new Board({layOut: this.layOut, capturedPieces: this.capturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
+        newBoard = new Board({layOut: stringLayOut, capturedPieces: stringCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
     return newBoard;
   }
 
@@ -419,14 +441,24 @@ class Board {
   }
 
   _storeCurrentLayoutAsPrevious(){
-    let layOutCopy = Board._deepCopy( this.layOut );
-    this.previousLayouts.push(layOutCopy)
+    // let layOutCopy = Board._deepCopy( this.layOut );
+    // this.previousLayouts.push(layOutCopy)
+    // debugger
+    let parsedPrevious =  this.previousLayouts
+    if( parsedPrevious === JSON.stringify([]) ){
+      parsedPrevious = parsedPrevious.replace(/]/, '')
+    } else {
+      parsedPrevious = parsedPrevious.replace(/]$/, ',')
+    }
+    parsedPrevious = parsedPrevious + JSON.stringify(this.layOut)
+    parsedPrevious = parsedPrevious + "]"
+    this.previousLayouts = parsedPrevious
   }
 
   addToCaptures(pieceObject){
     let captures = this.capturedPieces;
     captures.push(pieceObject);
-    this._capturedPieces = JSON.stringify(captures)
+    // this._capturedPieces = JSON.stringify(captures)
   }
 
   _capture(position){
@@ -443,7 +475,11 @@ class Board {
   }
 
   lastLayout(){
-    return this.previousLayouts[this.previousLayouts.length - 1]
+    // return this.previousLayouts[this.previousLayouts.length - 1]
+    let parsedPrevious = JSON.parse(this.previousLayouts),
+      oldLayout = parsedPrevious[parsedPrevious.length - 1];
+      // debugger
+    return oldLayout;
   }
 
   _oneSpaceDownIsEmpty(position){
@@ -630,19 +666,21 @@ class Board {
 
   _emptify(position){
     // this.layOut[position] = JSON.stringify({color: Board.EMPTY, species: Board.EMPTY})
-    // this._layOut[position] = {color: Board.EMPTY, species: Board.EMPTY}
-    this.setLayOut(position, {color: Board.EMPTY, species: Board.EMPTY})
+    this.layOut[position] = {color: Board.EMPTY, species: Board.EMPTY}
+    // this.setLayOut(position, {color: Board.EMPTY, species: Board.EMPTY})
   }
 
   _placePiece({position: position, pieceObject: pieceObject}){
     // this.layOut[position] = JSON.stringify(pieceObject)
-    this.setLayOut(position, pieceObject)
+    this.layOut[position] = pieceObject
+    // this.setLayOut(position, pieceObject)
   }
 
   _promotePawn(position){
     let teamString = this.teamAt(position);
     // this.layOut[position] = JSON.stringify({color: teamString , species: Board.QUEEN})
-    this.setLayOut(position, {color: teamString , species: Board.QUEEN})
+    this.layOut[position] = {color: teamString , species: Board.QUEEN}
+    // this.setLayOut(position, {color: teamString , species: Board.QUEEN})
   }
 
   teamAt(position){

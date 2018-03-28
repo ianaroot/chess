@@ -147,7 +147,10 @@ class Bot {
 
   }
 
-
+// moves = gameController.api.availableMovesDefault()
+// for( i = 0; i < moves.length; i++){
+// gameController._whiteBot.seekCheckMateRecursively({board: gameController.board, move: moves[i], team: Board.WHITE, value: 50, depth: 2, iteration: 0})
+// }
   seekCheckMateRecursively({board: board, move: move, team: team, value: value, depth: depth, iteration: iteration}){
     if (iteration > depth){
       return value
