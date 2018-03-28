@@ -286,13 +286,15 @@ class MovesCalculator {
       King: function({board: board, startPosition: startPosition, ignoreCastles: ignoreCastles}){
         let moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown(),
                     MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()
-                  ];
+                  ],
+          team = board.teamAt(startPosition)
         for (let i = 0; i < moveObjects.length; i++ ) {
           moveObjects[i].rangeLimit = 1;
           moveObjects[i].pieceNotation = "K";
           moveObjects[i].startPosition = startPosition
         };
-        if ( !ignoreCastles && board.kingSideCastleViableFrom(startPosition) ){
+        // if ( !ignoreCastles && board.kingSideCastleViableFrom(startPosition) ){
+        if ( !ignoreCastles && board.kingSideCastleViableFor(team) ){
           let moveObject = MovesCalculator.genericMovements().horizontalLeft()
           moveObject.increment = + 2
           moveObject.rangeLimit = 1
@@ -306,7 +308,8 @@ class MovesCalculator {
           }
           moveObjects.push(moveObject)
         };
-        if ( !ignoreCastles && board.queenSideCastleViableFrom(startPosition) ){
+        // if ( !ignoreCastles && board.queenSideCastleViableFrom(startPosition) ){
+        if ( !ignoreCastles && board.queenSideCastleViableFor(team) ){
           let moveObject = MovesCalculator.genericMovements().horizontalRight()
           moveObject.increment = - 2
           moveObject.rangeLimit = 1

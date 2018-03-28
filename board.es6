@@ -273,7 +273,7 @@ class Board {
   blackPawnDoubleSteppedTo(position){
     // only to be called if already know the black pawn is at rank 4
     var result;
-    let blackMoves = this.movesFor(Board.BLACK),
+    let blackMoves = this.movesNotationFor(Board.BLACK),
       square = Board.gridCalculator(position),
       hypotheticalSingleStepSquare = square[0] + '6'; //e.g. if the double step would've been to a4, then the single step it may have taken would've been to a3
     if( blackMoves[blackMoves.length -1] === square ){
@@ -297,7 +297,7 @@ class Board {
     // debugger
     // only to be called if already know the black pawn is at rank 4
     var result;
-    let whiteMoves = this.movesFor(Board.WHITE),
+    let whiteMoves = this.movesNotationFor(Board.WHITE),
       square = Board.gridCalculator(position),
       hypotheticalSingleStepSquare = square[0] + '3'; //e.g. if the double step would've been to a4, then the single step it may have taken would've been to a3
     if( whiteMoves[whiteMoves.length -1] === square ){
@@ -313,7 +313,7 @@ class Board {
     return result
   }
 
-  movesFor(team){
+  movesNotationFor(team){
     // var initialElement;
     let teamMoves = [];
     if( team === Board.WHITE ){
@@ -321,7 +321,7 @@ class Board {
     } else if (team === Board.BLACK ){
       var initialElement = 1
     } else {
-      alert( "bad input for board.movesFor: " + team )
+      alert( "bad input for board.movesNotationFor: " + team )
     }
     for(let i = initialElement; i < this.movementNotation.length; i = i + 2 ){
       teamMoves.push( this.movementNotation[i] )
@@ -489,22 +489,85 @@ class Board {
     }
   }
 
-  kingSideCastleViableFrom(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
-    return(
-      this.pieceHasNotMovedFrom(position) && this._kingSideCastleIsClear(position) && this._kingSideRookHasNotMoved(position)
-      && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
-      && !Rules.checkQuery({startPosition: (position), endPosition: (position + 1), board: this })
-    )
+  static backRankFor(team){
+    let rankArray = {
+      black: 8,
+      white: 1
+    }
+    return rankArray[team]
   }
 
-  queenSideCastleViableFrom(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
-    return(
-      this.pieceHasNotMovedFrom(position) && this._queenSideCastleIsClear(position) && this._queenSideRookHasNotMoved(position)
-      && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
-      && !Rules.checkQuery({startPosition: (position), endPosition: (position - 1), board: this })
-    )
+  // kingSideCastleViableFrom(position){
+  // let teamRank = Board.backRankFor( team )
+
+  // position = Board.convertPositionFromAlphaNumeric(position)
+  // return(
+  //   this.pieceHasNotMovedFrom(position) && this._kingSideCastleIsClear(position) && this._kingSideRookHasNotMoved(position)
+  //   && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
+  //   && !Rules.checkQuery({startPosition: (position), endPosition: (position + 1), board: this })
+  // )
+
+
+  // rook hasn't moved
+  // king hasn't moved
+  // space between is opened
+  kingSideCastleViableFor(team){
+    let moveNotations = this.movesNotationFor(team),
+      regexes = [/Rh/, /Rg/, /Rf/];
+    if(team === Board.WHITE){
+      var necessaryEmptyPositions = [5,6];
+      regexes = regexes.concat([/Ke2/, /Kd1/, /Kd2/, /Kf1/, /Kf2/, /Kg1/, /Kc1/])
+    } else if( team === Board.BLACK){
+      var necessaryEmptyPositions = [61,62];
+        regexes = regexes.concat([/Ke7/, /Kd8/, /Kd7/, /Kf8/, /Kf7/, /Kg8/, /Kc8/])
+    } else {
+      alert('bad input for board.kingSideCastleViableFor :' + team)
+    }
+    for(let j = 0; j < moveNotations.length; j++){
+      let notation = moveNotations[j];
+      for(let i = 0; i < regexes.length; i++){
+        let regex = regexes[i];
+        if( regex.exec(notation) ){ return false }
+      }
+    }
+    for( let i = 0; i < necessaryEmptyPositions.length; i++){
+      let necessaryEmptyPosition = necessaryEmptyPositions[i];
+      if( !this.positionEmpty( necessaryEmptyPosition ) ){ return false }
+    }
+    return true;
+  }
+
+  // queenSideCastleViableFrom(position){
+  //   position = Board.convertPositionFromAlphaNumeric(position)
+  //   return(
+  //     this.pieceHasNotMovedFrom(position) && this._queenSideCastleIsClear(position) && this._queenSideRookHasNotMoved(position)
+  //     && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
+  //     && !Rules.checkQuery({startPosition: (position), endPosition: (position - 1), board: this })
+  //   )
+  queenSideCastleViableFor(team){
+    let moveNotations = this.movesNotationFor(team),
+      regexes = [/Ra/, /Rb/, /Rc/, /Rd/];
+    if(team === Board.WHITE){
+      var necessaryEmptyPositions = [1,2,3];
+        regexes = regexes.concat([/Ke2/, /Kd1/, /Kd2/, /Kf1/, /Kf2/, /Kg1/, /Kc1/]);
+    } else if( team === Board.BLACK){
+      var necessaryEmptyPositions = [59,58,57];
+        regexes = regexes.concat([/Ke7/, /Kd8/, /Kd7/, /Kf8/, /Kf7/, /Kg8/, /Kc8/])
+    } else {
+      alert('bad input for board.kingSideCastleViableFor :' + team)
+    }
+    for(let j = 0; j < moveNotations.length; j++){
+      let notation = moveNotations[j];
+      for(let i = 0; i < regexes.length; i++){
+        let regex = regexes[i];
+        if( regex.exec(notation) ){ return false }
+      }
+    }
+    for( let i = 0; i < necessaryEmptyPositions.length; i++){
+      let necessaryEmptyPosition = necessaryEmptyPositions[i];
+      if( !this.positionEmpty( necessaryEmptyPosition ) ){ return false }
+    }
+    return true;
   }
 
 
