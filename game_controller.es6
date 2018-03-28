@@ -2,7 +2,7 @@ const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
 
 class GameController {
 	constructor(){
-		this.board = new Board();
+		this.board = new Board({});
     this.view = new View(this);
 		this._paused = false
 		this.view.displayLayOut({board: this.board})

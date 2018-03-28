@@ -60,7 +60,8 @@ class View{
     return "img/chesspieces/wikipedia/" + pieceInitials + ".png"
   };
   pieceInitials(pieceObject){
-    pieceObject = JSON.parse(pieceObject);
+    // debugger
+    // pieceObject = JSON.parse(pieceObject);
     let firstInitial = Board.parseTeam( pieceObject )[0],
       secondInitial = pieceObject.species[0];
     return firstInitial + secondInitial
@@ -128,7 +129,8 @@ class View{
     whiteCaptureDiv.innerHTML = "";
     for (let i = 0; i < capturedPieces.length; i++){
       let pieceObject = capturedPieces[i],
-        team = Board.parseTeam( JSON.parse(pieceObject ) ),
+        // team = Board.parseTeam( JSON.parse(pieceObject ) ),
+        team = Board.parseTeam( pieceObject ),
         pieceInitials = this.pieceInitials(pieceObject);
       this.displayPiece({pieceInitials: pieceInitials, gridPosition: team + "-captures"})
     }
@@ -153,7 +155,8 @@ class View{
     let capturedPieces = board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
-      if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.BLACK) { total++ }
+      // if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.BLACK) { total++ }
+      if ( Board.parseTeam( capturedPieces[i] ) === Board.BLACK) { total++ }
     }
     if( total === 11 ){ this.expandBlackCaptureDiv() }
   }
@@ -162,7 +165,8 @@ class View{
     let capturedPieces = board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
-      if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.WHITE) { total++ }
+      // if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.WHITE) { total++ }
+      if ( Board.parseTeam( capturedPieces[i] ) === Board.WHITE) { total++ }
     }
     if( total === 11 ){ this.expandWhiteCaptureDiv() }
   }

@@ -63,7 +63,7 @@ class Rules {
         danger             = false,
         newLayout          = Board._deepCopy(layOut),
         opposingTeamString = Board.opposingTeam(teamString),
-        newBoard = new Board(newLayout),
+        newBoard = new Board({layOut: newLayout}),
         dummyMoveObject = {startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions};
 
     newBoard._hypotheticallyMovePiece( dummyMoveObject )

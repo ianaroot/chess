@@ -1,12 +1,12 @@
 class Board {
 
-  constructor(layOut, options = { capturedPieces: [], gameOver: false, allowedToMove: Board.WHITE, movementNotation: [], previousLayouts: []}){
-    this.layOut = layOut || Board._defaultLayOut()
-    this.capturedPieces = options["capturedPieces"];
-    this.gameOver = options["gameOver"];
-    this.allowedToMove = options["allowedToMove"];
-    this.movementNotation = options["movementNotation"];
-    this.previousLayouts = options["previousLayouts"];
+  constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation, previousLayouts: previousLayouts}){
+    this._layOut = JSON.stringify(layOut) || Board._defaultLayOut()
+    this._capturedPieces = JSON.stringify(capturedPieces || []);
+    this.gameOver = gameOver || false;
+    this.allowedToMove = allowedToMove || Board.WHITE;
+    this.movementNotation = movementNotation || [];
+    this.previousLayouts = previousLayouts || [];
   }
 
   static get WHITE()  { return "white" }
@@ -50,11 +50,19 @@ class Board {
     //   {color: "empty", species: "empty"},{color: "black", species: "Bishop"},{color: "black", species: "Queen"},{color: "black", species: "King"},{color: "black", species: "Bishop"},{color: "black", species: "Night"},
     //   {color: "black", species: "Rook"}]; //approachingMate used for training bot to seek mate
 
-    for(let i = 0; i < layOut.length; i ++){
-      let pieceObject = layOut[i]
-      layOut[i] = JSON.stringify(pieceObject)
-    }
-    return layOut
+    // for(let i = 0; i < layOut.length; i ++){
+    //   let pieceObject = layOut[i]
+    //   layOut[i] = JSON.stringify(pieceObject)
+    // }
+    return JSON.stringify(layOut)
+  }
+
+  get layOut() {
+    return JSON.parse(this._layOut)
+  }
+
+  get capturedPieces(){
+    return JSON.parse(this._capturedPieces)
   }
 
   static _boundaries(){
@@ -187,7 +195,8 @@ class Board {
     let subtractedValue = 0,
         captures = this.capturedPieces;
     for( let i = 0; i < captures.length; i++){
-      let piece = JSON.parse( captures[i] );
+      // let piece = JSON.parse( captures[i] );
+      let piece = captures[i] ;
       if( Board.parseTeam( piece ) === team ){
         subtractedValue = subtractedValue + Board.pieceValues()[ Board.parseSpecies( piece ) ]
       }
@@ -250,13 +259,14 @@ class Board {
 
   pieceObject(position){
     position = Board.convertPositionFromAlphaNumeric(position)
-    return JSON.parse(this.layOut[position])
+    // return JSON.parse(this.layOut[position])
+    return this.layOut[position]
   }
 
-  pieceObjectFromLastLayout(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
-    return JSON.parse( this.lastLayout()[position] )
-  }
+  // pieceObjectFromLastLayout(position){
+  //   position = Board.convertPositionFromAlphaNumeric(position)
+  //   return JSON.parse( this.lastLayout()[position] )
+  // }
 
   _blackPawnAt(position){
     return Board.parseTeam( this.pieceObject(position) )=== Board.BLACK && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
@@ -335,7 +345,7 @@ class Board {
         newMovementNotation = Board._deepCopy(this.movementNotation),
         newPreviousLayouts = Board._deepCopy(this.previousLayouts),
 
-        newBoard = new Board( newLayOut, {capturedPieces: newCapturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
+        newBoard = new Board({layOut: newLayout, capturedPieces: newCapturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
     return newBoard;
   }
 
@@ -377,8 +387,8 @@ class Board {
     // there's a lot of space between _officiallyMovePiece and hypothetical. eg  not recording any data on hypothetical moves
     let startPosition = moveObject.startPosition,
       endPosition = moveObject.endPosition,
-      additionalActions = moveObject.additionalActions,
-      pieceObject = this.pieceObject(startPosition);
+      additionalActions = moveObject.additionalActions;
+      let pieceObject = this.pieceObject(startPosition);
     this._emptify(startPosition)
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ additionalActions.call(this, {position: startPosition} ) }
@@ -412,11 +422,17 @@ class Board {
     this.previousLayouts.push(layOutCopy)
   }
 
+  addToCaptures(pieceObject){
+    let captures = this.capturedPieces;
+    captures.push(pieceObject);
+    this._capturedPieces = JSON.stringify(captures)
+  }
+
   _capture(position){
     let captureNotation = ""
     if( !this.positionEmpty(position) ){
       let pieceObject = this.layOut[position];
-      this.capturedPieces.push(pieceObject)
+      this.addToCaptures(pieceObject)
       this._emptify(position)
       captureNotation = "x"
     } else {
@@ -605,17 +621,27 @@ class Board {
     return pieceHasNotMoved
   }
 
+  setLayOut(position, pieceObject){
+    let layOut = JSON.parse(this._layOut);
+    layOut[position] = pieceObject;
+    this._layOut = JSON.stringify(layOut)
+  }
+
   _emptify(position){
-    this.layOut[position] = JSON.stringify({color: Board.EMPTY, species: Board.EMPTY})
+    // this.layOut[position] = JSON.stringify({color: Board.EMPTY, species: Board.EMPTY})
+    // this._layOut[position] = {color: Board.EMPTY, species: Board.EMPTY}
+    this.setLayOut(position, {color: Board.EMPTY, species: Board.EMPTY})
   }
 
   _placePiece({position: position, pieceObject: pieceObject}){
-    this.layOut[position] = JSON.stringify(pieceObject)
+    // this.layOut[position] = JSON.stringify(pieceObject)
+    this.setLayOut(position, pieceObject)
   }
 
   _promotePawn(position){
     let teamString = this.teamAt(position);
-    this.layOut[position] = JSON.stringify({color: teamString , species: Board.QUEEN})
+    // this.layOut[position] = JSON.stringify({color: teamString , species: Board.QUEEN})
+    this.setLayOut(position, {color: teamString , species: Board.QUEEN})
   }
 
   teamAt(position){
