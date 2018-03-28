@@ -1,15 +1,17 @@
 class Bot {
-  constructor(){
-
+  constructor(api, team){
+    this.api = api;
+    this.team = team
   }
 
   determineMove(args){
-    this.api = args["api"];
+    // this.api = args["api"];
     let board = args["board"],
         availableMoves = this.api.availableMovesDefault(),
-        homeTeam = board.allowedToMove;
-    this.team = homeTeam;
-    let gamePhase = this.calculateGamePhase({team: homeTeam, board: board}),
+        homeTeam = board.allowedToMove,
+    // this.team = homeTeam;
+    // let
+        gamePhase = this.calculateGamePhase({team: homeTeam, board: board}),
         weightMoves = this.gamePhasePriorities[gamePhase],
         weightedMoves = weightMoves({moves: availableMoves, board: board, team: homeTeam});
 
@@ -111,9 +113,9 @@ class Bot {
           avoidCheckMate = this.avoidCheckMate(board, move, team),// passing in newBoard seibnce we want to see the opponents possible responses
           stackDeckForCastle = this.stackDeckForCastle( board, move, 20 ),
           limitNonCastleKingMoves = this.limitNonCastleKingMoves( board, move ),
-          discourageEarlyQueenMovement = this.discourageEarlyQueenMovement( board, move ),
-          doubleMoveInOpeningPenalty = this. doubleMoveInOpeningPenalty( board, move );
-      weight = weight + accessibleSquaresWeight + stackDeckForCastle + limitNonCastleKingMoves + discourageEarlyQueenMovement + doubleMoveInOpeningPenalty + seekCheckMate
+          discourageEarlyQueenMovement = this.discourageEarlyQueenMovement( board, move );
+          // doubleMoveInOpeningPenalty = this. doubleMoveInOpeningPenalty( board, move );
+      weight = weight + accessibleSquaresWeight + stackDeckForCastle + limitNonCastleKingMoves + discourageEarlyQueenMovement + seekCheckMate// + doubleMoveInOpeningPenalty
       weight = Math.round( weight * 100 )/100
 
       if( weightedMoves[weight] ){

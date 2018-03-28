@@ -233,7 +233,8 @@ class Rules {
     // return threeFoldRepetition
   }
   static stalemateQuery({board: board, moveObject: moveObject}){
-    if (this.threeFoldRepetition(board) || this.noLegalMoves(board)){
+    // if (this.threeFoldRepetition(board) || this.noLegalMoves(board)){
+    if (this.noLegalMoves(board)){
       moveObject.alerts.push( "stalemate" )
       board._endGame()
     }

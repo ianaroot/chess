@@ -244,7 +244,7 @@ class MovesCalculator {
 
   static pieceSpecificMovements(){
     return {
-      Night: function({board: board, startPosition: startPosition}){
+      N: function({board: board, startPosition: startPosition}){
         let moveObjects = [MovesCalculator.genericMovements().nightHorizontalRightDown(), MovesCalculator.genericMovements().nightHorizontalLeftDown(), MovesCalculator.genericMovements().nightVerticalRightDown(),
                     MovesCalculator.genericMovements().nightVerticalLeftDown(), MovesCalculator.genericMovements().nightHorizontalRightUp(), MovesCalculator.genericMovements().nightHorizontalLeftUp(),
                     MovesCalculator.genericMovements().nightVerticalRightUp(), MovesCalculator.genericMovements().nightVerticalLeftUp()
@@ -256,7 +256,7 @@ class MovesCalculator {
         };
         return  moveObjects
       },
-      Rook: function({board: board, startPosition: startPosition}){
+      R: function({board: board, startPosition: startPosition}){
         let moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown()]
         for (let i = 0; i < moveObjects.length; i++ ) {
           moveObjects[i].rangeLimit = 7;
@@ -265,7 +265,7 @@ class MovesCalculator {
         };
         return moveObjects
       },
-      Bishop: function({board: board, startPosition: startPosition}){
+      B: function({board: board, startPosition: startPosition}){
         let moveObjects = [MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()]
         for (let i = 0; i < moveObjects.length; i++ ) {
           moveObjects[i].rangeLimit = 7;
@@ -274,8 +274,8 @@ class MovesCalculator {
         };
         return moveObjects
       },
-      Queen: function({board: board, startPosition: startPosition}){
-        let moveObjects =  MovesCalculator.pieceSpecificMovements().Rook({startPosition: startPosition, board: board}).concat( MovesCalculator.pieceSpecificMovements().Bishop({startPosition: startPosition, board: board}) )
+      Q: function({board: board, startPosition: startPosition}){
+        let moveObjects =  MovesCalculator.pieceSpecificMovements().R({startPosition: startPosition, board: board}).concat( MovesCalculator.pieceSpecificMovements().B({startPosition: startPosition, board: board}) )
         for (let i = 0; i < moveObjects.length; i++ ) {
           moveObjects[i].rangeLimit = 7;
           moveObjects[i].pieceNotation = "Q";
@@ -283,7 +283,7 @@ class MovesCalculator {
         };
         return moveObjects
       },
-      King: function({board: board, startPosition: startPosition, ignoreCastles: ignoreCastles}){
+      K: function({board: board, startPosition: startPosition, ignoreCastles: ignoreCastles}){
         let moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown(),
                     MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()
                   ],
@@ -325,11 +325,11 @@ class MovesCalculator {
         };
         return moveObjects
       },
-      Pawn: function({board: board, startPosition: startPosition}){
+      P: function({board: board, startPosition: startPosition}){
         let moveObjects = [],
           teamString = board.teamAt(startPosition),
           colorVars = {
-            black: {
+            B: {
               startRank: 7,
               nonAttackMove: MovesCalculator.genericMovements().verticalDown(),
               singleStepCheck: board._oneSpaceDownIsEmpty(startPosition),
@@ -341,7 +341,7 @@ class MovesCalculator {
               rightEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition + 1) && board.whitePawnDoubleSteppedTo(startPosition + 1),//board.whitePawnDoubleSteppedFrom(startPosition - 15),
               leftEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition - 1) && board.whitePawnDoubleSteppedTo(startPosition - 1)// board.whitePawnDoubleSteppedFrom(startPosition - 17),
             },
-            white: {
+            W: {
               startRank: 2,
               nonAttackMove: MovesCalculator.genericMovements().verticalUp(),
               singleStepCheck: board._oneSpaceUpIsEmpty(startPosition),

@@ -4,15 +4,15 @@ class GameController {
 	constructor(){
 		this.board = new Board({});
     this.view = new View(this);
-		this._paused = false
+		this._paused = true
 		this.view.displayLayOut({board: this.board})
 		this.view.setTileClickListener()
 		this.view.setUndoClickListener(this)
 		this.view.setPauseClickListener(this)
 		this.api = new Api({board: this.board, gameController: this});
-		this._whiteBot = new Bot()
-		this._blackBot = new Bot()
-		if(this._whiteBot){ this.queryNextBotMove()}
+		this._whiteBot = new Bot(this.api, Board.WHITE)
+		this._blackBot = new Bot(this.api, Board.BLACK)
+		if(this._whiteBot && !this._paused){ this.queryNextBotMove()}
 	}
 
 	pause(){

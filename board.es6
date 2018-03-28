@@ -27,15 +27,15 @@ class Board {
     }
   }
 
-  static get WHITE()  { return "white" }
-  static get BLACK()  { return "black" }
-  static get EMPTY()  { return "empty" }
-  static get PAWN()   { return "Pawn" }
-  static get ROOK()   { return "Rook" }
-  static get NIGHT()  { return "Night" }
-  static get BISHOP() { return "Bishop" }
-  static get QUEEN()  { return "Queen" }
-  static get KING()   { return "King" }
+  static get WHITE()  { return "W" }
+  static get BLACK()  { return "B" }
+  static get EMPTY()  { return "e" }
+  static get PAWN()   { return "P" }
+  static get ROOK()   { return "R" }
+  static get NIGHT()  { return "N" }
+  static get BISHOP() { return "B" }
+  static get QUEEN()  { return "Q" }
+  static get KING()   { return "K" }
   static get DARK()   { return "dark" }
   static get LIGHT()  { return "light" }
   static get MINOR_PIECES() { return [Board.NIGHT, Board.BISHOP] }
@@ -55,18 +55,16 @@ class Board {
     //   {color: Board.BLACK, species: Board.ROOK}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.QUEEN}, {color: Board.BLACK, species: Board.KING}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.ROOK}
     // ];
 
-    let layOut = [{color: "white", species: "Rook"},{color: "empty", species: "empty"},{color: "white", species: "Bishop"},{color: "white", species: "Queen"},{color: "white", species: "King"},{color: "white", species: "Bishop"},
-      {color: "white", species: "Night"},{color: "white", species: "Rook"},{color: "white", species: "Pawn"},
-      {color: "white", species: "Pawn"},{color: "white", species: "Pawn"},{color: "white", species: "Pawn"},{color: "empty", species: "empty"},{color: "white", species: "Pawn"},{color: "white", species: "Pawn"},
-      {color: "white", species: "Pawn"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "white", species: "Night"},{color: "empty", species: "empty"},{color: "white", species: "Pawn"},
-      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-      {color: "empty", species: "empty"},{color: "black", species: "Night"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},
-      {color: "black", species: "Pawn"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Rook"},
-      {color: "empty", species: "empty"},{color: "black", species: "Bishop"},{color: "black", species: "Queen"},{color: "black", species: "King"},{color: "black", species: "Bishop"},{color: "black", species: "Night"},
-      {color: "black", species: "Rook"}]; //approachingMate used for training bot to seek mate
+    let layOut = [
+      {color: Board.WHITE, species: Board.ROOK},  {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.WHITE, species: Board.BISHOP},  {color: Board.WHITE, species: Board.QUEEN}, {color: Board.WHITE, species: Board.KING},  {color: Board.EMPTY, species: Board.EMPTY},   {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.ROOK},
+      {color: Board.WHITE, species: Board.PAWN},  {color: Board.WHITE, species: Board.PAWN},  {color: Board.WHITE, species: Board.PAWN},    {color: Board.WHITE, species: Board.PAWN},  {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.WHITE, species: Board.PAWN},    {color: Board.WHITE, species: Board.PAWN},  {color: Board.WHITE, species: Board.PAWN},
+      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.WHITE, species: Board.NIGHT},   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.WHITE, species: Board.PAWN},  {color: Board.EMPTY, species: Board.EMPTY},   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.WHITE, species: Board.BISHOP},  {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+      {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.BLACK, species: Board.PAWN},  {color: Board.EMPTY, species: Board.EMPTY},   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+      {color: Board.BLACK, species: Board.NIGHT}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},   {color: Board.BLACK, species: Board.PAWN},  {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
+      {color: Board.BLACK, species: Board.PAWN},  {color: Board.BLACK, species: Board.PAWN},  {color: Board.BLACK, species: Board.PAWN},    {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},{color: Board.BLACK, species: Board.PAWN},   {color: Board.BLACK, species: Board.PAWN},  {color: Board.BLACK, species: Board.PAWN},
+      {color: Board.BLACK, species: Board.ROOK},  {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.BLACK, species: Board.BISHOP},  {color: Board.BLACK, species: Board.QUEEN}, {color: Board.BLACK, species: Board.KING},  {color: Board.BLACK, species: Board.BISHOP},  {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.ROOK}
+    ];//approachingMate used for training bot to seek mate
 
     // for(let i = 0; i < layOut.length; i ++){
     //   let pieceObject = layOut[i]

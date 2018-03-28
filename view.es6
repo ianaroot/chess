@@ -98,9 +98,9 @@ class View{
   teamSet(src){
     let regex = /(\w)[A-Z]\.png$/,
       teamInitial = src.match(regex)[1];
-    if( teamInitial === "b"){
+    if( teamInitial === "B"){
       return Board.BLACK;
-    }else if (teamInitial === "w") {
+    }else if (teamInitial === "W") {
       return Board.WHITE;
     }else {
       throw new Error("error in teamSet")
