@@ -224,7 +224,8 @@ class Bot {
   stackDeckForCastle(board, move, weight){
     let pieceType = board.pieceTypeAt(move.startPosition);
     if( pieceType === Board.KING && Bot.KINGSTARTPOSITIONS.includes(move.startPosition) &&
-    (board.queenSideCastleViableFrom(move.startPosition) || board.kingSideCastleViableFrom(move.startPosition)) && Bot.CASTLEENDPOSITIONS.includes(move.endPosition)      ) {
+    // (board.queenSideCastleViableFrom(move.startPosition) || board.kingSideCastleViableFrom(move.startPosition)) && Bot.CASTLEENDPOSITIONS.includes(move.endPosition)      ) {
+    (board.queenSideCastleViableFor(board.allowedToMove) || board.kingSideCastleViableFor(board.allowedToMove)) && Bot.CASTLEENDPOSITIONS.includes(move.endPosition)      ) {
       return weight
     }
     else {

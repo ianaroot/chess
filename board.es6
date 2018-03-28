@@ -5,6 +5,7 @@ class Board {
     this._capturedPieces = JSON.stringify(capturedPieces || []);
     this.gameOver = gameOver || false;
     this.allowedToMove = allowedToMove || Board.WHITE;
+    // TODO stringify notation and previousLayouts
     this.movementNotation = movementNotation || [];
     this.previousLayouts = previousLayouts || [];
   }
@@ -340,12 +341,12 @@ class Board {
   }
 
   deepCopy(){
-    let newLayOut = Board._deepCopy(this.layOut),
-        newCapturedPieces = Board._deepCopy(this.capturedPieces),
-        newMovementNotation = Board._deepCopy(this.movementNotation),
+    // let newLayOut = Board._deepCopy(this.layOut),
+    //     newCapturedPieces = Board._deepCopy(this.capturedPieces),
+      let newMovementNotation = Board._deepCopy(this.movementNotation),
         newPreviousLayouts = Board._deepCopy(this.previousLayouts),
 
-        newBoard = new Board({layOut: newLayout, capturedPieces: newCapturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
+        newBoard = new Board({layOut: this.layOut, capturedPieces: this.capturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
     return newBoard;
   }
 
