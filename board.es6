@@ -276,12 +276,6 @@ class Board {
     }
   }
 
-  pieceObject(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
-    // return JSON.parse(this.layOut[position])
-    return this.layOut[position]
-  }
-
   // pieceObjectFromLastLayout(position){
   //   position = Board.convertPositionFromAlphaNumeric(position)
   //   return JSON.parse( this.lastLayout()[position] )
@@ -660,6 +654,12 @@ class Board {
     let layOut = JSON.parse(this._layOut);
     layOut[position] = pieceObject;
     this._layOut = JSON.stringify(layOut)
+  }
+
+  pieceObject(position){
+    position = Board.convertPositionFromAlphaNumeric(position)
+    // return JSON.parse(this.layOut[position])
+    return this.layOut[position]
   }
 
   _emptify(position){
