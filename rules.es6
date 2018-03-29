@@ -40,15 +40,16 @@ class Rules {
     } else if( moveObject.illegal ) {
       moveObject.alerts.push("that's not how that piece moves")
       moveObject.illegal = true
+      // CHECKQUERY SELF
     } else if( Rules.checkQuery( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: moveObject.additionalActions})){
       moveObject.alerts.push("check yo king fool")
       moveObject.illegal = true
     }
-
     return moveObject
   }
 
   static checkQuery({board: board, startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions, moveObject: moveObject}){
+    // console.log("checkQuery")
     if(
       !Board.prototype.isPrototypeOf( board ) ||
       typeof startPosition !== "number" ||
@@ -61,7 +62,6 @@ class Rules {
         pieceObject        = layOut[startPosition],
         teamString         = board.teamAt(startPosition),
         danger             = false,
-        // newLayout          = Board._deepCopy(layOut),
         opposingTeamString = Board.opposingTeam(teamString),
         newBoard = board.deepCopy(),
         dummyMoveObject = {startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions};
@@ -69,10 +69,12 @@ class Rules {
     newBoard._hypotheticallyMovePiece( dummyMoveObject )
     let kingPosition = newBoard._kingPosition(teamString),
         enemyPositions = newBoard._positionsOccupiedByTeam(opposingTeamString);
+        // console.log("kingPosition :" + kingPosition)
     for(let i = 0; i < enemyPositions.length; i++){
       let enemyPosition = enemyPositions[i],
           enemyPieceType = newBoard.pieceTypeAt( enemyPosition ),
           differential = kingPosition - enemyPosition;
+          // console.log("enemyPosition :" + enemyPosition)
           // if(enemyPosition === 53){ console.log('yo') }
       // if( !( differential % 10 === 0 || differential % 8 === 0 || differential % 6 === 0 || differential % 7 === 0 || differential % 9 === 0 || differential % 15 === 0 || differential % 17 === 0 || Math.abs(differential) === 0 ) ){ continue}
       let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition, ignoreCastles: true}),//, endPosition: kingPosition}),
@@ -153,10 +155,9 @@ class Rules {
     let occcupiedPositions = board._positionsOccupiedByTeam(onDeckTeamString);
     for(let i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       let startPosition = occcupiedPositions[i],
-        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition}),
-        keys = Object.keys(movesCalculator.viablePositions);
-      for( let i = 0; i < keys.length && noLegalMoves; i++ ){
-        if( !this.checkQuery( {startPosition: startPosition, endPosition: keys[i], board: board}) ){
+        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition});
+      for( let key in movesCalculator.viablePositions ){
+        if( !this.checkQuery( {startPosition: startPosition, endPosition: key, board: board}) ){
           noLegalMoves = false
           break
         }
@@ -246,6 +247,7 @@ class Rules {
         attackingTeam = Board.opposingTeam(otherTeam),
         kingPosition = board._kingPosition(otherTeam),
         inCheck = this.checkQuery({board: board, startPosition: kingPosition, endPosition: kingPosition, moveObject: moveObject}),
+    // debugger
         noMoves = this.noLegalMoves(board),
         threeFold = this.threeFoldRepetition(board);
     this.checkmateQuery({inCheck: inCheck, noMoves: noMoves, moveObject: moveObject,board:  board,attackingTeam: attackingTeam})
