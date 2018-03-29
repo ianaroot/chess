@@ -23,7 +23,7 @@ class Rules {
     }
 
     let viableMovement = {},
-        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition, endPosition: endPosition});
+        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition})//, endPosition: endPosition});
     for( let key in movesCalculator.viablePositions ){
       if( parseInt(key) === endPosition ){
         moveObject = movesCalculator.viablePositions[key]
@@ -71,8 +71,11 @@ class Rules {
         enemyPositions = newBoard._positionsOccupiedByTeam(opposingTeamString);
     for(let i = 0; i < enemyPositions.length; i++){
       let enemyPosition = enemyPositions[i],
-          enemyPieceType = newBoard.pieceTypeAt( enemyPosition );
-      let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition, ignoreCastles: true}),
+          enemyPieceType = newBoard.pieceTypeAt( enemyPosition ),
+          differential = kingPosition - enemyPosition;
+          // if(enemyPosition === 53){ console.log('yo') }
+      // if( !( differential % 10 === 0 || differential % 8 === 0 || differential % 6 === 0 || differential % 7 === 0 || differential % 9 === 0 || differential % 15 === 0 || differential % 17 === 0 || Math.abs(differential) === 0 ) ){ continue}
+      let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition, ignoreCastles: true}),//, endPosition: kingPosition}),
           responseMoveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
       for( let key in movesCalculator.viablePositions ){
         if( parseInt(key) === kingPosition ){
