@@ -617,7 +617,7 @@ class Board {
 
   _positionsOccupiedByTeam(teamString){
     let positions = [];
-    for( let i = 0; i < this.layOut.length; i++){
+    for( let i = 0; i < this.layOut.length && positions.length < 16; i++){
       let teamAt = this.teamAt(i);
       if(teamAt === teamString){
         positions.push(i)
