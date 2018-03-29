@@ -348,28 +348,28 @@ class MovesCalculator {
             moveObject.rangeLimit = 1
             moveObject.pieceNotation = ""
             moveObject.startPosition = startPosition
-            moveObjects = moveObjects.concat(moveObject)
+            moveObjects.push(moveObject)
           }
           if ( pawnVars.doubleStepCheck ){
               let moveObject = pawnVars.nonAttackMove
             moveObject.rangeLimit = 2
             moveObject.pieceNotation = ""
             moveObject.startPosition = startPosition
-            moveObjects = moveObjects.concat(moveObject)
+            moveObjects.push(moveObject)
           }
           if ( pawnVars.leftAttackCheck ) {
             let moveObject = pawnVars.leftAttackMove
             moveObject.rangeLimit = 1
             moveObject.startPosition = startPosition
             moveObject.pieceNotation = Board.file(startPosition)
-            moveObjects = moveObjects.concat(moveObject)
+            moveObjects.push(moveObject)
           }
           if( pawnVars.rightAttackCheck ) {
             let moveObject = pawnVars.rightAttackMove
             moveObject.rangeLimit = 1
             moveObject.startPosition = startPosition
             moveObject.pieceNotation = Board.file(startPosition)
-            moveObjects = moveObjects.concat(moveObject)
+            moveObjects.push(moveObject)
           };
           if( pawnVars.rightEnPassantCheck ){
             let moveObject = pawnVars.rightAttackMove
@@ -381,7 +381,7 @@ class MovesCalculator {
                 captureNotation = this._capture(startPosition + 1) + "e.p.";
               return captureNotation
             }
-            moveObjects = moveObjects.concat(moveObject)
+            moveObjects.push(moveObject)
           }
           if( pawnVars.leftEnPassantCheck ){
             let moveObject = pawnVars.leftAttackMove
@@ -393,7 +393,7 @@ class MovesCalculator {
               let captureNotation = this._capture(startPosition - 1) + "e.p.";
               return captureNotation
             }
-            moveObjects = moveObjects.concat(moveObject)
+            moveObjects.push(moveObject)
           }
         return moveObjects;
       };
