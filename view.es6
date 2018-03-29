@@ -62,8 +62,8 @@ class View{
   pieceInitials(pieceObject){
     // debugger
     // pieceObject = JSON.parse(pieceObject);
-    let firstInitial = Board.parseTeam( pieceObject )[0],
-      secondInitial = pieceObject.species[0];
+    let firstInitial = Board.parseTeam( pieceObject ),
+      secondInitial = Board.parseSpecies(pieceObject);
     return firstInitial + secondInitial
   };
   highlightTile(){
