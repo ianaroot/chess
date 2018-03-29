@@ -44,27 +44,27 @@ class Board {
 
 
   static _defaultLayOut(){
-    // let layOut = [
-    //   {c: Board.WHITE, s: Board.ROOK}, {c: Board.WHITE, s: Board.NIGHT}, {c: Board.WHITE, s: Board.BISHOP}, {c: Board.WHITE, s: Board.QUEEN}, {c: Board.WHITE, s: Board.KING}, {c: Board.WHITE, s: Board.BISHOP}, {c: Board.WHITE, s: Board.NIGHT}, {c: Board.WHITE, s: Board.ROOK},
-    //   {c: Board.WHITE, s: Board.PAWN}, {c: Board.WHITE, s: Board.PAWN}, {c: Board.WHITE, s: Board.PAWN}, {c: Board.WHITE, s: Board.PAWN}, {c: Board.WHITE, s: Board.PAWN}, {c: Board.WHITE, s: Board.PAWN}, {c: Board.WHITE, s: Board.PAWN}, {c: Board.WHITE, s: Board.PAWN},
-    //   {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY},
-    //   {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY},
-    //   {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY},
-    //   {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY}, {c: Board.EMPTY, s: Board.EMPTY},
-    //   {c: Board.BLACK, s: Board.PAWN}, {c: Board.BLACK, s: Board.PAWN}, {c: Board.BLACK, s: Board.PAWN}, {c: Board.BLACK, s: Board.PAWN}, {c: Board.BLACK, s: Board.PAWN}, {c: Board.BLACK, s: Board.PAWN}, {c: Board.BLACK, s: Board.PAWN}, {c: Board.BLACK, s: Board.PAWN},
-    //   {c: Board.BLACK, s: Board.ROOK}, {c: Board.BLACK, s: Board.NIGHT}, {c: Board.BLACK, s: Board.BISHOP}, {c: Board.BLACK, s: Board.QUEEN}, {c: Board.BLACK, s: Board.KING}, {c: Board.BLACK, s: Board.BISHOP}, {c: Board.BLACK, s: Board.NIGHT}, {c: Board.BLACK, s: Board.ROOK}
-    // ];
-
     let layOut = [
-      Board.WHITE + Board.ROOK,  Board.EMPTY + Board.EMPTY, Board.WHITE + Board.BISHOP,  Board.WHITE + Board.QUEEN, Board.WHITE + Board.KING,  Board.EMPTY + Board.EMPTY,   Board.WHITE + Board.NIGHT, Board.WHITE + Board.ROOK,
-      Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,    Board.WHITE + Board.PAWN,  Board.EMPTY + Board.EMPTY, Board.WHITE + Board.PAWN,    Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,
-      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.WHITE + Board.NIGHT,   Board.EMPTY + Board.EMPTY, Board.WHITE + Board.PAWN,  Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.WHITE + Board.BISHOP,  Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.BLACK + Board.PAWN,  Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.BLACK + Board.NIGHT, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.BLACK + Board.PAWN,  Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,    Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,Board.BLACK + Board.PAWN,   Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,
-      Board.BLACK + Board.ROOK,  Board.EMPTY + Board.EMPTY, Board.BLACK + Board.BISHOP,  Board.BLACK + Board.QUEEN, Board.BLACK + Board.KING,  Board.BLACK + Board.BISHOP,  Board.BLACK + Board.NIGHT, Board.BLACK + Board.ROOK
-    ];//approachingMate used for training bot to seek mate
+      Board.WHITE + Board.ROOK, Board.WHITE + Board.NIGHT, Board.WHITE + Board.BISHOP, Board.WHITE + Board.QUEEN, Board.WHITE + Board.KING, Board.WHITE + Board.BISHOP, Board.WHITE + Board.NIGHT, Board.WHITE + Board.ROOK,
+      Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN,
+      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+      Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN,
+      Board.BLACK + Board.ROOK, Board.BLACK + Board.NIGHT, Board.BLACK + Board.BISHOP, Board.BLACK + Board.QUEEN, Board.BLACK + Board.KING, Board.BLACK + Board.BISHOP, Board.BLACK + Board.NIGHT, Board.BLACK + Board.ROOK
+    ];
+
+    // let layOut = [
+    //   Board.WHITE + Board.ROOK,  Board.EMPTY + Board.EMPTY, Board.WHITE + Board.BISHOP,  Board.WHITE + Board.QUEEN, Board.WHITE + Board.KING,  Board.EMPTY + Board.EMPTY,   Board.WHITE + Board.NIGHT, Board.WHITE + Board.ROOK,
+    //   Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,    Board.WHITE + Board.PAWN,  Board.EMPTY + Board.EMPTY, Board.WHITE + Board.PAWN,    Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,
+    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.WHITE + Board.NIGHT,   Board.EMPTY + Board.EMPTY, Board.WHITE + Board.PAWN,  Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.WHITE + Board.BISHOP,  Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.BLACK + Board.PAWN,  Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+    //   Board.BLACK + Board.NIGHT, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.BLACK + Board.PAWN,  Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+    //   Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,    Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,Board.BLACK + Board.PAWN,   Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,
+    //   Board.BLACK + Board.ROOK,  Board.EMPTY + Board.EMPTY, Board.BLACK + Board.BISHOP,  Board.BLACK + Board.QUEEN, Board.BLACK + Board.KING,  Board.BLACK + Board.BISHOP,  Board.BLACK + Board.NIGHT, Board.BLACK + Board.ROOK
+    // ];//approachingMate used for training bot to seek mate
 
     // for(let i = 0; i < layOut.length; i ++){
     //   let pieceObject = layOut[i]
