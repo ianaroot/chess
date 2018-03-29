@@ -1,5 +1,4 @@
 class Board {
-
   constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation}){//, previousLayouts: previousLayouts}){
     this.layOut = layOut|| Board._defaultLayOut()
     this.capturedPieces = capturedPieces || [];
@@ -368,14 +367,7 @@ class Board {
     moveObject.captureNotation = this._capture(endPosition);
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ moveObject.captureNotation = additionalActions.call(this, {position: startPosition} ) }
-    Rules.pawnPromotionQuery({board: this, moveObject: moveObject} );
-		Rules.checkmateQuery({board: this, moveObject: moveObject})
-    if( !this.gameOver ){
-      var otherTeam = this.teamNotMoving(),
-        otherTeamsKingPosition = this._kingPosition(otherTeam);
-      Rules.checkQuery( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: this, moveObject: moveObject} )
-      Rules.stalemateQuery({board: this, moveObject: moveObject});
-    }
+    Rules.postMoveQueries({board: this, moveObject: moveObject})
     this._recordNotationFrom(moveObject)
     if( !this.gameOver ){ this._nextTurn() }
   }

@@ -127,13 +127,8 @@ class Rules {
     }
     moveObject.promotionNotation = promotionNotation;
   }
-  static checkmateQuery({board: board, moveObject: moveObject}){
-    let checkNotation = "",
-        otherTeam = board.teamNotMoving(),
-        attackingTeam = Board.opposingTeam(otherTeam),
-        kingPosition = board._kingPosition(otherTeam),
-        inCheck = this.checkQuery({board: board, startPosition: kingPosition, endPosition: kingPosition}),
-        noMoves = this.noLegalMoves(board);
+
+  static checkmateQuery({inCheck: inCheck, noMoves: noMoves, moveObject: moveObject,board:  board,attackingTeam: attackingTeam}){
     if (inCheck && noMoves){
       moveObject.checkNotation = "#"
 			moveObject.alerts.push( "checkmate" )
@@ -237,5 +232,17 @@ class Rules {
       moveObject.alerts.push( "stalemate" )
       board._endGame()
     }
+  }
+
+  static postMoveQueries({board: board, moveObject: moveObject}){
+    Rules.pawnPromotionQuery({board: board, moveObject: moveObject} );
+    let checkNotation = "",
+        otherTeam = board.teamNotMoving(),
+        attackingTeam = Board.opposingTeam(otherTeam),
+        kingPosition = board._kingPosition(otherTeam),
+        inCheck = this.checkQuery({board: board, startPosition: kingPosition, endPosition: kingPosition, moveObject: moveObject}),
+        noMoves = this.noLegalMoves(board),
+        threeFold = this.threeFoldRepetition(board);
+    this.checkmateQuery({inCheck: inCheck, noMoves: noMoves, moveObject: moveObject,board:  board,attackingTeam: attackingTeam})
   }
 }
