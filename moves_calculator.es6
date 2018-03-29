@@ -15,14 +15,14 @@ class MovesCalculator {
 // have some conditions under which pawns can move
 // also conditions for castling
   addMoves(){
-    if ( this.startPosition === undefined || !this.board){
-      throw new Error("moveObject missing startPosition or board in addMovementTypesAndBoundaryChecks")
-    } else {
+    // if ( this.startPosition === undefined || !this.board){
+    //   throw new Error("moveObject missing startPosition or board in addMovementTypesAndBoundaryChecks")
+    // } else {
       let pieceType = this.board.pieceTypeAt(this.startPosition), //TODO maybe shouldn't rely on Nan below when endPosition is undefined
           pieceSpecificMovements = MovesCalculator.pieceSpecificMovements(pieceType)// , (this.endPosition - this.startPosition ) );
           // the difference between the two refs to pieceSpecificMovements in these couple lines is very unclear
       this.moveObjects = pieceSpecificMovements({startPosition: this.startPosition, board: this.board, ignoreCastles: this.ignoreCastles})
-    }
+    // }
   }
 
   calculateViablePositions(){

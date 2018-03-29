@@ -1,13 +1,13 @@
 class Rules {
 
   static getMoveObject(startPosition, endPosition, board){
-    if(
-      !Board.prototype.isPrototypeOf( board ) ||
-      typeof startPosition !== "number" ||
-      typeof endPosition !== "number"
-    ){
-      throw new Error("missing params in getMoveObject")
-    }
+    // if(
+    //   !Board.prototype.isPrototypeOf( board ) ||
+    //   typeof startPosition !== "number" ||
+    //   typeof endPosition !== "number"
+    // ){
+    //   throw new Error("missing params in getMoveObject")
+    // }
 
     let layOut = board.layOut,
         team = board.teamAt(startPosition),
@@ -50,14 +50,14 @@ class Rules {
 
   static checkQuery({board: board, startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions, moveObject: moveObject}){
     // console.log("checkQuery")
-    if(
-      !Board.prototype.isPrototypeOf( board ) ||
-      typeof startPosition !== "number" ||
-      !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
-      !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
-    ){
-      throw new Error("missing params in checkQuery")
-    }
+    // if(
+    //   !Board.prototype.isPrototypeOf( board ) ||
+    //   typeof startPosition !== "number" ||
+    //   !(typeof endPosition !== "number" || typeof endPosition !== "string") || //not sure where this got turned into a string...
+    //   !(typeof additionalActions === "function" || typeof additionalActions === "undefined")
+    // ){
+    //   throw new Error("missing params in checkQuery")
+    // }
     let layOut             = board.layOut,
         pieceObject        = layOut[startPosition],
         teamString         = board.teamAt(startPosition),
@@ -82,6 +82,7 @@ class Rules {
       for( let key in movesCalculator.viablePositions ){
         if( parseInt(key) === kingPosition ){
           responseMoveObject = movesCalculator.viablePositions[key]
+          break;
         }
       };
       if( !responseMoveObject.illegal ){
@@ -96,13 +97,12 @@ class Rules {
   }
 
   static viablePositionsFromKeysOnly({board: board, startPosition: startPosition}){
-    if(
-      !Board.prototype.isPrototypeOf( board ) ||
-      typeof startPosition !== "number"
-    ){
-      throw new Error("missing params in viablePositionsFromKeysOnly")
-    }
-
+    // if(
+    //   !Board.prototype.isPrototypeOf( board ) ||
+    //   typeof startPosition !== "number"
+    // ){
+    //   throw new Error("missing params in viablePositionsFromKeysOnly")
+    // }
     let movesCalculator = new MovesCalculator({board: board, startPosition: startPosition}),
         keysOnly = [];
     for (let property in movesCalculator.viablePositions) {
