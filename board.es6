@@ -343,14 +343,14 @@ class Board {
   deepCopy(){
     // let stringLayOut = JSON.stringify(this.layOut),
     let newLayout = Board._deepCopy(this.layOut),
-        stringCaptures = Board._deepCopy(this.capturedPieces),
+        newCaptures = Board._deepCopy(this.capturedPieces),
         newMovementNotation = Board._deepCopy(this.movementNotation),
         // newPreviousLayouts = JSON.stringify(this.previousLayouts),
         // newMovementNotation = Board._deepCopy(this.movementNotation),
         // newPreviousLayouts = Board._deepCopy(this.previousLayouts),
 
         // newBoard = new Board({layOut: stringLayOut, capturedPieces: stringCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
-        newBoard = new Board({layOut: newLayout, capturedPieces: stringCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, movementNotation: newMovementNotation});
+        newBoard = new Board({layOut: newLayout, capturedPieces: newCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, movementNotation: newMovementNotation});
     return newBoard;
   }
 
