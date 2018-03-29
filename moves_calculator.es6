@@ -19,8 +19,11 @@ class MovesCalculator {
       throw new Error("moveObject missing startPosition or board in addMovementTypesAndBoundaryChecks")
     } else {
       let pieceType = this.board.pieceTypeAt(this.startPosition),
-          pieceSpecificMovements = MovesCalculator.pieceSpecificMovements()[ pieceType ];
+      //TODO maybe shouldn't rely on Nan below when endPosition is undefined
+          pieceSpecificMovements = MovesCalculator.pieceSpecificMovements(pieceType, (this.endPosition - this.startPosition ) );
+          // the difference between the two refs to pieceSpecificMovements in these couple lines is very unclear
       this.moveObjects = pieceSpecificMovements({startPosition: this.startPosition, board: this.board, ignoreCastles: this.ignoreCastles})
+      // console.log(pieceType + " " + this.moveObjects.length)
     }
   }
 
