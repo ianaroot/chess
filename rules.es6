@@ -23,9 +23,9 @@ class Rules {
     }
 
     let viableMovement = {},
-        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition});
+        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition, endPosition: endPosition});
     for( let key in movesCalculator.viablePositions ){
-      if( key == endPosition ){
+      if( parseInt(key) === endPosition ){
         moveObject = movesCalculator.viablePositions[key]
         moveObject.endPosition = endPosition;
       }

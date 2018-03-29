@@ -62,13 +62,6 @@ class Board {
     return layOut
   }
 
-  // get layOut() {
-  //   return JSON.parse(this._layOut)
-  // }
-
-  // get capturedPieces(){
-  //   return JSON.parse(this._capturedPieces)
-  // }
 
   static _boundaries(){
     return { upperLimit: 63, lowerLimit: 0 }
