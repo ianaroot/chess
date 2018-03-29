@@ -483,18 +483,24 @@ class Board {
     return rankArray[team]
   }
 
-  kingSideCastleViableFor(team){
+  kingSideCastleViableFor(team, startPosition){
     let moveNotations = this.movesNotationFor(team),
       regexes = [/Rh/, /Rg/, /Rf/];
     if(team === Board.WHITE){
+      if( startPosition !== 4 ){ return false }
       var necessaryEmptyPositions = [5,6];
       regexes = regexes.concat([/Ke2/, /Kd1/, /Kd2/, /Kf1/, /Kf2/, /Kg1/, /Kc1/])
     } else if( team === Board.BLACK){
+      if( startPosition !== 60 ){ return false }
       var necessaryEmptyPositions = [61,62];
         regexes = regexes.concat([/Ke7/, /Kd8/, /Kd7/, /Kf8/, /Kf7/, /Kg8/, /Kc8/])
     } else {
       alert('bad input for board.kingSideCastleViableFor :' + team)
     }
+    for( let i = 0; i < necessaryEmptyPositions.length; i++){
+      let necessaryEmptyPosition = necessaryEmptyPositions[i];
+      if( !this.positionEmpty( necessaryEmptyPosition ) ){ return false }
+    }
     for(let j = 0; j < moveNotations.length; j++){
       let notation = moveNotations[j];
       for(let i = 0; i < regexes.length; i++){
@@ -502,35 +508,33 @@ class Board {
         if( regex.exec(notation) ){ return false }
       }
     }
-    for( let i = 0; i < necessaryEmptyPositions.length; i++){
-      let necessaryEmptyPosition = necessaryEmptyPositions[i];
-      if( !this.positionEmpty( necessaryEmptyPosition ) ){ return false }
-    }
     return true;
   }
 
-  queenSideCastleViableFor(team){
+  queenSideCastleViableFor(team, startPosition){
     let moveNotations = this.movesNotationFor(team),
       regexes = [/Ra/, /Rb/, /Rc/, /Rd/];
     if(team === Board.WHITE){
+      if( startPosition !== 4 ){ return false }
       var necessaryEmptyPositions = [1,2,3];
         regexes = regexes.concat([/Ke2/, /Kd1/, /Kd2/, /Kf1/, /Kf2/, /Kg1/, /Kc1/]);
     } else if( team === Board.BLACK){
+      if( startPosition !== 60 ){ return false }
       var necessaryEmptyPositions = [59,58,57];
         regexes = regexes.concat([/Ke7/, /Kd8/, /Kd7/, /Kf8/, /Kf7/, /Kg8/, /Kc8/])
     } else {
       alert('bad input for board.kingSideCastleViableFor :' + team)
     }
+    for( let i = 0; i < necessaryEmptyPositions.length; i++){
+      let necessaryEmptyPosition = necessaryEmptyPositions[i];
+      if( !this.positionEmpty( necessaryEmptyPosition ) ){ return false }
+    }
     for(let j = 0; j < moveNotations.length; j++){
       let notation = moveNotations[j];
       for(let i = 0; i < regexes.length; i++){
         let regex = regexes[i];
         if( regex.exec(notation) ){ return false }
       }
-    }
-    for( let i = 0; i < necessaryEmptyPositions.length; i++){
-      let necessaryEmptyPosition = necessaryEmptyPositions[i];
-      if( !this.positionEmpty( necessaryEmptyPosition ) ){ return false }
     }
     return true;
   }
