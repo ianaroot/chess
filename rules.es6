@@ -209,7 +209,7 @@ class Rules {
     if( duplicates.length < 2 ){
       return false
     } else {
-      debugger
+      console.log("threeFold triggered")
     }
     // let previousLayouts = board.previousLayouts,
     //     repetitions = 0,
@@ -233,8 +233,8 @@ class Rules {
     // return threeFoldRepetition
   }
   static stalemateQuery({board: board, moveObject: moveObject}){
-    // if (this.threeFoldRepetition(board) || this.noLegalMoves(board)){
-    if (this.noLegalMoves(board)){
+    if (this.threeFoldRepetition(board) || this.noLegalMoves(board)){
+    // if (this.noLegalMoves(board)){
       moveObject.alerts.push( "stalemate" )
       board._endGame()
     }

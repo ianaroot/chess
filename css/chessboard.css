@@ -98,7 +98,7 @@ body {
   font-weight: bold;
 }
 
-#white-captures {
+#W-captures {
   background-color: #fce38f;
   border-radius: 10px;
   border: 2px solid #000000;
@@ -106,7 +106,7 @@ body {
   width: 490
 }
 
-#black-captures {
+#B-captures {
   background-color: #fce38f;
   border-radius: 10px;
   border: 2px solid #000000;

@@ -122,8 +122,8 @@ class View{
     span.innerText = board.allowedToMove
   }
   updateCaptures(board){
-    let blackCaptureDiv = document.getElementById("black-captures"),
-      whiteCaptureDiv = document.getElementById("white-captures"),
+    let blackCaptureDiv = document.getElementById("B-captures"),
+      whiteCaptureDiv = document.getElementById("W-captures"),
       capturedPieces = board.capturedPieces;
     blackCaptureDiv.innerHTML = "";
     whiteCaptureDiv.innerHTML = "";
