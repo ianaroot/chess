@@ -150,10 +150,12 @@ class Rules {
     let occcupiedPositions = board._positionsOccupiedByTeam(onDeckTeamString);
     for(let i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       let startPosition = occcupiedPositions[i],
-        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition})
-      for( let key in movesCalculator.viablePositions ){
-        if( !this.checkQuery( {startPosition: startPosition, endPosition: key, board: board}) ){
+        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition}),
+        keys = Object.keys(movesCalculator.viablePositions);
+      for( let i = 0; i < keys.length && noLegalMoves; i++ ){
+        if( !this.checkQuery( {startPosition: startPosition, endPosition: keys[i], board: board}) ){
           noLegalMoves = false
+          break
         }
       };
     };
