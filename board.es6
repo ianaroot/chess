@@ -489,11 +489,11 @@ class Board {
     if(team === Board.WHITE){
       if( startPosition !== 4 ){ return false }
       var necessaryEmptyPositions = [5,6];
-      regexes = regexes.concat([/Ke2/, /Kd1/, /Kd2/, /Kf1/, /Kf2/, /Kg1/, /Kc1/])
+      regexes.push(/Ke2/, /Kd1/, /Kd2/, /Kf1/, /Kf2/, /Kg1/, /Kc1/)
     } else if( team === Board.BLACK){
       if( startPosition !== 60 ){ return false }
       var necessaryEmptyPositions = [61,62];
-        regexes = regexes.concat([/Ke7/, /Kd8/, /Kd7/, /Kf8/, /Kf7/, /Kg8/, /Kc8/])
+        regexes.push(/Ke7/, /Kd8/, /Kd7/, /Kf8/, /Kf7/, /Kg8/, /Kc8/)
     } else {
       alert('bad input for board.kingSideCastleViableFor :' + team)
     }
@@ -517,11 +517,11 @@ class Board {
     if(team === Board.WHITE){
       if( startPosition !== 4 ){ return false }
       var necessaryEmptyPositions = [1,2,3];
-        regexes = regexes.concat([/Ke2/, /Kd1/, /Kd2/, /Kf1/, /Kf2/, /Kg1/, /Kc1/]);
+        regexes.push(/Ke2/, /Kd1/, /Kd2/, /Kf1/, /Kf2/, /Kg1/, /Kc1/);
     } else if( team === Board.BLACK){
       if( startPosition !== 60 ){ return false }
       var necessaryEmptyPositions = [59,58,57];
-        regexes = regexes.concat([/Ke7/, /Kd8/, /Kd7/, /Kf8/, /Kf7/, /Kg8/, /Kc8/])
+        regexes.push(/Ke7/, /Kd8/, /Kd7/, /Kf8/, /Kf7/, /Kg8/, /Kc8/)
     } else {
       alert('bad input for board.kingSideCastleViableFor :' + team)
     }
