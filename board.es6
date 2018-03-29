@@ -251,7 +251,7 @@ class Board {
     return Board.parseTeam( this.pieceObject(position) )=== Board.WHITE && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
 
-  blackPawnDoubleSteppedTo(position){// only to be called if already know the black pawn is at rank 4
+  blackPawnDoubleSteppedTo(position){// only to be called if already know the black pawn is at rank 4 and in "position"
     var result;
     let blackMoves = this.movesNotationFor(Board.BLACK),
       square = Board.gridCalculator(position),
@@ -264,13 +264,14 @@ class Board {
     for(let i = 0; i < blackMoves; i < blackMoves.length){
       if( blackMoves[i] === hypotheticalSingleStepSquare || blackMoves[i] === hypotheticalSingleStepSquare + "+" ){
         result = false;
+        break
       }
     }
     return result
   }
 
 
-  whitePawnDoubleSteppedTo(position){// only to be called if already know the black pawn is at rank 4
+  whitePawnDoubleSteppedTo(position){// only to be called if already know the white pawn is at rank 4 and in "position"
     var result;
     let whiteMoves = this.movesNotationFor(Board.WHITE),
       square = Board.gridCalculator(position),
@@ -283,6 +284,7 @@ class Board {
     for(let i = 0; i < whiteMoves; i < whiteMoves.length){
       if( whiteMoves[i] === hypotheticalSingleStepSquare || whiteMoves[i] === hypotheticalSingleStepSquare + "+" ){
         result = false;
+        break
       }
     }
     return result
