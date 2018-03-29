@@ -75,8 +75,7 @@ class Rules {
           enemyPieceType = newBoard.pieceTypeAt( enemyPosition ),
           differential = kingPosition - enemyPosition;
           // console.log("enemyPosition :" + enemyPosition)
-          // if(enemyPosition === 53){ console.log('yo') }
-      // if( !( differential % 10 === 0 || differential % 8 === 0 || differential % 6 === 0 || differential % 7 === 0 || differential % 9 === 0 || differential % 15 === 0 || differential % 17 === 0 || Math.abs(differential) === 0 ) ){ continue}
+      if( !( differential % 10 === 0 || differential % 8 === 0 || differential % 6 === 0 || differential % 7 === 0 || differential % 9 === 0 || differential % 15 === 0 || differential % 17 === 0 || Math.abs(differential) < 8 ) ){ continue}
       let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition, ignoreCastles: true}),//, endPosition: kingPosition}),
           responseMoveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
       for( let key in movesCalculator.viablePositions ){
