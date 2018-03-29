@@ -30,7 +30,6 @@ class GameController {
 			return
 		} else {
 			board._officiallyMovePiece( moveObject )
-
 			this.view.displayLayOut({board: board, alerts: moveObject.alerts, startPosition: startPosition})
 
 			if(this.movingTeamHasBot() && !this._paused ){
