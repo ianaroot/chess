@@ -84,7 +84,7 @@ class Rules {
           moveObject.alerts.push( "check" )
           moveObject.checkNotation = "+";
         }
-        danger = true
+        return true
       }
     };
     return danger
@@ -143,6 +143,7 @@ class Rules {
       return false
     }
   }
+
   static noLegalMoves(board){
     let movingTeamString = board.allowedToMove,
       noLegalMoves = true;
@@ -166,10 +167,8 @@ class Rules {
 
   static getDuplicatesForThreeFold( arr ) {
     var all = {};
-    return arr.reduce(function( duplicates, value ) {
-      // strip out clarifying rank or file letter
+    return arr.reduce(function( duplicates, value ) {// strip out clarifying rank or file letter
       //TODO record clarifying rank or file letter
-      //
       value = value.replace(/=[QRNB]/, "")
       value = value.replace(/\+/, "")
       if( /[RNBQ][a-h1-8][a-h]/.exec(value) ){

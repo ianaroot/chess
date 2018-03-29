@@ -1,18 +1,11 @@
 class Board {
 
   constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation}){//, previousLayouts: previousLayouts}){
-      // this.layOut = JSON.parse(layOut)
     this.layOut = layOut|| Board._defaultLayOut()
     this.capturedPieces = capturedPieces || [];
     this.gameOver = gameOver || false;
     this.allowedToMove = allowedToMove || Board.WHITE;
     this.movementNotation = movementNotation || [];
-    // if ( previousLayouts ){
-    //   // this.previousLayouts = JSON.parse(previousLayouts)
-    //   this.previousLayouts = previousLayouts
-    // } else {
-    //   this.previousLayouts = JSON.stringify([]);
-    // }
   }
 
   static get WHITE()  { return "W" }
@@ -32,33 +25,28 @@ class Board {
 
 
   static _defaultLayOut(){
-    // let layOut = [
-    //   Board.WHITE + Board.ROOK, Board.WHITE + Board.NIGHT, Board.WHITE + Board.BISHOP, Board.WHITE + Board.QUEEN, Board.WHITE + Board.KING, Board.WHITE + Board.BISHOP, Board.WHITE + Board.NIGHT, Board.WHITE + Board.ROOK,
-    //   Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN,
-    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-    //   Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN,
-    //   Board.BLACK + Board.ROOK, Board.BLACK + Board.NIGHT, Board.BLACK + Board.BISHOP, Board.BLACK + Board.QUEEN, Board.BLACK + Board.KING, Board.BLACK + Board.BISHOP, Board.BLACK + Board.NIGHT, Board.BLACK + Board.ROOK
-    // ];
-
     let layOut = [
-      Board.WHITE + Board.ROOK,  Board.EMPTY + Board.EMPTY, Board.WHITE + Board.BISHOP,  Board.WHITE + Board.QUEEN, Board.WHITE + Board.KING,  Board.EMPTY + Board.EMPTY,   Board.WHITE + Board.NIGHT, Board.WHITE + Board.ROOK,
-      Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,    Board.WHITE + Board.PAWN,  Board.EMPTY + Board.EMPTY, Board.WHITE + Board.PAWN,    Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,
-      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.WHITE + Board.NIGHT,   Board.EMPTY + Board.EMPTY, Board.WHITE + Board.PAWN,  Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.WHITE + Board.BISHOP,  Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.BLACK + Board.PAWN,  Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.BLACK + Board.NIGHT, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.BLACK + Board.PAWN,  Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,    Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,Board.BLACK + Board.PAWN,   Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,
-      Board.BLACK + Board.ROOK,  Board.EMPTY + Board.EMPTY, Board.BLACK + Board.BISHOP,  Board.BLACK + Board.QUEEN, Board.BLACK + Board.KING,  Board.BLACK + Board.BISHOP,  Board.BLACK + Board.NIGHT, Board.BLACK + Board.ROOK
-    ];//approachingMate used for training bot to seek mate
+      Board.WHITE + Board.ROOK, Board.WHITE + Board.NIGHT, Board.WHITE + Board.BISHOP, Board.WHITE + Board.QUEEN, Board.WHITE + Board.KING, Board.WHITE + Board.BISHOP, Board.WHITE + Board.NIGHT, Board.WHITE + Board.ROOK,
+      Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN,
+      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+      Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN,
+      Board.BLACK + Board.ROOK, Board.BLACK + Board.NIGHT, Board.BLACK + Board.BISHOP, Board.BLACK + Board.QUEEN, Board.BLACK + Board.KING, Board.BLACK + Board.BISHOP, Board.BLACK + Board.NIGHT, Board.BLACK + Board.ROOK
+    ];
 
-    // for(let i = 0; i < layOut.length; i ++){
-    //   let pieceObject = layOut[i]
-    //   layOut[i] = JSON.stringify(pieceObject)
-    // }
-    // return JSON.stringify(layOut)
+    // let layOut = [
+    //   Board.WHITE + Board.ROOK,  Board.EMPTY + Board.EMPTY, Board.WHITE + Board.BISHOP,  Board.WHITE + Board.QUEEN, Board.WHITE + Board.KING,  Board.EMPTY + Board.EMPTY,   Board.WHITE + Board.NIGHT, Board.WHITE + Board.ROOK,
+    //   Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,    Board.WHITE + Board.PAWN,  Board.EMPTY + Board.EMPTY, Board.WHITE + Board.PAWN,    Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,
+    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.WHITE + Board.NIGHT,   Board.EMPTY + Board.EMPTY, Board.WHITE + Board.PAWN,  Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.WHITE + Board.BISHOP,  Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.BLACK + Board.PAWN,  Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+    //   Board.BLACK + Board.NIGHT, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.BLACK + Board.PAWN,  Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
+    //   Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,    Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,Board.BLACK + Board.PAWN,   Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,
+    //   Board.BLACK + Board.ROOK,  Board.EMPTY + Board.EMPTY, Board.BLACK + Board.BISHOP,  Board.BLACK + Board.QUEEN, Board.BLACK + Board.KING,  Board.BLACK + Board.BISHOP,  Board.BLACK + Board.NIGHT, Board.BLACK + Board.ROOK
+    // ];//approachingMate used for training bot to seek mate
+
     return layOut
   }
 
@@ -195,7 +183,6 @@ class Board {
     let subtractedValue = 0,
         captures = this.capturedPieces;
     for( let i = 0; i < captures.length; i++){
-      // let piece = JSON.parse( captures[i] );
       let piece = captures[i] ;
       if( Board.parseTeam( piece ) === team ){
         subtractedValue = subtractedValue + Board.pieceValues()[ Board.parseSpecies( piece ) ]
@@ -257,11 +244,6 @@ class Board {
     }
   }
 
-  // pieceObjectFromLastLayout(position){
-  //   position = Board.convertPositionFromAlphaNumeric(position)
-  //   return JSON.parse( this.lastLayout()[position] )
-  // }
-
   _blackPawnAt(position){
     return Board.parseTeam( this.pieceObject(position) )=== Board.BLACK && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
@@ -270,12 +252,7 @@ class Board {
     return Board.parseTeam( this.pieceObject(position) )=== Board.WHITE && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
 
-  // blackPawnDoubleSteppedFrom(position){
-  //   return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.BLACK && Board.parseSpecies( this.pieceObjectFromLastLayout(position) ) === Board.PAWN
-  // }
-
-  blackPawnDoubleSteppedTo(position){
-    // only to be called if already know the black pawn is at rank 4
+  blackPawnDoubleSteppedTo(position){// only to be called if already know the black pawn is at rank 4
     var result;
     let blackMoves = this.movesNotationFor(Board.BLACK),
       square = Board.gridCalculator(position),
@@ -293,13 +270,8 @@ class Board {
     return result
   }
 
-  // whitePawnDoubleSteppedFrom(position){
-  //   return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.WHITE && Board.parseSpecies( this.pieceObjectFromLastLayout(position) ) === Board.PAWN
-  // }
 
-  whitePawnDoubleSteppedTo(position){
-    // debugger
-    // only to be called if already know the black pawn is at rank 4
+  whitePawnDoubleSteppedTo(position){// only to be called if already know the black pawn is at rank 4
     var result;
     let whiteMoves = this.movesNotationFor(Board.WHITE),
       square = Board.gridCalculator(position),
@@ -318,7 +290,6 @@ class Board {
   }
 
   movesNotationFor(team){
-    // var initialElement;
     let teamMoves = [];
     if( team === Board.WHITE ){
       var initialElement = 0
@@ -334,15 +305,9 @@ class Board {
   }
 
   deepCopy(){
-    // let stringLayOut = JSON.stringify(this.layOut),
     let newLayout = Board._deepCopy(this.layOut),
         newCaptures = Board._deepCopy(this.capturedPieces),
         newMovementNotation = Board._deepCopy(this.movementNotation),
-        // newPreviousLayouts = JSON.stringify(this.previousLayouts),
-        // newMovementNotation = Board._deepCopy(this.movementNotation),
-        // newPreviousLayouts = Board._deepCopy(this.previousLayouts),
-
-        // newBoard = new Board({layOut: stringLayOut, capturedPieces: stringCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
         newBoard = new Board({layOut: newLayout, capturedPieces: newCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, movementNotation: newMovementNotation});
     return newBoard;
   }
@@ -453,7 +418,6 @@ class Board {
     // return this.previousLayouts[this.previousLayouts.length - 1]
     let parsedPrevious = JSON.parse(this.previousLayouts),
       oldLayout = parsedPrevious[parsedPrevious.length - 1];
-      // debugger
     return oldLayout;
   }
 
@@ -525,20 +489,6 @@ class Board {
     return rankArray[team]
   }
 
-  // kingSideCastleViableFrom(position){
-  // let teamRank = Board.backRankFor( team )
-
-  // position = Board.convertPositionFromAlphaNumeric(position)
-  // return(
-  //   this.pieceHasNotMovedFrom(position) && this._kingSideCastleIsClear(position) && this._kingSideRookHasNotMoved(position)
-  //   && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
-  //   && !Rules.checkQuery({startPosition: (position), endPosition: (position + 1), board: this })
-  // )
-
-
-  // rook hasn't moved
-  // king hasn't moved
-  // space between is opened
   kingSideCastleViableFor(team){
     let moveNotations = this.movesNotationFor(team),
       regexes = [/Rh/, /Rg/, /Rf/];
@@ -565,13 +515,6 @@ class Board {
     return true;
   }
 
-  // queenSideCastleViableFrom(position){
-  //   position = Board.convertPositionFromAlphaNumeric(position)
-  //   return(
-  //     this.pieceHasNotMovedFrom(position) && this._queenSideCastleIsClear(position) && this._queenSideRookHasNotMoved(position)
-  //     && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
-  //     && !Rules.checkQuery({startPosition: (position), endPosition: (position - 1), board: this })
-  //   )
   queenSideCastleViableFor(team){
     let moveNotations = this.movesNotationFor(team),
       regexes = [/Ra/, /Rb/, /Rc/, /Rd/];
@@ -597,7 +540,6 @@ class Board {
     }
     return true;
   }
-
 
   _kingSideCastleIsClear(kingPosition){
     return this.positionEmpty(kingPosition + 1) && this.positionEmpty(kingPosition + 2 )
@@ -641,27 +583,20 @@ class Board {
 
   pieceObject(position){
     position = Board.convertPositionFromAlphaNumeric(position)
-    // return JSON.parse(this.layOut[position])
     return this.layOut[position]
   }
 
   _emptify(position){
-    // this.layOut[position] = JSON.stringify({color: Board.EMPTY, species: Board.EMPTY})
     this.layOut[position] = Board.EMPTY + Board.EMPTY
-    // this.setLayOut(position, {color: Board.EMPTY, species: Board.EMPTY})
   }
 
   _placePiece({position: position, pieceObject: pieceObject}){
-    // this.layOut[position] = JSON.stringify(pieceObject)
     this.layOut[position] = pieceObject
-    // this.setLayOut(position, pieceObject)
   }
 
   _promotePawn(position){
     let teamString = this.teamAt(position);
-    // this.layOut[position] = JSON.stringify({color: teamString , species: Board.QUEEN})
     this.layOut[position] = teamString  + Board.QUEEN
-    // this.setLayOut(position, {color: teamString , species: Board.QUEEN})
   }
 
   teamAt(position){
