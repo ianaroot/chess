@@ -338,13 +338,7 @@ class Board {
   }
 
   _recordNotationFrom(moveObject){
-    if( moveObject.fullNotation ){
-      var notation = moveObject.fullNotation + moveObject.captureNotation + moveObject.positionNotation + moveObject.promotionNotation + moveObject.checkNotation
-    } else {
-      moveObject.positionNotation = Board.gridCalculator(moveObject.endPosition);
-      var	notation = moveObject.pieceNotation + moveObject.captureNotation + moveObject.positionNotation + moveObject.promotionNotation + moveObject.checkNotation;
-    }
-    this.movementNotation.push(notation)
+    this.movementNotation.push(moveObject.notation())
   }
 
   _hypotheticallyMovePiece( moveObject ){
@@ -355,7 +349,8 @@ class Board {
       let pieceObject = this.pieceObject(startPosition);
     this._emptify(startPosition)
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
-    if( additionalActions ){ additionalActions.call(this, {position: startPosition} ) }
+    if( additionalActions ){ additionalActions.call(this, startPosition) }
+    // if( additionalActions ){ additionalActions({position: startPosition}) }
   }
 
   _officiallyMovePiece( moveObject ){
@@ -366,9 +361,10 @@ class Board {
       pieceObject = this.pieceObject(startPosition);
     // this._storeCurrentLayoutAsPrevious()
     this._emptify(startPosition)
-    moveObject.captureNotation = this._capture(endPosition);
+    this._capture(endPosition);
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
-    if( additionalActions ){ moveObject.captureNotation = additionalActions.call(this, {position: startPosition} ) }
+    // console.log("inside _officiallyMovePiece startPosition is :" + startPosition)
+    if( additionalActions ){ additionalActions.call(this, startPosition) }
     Rules.postMoveQueries({board: this, moveObject: moveObject})
     this._recordNotationFrom(moveObject)
     if( !this.gameOver ){ this._nextTurn() }
@@ -396,16 +392,12 @@ class Board {
   }
 
   _capture(position){
-    let captureNotation = ""
+    // debugger
     if( !this.positionEmpty(position) ){
       let pieceObject = this.layOut[position];
       this.addToCaptures(pieceObject)
       this._emptify(position)
-      captureNotation = "x"
-    } else {
-      return captureNotation
     }
-      return captureNotation
   }
 
   lastLayout(){
@@ -589,6 +581,7 @@ class Board {
   }
 
   _placePiece({position: position, pieceObject: pieceObject}){
+    // if( pieceObject === "WR"){ debugger}
     this.layOut[position] = pieceObject
   }
 

@@ -41,12 +41,16 @@ class MovesCalculator {
         }
         if ( this.board.positionEmpty(currentPosition) ){
           // this.viablePositions[currentPosition] = move
-          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, illegal: false, pieceNotation: this.pieceType}) )// illegal may change later
-          if( this.endPosition === currentPosition){ return }
+          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, illegal: false, pieceNotation: movementType.pieceNotation}) )// illegal may change later
+          if( this.endPosition === currentPosition){
+            return
+          }
         } else if( this.board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
           // this.viablePositions[currentPosition] = move
-          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, illegal: false, pieceNotation: this.pieceType}) )// illegal may change later
-          if( this.endPosition === currentPosition){ return }
+          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, illegal: false, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )// illegal may change later
+          if( this.endPosition === currentPosition){
+            return
+          }
           break
         } else if( this.board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
           break
@@ -379,11 +383,10 @@ class MovesCalculator {
             let movementType = pawnVars.rightAttackMove
             movementType.rangeLimit = 1
             movementType.startPosition = startPosition
-            movementType.pieceNotation = Board.file(startPosition)
-            movementType.additionalActions = function(args){
-              let position = args["position"],
-                captureNotation = this._capture(startPosition + 1) + "e.p.";
-              return captureNotation
+            movementType.pieceNotation = Board.file(startPosition) + "x"
+            // let capture = board._capture.bind(board)
+            movementType.additionalActions = function(startPosition){
+              this._capture(startPosition + 1)// + "e.p.";
             }
             movementTypes.push(movementType)
           }
@@ -391,11 +394,10 @@ class MovesCalculator {
             let movementType = pawnVars.leftAttackMove
             movementType.rangeLimit = 1
             movementType.startPosition = startPosition
-            movementType.pieceNotation = Board.file(startPosition)
-            movementType.additionalActions = function(args){
-              let position = args["position"];
-              let captureNotation = this._capture(startPosition - 1) + "e.p.";
-              return captureNotation
+            movementType.pieceNotation = Board.file(startPosition) + "x"
+            // let capture = board._capture.bind(board)
+            movementType.additionalActions = function(startPosition){
+              this._capture(startPosition - 1)// + "e.p.";
             }
             movementTypes.push(movementType)
           }
@@ -492,13 +494,15 @@ class MovesCalculator {
           let movementType = MovesCalculator.genericMovements( MovesCalculator.horizontalLeftIncrement)
           movementType.increment = + 2
           movementType.rangeLimit = 1
-          movementType.fullNotation = "O-O";
+          movementType.pieceNotation = "O-O";
           movementType.startPosition = startPosition;
-          movementType.additionalActions = function(args){
-            let position = args["position"],
-                pieceObject = this.pieceObject( startPosition + 3 );
+          // let _emptify = board._emptify.bind(board),
+          //   _placePiece = board._placePiece.bind(board),
+          //   pieceObject = board.pieceObject.bind(board);
+          movementType.additionalActions = function(startPosition){
+            let rook = this.pieceObject( startPosition + 3 );
+            this._placePiece({ position: (startPosition + 1), pieceObject: rook })
             this._emptify( startPosition + 3)
-            this._placePiece({ position: (startPosition + 1), pieceObject: pieceObject })
           }
           movementTypes.push(movementType)
         };
@@ -506,13 +510,15 @@ class MovesCalculator {
           let movementType = MovesCalculator.genericMovements( MovesCalculator.horizontalRightIncrement)
           movementType.increment = - 2
           movementType.rangeLimit = 1
-          movementType.fullNotation = "O-O-O";
+          movementType.pieceNotation = "O-O-O";
           movementType.startPosition = startPosition;
-          movementType.additionalActions = function(args){
-            let position = args["position"],
-                pieceObject = this.pieceObject( startPosition - 4 );
+          // let _emptify = board._emptify.bind(board),
+          //   _placePiece = board._placePiece.bind(board),
+          //   pieceObject = board.pieceObject.bind(board);
+          movementType.additionalActions = function(startPosition){
+            let rook = this.pieceObject( startPosition - 4 );
+            this._placePiece({ position: (startPosition - 1), pieceObject: rook })
             this._emptify( startPosition - 4)
-            this._placePiece({ position: (startPosition - 1), pieceObject: pieceObject })
           }
           movementTypes.push(movementType)
         };

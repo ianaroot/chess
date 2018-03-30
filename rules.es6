@@ -24,12 +24,6 @@ class Rules {
 
     let viableMovement = {},
         movesCalculator = new MovesCalculator({board: board, startPosition: startPosition})//, endPosition: endPosition});
-    // for( let key in movesCalculator.viablePositions ){
-    //   if( parseInt(key) === endPosition ){
-    //     moveObject = movesCalculator.viablePositions[key]
-    //     moveObject.endPosition = endPosition;
-    //   }
-    // };
     for(let i = 0; i < movesCalculator.moveObjects.length; i++){
       let currentMoveObject = movesCalculator.moveObjects[i],
         queryPosition = currentMoveObject.endPosition;
@@ -57,7 +51,6 @@ class Rules {
   }
 
   static checkQuery({board: board, startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions, moveObject: moveObject}){
-    // console.log("checkQuery")
     // if(
     //   !Board.prototype.isPrototypeOf( board ) ||
     //   typeof startPosition !== "number" ||
@@ -86,12 +79,6 @@ class Rules {
       if( !( differential % 10 === 0 || differential % 8 === 0 || differential % 6 === 0 || differential % 7 === 0 || differential % 9 === 0 || differential % 15 === 0 || differential % 17 === 0 || Math.abs(differential) < 8 ) ){ continue}
       let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition, ignoreCastles: true}),//, endPosition: kingPosition}),
           responseMoveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
-      // for( let key in movesCalculator.viablePositions ){
-      //   if( parseInt(key) === kingPosition ){
-          // responseMoveObject = movesCalculator.viablePositions[key]
-          // break
-      //   }
-      // };
       for(let i = 0; i < movesCalculator.moveObjects.length; i++){
         let currentMoveObject = movesCalculator.moveObjects[i],
           endPosition = currentMoveObject.endPosition;
@@ -120,13 +107,6 @@ class Rules {
     // }
     let movesCalculator = new MovesCalculator({board: board, startPosition: startPosition}),
         keysOnly = [];
-    // for (let property in movesCalculator.viablePositions) {
-      // let newArgs = {board: board, startPosition: startPosition, endPosition: property };
-    //   if (movesCalculator.viablePositions.hasOwnProperty(property) && !this.checkQuery( newArgs ) ){
-    //     keysOnly.push(property)
-    //   }
-    // }
-
     for (let i = 0; i < movesCalculator.moveObjects.length; i++){
       let moveObject = movesCalculator.moveObjects[i],
         endPosition = moveObject.endPosition,
@@ -138,23 +118,19 @@ class Rules {
     return keysOnly
   }
 
-  static pawnPromotionQuery(args){
-    let board = args["board"],
-        moveObject = args["moveObject"],
-        promotionNotation = "";
+  static pawnPromotionQuery({board: board, moveObject: moveObject}){
     for(let i = 0; i < 8; i++){
       if ( board._blackPawnAt(i) ){
         board._promotePawn(i)
-        promotionNotation = "=Q"
+        moveObject.promotionNotation = "=Q"
       }
     }
     for(let i = 56; i < 64; i++){
       if( board._whitePawnAt(i) ){
         board._promotePawn(i)
-        promotionNotation = "=Q"
+        moveObject.promotionNotation = "=Q"
       }
     }
-    moveObject.promotionNotation = promotionNotation;
   }
 
   static checkmateQuery({inCheck: inCheck, noMoves: noMoves, moveObject: moveObject,board:  board,attackingTeam: attackingTeam}){
@@ -180,12 +156,6 @@ class Rules {
     for(let i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       let startPosition = occcupiedPositions[i],
         movesCalculator = new MovesCalculator({board: board, startPosition: startPosition});
-      // for( let key in movesCalculator.viablePositions ){
-      //   if( !this.checkQuery( {startPosition: startPosition, endPosition: key, board: board}) ){
-      //     noLegalMoves = false
-      //     break
-      //   }
-      // };
       for (let i = 0; i < movesCalculator.moveObjects.length; i++){
         let moveObject = movesCalculator.moveObjects[i],
            endPosition = moveObject.endPosition;
@@ -227,13 +197,6 @@ class Rules {
       if( /x/.exec(notation) || /=/.exec(notation) ){
         break
       }
-    // let movingTeam = board.allowedToMove,
-    //   nonMovingTeam = board.opposingTeam(movingTeam),
-    //   movingTeamMovesSinceCaptureOrPromotion = [],
-    //   nonMovingTeamMovesSinceCaptureOrPromotion = [];
-    //   for( let i = notationsSinceCaptureOrPromotion.length - 1; i > 0; i --){
-    //
-    //   }
 
 
     }
