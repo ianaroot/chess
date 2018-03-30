@@ -1,14 +1,12 @@
 class MoveObject {
-  constructor( options = {
-    boundaryCheck: undefined, endPosition: undefined,
-    additionalActions: undefined, rangeLimit: undefined, pieceNotation: undefined,
-    alerts: undefined, illegal: undefined, increment: undefined, fullNotation: undefined
+  constructor( options = {endPosition: undefined,
+    additionalActions: undefined, pieceNotation: undefined,
+    alerts: undefined, illegal: undefined, fullNotation: undefined,
+    startPosition: startPosition
   }){
-    this.boundaryCheck = options["boundaryCheck"]
-    this.increment = options["increment"]
     this.additionalActions = options["additionalActions"]
-    this.rangeLimit = options["rangeLimit"]
     this._endPosition = options["endPosition"]
+    this.startPosition = options["startPosition"]
     this.alerts = options["alerts"] || []
     this.illegal = options["illegal"]
     this.fullNotation = options["fullNotation"]

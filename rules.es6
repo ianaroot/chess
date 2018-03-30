@@ -24,12 +24,20 @@ class Rules {
 
     let viableMovement = {},
         movesCalculator = new MovesCalculator({board: board, startPosition: startPosition})//, endPosition: endPosition});
-    for( let key in movesCalculator.viablePositions ){
-      if( parseInt(key) === endPosition ){
-        moveObject = movesCalculator.viablePositions[key]
-        moveObject.endPosition = endPosition;
+    // for( let key in movesCalculator.viablePositions ){
+    //   if( parseInt(key) === endPosition ){
+    //     moveObject = movesCalculator.viablePositions[key]
+    //     moveObject.endPosition = endPosition;
+    //   }
+    // };
+    for(let i = 0; i < movesCalculator.moveObjects.length; i++){
+      let currentMoveObject = movesCalculator.moveObjects[i],
+        queryPosition = currentMoveObject.endPosition;
+      if( endPosition === queryPosition ){
+        moveObject = currentMoveObject
+        break;
       }
-    };
+    }
 
     if ( !Board._inBounds(endPosition) ){
       moveObject.alerts.push('stay on the board, fool')
@@ -78,12 +86,20 @@ class Rules {
       if( !( differential % 10 === 0 || differential % 8 === 0 || differential % 6 === 0 || differential % 7 === 0 || differential % 9 === 0 || differential % 15 === 0 || differential % 17 === 0 || Math.abs(differential) < 8 ) ){ continue}
       let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition, ignoreCastles: true}),//, endPosition: kingPosition}),
           responseMoveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
-      for( let key in movesCalculator.viablePositions ){
-        if( parseInt(key) === kingPosition ){
-          responseMoveObject = movesCalculator.viablePositions[key]
+      // for( let key in movesCalculator.viablePositions ){
+      //   if( parseInt(key) === kingPosition ){
+          // responseMoveObject = movesCalculator.viablePositions[key]
+          // break
+      //   }
+      // };
+      for(let i = 0; i < movesCalculator.moveObjects.length; i++){
+        let currentMoveObject = movesCalculator.moveObjects[i],
+          endPosition = currentMoveObject.endPosition;
+        if( endPosition === kingPosition ){
+          responseMoveObject = currentMoveObject
           break;
         }
-      };
+      }
       if( !responseMoveObject.illegal ){
         if (moveObject){
           moveObject.alerts.push( "check" )
@@ -104,10 +120,19 @@ class Rules {
     // }
     let movesCalculator = new MovesCalculator({board: board, startPosition: startPosition}),
         keysOnly = [];
-    for (let property in movesCalculator.viablePositions) {
-      let newArgs = {board: board, startPosition: startPosition, endPosition: property };
-      if (movesCalculator.viablePositions.hasOwnProperty(property) && !this.checkQuery( newArgs ) ){
-        keysOnly.push(property)
+    // for (let property in movesCalculator.viablePositions) {
+      // let newArgs = {board: board, startPosition: startPosition, endPosition: property };
+    //   if (movesCalculator.viablePositions.hasOwnProperty(property) && !this.checkQuery( newArgs ) ){
+    //     keysOnly.push(property)
+    //   }
+    // }
+
+    for (let i = 0; i < movesCalculator.moveObjects.length; i++){
+      let moveObject = movesCalculator.moveObjects[i],
+        endPosition = moveObject.endPosition,
+        newArgs = {board: board, startPosition: startPosition, endPosition: endPosition };
+      if( !this.checkQuery( newArgs ) ){
+        keysOnly.push(endPosition)
       }
     }
     return keysOnly
@@ -155,12 +180,20 @@ class Rules {
     for(let i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       let startPosition = occcupiedPositions[i],
         movesCalculator = new MovesCalculator({board: board, startPosition: startPosition});
-      for( let key in movesCalculator.viablePositions ){
-        if( !this.checkQuery( {startPosition: startPosition, endPosition: key, board: board}) ){
-          noLegalMoves = false
-          break
-        }
-      };
+      // for( let key in movesCalculator.viablePositions ){
+      //   if( !this.checkQuery( {startPosition: startPosition, endPosition: key, board: board}) ){
+      //     noLegalMoves = false
+      //     break
+      //   }
+      // };
+      for (let i = 0; i < movesCalculator.moveObjects.length; i++){
+        let moveObject = movesCalculator.moveObjects[i],
+           endPosition = moveObject.endPosition;
+         if( !this.checkQuery( {startPosition: startPosition, endPosition: endPosition, board: board}) ){
+           noLegalMoves = false
+           break
+         }
+      }
     };
     return noLegalMoves
   }
