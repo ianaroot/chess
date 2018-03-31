@@ -5,7 +5,7 @@ class GameController {
 		this.board = new Board({});
     this.view = new View(this);
 		this._paused = true
-		this.view.displayLayOut({board: this.board})
+		this.view.displayLayOut({board: this.board, alert: ""})
 		this.view.setTileClickListener()
 		this.view.setUndoClickListener(this)
 		this.view.setPauseClickListener(this)
@@ -26,11 +26,21 @@ class GameController {
 
 		var moveObject = Rules.getMoveObject(startPosition, endPosition, board);
 		if( moveObject.illegal ){
-			this.view.displayAlerts(moveObject.alerts)
+			this.view.displayAlerts(moveObject.alert)
 			return
 		} else {
 			board._officiallyMovePiece( moveObject )
-			this.view.displayLayOut({board: board, alerts: moveObject.alerts, startPosition: startPosition})
+			let lastNotation = board.movementNotation[board.movementNotation.length -1];
+				alert = moveObject.alert;
+			if( /#/.exec(lastNotation) ){
+				alert = "checkmate"
+			} else if( /\+/.exec(lastNotation) ) {
+				alert = "check"
+			} else if( board.gameOver === true ){
+				alert = "stalemate"
+			}
+
+			this.view.displayLayOut({board: board, alert: alert, startPosition: startPosition})
 
 			if(this.movingTeamHasBot() && !this._paused ){
 				let queryMove = this.queryNextBotMove.bind(this)

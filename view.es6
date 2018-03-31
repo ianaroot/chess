@@ -7,12 +7,12 @@ class View{
 
   static get TILE_HEIGHT() { return "49" }
 
-  displayAlerts(messages){
-    if(messages){
-      for (let i = 0; i < messages.length; i++){
-        document.getElementById( 'notifications' ).innerHTML = messages[i];
-      };
-    }
+  displayAlerts(message){
+    // if(messages){
+    //   for (let i = 0; i < messages.length; i++){
+        document.getElementById( 'notifications' ).innerHTML = message//s[i];
+    //   };
+    // }
   };
   clearAlerts(){
     document.getElementById( 'notifications' ).innerHTML = "";
@@ -37,7 +37,7 @@ class View{
   displayLayOut(args){
 
     let board = args["board"],
-        alerts = args["alerts"],
+        alert = args["alert"] || "",
         layOut = board.layOut;
     for( let i = 0; i < layOut.length; i++){
       let gridPosition = Board.gridCalculator(i),
@@ -54,7 +54,7 @@ class View{
     this.updateCaptures(board);
     this.clearAlerts();
 		this.updateTeamAllowedToMove(board);
-    this.displayAlerts(alerts)
+    this.displayAlerts(alert)
   };
   pieceImgSrc(pieceInitials){
     return "img/chesspieces/wikipedia/" + pieceInitials + ".png"

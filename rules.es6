@@ -14,11 +14,11 @@ class Rules {
         moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
 
     if( team === Board.EMPTY ){
-      moveObject.alert.push("that tile is empty")
+      moveObject.alert = "that tile is empty"
       return moveObject
     }
     if( team !== board.allowedToMove ){
-      moveObject.alert.push( "other team's turn" )
+      moveObject.alert =  "other team's turn"
       return moveObject
     }
 
@@ -34,17 +34,17 @@ class Rules {
     }
 
     if ( !Board._inBounds(endPosition) ){
-      moveObject.alert.push('stay on the board, fool')
+      moveObject.alert = 'stay on the board, fool'
       moveObject.illegal = true
     } else if( board.occupiedByTeamMate({position: endPosition, teamString: team}) ){
-      moveObject.alert.push("what, are you trying to capture your own piece?")
+      moveObject.alert = "what, are you trying to capture your own piece?"
       moveObject.illegal = true
     } else if( moveObject.illegal ) {
-      moveObject.alert.push("that's not how that piece moves")
+      moveObject.alert = "that's not how that piece moves"
       moveObject.illegal = true
       // CHECKQUERY SELF
     } else if( Rules.checkQueryWithMove( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: moveObject.additionalActions})){
-      moveObject.alert.push("check yo king fool")
+      moveObject.alert = "check yo king fool"
       moveObject.illegal = true
     }
     return moveObject
@@ -234,7 +234,7 @@ class Rules {
   // static stalemateQuery({board: board, moveObject: moveObject}){
   //   if (this.threeFoldRepetition(board) || this.noLegalMoves(board)){
   //   // if (this.noLegalMoves(board)){
-  //     moveObject.alert.push( "stalemate" )
+  //     moveObject.alert =  "stalemate"
   //     board._endGame()
   //   }
   // }

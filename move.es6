@@ -1,7 +1,7 @@
 class MoveObject {
   constructor({endPosition: endPosition,
     additionalActions: additionalActions, pieceNotation: pieceNotation,
-    alert: alert, illegal: illegal,
+    illegal: illegal,// alert: alert, 
     startPosition: startPosition, captureNotation: captureNotation
   }){
     this.additionalActions = additionalActions
@@ -11,6 +11,7 @@ class MoveObject {
     this.illegal = illegal
     this.pieceNotation = pieceNotation
     this.captureNotation = captureNotation
+    // this.alert = ""
     // this.promotionNotation = ""
     // this.checkNotation = ""
     // this.enPassantNotation = enPassantNotation
