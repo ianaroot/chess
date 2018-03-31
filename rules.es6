@@ -14,11 +14,11 @@ class Rules {
         moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
 
     if( team === Board.EMPTY ){
-      moveObject.alerts.push("that tile is empty")
+      moveObject.alert.push("that tile is empty")
       return moveObject
     }
     if( team !== board.allowedToMove ){
-      moveObject.alerts.push( "other team's turn" )
+      moveObject.alert.push( "other team's turn" )
       return moveObject
     }
 
@@ -34,23 +34,23 @@ class Rules {
     }
 
     if ( !Board._inBounds(endPosition) ){
-      moveObject.alerts.push('stay on the board, fool')
+      moveObject.alert.push('stay on the board, fool')
       moveObject.illegal = true
     } else if( board.occupiedByTeamMate({position: endPosition, teamString: team}) ){
-      moveObject.alerts.push("what, are you trying to capture your own piece?")
+      moveObject.alert.push("what, are you trying to capture your own piece?")
       moveObject.illegal = true
     } else if( moveObject.illegal ) {
-      moveObject.alerts.push("that's not how that piece moves")
+      moveObject.alert.push("that's not how that piece moves")
       moveObject.illegal = true
       // CHECKQUERY SELF
-    } else if( Rules.checkQuery( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: moveObject.additionalActions})){
-      moveObject.alerts.push("check yo king fool")
+    } else if( Rules.checkQueryWithMove( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: moveObject.additionalActions})){
+      moveObject.alert.push("check yo king fool")
       moveObject.illegal = true
     }
     return moveObject
   }
 
-  static checkQuery({board: board, startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions, moveObject: moveObject}){
+  static checkQueryWithMove({board: board, startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions, moveObject: moveObject}){
     // if(
     //   !Board.prototype.isPrototypeOf( board ) ||
     //   typeof startPosition !== "number" ||
@@ -59,43 +59,39 @@ class Rules {
     // ){
     //   throw new Error("missing params in checkQuery")
     // }
-    let layOut             = board.layOut,
-        pieceObject        = layOut[startPosition],
-        teamString         = board.teamAt(startPosition),
-        danger             = false,
-        opposingTeamString = Board.opposingTeam(teamString),
+    let teamString         = board.teamAt(startPosition),
         newBoard = board.deepCopy(),
         dummyMoveObject = {startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions};
 
     newBoard._hypotheticallyMovePiece( dummyMoveObject )
-    let kingPosition = newBoard._kingPosition(teamString),
-        enemyPositions = newBoard._positionsOccupiedByTeam(opposingTeamString);
-        // console.log("kingPosition :" + kingPosition)
+    return this.checkQuery({board: newBoard, teamString: teamString})
+  }
+
+  static checkQuery({board: board, teamString: teamString}){
+    let opposingTeamString = Board.opposingTeam(teamString),
+      kingPosition = board._kingPosition(teamString),
+      enemyPositions = board._positionsOccupiedByTeam(opposingTeamString);
+    // console.log("kingPosition :" + kingPosition)
     for(let i = 0; i < enemyPositions.length; i++){
       let enemyPosition = enemyPositions[i],
-          enemyPieceType = newBoard.pieceTypeAt( enemyPosition ),
-          differential = kingPosition - enemyPosition;
-          // console.log("enemyPosition :" + enemyPosition)
+      enemyPieceType = board.pieceTypeAt( enemyPosition ),
+      differential = kingPosition - enemyPosition;
+      // console.log("enemyPosition :" + enemyPosition)
       if( !( differential % 10 === 0 || differential % 8 === 0 || differential % 6 === 0 || differential % 7 === 0 || differential % 9 === 0 || differential % 15 === 0 || differential % 17 === 0 || Math.abs(differential) < 8 ) ){ continue}
-      let movesCalculator = new MovesCalculator({board: newBoard, startPosition: enemyPosition, ignoreCastles: true}),//, endPosition: kingPosition}),
-          responseMoveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
+      let movesCalculator = new MovesCalculator({board: board, startPosition: enemyPosition, ignoreCastles: true}),//, endPosition: kingPosition}),
+      responseMoveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
       for(let i = 0; i < movesCalculator.moveObjects.length; i++){
         let currentMoveObject = movesCalculator.moveObjects[i],
-          endPosition = currentMoveObject.endPosition;
+        endPosition = currentMoveObject.endPosition;
         if( endPosition === kingPosition ){
           responseMoveObject = currentMoveObject
           break;
         }
       }
       if( !responseMoveObject.illegal ){
-        if (moveObject){
-          moveObject.alerts.push( "check" )
-          moveObject.checkNotation = "+";
-        }
         return true
       }
     };
-    return danger
   }
 
   static viablePositionsFromKeysOnly({board: board, startPosition: startPosition}){
@@ -111,32 +107,31 @@ class Rules {
       let moveObject = movesCalculator.moveObjects[i],
         endPosition = moveObject.endPosition,
         newArgs = {board: board, startPosition: startPosition, endPosition: endPosition };
-      if( !this.checkQuery( newArgs ) ){
+      if( !this.checkQueryWithMove( newArgs ) ){
         keysOnly.push(endPosition)
       }
     }
     return keysOnly
   }
 
-  static pawnPromotionQuery({board: board, moveObject: moveObject}){
+  static pawnPromotionQuery(board){
     for(let i = 0; i < 8; i++){
       if ( board._blackPawnAt(i) ){
         board._promotePawn(i)
-        moveObject.promotionNotation = "=Q"
+        return "=Q"
       }
     }
     for(let i = 56; i < 64; i++){
       if( board._whitePawnAt(i) ){
         board._promotePawn(i)
-        moveObject.promotionNotation = "=Q"
+        return "=Q"
       }
     }
+    return ""
   }
 
   static checkmateQuery({inCheck: inCheck, noMoves: noMoves, moveObject: moveObject,board:  board,attackingTeam: attackingTeam}){
     if (inCheck && noMoves){
-      moveObject.checkNotation = "#"
-			moveObject.alerts.push( "checkmate" )
 			board._endGame(attackingTeam)
       return true
     } else {
@@ -145,6 +140,7 @@ class Rules {
   }
 
   static noLegalMoves(board){
+    // debugger
     let movingTeamString = board.allowedToMove,
       noLegalMoves = true;
     if(movingTeamString === Board.BLACK){
@@ -159,7 +155,7 @@ class Rules {
       for (let i = 0; i < movesCalculator.moveObjects.length; i++){
         let moveObject = movesCalculator.moveObjects[i],
            endPosition = moveObject.endPosition;
-         if( !this.checkQuery( {startPosition: startPosition, endPosition: endPosition, board: board}) ){
+         if( !this.checkQueryWithMove( {startPosition: startPosition, endPosition: endPosition, board: board}) ){
            noLegalMoves = false
            break
          }
@@ -194,6 +190,7 @@ class Rules {
     for(let i = notations.length -1; i > 0; i --){
       let notation = notations[i];
       notationsSinceCaptureOrPromotion.push( notation )
+      // if( /x/.exec(notation) || /=/.exec(notation) ){
       if( /x/.exec(notation) || /=/.exec(notation) ){
         break
       }
@@ -227,24 +224,26 @@ class Rules {
     // }
     // return threeFoldRepetition
   }
-  static stalemateQuery({board: board, moveObject: moveObject}){
-    if (this.threeFoldRepetition(board) || this.noLegalMoves(board)){
-    // if (this.noLegalMoves(board)){
-      moveObject.alerts.push( "stalemate" )
-      board._endGame()
-    }
-  }
+  // static stalemateQuery({board: board, moveObject: moveObject}){
+  //   if (this.threeFoldRepetition(board) || this.noLegalMoves(board)){
+  //   // if (this.noLegalMoves(board)){
+  //     moveObject.alert.push( "stalemate" )
+  //     board._endGame()
+  //   }
+  // }
 
-  static postMoveQueries({board: board, moveObject: moveObject}){
-    Rules.pawnPromotionQuery({board: board, moveObject: moveObject} );
-    let checkNotation = "",
+  static postMoveQueries(board){
+    let pawnPromotionNotation = Rules.pawnPromotionQuery(board),
         otherTeam = board.teamNotMoving(),
         attackingTeam = Board.opposingTeam(otherTeam),
         kingPosition = board._kingPosition(otherTeam),
-        inCheck = this.checkQuery({board: board, startPosition: kingPosition, endPosition: kingPosition, moveObject: moveObject}),
-    // debugger
+        inCheck = this.checkQuery({board: board, teamString: otherTeam}),
         noMoves = this.noLegalMoves(board),
         threeFold = this.threeFoldRepetition(board);
-    this.checkmateQuery({inCheck: inCheck, noMoves: noMoves, moveObject: moveObject,board:  board,attackingTeam: attackingTeam})
+    // this.checkmateQuery({inCheck: inCheck, noMoves: noMoves, board: board, attackingTeam: attackingTeam})
+    if( inCheck && noMoves ){ board._endGame(attackingTeam); return pawnPromotionNotation + "#" }
+    if( inCheck ){ return pawnPromotionNotation + "+" }
+    if( noMoves || threeFold ){ board._endGame; return pawnPromotionNotation }
+    return pawnPromotionNotation
   }
 }

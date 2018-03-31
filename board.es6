@@ -364,9 +364,10 @@ class Board {
     this._capture(endPosition);
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
     // console.log("inside _officiallyMovePiece startPosition is :" + startPosition)
-    if( additionalActions ){ additionalActions.call(this, startPosition) }
-    Rules.postMoveQueries({board: this, moveObject: moveObject})
-    this._recordNotationFrom(moveObject)
+    if( additionalActions ){ var epNotation = additionalActions.call(this, startPosition) }
+    let notationSuffix = Rules.postMoveQueries( this )
+    // this._recordNotationFrom(moveObject)
+    this.movementNotation.push(moveObject.notation() + (epNotation || "") + notationSuffix)
     if( !this.gameOver ){ this._nextTurn() }
   }
 

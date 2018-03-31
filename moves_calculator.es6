@@ -41,13 +41,13 @@ class MovesCalculator {
         }
         if ( this.board.positionEmpty(currentPosition) ){
           // this.viablePositions[currentPosition] = move
-          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, illegal: false, pieceNotation: movementType.pieceNotation}) )// illegal may change later
+          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation}) )// illegal may change later
           if( this.endPosition === currentPosition){
             return
           }
         } else if( this.board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
           // this.viablePositions[currentPosition] = move
-          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, illegal: false, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )// illegal may change later
+          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )// illegal may change later
           if( this.endPosition === currentPosition){
             return
           }
@@ -386,7 +386,8 @@ class MovesCalculator {
             movementType.pieceNotation = Board.file(startPosition) + "x"
             // let capture = board._capture.bind(board)
             movementType.additionalActions = function(startPosition){
-              this._capture(startPosition + 1)// + "e.p.";
+              this._capture(startPosition + 1)
+              return "e.p.";
             }
             movementTypes.push(movementType)
           }
@@ -397,7 +398,8 @@ class MovesCalculator {
             movementType.pieceNotation = Board.file(startPosition) + "x"
             // let capture = board._capture.bind(board)
             movementType.additionalActions = function(startPosition){
-              this._capture(startPosition - 1)// + "e.p.";
+              this._capture(startPosition - 1)
+              return "e.p.";
             }
             movementTypes.push(movementType)
           }
@@ -503,6 +505,7 @@ class MovesCalculator {
             let rook = this.pieceObject( startPosition + 3 );
             this._placePiece({ position: (startPosition + 1), pieceObject: rook })
             this._emptify( startPosition + 3)
+            return ""
           }
           movementTypes.push(movementType)
         };
@@ -519,6 +522,7 @@ class MovesCalculator {
             let rook = this.pieceObject( startPosition - 4 );
             this._placePiece({ position: (startPosition - 1), pieceObject: rook })
             this._emptify( startPosition - 4)
+            return ""
           }
           movementTypes.push(movementType)
         };
