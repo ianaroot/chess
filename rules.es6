@@ -165,11 +165,13 @@ class Rules {
   }
 
   static getDuplicatesForThreeFold( arr ) {
+    // console.log('arr is :' + arr)
     var all = {};
     return arr.reduce(function( duplicates, value ) {// strip out clarifying rank or file letter
       //TODO record clarifying rank or file letter
       value = value.replace(/=[QRNB]/, "")
       value = value.replace(/\+/, "")
+      // console.log(value)
       if( /[RNBQ][a-h1-8][a-h]/.exec(value) ){
         value = value.replace(/[a-h1-8]/, "")
       }
@@ -184,21 +186,26 @@ class Rules {
   }
 
 
-  static threeFoldRepetition(board){
-    let notations = board.movementNotation,
-      notationsSinceCaptureOrPromotion = []
-    for(let i = notations.length -1; i > 0; i --){
+  static threeFoldRepetition(board, prefixNotation){
+    let notations = Board._deepCopy(board.movementNotation),
+      notationsSinceCaptureOrPromotion = [];
+      notations.push(prefixNotation); //have to start with this one, don't want to
+      // notations.push(prefixNotation)
+      // console.log(notations)
+    for(let i = notations.length -1; i >= 0; i --){
       let notation = notations[i];
+      // debugger
       notationsSinceCaptureOrPromotion.push( notation )
       // if( /x/.exec(notation) || /=/.exec(notation) ){
-      if( /x/.exec(notation) || /=/.exec(notation) ){
+      if( /x/.exec(notation) || /^[a-h]/.exec(notation) ){
         break
       }
 
 
     }
     let duplicates = Rules.getDuplicatesForThreeFold(notationsSinceCaptureOrPromotion)
-    if( duplicates.length < 2 ){
+    // debugger
+    if( duplicates.length < 2 ){//TODO setup more indicative three fold test to show why this is 2 not 3
       return false
     } else {
       console.log("threeFold triggered")
@@ -232,14 +239,14 @@ class Rules {
   //   }
   // }
 
-  static postMoveQueries(board){
+  static postMoveQueries(board, prefixNotation){
     let pawnPromotionNotation = Rules.pawnPromotionQuery(board),
         otherTeam = board.teamNotMoving(),
         attackingTeam = Board.opposingTeam(otherTeam),
         kingPosition = board._kingPosition(otherTeam),
         inCheck = this.checkQuery({board: board, teamString: otherTeam}),
         noMoves = this.noLegalMoves(board),
-        threeFold = this.threeFoldRepetition(board);
+        threeFold = this.threeFoldRepetition(board, prefixNotation);
     // this.checkmateQuery({inCheck: inCheck, noMoves: noMoves, board: board, attackingTeam: attackingTeam})
     if( inCheck && noMoves ){ board._endGame(attackingTeam); return pawnPromotionNotation + "#" }
     if( inCheck ){ return pawnPromotionNotation + "+" }

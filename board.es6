@@ -365,9 +365,10 @@ class Board {
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
     // console.log("inside _officiallyMovePiece startPosition is :" + startPosition)
     if( additionalActions ){ var epNotation = additionalActions.call(this, startPosition) }
-    let notationSuffix = Rules.postMoveQueries( this )
+    let prefixNotation = moveObject.notation()
+    let notationSuffix = Rules.postMoveQueries( this, prefixNotation )
     // this._recordNotationFrom(moveObject)
-    this.movementNotation.push(moveObject.notation() + (epNotation || "") + notationSuffix)
+    this.movementNotation.push( prefixNotation + (epNotation || "") + notationSuffix)
     if( !this.gameOver ){ this._nextTurn() }
   }
 
@@ -397,7 +398,7 @@ class Board {
     if( !this.positionEmpty(position) ){
       let pieceObject = this.layOut[position];
       this.addToCaptures(pieceObject)
-      this._emptify(position)
+      // this._emptify(position)
     }
   }
 

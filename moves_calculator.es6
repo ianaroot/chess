@@ -387,6 +387,7 @@ class MovesCalculator {
             // let capture = board._capture.bind(board)
             movementType.additionalActions = function(startPosition){
               this._capture(startPosition + 1)
+              this._emptify(startPosition + 1)
               return "e.p.";
             }
             movementTypes.push(movementType)
@@ -399,6 +400,7 @@ class MovesCalculator {
             // let capture = board._capture.bind(board)
             movementType.additionalActions = function(startPosition){
               this._capture(startPosition - 1)
+              this._emptify(startPosition - 1)
               return "e.p.";
             }
             movementTypes.push(movementType)
