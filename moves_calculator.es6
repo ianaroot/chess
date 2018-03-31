@@ -1,5 +1,5 @@
 class MovesCalculator {
-  constructor({  startPosition: startPosition, board: board, moveObjects: moveObjects, movementTypes: movementTypes, ignoreCastles: ignoreCastles, endPosition: endPosition
+  constructor({  startPosition: startPosition, board: board, moveObjects: moveObjects, movementTypes: movementTypes, ignoreCastles: ignoreCastles//, endPosition: endPosition
   }){
     this.startPosition = startPosition
     this.board = board
@@ -8,7 +8,7 @@ class MovesCalculator {
     this.pieceType = this.board.pieceTypeAt(this.startPosition)
     this.viablePositions = {}
     this.ignoreCastles = ignoreCastles || false
-    this.endPosition = endPosition
+    // this.endPosition = endPosition
     this.addMovementTypes()
     this.calculateViablePositions()
   }
@@ -41,14 +41,14 @@ class MovesCalculator {
         }
         if ( this.board.positionEmpty(currentPosition) ){
           this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation}) )// illegal may change later
-          if( this.endPosition === currentPosition){
-            return
-          }
+          // if( this.endPosition === currentPosition){
+          //   return
+          // }
         } else if( this.board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
           this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )// illegal may change later
-          if( this.endPosition === currentPosition){
-            return
-          }
+          // if( this.endPosition === currentPosition){
+          //   return
+          // }
           break
         } else if( this.board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
           break

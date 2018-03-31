@@ -167,9 +167,9 @@ class Board {
 
   _undo(){
     this.layOut = this.lastLayout()
-    let parsedPrevious = JSON.parse(this.previousLayouts);
+    // let parsedPrevious = JSON.parse(this.previousLayouts);
     parsedPrevious.pop();
-    this.previousLayouts = JSON.stringify(parsedPrevious)
+    // this.previousLayouts = JSON.stringify(parsedPrevious)
     let undoneNotation = this.movementNotation.pop(),
       captureNotationMatch = undoneNotation.match(/x/);
     if( captureNotationMatch ){
@@ -318,7 +318,7 @@ class Board {
     this.capturedPieces = [];
     this.gameOver = false;
     this.allowedToMove = Board.WHITE;
-    this.previousLayouts = [];
+    // this.previousLayouts = [];
     this.movementNotation = [];
   }
 
@@ -526,7 +526,6 @@ class Board {
   }
 
   _placePiece({position: position, pieceObject: pieceObject}){
-    // if( pieceObject === "WR"){ debugger}
     this.layOut[position] = pieceObject
   }
 
