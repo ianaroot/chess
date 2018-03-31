@@ -149,33 +149,56 @@ class Bot {
 
   }
 
+  logTime(){
+    console.log(Math.floor(Date.now() / 1000))
+  }
+// gameController._whiteBot.benchMarkSeekCheckMateRecursively( gameController._whiteBot.logTime )
+  benchMarkSeekCheckMateRecursively(callback){
+    this.logTime()
+    let startTime = Math.floor(Date.now() / 1000),
+      moves = gameController.api.availableMovesDefault(),
+      v = 0
+    for(let  i = 0; i < moves.length; i++){
+      v = v + (gameController._whiteBot.seekCheckMateRecursively({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: 2, iteration: 0}))
+    }
+    callback()
+    let endTime = Math.floor(Date.now() / 1000)
+    console.log(v)
+    console.log( endTime - startTime)
+  }
+
 // moves = gameController.api.availableMovesDefault()
 // for( i = 0; i < moves.length; i++){
 // gameController._whiteBot.seekCheckMateRecursively({board: gameController.board, move: moves[i], team: Board.WHITE, value: 50, depth: 2, iteration: 0})
 // }
-  seekCheckMateRecursively({board: board, move: move, team: team, value: value, depth: depth, iteration: iteration}){
-    if (iteration > depth){
-      return value
-    }
+
+// there's something very broken about this approach.i really can't tell what. might be continuing after the game ends?
+  seekCheckMateRecursively({board: board, move: move, team: team, depth: depth, iteration: iteration}){
     let newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition});
     if( newBoard._winner === this.team){
-      value = value + 1000
       console.log(newBoard.movementNotation)
       console.log('good checkmate')
-      return value
+      // return 1
+      return 1
     } else if ( newBoard._winner === Board.opposingTeam(this.team) ){
-      value = value - 1000
+      // value = - 1 //JUST TWEAKING THIS FOR MEASUREMENT PURPOSES CHANGE TO - for actual move weighting
       console.log('bad checkmate')
       console.log(newBoard.movementNotation)
-      return value
+      // return -1
+      return 1
+    } else if (iteration === depth || board.gameOver){
+      // return 0
+      return 1
     } else {
       let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
       iteration++
       for( let i = 0; i < newlyAvailableMoves.length; i++){
-        value = value + this.seekCheckMateRecursively({board: newBoard, move: newlyAvailableMoves[i], team: team, value: value, depth: depth, iteration: iteration})
+        var value = (value || 0) + this.seekCheckMateRecursively({board: newBoard, move: newlyAvailableMoves[i], team: team, depth: depth, iteration: iteration})
+        // this.seekCheckMateRecursively({board: newBoard, move: newlyAvailableMoves[i], team: team, depth: depth, iteration: iteration})
+        // return 1
       }
     }
-
+    // console.log(value)
     return value
   }
 
