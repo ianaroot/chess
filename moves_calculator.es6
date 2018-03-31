@@ -40,13 +40,11 @@ class MovesCalculator {
           break
         }
         if ( this.board.positionEmpty(currentPosition) ){
-          // this.viablePositions[currentPosition] = move
           this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation}) )// illegal may change later
           if( this.endPosition === currentPosition){
             return
           }
         } else if( this.board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
-          // this.viablePositions[currentPosition] = move
           this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )// illegal may change later
           if( this.endPosition === currentPosition){
             return
@@ -287,26 +285,6 @@ class MovesCalculator {
     }
     return commons
   }
- // static getCommonMoveObjects(arrays){//Assumes that we are dealing with an array of arrays of integers
-    // var currentValues = {};
-    // var commonValues = {};
-    // for (var i = arrays[0].length-1; i >=0; i--){//Iterating backwards for efficiency
-    //   currentValues[arrays[0][i]] = 1; //Doesn't really matter what we set it to
-    // }
-    // for (var i = arrays.length-1; i>0; i--){
-    //   var currentArray = arrays[i];
-    //   for (var j = currentArray.length-1; j >=0; j--){
-    //     if (currentArray[j] in currentValues){
-    //       commonValues[currentArray[j]] = 1; //Once again, the `1` doesn't matter
-    //     }
-    //   }
-    //   currentValues = commonValues;
-    //   commonValues = {};
-    // }
-    // return Object.keys(currentValues).map(function(value){
-    //   return parseInt(value);
-    // });
-  // }
 
   static pieceSpecificMovements(species, differential){
 
@@ -413,12 +391,9 @@ class MovesCalculator {
               MovesCalculator.genericMovements( MovesCalculator.nightVerticalLeftDownIncrement), MovesCalculator.genericMovements( MovesCalculator.nightHorizontalRightUpIncrement), MovesCalculator.genericMovements( MovesCalculator.nightHorizontalLeftUpIncrement),
               MovesCalculator.genericMovements( MovesCalculator.nightVerticalRightUpIncrement), MovesCalculator.genericMovements( MovesCalculator.nightVerticalLeftUpIncrement)
             ];
-          //
           // if( possibleMovesTowardsEndPosition ){
           //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
           // }
-
-
           for (let i = 0; i < movementTypes.length; i++ ) {
               movementTypes[i].rangeLimit = 1;
               movementTypes[i].pieceNotation = "N";;
@@ -429,11 +404,9 @@ class MovesCalculator {
       case "R":
         return function({board: board, startPosition: startPosition}){
           var movementTypes = [MovesCalculator.genericMovements( MovesCalculator.horizontalRightIncrement), MovesCalculator.genericMovements( MovesCalculator.horizontalLeftIncrement), MovesCalculator.genericMovements( MovesCalculator.verticalUpIncrement), MovesCalculator.genericMovements( MovesCalculator.verticalDownIncrement)]
-          //
           // if( possibleMovesTowardsEndPosition ){
           //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
           // }
-
           for (let i = 0; i < movementTypes.length; i++ ) {
             movementTypes[i].rangeLimit = 7;
             movementTypes[i].pieceNotation = "R";
@@ -444,11 +417,9 @@ class MovesCalculator {
       case "B":
         return function({board: board, startPosition: startPosition}){
           var movementTypes = [MovesCalculator.genericMovements( MovesCalculator.forwardSlashDownIncrement), MovesCalculator.genericMovements( MovesCalculator.forwardSlashUpIncrement), MovesCalculator.genericMovements( MovesCalculator.backSlashDownIncrement), MovesCalculator.genericMovements( MovesCalculator.backSlashUpIncrement)]
-          //
           // if( possibleMovesTowardsEndPosition ){
           //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
           // }
-
           for (let i = 0; i < movementTypes.length; i++ ) {
             movementTypes[i].rangeLimit = 7;
             movementTypes[i].pieceNotation = "B";
@@ -465,11 +436,9 @@ class MovesCalculator {
             MovesCalculator.genericMovements( MovesCalculator.horizontalRightIncrement), MovesCalculator.genericMovements( MovesCalculator.horizontalLeftIncrement),
             MovesCalculator.genericMovements( MovesCalculator.verticalUpIncrement), MovesCalculator.genericMovements( MovesCalculator.verticalDownIncrement)
           ];
-          //
           // if( possibleMovesTowardsEndPosition ){
           //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
           // }
-
           for (let i = 0; i < movementTypes.length; i++ ) {
             movementTypes[i].rangeLimit = 7;
             movementTypes[i].pieceNotation = "Q";

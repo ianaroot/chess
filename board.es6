@@ -341,8 +341,7 @@ class Board {
     this.movementNotation.push(moveObject.notation())
   }
 
-  _hypotheticallyMovePiece( moveObject ){
-    // there's a lot of space between _officiallyMovePiece and hypothetical. eg  not recording any data on hypothetical moves
+  _hypotheticallyMovePiece( moveObject ){ // ONLY USE THIS TO SEE IF A MOVE WOULD RESULT IN MATE. there's a lot of space between _officiallyMovePiece and hypothetical. eg  not recording any data on hypothetical moves
     let startPosition = moveObject.startPosition,
       endPosition = moveObject.endPosition,
       additionalActions = moveObject.additionalActions;
@@ -350,7 +349,6 @@ class Board {
     this._emptify(startPosition)
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ additionalActions.call(this, startPosition) }
-    // if( additionalActions ){ additionalActions({position: startPosition}) }
   }
 
   _officiallyMovePiece( moveObject ){
@@ -359,54 +357,20 @@ class Board {
       endPosition = moveObject.endPosition,
       additionalActions = moveObject.additionalActions,
       pieceObject = this.pieceObject(startPosition);
-    // this._storeCurrentLayoutAsPrevious()
     this._emptify(startPosition)
-    this._capture(endPosition);
+    if( !this.positionEmpty(endPosition) ){ this._capture(endPosition); }
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
-    // console.log("inside _officiallyMovePiece startPosition is :" + startPosition)
     if( additionalActions ){ var epNotation = additionalActions.call(this, startPosition) }
+    // if( additionalActions ){ additionalActions({position: startPosition}) }
     let prefixNotation = moveObject.notation()
     let notationSuffix = Rules.postMoveQueries( this, prefixNotation )
-    // this._recordNotationFrom(moveObject)
     this.movementNotation.push( prefixNotation + (epNotation || "") + notationSuffix)
     if( !this.gameOver ){ this._nextTurn() }
   }
 
-  _storeCurrentLayoutAsPrevious(){
-    // let layOutCopy = Board._deepCopy( this.layOut );
-    // this.previousLayouts.push(layOutCopy)
-    // debugger
-    let parsedPrevious =  this.previousLayouts
-    if( parsedPrevious === JSON.stringify([]) ){
-      parsedPrevious = parsedPrevious.replace(/]/, '')
-    } else {
-      parsedPrevious = parsedPrevious.replace(/]$/, ',')
-    }
-    parsedPrevious = parsedPrevious + JSON.stringify(this.layOut)
-    parsedPrevious = parsedPrevious + "]"
-    this.previousLayouts = parsedPrevious
-  }
-
-  addToCaptures(pieceObject){
-    let captures = this.capturedPieces;
-    captures.push(pieceObject);
-    // this._capturedPieces = JSON.stringify(captures)
-  }
-
   _capture(position){
-    // debugger
-    if( !this.positionEmpty(position) ){
-      let pieceObject = this.layOut[position];
-      this.addToCaptures(pieceObject)
-      // this._emptify(position)
-    }
-  }
-
-  lastLayout(){
-    // return this.previousLayouts[this.previousLayouts.length - 1]
-    let parsedPrevious = JSON.parse(this.previousLayouts),
-      oldLayout = parsedPrevious[parsedPrevious.length - 1];
-    return oldLayout;
+    let pieceObject = this.layOut[position];
+    this.capturedPieces.push(pieceObject);
   }
 
   _oneSpaceDownIsEmpty(position){
@@ -550,27 +514,6 @@ class Board {
     let queenSideRookStartPosition = kingPosition - 4;
 
     return (this.pieceTypeAt( queenSideRookStartPosition ) ===Board.ROOK) && this.pieceHasNotMovedFrom( queenSideRookStartPosition )
-  }
-
-  pieceHasNotMovedFrom(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
-    let pieceObject = this.layOut[position],
-      previousLayouts = this.previousLayouts,
-      pieceHasNotMoved = true;
-    for(let i = 0; i < previousLayouts.length; i++){
-      let oldLayout= previousLayouts[i];
-      if(oldLayout[position] !== pieceObject ){
-        pieceHasNotMoved = false
-        break;
-      };
-    };
-    return pieceHasNotMoved
-  }
-
-  setLayOut(position, pieceObject){
-    let layOut = JSON.parse(this._layOut);
-    layOut[position] = pieceObject;
-    this._layOut = JSON.stringify(layOut)
   }
 
   pieceObject(position){

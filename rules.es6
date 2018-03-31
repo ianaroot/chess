@@ -12,7 +12,6 @@ class Rules {
     let layOut = board.layOut,
         team = board.teamAt(startPosition),
         moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
-
     if( team === Board.EMPTY ){
       moveObject.alert = "that tile is empty"
       return moveObject
@@ -21,31 +20,14 @@ class Rules {
       moveObject.alert =  "other team's turn"
       return moveObject
     }
-
-    let viableMovement = {},
-        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition})//, endPosition: endPosition});
-    for(let i = 0; i < movesCalculator.moveObjects.length; i++){
-      let currentMoveObject = movesCalculator.moveObjects[i],
+    let moveObjects = new MovesCalculator({board: board, startPosition: startPosition}).moveObjects//, endPosition: endPosition});
+    for(let i = 0; i < moveObjects.length; i++){
+      let currentMoveObject = moveObjects[i],
         queryPosition = currentMoveObject.endPosition;
       if( endPosition === queryPosition ){
         moveObject = currentMoveObject
         break;
       }
-    }
-
-    if ( !Board._inBounds(endPosition) ){
-      moveObject.alert = 'stay on the board, fool'
-      moveObject.illegal = true
-    } else if( board.occupiedByTeamMate({position: endPosition, teamString: team}) ){
-      moveObject.alert = "what, are you trying to capture your own piece?"
-      moveObject.illegal = true
-    } else if( moveObject.illegal ) {
-      moveObject.alert = "that's not how that piece moves"
-      moveObject.illegal = true
-      // CHECKQUERY SELF
-    } else if( Rules.checkQueryWithMove( {startPosition: startPosition, endPosition: endPosition, board: board, additionalActions: moveObject.additionalActions})){
-      moveObject.alert = "check yo king fool"
-      moveObject.illegal = true
     }
     return moveObject
   }
