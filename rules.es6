@@ -26,7 +26,7 @@ class Rules {
         queryPosition = currentMoveObject.endPosition;
       if( endPosition === queryPosition ){
         moveObject = currentMoveObject
-        if( this.checkQueryWithMove({board: board, startPosition: moveObject.startPosition, endPosition: moveObject.endPosition, additionalActions: moveObject.additionalActions}) ){
+        if( this.checkQueryWithMove({board: board, moveObject: moveObject}) ){
           moveObject.illegal = true
         }
         break;
@@ -35,7 +35,7 @@ class Rules {
     return moveObject
   }
 
-  static checkQueryWithMove({board: board, startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions, moveObject: moveObject}){
+  static checkQueryWithMove({board: board, moveObject: moveObject}){
     // if(
     //   !Board.prototype.isPrototypeOf( board ) ||
     //   typeof startPosition !== "number" ||
@@ -44,11 +44,14 @@ class Rules {
     // ){
     //   throw new Error("missing params in checkQuery")
     // }
-    let teamString         = board.teamAt(startPosition),
-        newBoard = board.deepCopy(),
-        dummyMoveObject = {startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions};
+    let startPosition = moveObject.startPosition,
+      endPosition = moveObject.endPosition,
+      additionalActions = moveObject.additionalActions,
+      teamString         = board.teamAt(startPosition),
+      newBoard = board.deepCopy();
+        // dummyMoveObject = {startPosition: startPosition, endPosition: endPosition, additionalActions: additionalActions};
 
-    newBoard._hypotheticallyMovePiece( dummyMoveObject )
+    newBoard._hypotheticallyMovePiece( moveObject )
     return this.checkQuery({board: newBoard, teamString: teamString})
   }
 
@@ -88,9 +91,9 @@ class Rules {
         keysOnly = [];
     for (let i = 0; i < movesCalculator.moveObjects.length; i++){
       let moveObject = movesCalculator.moveObjects[i],
-        endPosition = moveObject.endPosition,
-        newArgs = {board: board, startPosition: startPosition, endPosition: endPosition };
-      if( !this.checkQueryWithMove( newArgs ) ){
+        endPosition = moveObject.endPosition;
+        // newArgs = {board: board, startPosition: startPosition, endPosition: endPosition };
+      if( !this.checkQueryWithMove({board: board, moveObject: moveObject}) ){
         keysOnly.push(endPosition)
       }
     }
@@ -136,9 +139,9 @@ class Rules {
       let startPosition = occcupiedPositions[i],
         movesCalculator = new MovesCalculator({board: board, startPosition: startPosition});
       for (let i = 0; i < movesCalculator.moveObjects.length; i++){
-        let moveObject = movesCalculator.moveObjects[i],
-           endPosition = moveObject.endPosition;
-         if( !this.checkQueryWithMove( {startPosition: startPosition, endPosition: endPosition, board: board}) ){
+        let moveObject = movesCalculator.moveObjects[i];
+           // endPosition = moveObject.endPosition;
+         if( !this.checkQueryWithMove( {moveObject: moveObject, board: board}) ){
            noLegalMoves = false
            break
          }
