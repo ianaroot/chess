@@ -26,6 +26,9 @@ class Rules {
         queryPosition = currentMoveObject.endPosition;
       if( endPosition === queryPosition ){
         moveObject = currentMoveObject
+        if( this.checkQueryWithMove({board: board, startPosition: moveObject.startPosition, endPosition: moveObject.endPosition, additionalActions: moveObject.additionalActions}) ){
+          moveObject.illegal = true
+        }
         break;
       }
     }
