@@ -62,11 +62,11 @@ class GameController {
 
 	queryBotMove(team){
 		if( team === Board.WHITE ){
-			let alphaNumericMove = this._whiteBot.determineMove({ board: this.board, api: this.api })
-			this.api.attemptMove(alphaNumericMove.startPosition, alphaNumericMove.endPosition)
+			let moveObject = this._whiteBot.determineMove({ board: this.board, api: this.api })
+			this.attemptMove(moveObject.startPosition, moveObject.endPosition)
 		} else {
-			let alphaNumericMove = this._blackBot.determineMove({ board: this.board, api: this.api })
-			this.api.attemptMove(alphaNumericMove.startPosition, alphaNumericMove.endPosition)
+			let moveObject = this._blackBot.determineMove({ board: this.board, api: this.api })
+			this.attemptMove(moveObject.startPosition, moveObject.endPosition)
 		}
 	}
 
