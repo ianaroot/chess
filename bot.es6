@@ -131,24 +131,6 @@ class Bot {
 
   }
 
-  projectNmovesDeep({board: board, move: move, n: n,currentDepth}){
-
-    // weight things, distinguishing whether move is homeTeam or opponent
-    // good oppenent move is negatively weighted but is a branch you want to continue
-    // bad oppenent is dead branch unless they don't have better options
-    // return if game is over
-    // return if move is already deemed winning
-    // return if move is already deemed losing
-    // return if depth exceeds n
-    // otherwise
-    // could work in a condition that i doesn't increase if number of options is low enough
-
-    if( n > currentDepth ){ return value }
-
-
-
-  }
-
   logTime(){
     console.log(Math.floor(Date.now() / 1000))
   }
@@ -172,7 +154,7 @@ class Bot {
 // }
 
 // there's something very broken about this approach.i really can't tell what. might be continuing after the game ends?
-  seekCheckMateRecursively({board: board, move: move, team: team, depth: depth, iteration: iteration}){
+  seekCheckMateRecursively({board: board, move: move, depth: depth, iteration: iteration}){
     let newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition});
     if( newBoard._winner === this.team){
       // console.log(newBoard.movementNotation)
@@ -192,7 +174,7 @@ class Bot {
       let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
       iteration++
       for( let i = 0; i < newlyAvailableMoves.length; i++){
-        var value = (value || 0) + this.seekCheckMateRecursively({board: newBoard, move: newlyAvailableMoves[i], team: team, depth: depth, iteration: iteration})
+        var value = (value || 0) + this.seekCheckMateRecursively({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
         // this.seekCheckMateRecursively({board: newBoard, move: newlyAvailableMoves[i], team: team, depth: depth, iteration: iteration})
         // return 1
       }
