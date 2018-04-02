@@ -106,6 +106,7 @@ tests = {
   threeFold: 			[1,18, 62,45, 18,1, 45,62, 1,18, 62,45, 18,1, 45,62],
 	// movingIntoCheck
 	// castlingOutOfCheck
+	// startPosition straight step pawn capture
 
   notThreeFold: 	[1,18, 62,45, 18,1, 45,62, 1,18, 62,45, 18,1, 50,42, 1,18, 45,62, 18,1, 62,45],
 

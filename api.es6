@@ -32,45 +32,30 @@ class Api {
     let positions = board._positionsOccupiedByTeam(movingTeam),
         availableMoves = [];
     for(let i = 0; i < positions.length; i++){
-      // let availableMovesFromPosition = this.availableMovesFrom({position: positions[i], board: board})
-      // for(let j = 0; j < availableMovesFromPosition.length; j++){
-      //   availableMoves.push({ startPosition: Board.gridCalculator( positions[i] ), endPosition: availableMovesFromPosition[j]} )
-      // }
       availableMoves = availableMoves.concat( this.availableMovesFrom({board: board, position: positions[i]}) )
     }
     return availableMoves
   }
 
   availableMovesFrom({position: position, board: board}){
-    // let alphaNumericAvailableMoves = [],
-    //     availableMoves = Rules.viablePositionsFromKeysOnly({board: board, startPosition: position});
-    // for (let i = 0; i < availableMoves.length; i++){
-    //   alphaNumericAvailableMoves.push( Board.gridCalculator(availableMoves[i]) )
-    // }
-    // return alphaNumericAvailableMoves
     return Rules.availableMovesFrom({board: board, startPosition: position})
   }
 
   attemptMove(moveObject){
-    // let startPosition = Board.gridCalculatorReverse( alphaNumericStartPosition ),
-    //     endPosition = Board.gridCalculatorReverse( alphaNumericEndPosition );
     this._gameController.attemptMove(moveObject.startPosition, moveObject.endPosition)
   }
 
   resultOfHypotheticalMove({board: board, moveObject:moveObject}){
-    // var startPosition  = Board.gridCalculatorReverse(alphaNumericStartPosition),
-    //   endPosition  = Board.gridCalculatorReverse(alphaNumericEndPosition),
       let newBoard = board.deepCopy();
-    //   moveObject = Rules.getMoveObject(startPosition, endPosition, newBoard);
-    // if( moveObject.illegal ){
-    //   // LEAVING THIS COMMENT SO I REMEMBER TO INCLUDE THIS LINE  IF REFACTOR HOW THIS OPERATES this.view.displayAlerts(moveObject.alerts)
-    //   alert('you have passed an illegal move to resultOfHypotheticalMove. the move in question was ' + alphaNumericStartPosition + ' to ' + alphaNumericEndPosition)
-    //   return
-    // } else {
       newBoard._officiallyMovePiece( moveObject )
-    // }
     return newBoard
   }
+
+
+
+
+
+
 
   piecesAttackableByPieceAt(board, square){
     let startPosition = Board.convertPositionFromAlphaNumeric(square);

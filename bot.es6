@@ -141,7 +141,7 @@ class Bot {
       moves = gameController.api.availableMovesDefault(),
       v = 0
     for(let  i = 0; i < moves.length; i++){
-      v = v + (gameController._whiteBot.recursivelyProjectMoves({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: 3, iteration: 0}))
+      v = v + (gameController._whiteBot.recursivelyProjectMoves({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: 2, iteration: 0}))
     }
     let endTime = Math.floor(Date.now() / 1000)
     console.log(v)
@@ -149,6 +149,7 @@ class Bot {
   }
 
   recursivelyProjectMoves({board: board, move: move, depth: depth, iteration: iteration}){
+    // console.log(move.captureNotation)
     let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
     if( newBoard._winner === this.team){
       // console.log(newBoard.movementNotation)
@@ -198,7 +199,6 @@ class Bot {
     } else {
       return 0
     }
-
   }
 
   limitNonCastleKingMoves(board, move){
