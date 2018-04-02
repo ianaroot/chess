@@ -134,27 +134,21 @@ class Bot {
   logTime(){
     console.log(Math.floor(Date.now() / 1000))
   }
-// gameController._whiteBot.benchMarkSeekCheckMateRecursively( gameController._whiteBot.logTime )
-  benchMarkSeekCheckMateRecursively(){
+
+  benchMarkRecursivelyProjectMoves(){
     this.logTime()
     let startTime = Math.floor(Date.now() / 1000),
       moves = gameController.api.availableMovesDefault(),
       v = 0
     for(let  i = 0; i < moves.length; i++){
-      v = v + (gameController._whiteBot.seekCheckMateRecursively({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: 2, iteration: 0}))
+      v = v + (gameController._whiteBot.recursivelyProjectMoves({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: 3, iteration: 0}))
     }
     let endTime = Math.floor(Date.now() / 1000)
     console.log(v)
     console.log( endTime - startTime)
   }
 
-// moves = gameController.api.availableMovesDefault()
-// for( i = 0; i < moves.length; i++){
-// gameController._whiteBot.seekCheckMateRecursively({board: gameController.board, move: moves[i], team: Board.WHITE, value: 50, depth: 2, iteration: 0})
-// }
-
-// there's something very broken about this approach.i really can't tell what. might be continuing after the game ends?
-  seekCheckMateRecursively({board: board, move: move, depth: depth, iteration: iteration}){
+  recursivelyProjectMoves({board: board, move: move, depth: depth, iteration: iteration}){
     let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
     if( newBoard._winner === this.team){
       // console.log(newBoard.movementNotation)
@@ -162,7 +156,6 @@ class Bot {
       // return 1
       return 1
     } else if ( newBoard._winner === Board.opposingTeam(this.team) ){
-      // value = - 1 //JUST TWEAKING THIS FOR MEASUREMENT PURPOSES CHANGE TO - for actual move weighting
       // console.log('bad checkmate')
       // console.log(newBoard.movementNotation)
       return -1
@@ -174,16 +167,12 @@ class Bot {
       let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
       iteration++
       for( let i = 0; i < newlyAvailableMoves.length; i++){
-        var value = (value || 0) + this.seekCheckMateRecursively({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
-        // this.seekCheckMateRecursively({board: newBoard, move: newlyAvailableMoves[i], team: team, depth: depth, iteration: iteration})
+        var value = (value || 0) + this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
         // return 1
       }
     }
-    // console.log(value)
     return value
   }
-
-
 
 	seekCheckMate(board, move, team){
     let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move})
@@ -193,7 +182,6 @@ class Bot {
       return 0
     }
   }
-
 
   doubleMoveInOpeningPenalty(board, move){
     if( !board.pieceHasNotMovedFrom(move.startPosition)){

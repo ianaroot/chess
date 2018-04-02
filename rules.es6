@@ -72,18 +72,17 @@ class Rules {
     };
   }
 
-static availableMovesFrom({board: board, startPosition: startPosition}){
-  let moveObjects = new MovesCalculator({board: board, startPosition: startPosition}).moveObjects,
-    safeMoves = [];
-  for(let i = 0; i < moveObjects.length; i++){
-    let moveObject = moveObjects[i]
-    if( !this.checkQueryWithMove({board: board, moveObject: moveObject})){
-      safeMoves.push(moveObject);
+  static availableMovesFrom({board: board, startPosition: startPosition}){
+    let moveObjects = new MovesCalculator({board: board, startPosition: startPosition}).moveObjects,
+      safeMoves = [];
+    for(let i = 0; i < moveObjects.length; i++){
+      let moveObject = moveObjects[i]
+      if( !this.checkQueryWithMove({board: board, moveObject: moveObject})){
+        safeMoves.push(moveObject);
+      }
     }
+    return safeMoves
   }
-  return safeMoves
-}
-
   static viablePositionsFromKeysOnly({board: board, startPosition: startPosition}){
     // if(
     //   !Board.prototype.isPrototypeOf( board ) ||  typeof startPosition !== "number"

@@ -360,7 +360,7 @@ class MovesCalculator {
                 startRank: 7,
                 nonAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.verticalDownIncrement}),
                 singleStepCheck: board._oneSpaceDownIsEmpty(startPosition),
-                doubleStepCheck: Board.isSeventhRank(startPosition) && board._twoSpacesDownIsEmpty(startPosition),
+                doubleStepCheck: Board.isSeventhRank(startPosition) && board._twoSpacesDownIsEmpty(startPosition) && board._oneSpaceDownIsEmpty(startPosition),
                 leftAttackCheck: board._downAndLeftIsAttackable(startPosition),
                 leftAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.forwardSlashDownIncrement}),
                 rightAttackCheck: board._downAndRightIsAttackable(startPosition),
@@ -372,7 +372,7 @@ class MovesCalculator {
                 startRank: 2,
                 nonAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.verticalUpIncrement}),
                 singleStepCheck: board._oneSpaceUpIsEmpty(startPosition),
-                doubleStepCheck: Board.isSecondRank(startPosition) && board._twoSpacesUpIsEmpty( startPosition ),
+                doubleStepCheck: Board.isSecondRank(startPosition) && board._twoSpacesUpIsEmpty( startPosition ) && board._oneSpaceUpIsEmpty(startPosition),
                 leftAttackCheck: board._upAndLeftIsAttackable(startPosition),
                 leftAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.backSlashUpIncrement}),
                 rightAttackCheck: board._upAndRightIsAttackable(startPosition ),
@@ -435,6 +435,7 @@ class MovesCalculator {
             }
             movementTypes.push(movementType)
           }
+          // debugger
         return movementTypes
       }
       case "N":
