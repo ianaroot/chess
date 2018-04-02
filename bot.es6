@@ -175,6 +175,49 @@ class Bot {
     return value
   }
 
+  benchMarkRecursivelyProjectMoves2(){// gameController._whiteBot.benchMarkRecursivelyProjectMoves2()
+    this.logTime()
+    let startTime = Math.floor(Date.now() / 1000);
+    window.wins = []
+    window.losses = []
+    let v = (gameController._whiteBot.recursivelyProjectMoves2({board: gameController.board, depth: 3, iteration: 0}))
+    let endTime = Math.floor(Date.now() / 1000)
+    console.log(v)
+    console.log( endTime - startTime)
+  }
+  recursivelyProjectMoves2({board: board, depth: depth, iteration: iteration}){
+    iteration++
+    let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: board.allowedToMove, board: board}),
+      value = 0
+      // console.log(newlyAvailableMoves.length)
+    for( let i = 0; i < newlyAvailableMoves.length; i++){
+      let move = newlyAvailableMoves[i],
+        // newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition});
+        newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
+        if( newBoard._winner === this.team){
+          // console.log(newBoard.movementNotation)
+          // console.log('good checkmate')
+          window.wins.push( newBoard.movementNotation )
+          // return 1
+          value ++
+        } else if ( newBoard._winner === Board.opposingTeam(this.team) ){
+          // console.log(newBoard.movementNotation)
+          // console.log('bad checkmate')
+          window.losses.push( newBoard.movementNotation )
+          // return -1
+          value --
+        } else if (iteration === depth || board.gameOver){
+          // return 0
+          // console.log(newBoard.movementNotation)
+          // console.log('base')
+          // return 0
+        } else {
+          value = (value || 0) + this.recursivelyProjectMoves2({board: newBoard, depth: depth, iteration: iteration})
+        }
+      }
+    return value
+  }
+
 	seekCheckMate(board, move, team){
     let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move})
     if( board._winner === team){
