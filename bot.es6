@@ -155,7 +155,7 @@ class Bot {
 
 // there's something very broken about this approach.i really can't tell what. might be continuing after the game ends?
   seekCheckMateRecursively({board: board, move: move, depth: depth, iteration: iteration}){
-    let newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition});
+    let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
     if( newBoard._winner === this.team){
       // console.log(newBoard.movementNotation)
       // console.log('good checkmate')
