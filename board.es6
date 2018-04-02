@@ -442,6 +442,7 @@ class Board {
   }
 
   kingSideCastleViableFor(team, startPosition){
+    if (Rules.checkQuery({board: this, teamString: this.allowedToMove}) ){ return false }
     let moveNotations = this.movesNotationFor(team),
       regexes = [/Rh/, /Rg/, /Rf/];
     if(team === Board.WHITE){
@@ -470,6 +471,7 @@ class Board {
   }
 
   queenSideCastleViableFor(team, startPosition){
+    if (Rules.checkQuery({board: this, teamString: this.allowedToMove}) ){ return false }
     let moveNotations = this.movesNotationFor(team),
       regexes = [/Ra/, /Rb/, /Rc/, /Rd/];
     if(team === Board.WHITE){

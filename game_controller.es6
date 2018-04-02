@@ -104,6 +104,8 @@ tests = {
   kingsCastles: 	[12,20, 52,44, 5,12, 61,43, 6,23, 62,52, 4,6, 60,62],
   singleMoveTest: [1, 18],
   threeFold: 			[1,18, 62,45, 18,1, 45,62, 1,18, 62,45, 18,1, 45,62],
+	// movingIntoCheck
+	// castlingOutOfCheck
 
   notThreeFold: 	[1,18, 62,45, 18,1, 45,62, 1,18, 62,45, 18,1, 50,42, 1,18, 45,62, 18,1, 62,45],
 
