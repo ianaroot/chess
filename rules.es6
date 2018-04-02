@@ -172,11 +172,21 @@ class Rules {
       if( /x/.exec(notation) || /^[a-h]/.exec(notation) ){
         break
       }
-
-
     }
-    let duplicates = Rules.getDuplicatesForThreeFold(notationsSinceCaptureOrPromotion)
-    if( duplicates.length < 2 ){//TODO setup more indicative three fold test to show why this is 2 not 3
+    let teamOneNotation = [],
+      teamTwoNotation = [];
+    for(let i = 0; i < notationsSinceCaptureOrPromotion.length; i++){
+      let notation = notationsSinceCaptureOrPromotion[i];
+      if( i % 2 === 0 ){
+        teamOneNotation.push(notation)
+      } else {
+        teamTwoNotation.push(notation)
+      }
+    }
+
+    let teamOneDuplicates = this.getDuplicatesForThreeFold(teamOneNotation),
+      teamTwoDuplicates = this.getDuplicatesForThreeFold(teamTwoNotation);
+    if( teamOneDuplicates.length < 2 || teamTwoDuplicates.length < 2){//TODO setup more indicative three fold test to show why this is 2 not 3
       return false
     } else {
       console.log("threeFold triggered")
