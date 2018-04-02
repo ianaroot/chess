@@ -129,15 +129,19 @@ class Rules {
     let occcupiedPositions = board._positionsOccupiedByTeam(onDeckTeamString);
     for(let i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       let startPosition = occcupiedPositions[i],
-        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition});
-      for (let i = 0; i < movesCalculator.moveObjects.length; i++){
-        let moveObject = movesCalculator.moveObjects[i];
+        availableMoves = this.availableMovesFrom({board: board, startPosition: startPosition});
+        // movesCalculator = new MovesCalculator({board: board, startPosition: startPosition});
+      // for (let i = 0; i < movesCalculator.moveObjects.length; i++){
+        // let moveObject = movesCalculator.moveObjects[i];
            // endPosition = moveObject.endPosition;
-         if( !this.checkQueryWithMove( {moveObject: moveObject, board: board}) ){
-           noLegalMoves = false
-           break
-         }
+      for(let j = 0; j < availableMoves.length; j++){
+        let moveObject = availableMoves[j];
+        if( !this.checkQueryWithMove( {moveObject: moveObject, board: board}) ){
+          noLegalMoves = false
+          break
+        }
       }
+      // }
     };
     return noLegalMoves
   }
@@ -194,7 +198,7 @@ class Rules {
     // this.checkmateQuery({inCheck: inCheck, noMoves: noMoves, board: board, attackingTeam: attackingTeam})
     if( inCheck && noMoves ){ board._endGame(attackingTeam); return pawnPromotionNotation + "#" }
     if( inCheck ){ return pawnPromotionNotation + "+" }
-    if( noMoves || threeFold ){ board._endGame; return pawnPromotionNotation }
+    if( noMoves || threeFold ){ board._endGame(); return pawnPromotionNotation }
     return pawnPromotionNotation
   }
 }
