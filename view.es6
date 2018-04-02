@@ -166,11 +166,11 @@ class View{
     if( total === 11 ){ this.expandWhiteCaptureDiv() }
   }
   expandWhiteCaptureDiv(){
-    let div = document.getElementById("white-captures")
+    let div = document.getElementById("W-captures")
     div.style.height = 98
   }
   expandBlackCaptureDiv(){
-    let div = document.getElementById("black-captures")
+    let div = document.getElementById("B-captures")
     div.style.height = 98
   }
   setUndoClickListener(gameController){

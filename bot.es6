@@ -153,7 +153,7 @@ class Bot {
     console.log(Math.floor(Date.now() / 1000))
   }
 // gameController._whiteBot.benchMarkSeekCheckMateRecursively( gameController._whiteBot.logTime )
-  benchMarkSeekCheckMateRecursively(callback){
+  benchMarkSeekCheckMateRecursively(){
     this.logTime()
     let startTime = Math.floor(Date.now() / 1000),
       moves = gameController.api.availableMovesDefault(),
@@ -161,7 +161,6 @@ class Bot {
     for(let  i = 0; i < moves.length; i++){
       v = v + (gameController._whiteBot.seekCheckMateRecursively({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: 2, iteration: 0}))
     }
-    callback()
     let endTime = Math.floor(Date.now() / 1000)
     console.log(v)
     console.log( endTime - startTime)
@@ -176,19 +175,19 @@ class Bot {
   seekCheckMateRecursively({board: board, move: move, team: team, depth: depth, iteration: iteration}){
     let newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition});
     if( newBoard._winner === this.team){
-      console.log(newBoard.movementNotation)
-      console.log('good checkmate')
+      // console.log(newBoard.movementNotation)
+      // console.log('good checkmate')
       // return 1
       return 1
     } else if ( newBoard._winner === Board.opposingTeam(this.team) ){
       // value = - 1 //JUST TWEAKING THIS FOR MEASUREMENT PURPOSES CHANGE TO - for actual move weighting
-      console.log('bad checkmate')
-      console.log(newBoard.movementNotation)
-      // return -1
-      return 1
+      // console.log('bad checkmate')
+      // console.log(newBoard.movementNotation)
+      return -1
+      // return 1 //FOR CHECKING TOTAL END NODES
     } else if (iteration === depth || board.gameOver){
-      // return 0
-      return 1
+      return 0
+      // return 1 //FOR CHECKING TOTAL END NODES
     } else {
       let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
       iteration++
