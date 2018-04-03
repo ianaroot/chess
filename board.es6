@@ -475,6 +475,7 @@ class Board {
   }
 
   kingSideCastleViableFor(team, startPosition){
+    if( this.pieceObject(startPosition + 3) !== team + Board.ROOK ){ return false }
     if (Rules.checkQuery({board: this, teamString: this.allowedToMove}) ){ return false }
     // thinks you can castle if rook was captured but never moved!
     let moveNotations = this.movesNotationFor(team),
@@ -505,6 +506,7 @@ class Board {
   }
 
   queenSideCastleViableFor(team, startPosition){
+    if( this.pieceObject(startPosition - 4) !== team + Board.ROOK ){ return false }
     if (Rules.checkQuery({board: this, teamString: this.allowedToMove}) ){ return false }
     // thinks you can castle if rook was captured but never moved!
     let moveNotations = this.movesNotationFor(team),
