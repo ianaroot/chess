@@ -51,7 +51,7 @@ class GameController {
 		this.view.displayLayOut({board: board, alert: alert, startPosition: startPosition})
 		if(this.movingTeamHasBot() && !this._paused ){
 			let queryMove = this.queryNextBotMove.bind(this)
-			setTimeout( function(){  queryMove() }, 400)
+			setTimeout( function(){  queryMove() }, 800)
 		}
 	}
 
@@ -88,7 +88,7 @@ class GameController {
 			this.attemptMove( moveArray[0], moveArray[1] )
 			moveArray.shift()
 			moveArray.shift()
-			setTimeout( function(){ func(moveArray)  }, 500)
+			setTimeout( function(){ func(moveArray)  }, 1000)
 		}
 	}
 }
@@ -107,6 +107,7 @@ tests = {
 	// movingIntoCheck
 	// castlingOutOfCheck
 	// startPosition straight step pawn capture
+	// pawn king walk
 
   notThreeFold: 	[1,18, 62,45, 18,1, 45,62, 1,18, 62,45, 18,1, 50,42, 1,18, 45,62, 18,1, 62,45],
 

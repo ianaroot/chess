@@ -48,21 +48,28 @@ class Rules {
   }
 
   static checkQuery({board: board, teamString: teamString}){
-    let opposingTeamString = Board.opposingTeam(teamString),
-      kingPosition = board._kingPosition(teamString),
+    // let opposingTeamString = Board.opposingTeam(teamString),
+      let kingPosition = board._kingPosition(teamString);
+      return this.pieceIsAttacked({board: board, defensePosition: kingPosition})
+  }
+
+  static pieceIsAttacked({board: board, defensePosition: defensePosition}){ //doesn't care if the position is occupied
+    let teamString = board.teamAt(defensePosition),
+      opposingTeamString = Board.opposingTeam(teamString),
       enemyPositions = board._positionsOccupiedByTeam(opposingTeamString);
     for(let i = 0; i < enemyPositions.length; i++){
       let enemyPosition = enemyPositions[i],
       enemyPieceType = board.pieceTypeAt( enemyPosition ),
-      differential = kingPosition - enemyPosition;
+      differential = defensePosition - enemyPosition;
       if( !( differential % 10 === 0 || differential % 8 === 0 || differential % 6 === 0 || differential % 7 === 0 || differential % 9 === 0 || differential % 15 === 0 || differential % 17 === 0 || Math.abs(differential) < 8 ) ){ continue}
-      let movesCalculator = new MovesCalculator({board: board, startPosition: enemyPosition, ignoreCastles: true}),//, endPosition: kingPosition}),
+      let movesCalculator = new MovesCalculator({board: board, startPosition: enemyPosition, ignoreCastles: true}),//, endPosition: defensePosition}),
       responseMoveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
       for(let i = 0; i < movesCalculator.moveObjects.length; i++){
         let currentMoveObject = movesCalculator.moveObjects[i],
         endPosition = currentMoveObject.endPosition;
-        if( endPosition === kingPosition ){
+        if( endPosition === defensePosition ){
           responseMoveObject = currentMoveObject
+          console.log(responseMoveObject)
           break;
         }
       }
@@ -70,6 +77,7 @@ class Rules {
         return true
       }
     };
+
   }
 
   static availableMovesFrom({board: board, startPosition: startPosition}){

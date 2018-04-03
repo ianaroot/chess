@@ -189,7 +189,7 @@ class Board {
     this._nextTurn()
   }
 
-  remainingPieceValueFor(team){
+  pieceValue(team){
     let subtractedValue = 0,
         captures = this.capturedPieces;
     for( let i = 0; i < captures.length; i++){

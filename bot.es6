@@ -1,22 +1,37 @@
 class Bot {
   constructor(api, team){
     this.api = api;
-    this.team = team
+    this.homeTeam = team;
+    this.opponent = Board.opposingTeam(team)
+  }
+
+  teamModifier(team){
+    if( team === this.homeTeam ){
+      return 1
+    } else if ( team === this.opponent ){
+      return -1
+    } else {
+      alert("bad input at bot.teamModifier :" + team)
+    }
   }
 
   determineMove(args){
     // this.api = args["api"];
-    let board = args["board"],
-        availableMoves = this.api.availableMovesDefault(),
-        homeTeam = board.allowedToMove,
-    // this.team = homeTeam;
+    this.baseBoard = args["board"];
+    let availableMoves = this.api.availableMovesDefault(),
+        homeTeam = this.baseBoard.allowedToMove,
+    // this.homeTeam = homeTeam;
     // let
-        gamePhase = this.calculateGamePhase({team: homeTeam, board: board}),
-        weightMoves = this.gamePhasePriorities[gamePhase],
-        weightedMoves = weightMoves({moves: availableMoves, board: board, team: homeTeam});
+        // gamePhase = this.calculateGamePhase({team: homeTeam, board: this.baseBoard}),
+        // weightMoves = this.gamePhasePriorities[gamePhase],
+        // weightedMoves = weightMoves({moves: availableMoves, board: this.baseBoard, team: homeTeam});
+
+        weightedMoves = this.weightMovesRecursivelyForOpening(this.baseBoard, 1)
 
         console.log("weightedMoves")
         console.log(weightedMoves)
+
+        // weightedMoves = this.weightMovesRecursively(board)
 
     let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 3)
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
@@ -47,7 +62,7 @@ class Bot {
 
   calculateGamePhase({team: team, board: board}){
     let kingPosition = board.kingPosition(team);
-    if ( board.remainingPieceValueFor( Board.opposingTeam(team) ) <= 13 ) {
+    if ( board.pieceValue( Board.opposingTeam(team) ) <= 13 ) {
       return "end";
     } else if ( !this.backRankHasMinorPieces({team: team, board: board})) {
       return "middle";
@@ -138,86 +153,102 @@ class Bot {
   benchMarkRecursivelyProjectMoves(N){
     this.logTime()
     let startTime = Math.floor(Date.now() / 1000),
-      moves = gameController.api.availableMovesDefault(),
+      moves = this.api.availableMovesDefault(),
       v = 0
     for(let  i = 0; i < moves.length; i++){
-      v = v + (gameController._whiteBot.recursivelyProjectMoves({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: N, iteration: 0}))
+      v = v + (this.recursivelyProjectMoves({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: N, iteration: 0}))
     }
     let endTime = Math.floor(Date.now() / 1000)
     console.log(v)
     console.log( endTime - startTime)
+  }
+
+  enemyLossesAreGreater(board, newBoard){
+    return (board.pieceValue(this.homeTeam) - newBoard.pieceValue(this.homeTeam) ) < (board.pieceValue(this.opponent) - newBoard.pieceValue(this.opponent))
+  }
+
+  homeTeamLossesAreGreater(board, newBoard){
+    return (board.pieceValue(this.homeTeam) - newBoard.pieceValue(this.homeTeam) ) > (board.pieceValue(this.opponent) - newBoard.pieceValue(this.opponent))
+  }
+
+  noNonPawnsUnderAttack({moves: moves, board: board}){
+    for(let i = 0; i < moves.length; i++){
+      let move = moves[i]
+      if( move.captureNotation && !board.pieceTypeAt(move.endPosition) === Board.PAWN ){
+        return true
+      }
+    }
+  }
+
+  pointLossExceeds({board: board, newBoard: newBoard, team: team, minVal: minVal}){
+    // debugger
+    (board.pieceValue(team) - newBoard.pieceValue(team) ) > minVal
   }
 
   recursivelyProjectMoves({board: board, move: move, depth: depth, iteration: iteration}){
-    // console.log(move.captureNotation)
+    var value;
+    if( Board.pieceValues( board.pieceTypeAt(move.startPosition) ) < Board.pieceValues( board.pieceTypeAt(move.endPosition) ) ){
+      console.log("pieceValue");
+      return 20*this.teamModifier(board.allowedToMove)
+    }
     let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
-    if( newBoard._winner === this.team){
-      // console.log(newBoard.movementNotation)
-      // console.log('good checkmate')
-      // return 1
-      // console.log(newBoard.previousLayouts)
-      // console.log(JSON.parse(newBoard.previousLayouts).length)
-      return 1
-    } else if ( newBoard._winner === Board.opposingTeam(this.team) ){
-      // console.log('bad checkmate')
-      // console.log(newBoard.movementNotation)
-      return -1
+    // set gamePhase priorities
+    let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
+    if( newBoard._winner === this.homeTeam){
+      console.log("mate");
+      return 1000
+    } else if ( newBoard._winner === this.opponent ){
+      console.log("mate");
       // return 1 //FOR CHECKING TOTAL END NODES
-    } else if (iteration === depth || board.gameOver){
-      return 0
+      return -1000
+    //} else if (this.pointLossExceeds({board: this.baseBoard, newBoard:newBoard, minVal: 4, team: this.homeTeam}) ){
+    //   return -20
+    // }else if (this.pointLossExceeds({board: this.baseBoard, newBoard:newBoard, minVal: 4, team: this.opponent})){
+    //   return 20
+    } else if (iteration === depth || board.gameOver){//NOW WE GRADE THE END STATE OF THE BOARD
+
+      // THIS ONLY MAKES SENSE IF YOU START AND END WITH THE SAME TEAM ALLOWED TO MOVE
+      // ACTUALLY MAYBE NOT SINCE WE GET TO SPECIFY WHICH TEAM WE WANT THE MOVES FOR ON THE NEXT BOARD
+      let accessibleSquaresWeight = this.weightAccessibleSquares(this.api.availableMovesFor({board: newBoard, movingTeam: this.homeTeam})) - this.weightAccessibleSquares(this.api.availableMovesDefault())
+      // debugger
+      // if( this.enemyLossesAreGreater(this.baseBoard, newBoard) && this.noNonPawnsUnderAttack({moves: newlyAvailableMoves, board: newBoard}) ){ //&& no moves are attacks
+      //   return 10
+      // } else if( this.homeTeamLossesAreGreater(this.baseBoard, newBoard) && this.noNonPawnsUnderAttack({moves: newlyAvailableMoves, board: newBoard}) ){
+      //   return -10
+      // }
+      // return 0
       // return 1 //FOR CHECKING TOTAL END NODES
+      // console.log(this.homeTeam);
+      // console.log(newBoard.allowedToMove)
+      // console.log(accessibleSquaresWeight);
+      return accessibleSquaresWeight
     } else {
-      let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
       iteration++
       for( let i = 0; i < newlyAvailableMoves.length; i++){
-        var value = (value || 0) + this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
-        // return 1
+        // var value = (value || 0) + this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+        if(!value ){
+          value = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+        } else if ( value > this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration}) ){
+          value = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+        }
       }
     }
     return value
   }
 
-  benchMarkRecursivelyProjectMoves2(){// gameController._whiteBot.benchMarkRecursivelyProjectMoves2()
-    this.logTime()
-    let startTime = Math.floor(Date.now() / 1000);
-    window.wins = []
-    window.losses = []
-    let v = (gameController._whiteBot.recursivelyProjectMoves2({board: gameController.board, depth: 3, iteration: 0}))
-    let endTime = Math.floor(Date.now() / 1000)
-    console.log(v)
-    console.log( endTime - startTime)
-  }
-  recursivelyProjectMoves2({board: board, depth: depth, iteration: iteration}){
-    iteration++
-    let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: board.allowedToMove, board: board}),
-      value = 0
-      // console.log(newlyAvailableMoves.length)
-    for( let i = 0; i < newlyAvailableMoves.length; i++){
-      let move = newlyAvailableMoves[i],
-        // newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition});
-        newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
-        if( newBoard._winner === this.team){
-          // console.log(newBoard.movementNotation)
-          // console.log('good checkmate')
-          window.wins.push( newBoard.movementNotation )
-          // return 1
-          value ++
-        } else if ( newBoard._winner === Board.opposingTeam(this.team) ){
-          // console.log(newBoard.movementNotation)
-          // console.log('bad checkmate')
-          window.losses.push( newBoard.movementNotation )
-          // return -1
-          value --
-        } else if (iteration === depth || board.gameOver){
-          // return 0
-          // console.log(newBoard.movementNotation)
-          // console.log('base')
-          // return 0
-        } else {
-          value = (value || 0) + this.recursivelyProjectMoves2({board: newBoard, depth: depth, iteration: iteration})
-        }
+  weightMovesRecursivelyForOpening(board, N){
+    let moves = this.api.availableMovesDefault(),
+    weights = {}
+    for(let  i = 0; i < moves.length; i++){
+      let move = moves[i],
+        weight = (this.recursivelyProjectMoves({board: board, move: move, team: Board.WHITE, value: 0, depth: N, iteration: 0}))
+      if(weights[weight]){
+        weights[weight].push(move)
+      } else {
+        weights[weight] = [move]
       }
-    return value
+    }
+    return weights
   }
 
 	seekCheckMate(board, move, team){
@@ -468,3 +499,56 @@ class Bot {
 // documentation
 // bot should have a function called determineMove. it will take in a hash containing a board, and the this.api, and it
 // will return an array, with the alphaNumeric startPosition and endPosition
+
+
+
+// recursivelyProjectMoves({board: board, move: move, depth: depth, iteration: iteration}){
+//   var value;
+//   if( Board.pieceValues( board.pieceTypeAt(move.startPosition) ) < Board.pieceValues( board.pieceTypeAt(move.endPosition) ) ){
+//     console.log("pieceValue");
+//     return 20*this.teamModifier(board.allowedToMove)
+//   }
+//   let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
+//   // set gamePhase priorities
+//   let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
+//   if( newBoard._winner === this.homeTeam){
+//     console.log("mate");
+//     return 1000
+//   } else if ( newBoard._winner === this.opponent ){
+//     console.log("mate");
+//     // return 1 //FOR CHECKING TOTAL END NODES
+//     return -1000
+//   //} else if (this.pointLossExceeds({board: this.baseBoard, newBoard:newBoard, minVal: 4, team: this.homeTeam}) ){
+//   //   return -20
+//   // }else if (this.pointLossExceeds({board: this.baseBoard, newBoard:newBoard, minVal: 4, team: this.opponent})){
+//   //   return 20
+//   } else if (iteration === depth || board.gameOver){//NOW WE GRADE THE END STATE OF THE BOARD
+//
+//     // THIS ONLY MAKES SENSE IF YOU START AND END WITH THE SAME TEAM ALLOWED TO MOVE
+//     // ACTUALLY MAYBE NOT SINCE WE GET TO SPECIFY WHICH TEAM WE WANT THE MOVES FOR ON THE NEXT BOARD
+//     let accessibleSquaresWeight = this.weightAccessibleSquares(this.api.availableMovesDefault()) - this.weightAccessibleSquares(this.api.availableMovesFor({board: newBoard, movingTeam: this.homeTeam}))
+//     // debugger
+//     // if( this.enemyLossesAreGreater(this.baseBoard, newBoard) && this.noNonPawnsUnderAttack({moves: newlyAvailableMoves, board: newBoard}) ){ //&& no moves are attacks
+//     //   return 10
+//     // } else if( this.homeTeamLossesAreGreater(this.baseBoard, newBoard) && this.noNonPawnsUnderAttack({moves: newlyAvailableMoves, board: newBoard}) ){
+//     //   return -10
+//     // }
+//     // return 0
+//     // return 1 //FOR CHECKING TOTAL END NODES
+//     console.log(this.homeTeam);
+//     console.log(newBoard.allowedToMove)
+//     console.log(accessibleSquaresWeight);
+//     return accessibleSquaresWeight
+//   } else {
+//     iteration++
+//     for( let i = 0; i < newlyAvailableMoves.length; i++){
+//       // var value = (value || 0) + this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+//       if(!value ){
+//         value = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+//       } else if ( value > this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration}) ){
+//         value = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+//       }
+//     }
+//   }
+//   return value
+// }
