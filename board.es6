@@ -1,11 +1,12 @@
 class Board {
   // TODO might be easier to store the moveObjects and recreate noatation on demand!!!
-  constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation}){//, previousLayouts: previousLayouts}){
+  constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation, previousLayouts: previousLayouts}){
     this.layOut = layOut|| Board._defaultLayOut()
     this.capturedPieces = capturedPieces || [];
     this.gameOver = gameOver || false;
     this.allowedToMove = allowedToMove || Board.WHITE;
     this.movementNotation = movementNotation || [];
+    this.previousLayouts = previousLayouts || JSON.stringify([])
   }
 
   static get WHITE()  { return "W" }
@@ -176,10 +177,10 @@ class Board {
   }
 
   _undo(){
-    this.layOut = this.lastLayout()
-    // let parsedPrevious = JSON.parse(this.previousLayouts);
-    parsedPrevious.pop();
-    // this.previousLayouts = JSON.stringify(parsedPrevious)
+    // this.layOut = this.lastLayout()
+    let parsedPrevious = JSON.parse(this.previousLayouts);
+    this.layOut = parsedPrevious.pop();
+    this.previousLayouts = JSON.stringify(parsedPrevious)
     let undoneNotation = this.movementNotation.pop(),
       captureNotationMatch = undoneNotation.match(/x/);
     if( captureNotationMatch ){
@@ -319,7 +320,7 @@ class Board {
     let newLayout = Board._deepCopy(this.layOut),
         newCaptures = Board._deepCopy(this.capturedPieces),
         newMovementNotation = Board._deepCopy(this.movementNotation),
-        newBoard = new Board({layOut: newLayout, capturedPieces: newCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, movementNotation: newMovementNotation});
+        newBoard = new Board({layOut: newLayout, capturedPieces: newCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, movementNotation: newMovementNotation, previousLayouts: this.previousLayouts});
     return newBoard;
   }
 
@@ -347,8 +348,20 @@ class Board {
     return teamNotMoving
   }
 
-  _recordNotationFrom(moveObject){
-    this.movementNotation.push(moveObject.notation())
+  _recordNotationFrom({ moveObject: moveObject, epNotation: epNotation, notationSuffix:  notationSuffix }){
+    // if other pieces of same species from same team could move to the same place, attach clarifying file or rank
+    // for rooks, if Rb goes to a6, is there already a rook on 6? it could've done that too
+    // if it's a queen, is there another queen? if there is another queen, is it on the right rank, file, or square color?
+    // if its a bishop, is there another bishop on the right square color?
+    // if it it's a night, is there anot
+
+    // oooh! could you bump into your teammate from the position you just assumed!! take their rank and file, compare, apply the difference
+    let pieceNotation = moveObject.pieceNotation
+    if( /[QNBR]/.exec(pieceNotation) ){
+
+    }
+
+    this.movementNotation.push( moveObject.notation() + (epNotation || "") + notationSuffix)
   }
 
   _hypotheticallyMovePiece( moveObject ){ // ONLY USE THIS TO SEE IF A MOVE WOULD RESULT IN MATE. there's a lot of space between _officiallyMovePiece and hypothetical. eg  not recording any data on hypothetical moves
@@ -367,6 +380,15 @@ class Board {
       endPosition = moveObject.endPosition,
       additionalActions = moveObject.additionalActions,
       pieceObject = this.pieceObject(startPosition);
+
+
+    let stringyLayOut = JSON.stringify(this.layOut)
+    if(/,/.exec(this.previousLayouts)){
+      this.previousLayouts = this.previousLayouts.replace(/]$/, "," + stringyLayOut + "]" )
+    } else {
+      this.previousLayouts = "[" + stringyLayOut + "]"
+    }
+
     this._emptify(startPosition)
     if( !this.positionEmpty(endPosition) ){ this._capture(endPosition); }
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
@@ -374,7 +396,8 @@ class Board {
     // if( additionalActions ){ additionalActions({position: startPosition}) }
     let prefixNotation = moveObject.notation()
     let notationSuffix = Rules.postMoveQueries( this, prefixNotation )
-    this.movementNotation.push( prefixNotation + (epNotation || "") + notationSuffix)
+    // this.movementNotation.push( prefixNotation + (epNotation || "") + notationSuffix)
+    this._recordNotationFrom({ moveObject: moveObject, epNotation: (epNotation || ""), notationSuffix:  notationSuffix })
     if( !this.gameOver ){ this._nextTurn() }
   }
 

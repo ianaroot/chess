@@ -189,9 +189,35 @@ class Rules {
     if( teamOneDuplicates.length < 2 || teamTwoDuplicates.length < 2){//TODO setup more indicative three fold test to show why this is 2 not 3
       return false
     } else {
-      console.log("threeFold triggered")
+      // console.log("threeFold triggered")
+      let previousLayouts = JSON.parse(board.previousLayouts),
+          repetitions = 0,
+          threeFoldRepetition = false,
+          // currentLayOut = board.layOut;
+          currentLayOut = JSON.stringify(board.layOut);
+
+      for( let i = 0; i < previousLayouts.length; i++ ){
+
+        let comparisonLayout = JSON.stringify(previousLayouts[i]);
+        if(comparisonLayout === currentLayOut){ repetitions++ }
+
+      //   let comparisonLayout = previousLayouts[i],
+      //     different = false;
+      //   for( let j = 0; j < comparisonLayout.length; j++){
+      //     if( comparisonLayout[j] !== currentLayOut[j] ){
+      //       different = true
+      //       break
+      //     }
+      //   };
+      // if( !different ){ repetitions ++ }
+      };
+      if(repetitions >= 2){
+        threeFoldRepetition = true
+      }
+    return threeFoldRepetition
     }
   }
+
 
   static postMoveQueries(board, prefixNotation){
     let pawnPromotionNotation = Rules.pawnPromotionQuery(board),

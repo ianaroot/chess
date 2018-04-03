@@ -135,13 +135,13 @@ class Bot {
     console.log(Math.floor(Date.now() / 1000))
   }
 
-  benchMarkRecursivelyProjectMoves(){
+  benchMarkRecursivelyProjectMoves(N){
     this.logTime()
     let startTime = Math.floor(Date.now() / 1000),
       moves = gameController.api.availableMovesDefault(),
       v = 0
     for(let  i = 0; i < moves.length; i++){
-      v = v + (gameController._whiteBot.recursivelyProjectMoves({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: 2, iteration: 0}))
+      v = v + (gameController._whiteBot.recursivelyProjectMoves({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: N, iteration: 0}))
     }
     let endTime = Math.floor(Date.now() / 1000)
     console.log(v)
@@ -155,6 +155,8 @@ class Bot {
       // console.log(newBoard.movementNotation)
       // console.log('good checkmate')
       // return 1
+      // console.log(newBoard.previousLayouts)
+      // console.log(JSON.parse(newBoard.previousLayouts).length)
       return 1
     } else if ( newBoard._winner === Board.opposingTeam(this.team) ){
       // console.log('bad checkmate')
