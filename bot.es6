@@ -154,12 +154,18 @@ class Bot {
     this.logTime()
     let startTime = Math.floor(Date.now() / 1000),
       moves = this.api.availableMovesDefault(),
-      v = 0
+      weights = {}
     for(let  i = 0; i < moves.length; i++){
-      v = v + (this.recursivelyProjectMoves({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: N, iteration: 0}))
+      let move = moves[i],
+        weight = (this.recursivelyProjectMoves({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: N, iteration: 0}))
+      if(weights[weight]){
+        weights[weight].push(move)
+      } else {
+        weights[weight] = [move]
+      }
     }
     let endTime = Math.floor(Date.now() / 1000)
-    console.log(v)
+    console.log(weights)
     console.log( endTime - startTime)
   }
 
@@ -203,8 +209,9 @@ class Bot {
         // var value = (value || 0) + this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
         if(!value ){
           value = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
-        } else if ( value > this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration}) ){
-          value = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+        } else {
+          let latestValue = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+          if ( value > latestValue ){ value = latestValue }
         }
       }
     }
