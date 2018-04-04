@@ -1,7 +1,7 @@
 class Board {
   // TODO might be easier to store the moveObjects and recreate noatation on demand!!!
   constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation, previousLayouts: previousLayouts}){
-    this.layOut = layOut|| Board._defaultLayOut()
+    this.layOut = layOut|| Layout.approachingMate()
     this.capturedPieces = capturedPieces || [];
     this.gameOver = gameOver || false;
     this.allowedToMove = allowedToMove || Board.WHITE;
@@ -22,45 +22,6 @@ class Board {
   static get LIGHT()  { return "light" }
   static get MINOR_PIECES() { return [Board.NIGHT, Board.BISHOP] }
   static get MAJOR_PIECES() { return [Board.ROOK, Board.QUEEN]}
-  
-
-
-
-  static _defaultLayOut(){
-    // let layOut = [
-    //   Board.WHITE + Board.ROOK, Board.WHITE + Board.NIGHT, Board.WHITE + Board.BISHOP, Board.WHITE + Board.QUEEN, Board.WHITE + Board.KING, Board.WHITE + Board.BISHOP, Board.WHITE + Board.NIGHT, Board.WHITE + Board.ROOK,
-    //   Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN, Board.WHITE + Board.PAWN,
-    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-    //   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-    //   Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN, Board.BLACK + Board.PAWN,
-    //   Board.BLACK + Board.ROOK, Board.BLACK + Board.NIGHT, Board.BLACK + Board.BISHOP, Board.BLACK + Board.QUEEN, Board.BLACK + Board.KING, Board.BLACK + Board.BISHOP, Board.BLACK + Board.NIGHT, Board.BLACK + Board.ROOK
-    // ];
-
-    // let layOut = ["ee", "ee", "ee", "ee", "WK", "ee", "ee", "ee",
-    //               "ee", "ee", "ee", "WP", "WN", "WP", "WP", "ee",
-    //               "ee", "ee", "ee", "ee", "ee", "ee", "ee", "WR",
-    //               "WP", "WB", "ee", "ee", "ee", "ee", "ee", "ee",
-    //               "ee", "ee", "ee", "ee", "WQ", "ee", "ee", "ee",
-    //               "ee", "ee", "ee", "ee", "BP", "ee", "ee", "ee",
-    //               "ee", "ee", "ee", "ee", "ee", "BK", "ee", "ee",
-    //               "ee", "ee", "ee", "ee", "ee", "ee", "ee", "WR"]
-
-    let layOut = [
-      Board.WHITE + Board.ROOK,  Board.EMPTY + Board.EMPTY, Board.WHITE + Board.BISHOP,  Board.WHITE + Board.QUEEN, Board.WHITE + Board.KING,  Board.EMPTY + Board.EMPTY,   Board.WHITE + Board.NIGHT, Board.WHITE + Board.ROOK,
-      Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,    Board.WHITE + Board.PAWN,  Board.EMPTY + Board.EMPTY, Board.WHITE + Board.PAWN,    Board.WHITE + Board.PAWN,  Board.WHITE + Board.PAWN,
-      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.WHITE + Board.NIGHT,   Board.EMPTY + Board.EMPTY, Board.WHITE + Board.PAWN,  Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.WHITE + Board.BISHOP,  Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.BLACK + Board.PAWN,  Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.BLACK + Board.NIGHT, Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.BLACK + Board.PAWN,  Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,   Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,
-      Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,    Board.EMPTY + Board.EMPTY, Board.EMPTY + Board.EMPTY,Board.BLACK + Board.PAWN,   Board.BLACK + Board.PAWN,  Board.BLACK + Board.PAWN,
-      Board.BLACK + Board.ROOK,  Board.EMPTY + Board.EMPTY, Board.BLACK + Board.BISHOP,  Board.BLACK + Board.QUEEN, Board.BLACK + Board.KING,  Board.BLACK + Board.BISHOP,  Board.BLACK + Board.NIGHT, Board.BLACK + Board.ROOK
-    ];//approachingMate used for training bot to seek mate
-
-    return layOut
-  }
-
 
   static _boundaries(){
     return { upperLimit: 63, lowerLimit: 0 }
@@ -326,7 +287,7 @@ class Board {
   }
 
   _reset(){
-    this.layOut = Board._defaultLayOut();
+    this.layOut = Layout.default();
     this.capturedPieces = [];
     this.gameOver = false;
     this.allowedToMove = Board.WHITE;
