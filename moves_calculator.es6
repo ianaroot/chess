@@ -41,7 +41,7 @@ class MovesCalculator {
           break
         }
         if ( this.board.positionEmpty(currentPosition) ){
-          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation}) )// illegal may change later
+          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: movementType.captureNotation}) )// illegal may change later
           // if( this.endPosition === currentPosition){
           //   return
           // }
@@ -417,7 +417,8 @@ class MovesCalculator {
             let movementType = pawnVars.rightAttackMove
             movementType.rangeLimit = 1
             movementType.startPosition = startPosition
-            movementType.pieceNotation = Board.file(startPosition) + "x"
+            movementType.pieceNotation = Board.file(startPosition)// + "x"
+            movementType.captureNotation = "x" //might be quicker to assign a single hash at once
             // let capture = board._capture.bind(board)
             movementType.additionalActions = function(startPosition){
               this._capture(startPosition + 1)
@@ -430,7 +431,8 @@ class MovesCalculator {
             let movementType = pawnVars.leftAttackMove
             movementType.rangeLimit = 1
             movementType.startPosition = startPosition
-            movementType.pieceNotation = Board.file(startPosition) + "x"
+            movementType.pieceNotation = Board.file(startPosition)// + "x"
+            movementType.captureNotation = "x" //might be quicker to assign a single hash at once
             // let capture = board._capture.bind(board)
             movementType.additionalActions = function(startPosition){
               this._capture(startPosition - 1)

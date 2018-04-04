@@ -4,12 +4,12 @@ class MoveObject {
     illegal: illegal,
     startPosition: startPosition, captureNotation: captureNotation
   }){
-    this.additionalActions = additionalActions
-    this.endPosition = endPosition
     this.startPosition = startPosition
-    this.illegal = illegal
+    this.endPosition = endPosition
+    this.additionalActions = additionalActions
     this.pieceNotation = pieceNotation
     this.captureNotation = captureNotation
+    this.illegal = illegal
   }
 
 

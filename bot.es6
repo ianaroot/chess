@@ -182,7 +182,7 @@ class Bot {
           value = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
         } else {
           let latestValue = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
-          if( latestValue > value ){ value = latestValue }
+          if( latestValue > value ){ value = latestValue } // should be <, just doing this to make return clear in benchmark
         }
         // return 1
       }
