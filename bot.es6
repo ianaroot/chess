@@ -141,7 +141,7 @@ class Bot {
       weights = {};
     for(let  i = 0; i < moves.length; i++){
       let move = moves[i],
-        weight = (this.recursivelyProjectMoves({board: this.baseBoard, move: moves[i], team: Board.WHITE, value: 0, depth: N, iteration: 0}))
+        weight = (this.recursivelyProjectMoves({board: this.baseBoard, move: move, team: this.homeTeam, depth: N, iteration: 0}))
       if(weights[weight] ){
         weights[weight].push(move)
       } else {
@@ -153,6 +153,33 @@ class Bot {
     console.log( endTime - startTime)
   }
 
+  // recursivelyProjectMoves({board: board, move: move, depth: depth, iteration: iteration}){
+  //   var value;
+  //   let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
+  //   if( newBoard._winner === this.homeTeam){
+  //     // console.log("mate");
+  //     return 1000
+  //   } else if ( newBoard._winner === this.opponent ){
+  //     // console.log("mate");
+  //     return -1000
+  //   } else if (iteration === depth || board.gameOver){
+  //     return 0//accessibleSquaresWeight + opponentPieceValueDifferential - homeTeamPieceValueDifferential
+  //   } else {
+  //     iteration++
+  //     let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
+  //     for( let i = 0; i < newlyAvailableMoves.length; i++){
+  //       let move = moves[i]
+  //       // var value = (value || 0) + this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+  //       if(!value ){
+  //         value = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+  //       } else {
+  //         let latestValue = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+  //         if ( value > latestValue ){ value = latestValue }
+  //       }
+  //     }
+  //   }
+  //   return value
+  // }
   recursivelyProjectMoves({board: board, move: move, depth: depth, iteration: iteration}){
     // console.log(move.captureNotation)
     var value
