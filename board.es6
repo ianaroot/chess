@@ -22,6 +22,7 @@ class Board {
   static get LIGHT()  { return "light" }
   static get MINOR_PIECES() { return [Board.NIGHT, Board.BISHOP] }
   static get MAJOR_PIECES() { return [Board.ROOK, Board.QUEEN]}
+  
 
 
 
