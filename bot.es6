@@ -196,10 +196,10 @@ class Bot {
     let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
     let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
     if( newBoard._winner === this.homeTeam){
-      console.log("mate");
+      // console.log("mate");
       return 1000
     } else if ( newBoard._winner === this.opponent ){
-      console.log("mate");
+      // console.log("mate");
       return -1000
     } else if (iteration === depth || board.gameOver){
       return 0//accessibleSquaresWeight + opponentPieceValueDifferential - homeTeamPieceValueDifferential
