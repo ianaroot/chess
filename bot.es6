@@ -138,17 +138,24 @@ class Bot {
     this.logTime()
     let startTime = Math.floor(Date.now() / 1000),
       moves = this.api.availableMovesDefault(),
-      v = 0
+      weights = {};
     for(let  i = 0; i < moves.length; i++){
-      v = v + (this.recursivelyProjectMoves({board: this.baseBoard, move: moves[i], team: Board.WHITE, value: 0, depth: N, iteration: 0}))
+      let move = moves[i],
+        weight = (this.recursivelyProjectMoves({board: this.baseBoard, move: moves[i], team: Board.WHITE, value: 0, depth: N, iteration: 0}))
+      if(weights[weight] ){
+        weights[weight].push(move)
+      } else {
+        weights[weight] = [move]
+      }
     }
     let endTime = Math.floor(Date.now() / 1000)
-    console.log(v)
+    console.log(weights)
     console.log( endTime - startTime)
   }
 
   recursivelyProjectMoves({board: board, move: move, depth: depth, iteration: iteration}){
     // console.log(move.captureNotation)
+    var value
     let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
     if( newBoard._winner === this.homeTeam){
       // console.log(newBoard.movementNotation)
@@ -169,7 +176,14 @@ class Bot {
       let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
       iteration++
       for( let i = 0; i < newlyAvailableMoves.length; i++){
-        var value = (value || 0) + this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+        // var value = (value || 0) + this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+
+        if(!value ){
+          value = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+        } else {
+          let latestValue = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+          if( latestValue > value ){ value = latestValue }
+        }
         // return 1
       }
     }
@@ -213,7 +227,13 @@ class Bot {
           // console.log('base')
           // return 0
         } else {
-          value = (value || 0) + this.recursivelyProjectMoves2({board: newBoard, depth: depth, iteration: iteration})
+          // value = (value || 0) + this.recursivelyProjectMoves2({board: newBoard, depth: depth, iteration: iteration})
+          if(!value ){
+            value = this.recursivelyProjectMoves2({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+          } else {
+            let latestValue = this.recursivelyProjectMoves2({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+            if( latestValue < value ){ value = latestValue }
+          }
         }
       }
     return value
