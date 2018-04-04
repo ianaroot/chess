@@ -39,8 +39,14 @@ class Rules {
     //   throw new Error("missing params in checkQuery")
     // }
     let startPosition = moveObject.startPosition,
-      endPosition = moveObject.endPosition,
-      additionalActions = moveObject.additionalActions,
+      teamString         = board.teamAt(startPosition),
+      newBoard = board.deepCopy();
+    newBoard._hypotheticallyMovePiece( moveObject )
+    return this.checkQuery({board: newBoard, teamString: teamString})
+  }
+
+  static pieceWillBeAttackedAfterMove({board: board, moveObject: moveObject}){
+    let startPosition = moveObject.startPosition,
       teamString         = board.teamAt(startPosition),
       newBoard = board.deepCopy();
     newBoard._hypotheticallyMovePiece( moveObject )
@@ -69,7 +75,7 @@ class Rules {
         endPosition = currentMoveObject.endPosition;
         if( endPosition === defensePosition ){
           responseMoveObject = currentMoveObject
-          console.log(responseMoveObject)
+          // console.log(responseMoveObject)
           break;
         }
       }
@@ -78,6 +84,13 @@ class Rules {
       }
     };
 
+  }
+
+  static positionsControlledByTeam({board: board, team: team}){
+    let occcupiedPositions = board.positionsOccupiedByTeam(team);
+    for (let i = 0; i < occcupiedPositions.length; i++){
+      
+    }
   }
 
   static availableMovesFrom({board: board, startPosition: startPosition}){

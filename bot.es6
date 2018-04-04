@@ -26,14 +26,14 @@ class Bot {
         // weightMoves = this.gamePhasePriorities[gamePhase],
         // weightedMoves = weightMoves({moves: availableMoves, board: this.baseBoard, team: homeTeam});
 
-        weightedMoves = this.weightMovesRecursivelyForOpening(this.baseBoard, 1)
+        weightedMoves = this.weightMovesRecursivelyForOpening(this.baseBoard, 2)
 
         console.log("weightedMoves")
         console.log(weightedMoves)
 
         // weightedMoves = this.weightMovesRecursively(board)
 
-    let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 3)
+    let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 1)
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
     console.log(homeTeam)
     console.log(move)
@@ -187,41 +187,16 @@ class Bot {
 
   recursivelyProjectMoves({board: board, move: move, depth: depth, iteration: iteration}){
     var value;
-    if( Board.pieceValues( board.pieceTypeAt(move.startPosition) ) < Board.pieceValues( board.pieceTypeAt(move.endPosition) ) ){
-      console.log("pieceValue");
-      return 20*this.teamModifier(board.allowedToMove)
-    }
     let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
-    // set gamePhase priorities
     let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
     if( newBoard._winner === this.homeTeam){
       console.log("mate");
       return 1000
     } else if ( newBoard._winner === this.opponent ){
       console.log("mate");
-      // return 1 //FOR CHECKING TOTAL END NODES
       return -1000
-    //} else if (this.pointLossExceeds({board: this.baseBoard, newBoard:newBoard, minVal: 4, team: this.homeTeam}) ){
-    //   return -20
-    // }else if (this.pointLossExceeds({board: this.baseBoard, newBoard:newBoard, minVal: 4, team: this.opponent})){
-    //   return 20
-    } else if (iteration === depth || board.gameOver){//NOW WE GRADE THE END STATE OF THE BOARD
-
-      // THIS ONLY MAKES SENSE IF YOU START AND END WITH THE SAME TEAM ALLOWED TO MOVE
-      // ACTUALLY MAYBE NOT SINCE WE GET TO SPECIFY WHICH TEAM WE WANT THE MOVES FOR ON THE NEXT BOARD
-      let accessibleSquaresWeight = this.weightAccessibleSquares(this.api.availableMovesFor({board: newBoard, movingTeam: this.homeTeam})) - this.weightAccessibleSquares(this.api.availableMovesDefault())
-      // debugger
-      // if( this.enemyLossesAreGreater(this.baseBoard, newBoard) && this.noNonPawnsUnderAttack({moves: newlyAvailableMoves, board: newBoard}) ){ //&& no moves are attacks
-      //   return 10
-      // } else if( this.homeTeamLossesAreGreater(this.baseBoard, newBoard) && this.noNonPawnsUnderAttack({moves: newlyAvailableMoves, board: newBoard}) ){
-      //   return -10
-      // }
-      // return 0
-      // return 1 //FOR CHECKING TOTAL END NODES
-      // console.log(this.homeTeam);
-      // console.log(newBoard.allowedToMove)
-      // console.log(accessibleSquaresWeight);
-      return accessibleSquaresWeight
+    } else if (iteration === depth || board.gameOver){
+      return 0//accessibleSquaresWeight + opponentPieceValueDifferential - homeTeamPieceValueDifferential
     } else {
       iteration++
       for( let i = 0; i < newlyAvailableMoves.length; i++){
@@ -324,10 +299,10 @@ class Bot {
       // e5: 1.6,
       // e4: 1.6,
 
-      35: 1.6,
-      36: 1.6,
-      27: 1.6,
-      28: 1.6,
+      35: 4.0,
+      36: 4.0,
+      27: 4.0,
+      28: 4.0,
 
       // c3: .8,
       // c4: .8,
@@ -342,18 +317,18 @@ class Bot {
       // f5: .8,
       // f6: .8,
 
-      18: .8,
-      19: .8,
-      20: .8,
-      21: .8,
-      26: .8,
-      29: .8,
-      34: .8,
-      37: .8,
-      42: .8,
-      43: .8,
-      44: .8,
-      45: .8,
+      18: 2.0,
+      19: 2.0,
+      20: 2.0,
+      21: 2.0,
+      26: 2.0,
+      29: 2.0,
+      34: 2.0,
+      37: 2.0,
+      42: 2.0,
+      43: 2.0,
+      44: 2.0,
+      45: 2.0,
 
       // b2: .2,
       // b3: .2,

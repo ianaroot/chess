@@ -1,6 +1,6 @@
 class MovesCalculator {
   constructor({  startPosition: startPosition, board: board, moveObjects: moveObjects,
-    movementTypes: movementTypes, ignoreCastles: ignoreCastles//, countDefense: countDefense//, endPosition: endPosition
+    movementTypes: movementTypes, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly//, countDefense: countDefense//, endPosition: endPosition
   }){
     this.startPosition = startPosition
     this.board = board
