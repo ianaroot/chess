@@ -1,26 +1,25 @@
 class Bot {
   constructor(api, team){
     this.api = api;
-    this.team = team
+    this.homeTeam = team
   }
 
   determineMove(args){
     // this.api = args["api"];
     let board = args["board"],
-        availableMoves = this.api.availableMovesDefault(),
-        homeTeam = board.allowedToMove,
-    // this.team = homeTeam;
+        availableMoves = this.api.availableMovesDefault();
+    // this.homeTeam = this.homeTeam;
     // let
-        gamePhase = this.calculateGamePhase({team: homeTeam, board: board}),
+        gamePhase = this.calculateGamePhase({team: this.homeTeam, board: board}),
         weightMoves = this.gamePhasePriorities[gamePhase],
-        weightedMoves = weightMoves({moves: availableMoves, board: board, team: homeTeam});
+        weightedMoves = weightMoves({moves: availableMoves, board: board, team: this.homeTeam});
 
         console.log("weightedMoves")
         console.log(weightedMoves)
 
     let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 3)
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
-    console.log(homeTeam)
+    console.log(this.homeTeam)
     console.log(move)
     return move
 
@@ -138,10 +137,10 @@ class Bot {
   benchMarkRecursivelyProjectMoves(N){
     this.logTime()
     let startTime = Math.floor(Date.now() / 1000),
-      moves = gameController.api.availableMovesDefault(),
+      moves = this.api.availableMovesDefault(),
       v = 0
     for(let  i = 0; i < moves.length; i++){
-      v = v + (gameController._whiteBot.recursivelyProjectMoves({board: gameController.board, move: moves[i], team: Board.WHITE, value: 0, depth: N, iteration: 0}))
+      v = v + (this.recursivelyProjectMoves({board: this.baseBoard, move: moves[i], team: Board.WHITE, value: 0, depth: N, iteration: 0}))
     }
     let endTime = Math.floor(Date.now() / 1000)
     console.log(v)
@@ -151,14 +150,14 @@ class Bot {
   recursivelyProjectMoves({board: board, move: move, depth: depth, iteration: iteration}){
     // console.log(move.captureNotation)
     let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
-    if( newBoard._winner === this.team){
+    if( newBoard._winner === this.homeTeam){
       // console.log(newBoard.movementNotation)
       // console.log('good checkmate')
       // return 1
       // console.log(newBoard.previousLayouts)
       // console.log(JSON.parse(newBoard.previousLayouts).length)
       return 1
-    } else if ( newBoard._winner === Board.opposingTeam(this.team) ){
+    } else if ( newBoard._winner === Board.opposingTeam(this.homeTeam) ){
       // console.log('bad checkmate')
       // console.log(newBoard.movementNotation)
       return -1
@@ -182,9 +181,9 @@ class Bot {
     let startTime = Math.floor(Date.now() / 1000);
     window.wins = []
     window.losses = []
-    let v = (gameController._whiteBot.recursivelyProjectMoves2({board: gameController.board, depth: 3, iteration: 0}))
+    let v = (this.recursivelyProjectMoves2({board: this.baseBoard, depth: 3, iteration: 0}))
     let endTime = Math.floor(Date.now() / 1000)
-    console.log(v)
+    console.lo(v)
     console.log( endTime - startTime)
   }
   recursivelyProjectMoves2({board: board, depth: depth, iteration: iteration}){
@@ -196,13 +195,13 @@ class Bot {
       let move = newlyAvailableMoves[i],
         // newBoard = this.api.resultOfHypotheticalMove({board: board, alphaNumericStartPosition: move.startPosition, alphaNumericEndPosition: move.endPosition});
         newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
-        if( newBoard._winner === this.team){
+        if( newBoard._winner === this.homeTeam){
           // console.log(newBoard.movementNotation)
           // console.log('good checkmate')
           window.wins.push( newBoard.movementNotation )
           // return 1
           value ++
-        } else if ( newBoard._winner === Board.opposingTeam(this.team) ){
+        } else if ( newBoard._winner === Board.opposingTeam(this.homeTeam) ){
           // console.log(newBoard.movementNotation)
           // console.log('bad checkmate')
           window.losses.push( newBoard.movementNotation )
