@@ -1,5 +1,5 @@
 class MovesCalculator {
-  constructor({  startPosition: startPosition, board: board, moveObjects: moveObjects, movementTypes: movementTypes, ignoreCastles: ignoreCastles, countDefense: countDefense//, endPosition: endPosition
+  constructor({  startPosition: startPosition, board: board, moveObjects: moveObjects, movementTypes: movementTypes, ignoreCastles: ignoreCastles//, countDefense: countDefense//, endPosition: endPosition
   }){
     this.startPosition = startPosition
     this.board = board
@@ -8,7 +8,7 @@ class MovesCalculator {
     this.pieceType = this.board.pieceTypeAt(this.startPosition)
     this.viablePositions = {}
     this.ignoreCastles = ignoreCastles || false
-    this.countDefense = countDefense
+    // this.countDefense = countDefense
     // this.endPosition = endPosition
     this.addMovementTypes()
     this.calculateViablePositions()
@@ -52,9 +52,9 @@ class MovesCalculator {
           // }
           break
         } else if( this.board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
-          if(this.countDefense){
-            moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )
-          }
+          // if(this.countDefense){
+          //   moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )
+          // }
           break
         }
       }
