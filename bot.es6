@@ -15,9 +15,15 @@ class Bot {
     }
   }
 
-  determineMove(args){
-    // this.api = args["api"];
-    this.baseBoard = args["board"];
+  setInstanceVars(board){
+    this.baseBoard = board;
+    this.bestBranchValue = null;
+    this.hometeamStartingPieceValue = this.baseBoard.pieceValue(this.homeTeam);
+    this.opponentStartingPieceValue = this.baseBoard.pieceValue(this.opponent);
+  }
+
+  determineMove(board){
+    this.setInstanceVars(board);
     let availableMoves = this.api.availableMovesDefault(),
         homeTeam = this.baseBoard.allowedToMove,
     // this.homeTeam = homeTeam;
@@ -26,14 +32,14 @@ class Bot {
         // weightMoves = this.gamePhasePriorities[gamePhase],
         // weightedMoves = weightMoves({moves: availableMoves, board: this.baseBoard, team: homeTeam});
 
-        weightedMoves = this.weightMovesRecursivelyForOpening(this.baseBoard, 2)
+        weightedMoves = this.weightMovesRecursivelyForOpening(this.baseBoard, 3)
 
         console.log("weightedMoves")
         console.log(weightedMoves)
 
         // weightedMoves = this.weightMovesRecursively(board)
 
-    let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 1)
+    let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 5)
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
     console.log(homeTeam)
     console.log(move)
@@ -142,10 +148,6 @@ class Bot {
     return weightedMoves
   }
 
-  avoidCheckMate(board, move, team){
-
-  }
-
   logTime(){
     console.log(Math.floor(Date.now() / 1000))
   }
@@ -156,8 +158,11 @@ class Bot {
       moves = this.api.availableMovesDefault(),
       weights = {}
     for(let  i = 0; i < moves.length; i++){
-      let move = moves[i],
-        weight = (this.recursivelyProjectMoves({board: gameController.board, move: move, team: this.homeTeam, depth: N, iteration: 0}))
+      let move = moves[i];
+      if( [Board.KING, Board.QUEEN, Board.ROOK].includes(move.pieceNotation) && !Rules.pieceIsAttacked({board: this.baseBoard, }) ){ continue }
+      // if( move.startPosition !== 26 || move.endPosition !== 35){ continue}
+      this.baseNode = move
+      let weight = (this.recursivelyProjectMoves({board: gameController.board, move: move, team: this.homeTeam, depth: N, iteration: 0}))
       if(weights[weight]){
         weights[weight].push(move)
       } else {
@@ -191,39 +196,52 @@ class Bot {
     (board.pieceValue(team) - newBoard.pieceValue(team) ) > minVal
   }
 
+
   recursivelyProjectMoves({board: board, move: move, depth: depth, iteration: iteration}){
+    let pieceNotation = move.pieceNotation
+    if( /O/.exec(pieceNotation) && board.allowedToMove === this.homeTeam ){ return 2 }
     var value;
     let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
     if( newBoard._winner === this.homeTeam){
-      // console.log("mate");
       return 1000
     } else if ( newBoard._winner === this.opponent ){
-      // console.log("mate");
       return -1000
-    } else if (iteration === depth || board.gameOver){
-      return 0//accessibleSquaresWeight + opponentPieceValueDifferential - homeTeamPieceValueDifferential
+    } else if (iteration === depth || newBoard.gameOver){
+      let accessibleSquaresWeight = this.weightAccessibleSquares(newBoard),
+        opponentPieceValueDifferential = this.opponentStartingPieceValue - newBoard.pieceValue(this.opponent),
+        homeTeamPieceValueDifferential = this.hometeamStartingPieceValue - newBoard.pieceValue(this.homeTeam),
+        total = accessibleSquaresWeight - homeTeamPieceValueDifferential + opponentPieceValueDifferential;
+      if(total === undefined){debugger}
+      return total
     } else {
       iteration++
       let newlyAvailableMoves = this.api.availableMovesFor({movingTeam: newBoard.allowedToMove, board: newBoard});
       for( let i = 0; i < newlyAvailableMoves.length; i++){
+        let nextMove = newlyAvailableMoves[i]
         // var value = (value || 0) + this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
         if(!value ){
-          value = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+          value = this.recursivelyProjectMoves({board: newBoard, move: nextMove, depth: depth, iteration: iteration})
         } else {
-          let latestValue = this.recursivelyProjectMoves({board: newBoard, move: newlyAvailableMoves[i], depth: depth, iteration: iteration})
+          let latestValue = this.recursivelyProjectMoves({board: newBoard, move: nextMove, depth: depth, iteration: iteration})
           if ( value > latestValue ){ value = latestValue }
         }
+        if( value + 2 < this.bestBranchValue ){ return value }
       }
     }
-    return value
+    // if( isNaN(value) ){debugger}
+    // console.log("returning zero, yo shit is fucked up")
+    // console.log(this.baseNode, value)
+    return value || 0
   }
 
   weightMovesRecursivelyForOpening(board, N){
     let moves = this.api.availableMovesDefault(),
     weights = {}
     for(let  i = 0; i < moves.length; i++){
-      let move = moves[i],
-        weight = (this.recursivelyProjectMoves({board: board, move: move, team: Board.WHITE, value: 0, depth: N, iteration: 0}))
+      let move = moves[i];
+      this.baseNode = move
+      if( [Board.KING, Board.QUEEN, Board.ROOK].includes(move.pieceNotation) && !move.captureNotation ){ continue };
+      let weight = (this.recursivelyProjectMoves({board: board, move: move, team: Board.WHITE, value: 0, depth: N, iteration: 0}));
       if(weights[weight]){
         weights[weight].push(move)
       } else {
@@ -288,10 +306,11 @@ class Bot {
     }
   }
 
-  weightAccessibleSquares(moves){
-    let squareValues = 0;
-    for( let i = 0; i < moves.length; i++){
-      let square = moves[i].endPosition,
+  weightAccessibleSquares(board){
+    let squareValues = 0,
+      controlledPositions = Rules.positionsControlledByTeam({board: board, team: this.homeTeam}) ;//should be made accessible through the api
+    for( let i = 0; i < controlledPositions.length; i++){
+      let square = controlledPositions[i],
         squareValue = Bot.SQUAREWEIGHTS[square];
       squareValues = squareValues + squareValue
     }
@@ -306,10 +325,10 @@ class Bot {
       // e5: 1.6,
       // e4: 1.6,
 
-      35: 4.0,
-      36: 4.0,
-      27: 4.0,
-      28: 4.0,
+      35: .8,
+      36: .8,
+      27: .8,
+      28: .8,
 
       // c3: .8,
       // c4: .8,
@@ -324,18 +343,18 @@ class Bot {
       // f5: .8,
       // f6: .8,
 
-      18: 2.0,
-      19: 2.0,
-      20: 2.0,
-      21: 2.0,
-      26: 2.0,
-      29: 2.0,
-      34: 2.0,
-      37: 2.0,
-      42: 2.0,
-      43: 2.0,
-      44: 2.0,
-      45: 2.0,
+      18: .1,
+      19: .1,
+      20: .1,
+      21: .1,
+      26: .1,
+      29: .1,
+      34: .1,
+      37: .1,
+      42: .1,
+      43: .1,
+      44: .1,
+      45: .1,
 
       // b2: .2,
       // b3: .2,
@@ -358,28 +377,28 @@ class Bot {
       // g6: .2,
       // g7: .2,
 
-      9: .2,
-      10: .2,
-      11: .2,
-      12: .2,
-      13: .2,
-      14: .2,
+      9:  .02,
+      10: .02,
+      11: .02,
+      12: .02,
+      13: .02,
+      14: .02,
 
-      17: .2,
-      22: .2,
-      25: .2,
-      30: .2,
-      33: .2,
-      38: .2,
-      41: .2,
-      46: .2,
+      17: .02,
+      22: .02,
+      25: .02,
+      30: .02,
+      33: .02,
+      38: .02,
+      41: .02,
+      46: .02,
 
-      49: .2,
-      50: .2,
-      51: .2,
-      52: .2,
-      53: .2,
-      54: .2,
+      49: .02,
+      50: .02,
+      51: .02,
+      52: .02,
+      53: .02,
+      54: .02,
 
       // a1: .1,
       // a2: .1,
@@ -410,34 +429,37 @@ class Bot {
       // h7: .1,
       // h8: .1
 
-      1: .1,
-      2: .1,
-      3: .1,
-      4: .1,
-      5: .1,
-      6: .1,
-      7: .1,
-      8: .1,
-      16: .1,
-      24: .1,
-      32: .1,
-      40: .1,
-      48: .1,
-      56: .1,
-      57: .1,
-      58: .1,
-      59: .1,
-      60: .1,
-      61: .1,
-      62: .1,
-      63: .1,
-      15: .1,
-      23: .1,
-      31: .1,
-      39: .1,
-      47: .1,
-      55: .1,
-      63: .1
+      0: .004,
+      1: .004,
+      2: .004,
+      3: .004,
+      4: .004,
+      5: .004,
+      6: .004,
+      7: .004,
+
+      8: .004,
+      16: .004,
+      24: .004,
+      32: .004,
+      40: .004,
+      48: .004,
+
+      56: .004,
+      57: .004,
+      58: .004,
+      59: .004,
+      60: .004,
+      61: .004,
+      62: .004,
+      63: .004,
+
+      15: .004,
+      23: .004,
+      31: .004,
+      39: .004,
+      47: .004,
+      55: .004,
     }
   }
 
@@ -461,12 +483,15 @@ class Bot {
   pickNweightiestMovesFrom(weightedMoves, n){
     let nWeights = [],
       weights = Object.keys(weightedMoves),
-      sortedWeights = this.sortArray(weights);
+      sortedWeights = this.sortArray(weights),
+      highestWeight = sortedWeights[sortedWeights.length -1];
     for(let i = sortedWeights.length -1 ; i > -1 && nWeights.length < n; i--){
       let weight = sortedWeights[i],
         moves = weightedMoves[weight];
-      for( let j = 0; j < moves.length; j++){
-        nWeights.push(moves[j])
+      if((highestWeight - 2) < weight){
+        for( let j = 0; j < moves.length; j++){
+          nWeights.push(moves[j])
+        }
       }
     }
     return nWeights

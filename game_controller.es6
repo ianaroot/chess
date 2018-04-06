@@ -11,7 +11,7 @@ class GameController {
 		this.view.setPauseClickListener(this)
 		this.api = new Api({board: this.board, gameController: this});
 		this._whiteBot = new Bot(this.api, Board.WHITE)
-		// this._blackBot = new Bot(this.api, Board.BLACK)
+		this._blackBot = new Bot(this.api, Board.BLACK)
 		if(this._whiteBot && !this._paused){ this.queryNextBotMove()}
 	}
 
@@ -49,7 +49,7 @@ class GameController {
 			}
 		}
 		this.view.displayLayOut({board: board, alert: alert, startPosition: startPosition})
-		if(this.movingTeamHasBot() && !this._paused ){
+		if(this.movingTeamHasBot() && !this._paused && !this.board.gameOver){
 			let queryMove = this.queryNextBotMove.bind(this)
 			setTimeout( function(){  queryMove() }, 800)
 		}
@@ -62,12 +62,15 @@ class GameController {
 
 	queryBotMove(team){
 		if( team === Board.WHITE ){
-			let moveObject = this._whiteBot.determineMove({ board: this.board, api: this.api })
-			this.attemptMove(moveObject.startPosition, moveObject.endPosition)
+			var moveObject = this._whiteBot.determineMove(this.board)
 		} else {
-			let moveObject = this._blackBot.determineMove({ board: this.board, api: this.api })
-			this.attemptMove(moveObject.startPosition, moveObject.endPosition)
+			var moveObject = this._blackBot.determineMove(this.board)
 		}
+		if (!moveObject ){
+			console.log("FAILED queryBotMove, trying again")
+			this.queryBotMove( team )
+		}
+		this.attemptMove(moveObject.startPosition, moveObject.endPosition)
 	}
 
 	queryNextBotMove(){

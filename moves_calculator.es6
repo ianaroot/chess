@@ -1,4 +1,4 @@
-class MovesCalculator {
+class MovesCalculator { //MOVES ARE NOT GUARANTEED TO BE LEGAL, MUST RUN CHECK QUERY
   constructor({  startPosition: startPosition, board: board, moveObjects: moveObjects,
     movementTypes: movementTypes, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly//, countDefense: countDefense//, endPosition: endPosition
   }){
@@ -9,6 +9,7 @@ class MovesCalculator {
     this.pieceType = this.board.pieceTypeAt(this.startPosition)
     this.viablePositions = {}
     this.ignoreCastles = ignoreCastles || false
+    this.attacksOnly = attacksOnly || false
     // this.countDefense = countDefense
     // this.endPosition = endPosition
     this.addMovementTypes()
@@ -24,8 +25,16 @@ class MovesCalculator {
     // } else {
       let pieceSpecificMovements = MovesCalculator.pieceSpecificMovements(this.pieceType)// , (this.endPosition - this.startPosition ) ); //TODO maybe shouldn't rely on Nan below when endPosition is undefined
           // the difference between the two refs to pieceSpecificMovements in these couple lines is very unclear
-      this.movementTypes = pieceSpecificMovements({startPosition: this.startPosition, board: this.board, ignoreCastles: this.ignoreCastles})
+      this.movementTypes = pieceSpecificMovements({startPosition: this.startPosition, board: this.board, ignoreCastles: this.ignoreCastles, attacksOnly: this.attacksOnly})
     // }
+  }
+
+  endPositions(){
+    let positions = []
+    for(let i = 0; i < this.moveObjects.length; i++){
+      positions.push(this.moveObjects[i].endPosition)
+    }
+    return positions
   }
 
   calculateViablePositions(){
@@ -53,9 +62,9 @@ class MovesCalculator {
           // }
           break
         } else if( this.board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
-          // if(this.countDefense){
-          //   moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )
-          // }
+          if(this.attacksOnly){
+            this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )
+          }
           break
         }
       }
@@ -343,7 +352,7 @@ class MovesCalculator {
     return commons
   }
 
-  static pieceSpecificMovements(species, differential){
+  static pieceSpecificMovements(species){// differential){
 
     // if( differential ){
     //   var possibleMovesTowardsEndPosition = []
@@ -357,57 +366,57 @@ class MovesCalculator {
 
     switch(species){
       case "P":
-        return function({board: board, startPosition: startPosition}){
+        return function({board: board, startPosition: startPosition, attacksOnly: attacksOnly}){
           var movementTypes = [],
-            teamString = board.teamAt(startPosition),
-            colorVars = {
-              B: {
-                startRank: 7,
-                nonAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.verticalDownIncrement}),
-                singleStepCheck: board._oneSpaceDownIsEmpty(startPosition),
-                doubleStepCheck: Board.isSeventhRank(startPosition) && board._twoSpacesDownIsEmpty(startPosition) && board._oneSpaceDownIsEmpty(startPosition),
-                leftAttackCheck: board._downAndLeftIsAttackable(startPosition),
-                leftAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.forwardSlashDownIncrement}),
-                rightAttackCheck: board._downAndRightIsAttackable(startPosition),
-                rightAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.backSlashDownIncrement}),
-                rightEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition + 1) && board.whitePawnDoubleSteppedTo(startPosition + 1),//board.whitePawnDoubleSteppedFrom(startPosition - 15),
-                leftEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition - 1) && board.whitePawnDoubleSteppedTo(startPosition - 1)// board.whitePawnDoubleSteppedFrom(startPosition - 17),
-              },
-              W: {
-                startRank: 2,
-                nonAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.verticalUpIncrement}),
-                singleStepCheck: board._oneSpaceUpIsEmpty(startPosition),
-                doubleStepCheck: Board.isSecondRank(startPosition) && board._twoSpacesUpIsEmpty( startPosition ) && board._oneSpaceUpIsEmpty(startPosition),
-                leftAttackCheck: board._upAndLeftIsAttackable(startPosition),
-                leftAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.backSlashUpIncrement}),
-                rightAttackCheck: board._upAndRightIsAttackable(startPosition ),
-                rightAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.forwardSlashUpIncrement}),
-                leftEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition - 1) && board.blackPawnDoubleSteppedTo(startPosition - 1),//board.blackPawnDoubleSteppedFrom(startPosition + 15),
-                rightEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition + 1) && board.blackPawnDoubleSteppedTo(startPosition + 1)//board.blackPawnDoubleSteppedFrom(startPosition + 17),
-              }
-            },
-            pawnVars = colorVars[teamString]
-          if ( pawnVars.doubleStepCheck ){
+            teamString = board.teamAt(startPosition);
+          if( teamString === Board.BLACK ){
+            var pawnVars = {
+              startRank: 7,
+              nonAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.verticalDownIncrement}),
+              singleStepCheck: board._oneSpaceDownIsEmpty(startPosition),
+              doubleStepCheck: Board.isSeventhRank(startPosition) && board._twoSpacesDownIsEmpty(startPosition) && board._oneSpaceDownIsEmpty(startPosition),
+              leftAttackCheck: board._downAndLeftIsAttackable(startPosition),
+              leftAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.forwardSlashDownIncrement}),
+              rightAttackCheck: board._downAndRightIsAttackable(startPosition),
+              rightAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.backSlashDownIncrement}),
+              rightEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition + 1) && board.whitePawnDoubleSteppedTo(startPosition + 1),//board.whitePawnDoubleSteppedFrom(startPosition - 15),
+              leftEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition - 1) && board.whitePawnDoubleSteppedTo(startPosition - 1)// board.whitePawnDoubleSteppedFrom(startPosition - 17),
+            }
+          } else if( teamString === Board.WHITE ){
+            var pawnVars = {
+              startRank: 2,
+              nonAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.verticalUpIncrement}),
+              singleStepCheck: board._oneSpaceUpIsEmpty(startPosition),
+              doubleStepCheck: Board.isSecondRank(startPosition) && board._twoSpacesUpIsEmpty( startPosition ) && board._oneSpaceUpIsEmpty(startPosition),
+              leftAttackCheck: board._upAndLeftIsAttackable(startPosition),
+              leftAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.backSlashUpIncrement}),
+              rightAttackCheck: board._upAndRightIsAttackable(startPosition ),
+              rightAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.forwardSlashUpIncrement}),
+              leftEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition - 1) && board.blackPawnDoubleSteppedTo(startPosition - 1),//board.blackPawnDoubleSteppedFrom(startPosition + 15),
+              rightEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition + 1) && board.blackPawnDoubleSteppedTo(startPosition + 1)//board.blackPawnDoubleSteppedFrom(startPosition + 17),
+            }
+          }
+          if ( pawnVars.doubleStepCheck && !attacksOnly ){
             let movementType = pawnVars.nonAttackMove
             movementType.rangeLimit = 2
             movementType.pieceNotation = ""
             movementType.startPosition = startPosition
             movementTypes.push(movementType)
-          } else if ( pawnVars.singleStepCheck ) {
+          } else if ( pawnVars.singleStepCheck && !attacksOnly ) {
             let movementType = pawnVars.nonAttackMove
             movementType.rangeLimit = 1
             movementType.pieceNotation = ""
             movementType.startPosition = startPosition
             movementTypes.push(movementType)
           }
-          if ( pawnVars.leftAttackCheck ) {
+          if ( pawnVars.leftAttackCheck || attacksOnly) {
             let movementType = pawnVars.leftAttackMove
             movementType.rangeLimit = 1
             movementType.startPosition = startPosition
             movementType.pieceNotation = Board.file(startPosition)
             movementTypes.push(movementType)
           }
-          if( pawnVars.rightAttackCheck ) {
+          if( pawnVars.rightAttackCheck || attacksOnly) {
             let movementType = pawnVars.rightAttackMove
             movementType.rangeLimit = 1
             movementType.startPosition = startPosition
@@ -442,9 +451,9 @@ class MovesCalculator {
             }
             movementTypes.push(movementType)
           }
-          // debugger
-        return movementTypes
-      }
+            // debugger
+          return movementTypes
+        }
       case "N":
         return function({board: board, startPosition: startPosition}){
           let pieceNotation = "N",
@@ -519,7 +528,7 @@ class MovesCalculator {
         }
         break
       case "K":
-        return function({board: board, startPosition: startPosition, ignoreCastles: ignoreCastles}){
+        return function({board: board, startPosition: startPosition, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly}){
           let pieceNotation = "K",
             rangeLimit = 1;
           var movementTypes = [MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalRightIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalLeftIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.verticalUpIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.verticalDownIncrement}),
@@ -536,7 +545,7 @@ class MovesCalculator {
           //   movementTypes[i].pieceNotation = "K"
           //   movementTypes[i].startPosition = startPosition
           // }
-          if ( !ignoreCastles && board.kingSideCastleViableFor(team, startPosition) ){
+          if ( !ignoreCastles && board.kingSideCastleViableFor(team, startPosition) && !attacksOnly){
             let movementType = MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalLeftIncrement})
             movementType.increment = + 2
             movementType.rangeLimit = 1
@@ -553,7 +562,7 @@ class MovesCalculator {
             }
             movementTypes.push(movementType)
           }
-          if ( !ignoreCastles && board.queenSideCastleViableFor(team, startPosition) ){
+          if ( !ignoreCastles && board.queenSideCastleViableFor(team, startPosition) && !attacksOnly){
             let movementType = MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalRightIncrement})
             movementType.increment = - 2
             movementType.rangeLimit = 1

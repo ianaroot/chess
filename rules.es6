@@ -87,10 +87,12 @@ class Rules {
   }
 
   static positionsControlledByTeam({board: board, team: team}){
-    let occcupiedPositions = board.positionsOccupiedByTeam(team);
+    let controlledPositions = []
+    let occcupiedPositions = board._positionsOccupiedByTeam(team);
     for (let i = 0; i < occcupiedPositions.length; i++){
-      
+      controlledPositions = controlledPositions.concat( new MovesCalculator({board: board, startPosition: occcupiedPositions[i], attacksOnly: true}).endPositions() )
     }
+    return controlledPositions
   }
 
   static availableMovesFrom({board: board, startPosition: startPosition}){
