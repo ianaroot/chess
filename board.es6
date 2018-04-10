@@ -1,7 +1,7 @@
 class Board {
   // TODO might be easier to store the moveObjects and recreate noatation on demand!!!
   constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation, previousLayouts: previousLayouts}){
-    this.layOut = layOut|| Layout.approachingMate()
+    this.layOut = layOut|| Layout.default()
     this.capturedPieces = capturedPieces || [];
     this.gameOver = gameOver || false;
     this.allowedToMove = allowedToMove || Board.WHITE;
@@ -165,6 +165,7 @@ class Board {
 
   static pieceValues(){
     let values = {};
+    values[Board.EMPTY] = 0;
     values[Board.PAWN] = 1;
     values[Board.NIGHT] = 3;
     values[Board.BISHOP] = 3;

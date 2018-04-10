@@ -86,10 +86,13 @@ class Rules {
 
   }
 
-  static positionsControlledByTeam({board: board, team: team}){
-    let controlledPositions = []
-    let occcupiedPositions = board._positionsOccupiedByTeam(team);
+  static positionsControlledByTeam({board: board, team: team, exemptions: exemptions}){
+
+    let controlledPositions = [],
+      occcupiedPositions = board._positionsOccupiedByTeam(team);
+    exemptions = exemptions || [];
     for (let i = 0; i < occcupiedPositions.length; i++){
+      if (exemptions.includes(board.pieceTypeAt(occcupiedPositions[i]) )){ continue }
       controlledPositions = controlledPositions.concat( new MovesCalculator({board: board, startPosition: occcupiedPositions[i], attacksOnly: true}).endPositions() )
     }
     return controlledPositions
