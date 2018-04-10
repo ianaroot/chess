@@ -1,219 +1,299 @@
 class MovesCalculator {
-  constructor({  startPosition: startPosition, board: board, moveObjects: moveObjects, ignoreCastles: ignoreCastles, endPosition: endPosition
+  constructor({  startPosition: startPosition, board: board, moveObjects: moveObjects, movementTypes: movementTypes, ignoreCastles: ignoreCastles//, countDefense: countDefense//, endPosition: endPosition
   }){
-    this.startPosition = startPosition;
-    this.board = board;
-    this.moveObjects = moveObjects || [];
-    this.viablePositions = {};
-    this.ignoreCastles = ignoreCastles || false;
-    this.endPosition = endPosition;
-    this.addMoves();
-    this.calculateViablePositions();
+    this.startPosition = startPosition
+    this.board = board
+    this.movementTypes = movementTypes || []
+    this.moveObjects = moveObjects || []
+    this.pieceType = this.board.pieceTypeAt(this.startPosition)
+    this.viablePositions = {}
+    this.ignoreCastles = ignoreCastles || false
+    // this.countDefense = countDefense
+    // this.endPosition = endPosition
+    this.addMovementTypes()
+    this.calculateViablePositions()
   }
 // calculate form of motion by div modding start and end
 // check whether the piece at the start is in the list of pieces allowed to make such a movement
 // have some conditions under which pawns can move
 // also conditions for castling
-  addMoves(){
-    if ( this.startPosition === undefined || !this.board){
-      throw new Error("moveObject missing startPosition or board in addMovementTypesAndBoundaryChecks")
-    } else {
-      let pieceType = this.board.pieceTypeAt(this.startPosition),
-          pieceSpecificMovements = MovesCalculator.pieceSpecificMovements()[ pieceType ];
-      this.moveObjects = pieceSpecificMovements({startPosition: this.startPosition, board: this.board, ignoreCastles: this.ignoreCastles})
-    }
+  addMovementTypes(){
+    // if ( this.startPosition === undefined || !this.board){
+    //   throw new Error("movementType missing startPosition or board in addMovementTypesAndBoundaryChecks")
+    // } else {
+      let pieceSpecificMovements = MovesCalculator.pieceSpecificMovements(this.pieceType)// , (this.endPosition - this.startPosition ) ); //TODO maybe shouldn't rely on Nan below when endPosition is undefined
+          // the difference between the two refs to pieceSpecificMovements in these couple lines is very unclear
+      this.movementTypes = pieceSpecificMovements({startPosition: this.startPosition, board: this.board, ignoreCastles: this.ignoreCastles})
+    // }
   }
 
   calculateViablePositions(){
-    let teamString = this.board.teamAt(this.startPosition);
-    for(let i = 0; i < this.moveObjects.length; i++){
-      let move = this.moveObjects[i],
-          increment = move.increment,
-          rangeLimit = move.rangeLimit,
-          boundaryCheck = move.boundaryCheck;
+    let teamString = this.board.teamAt(this.startPosition)
+    for(let i = 0; i < this.movementTypes.length; i++){
+      let movementType = this.movementTypes[i],
+          increment = movementType.increment,
+          rangeLimit = movementType.rangeLimit,
+          boundaryCheck = movementType.boundaryCheck,
+          additionalActions = movementType.additionalActions
       for(let j = 1; j <= rangeLimit; j++){
-        let currentPosition = increment * j + this.startPosition;
+        let currentPosition = increment * j + this.startPosition
         if ( !boundaryCheck(j, increment, this.startPosition) ){
           break
         }
         if ( this.board.positionEmpty(currentPosition) ){
-          this.viablePositions[currentPosition] = move
-          if( this.endPosition === currentPosition){ return }
+          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: movementType.captureNotation}) )// illegal may change later
+          // if( this.endPosition === currentPosition){
+          //   return
+          // }
         } else if( this.board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
-          this.viablePositions[currentPosition] = move
-          if( this.endPosition === currentPosition){ return }
+          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )// illegal may change later
+          // if( this.endPosition === currentPosition){
+          //   return
+          // }
           break
         } else if( this.board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
+          // if(this.countDefense){
+          //   moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )
+          // }
           break
-        };
-      };
-    };
+        }
+      }
+    }
   }
 
+  static get verticalUpIncrement(){ return 8 }
+  static get verticalDownIncrement(){ return -8 }
+  static get forwardSlashUpIncrement(){ return 9 }
+  static get forwardSlashDownIncrement(){ return -9 }
+  static get backSlashUpIncrement(){ return 7 }
+  static get backSlashDownIncrement(){ return -7 }
+  static get nightVerticalLeftUpIncrement(){ return 15 }
+  static get nightVerticalRightUpIncrement(){ return 17 }
+  static get nightHorizontalLeftUpIncrement(){ return 6 }
+  static get nightHorizontalRightUpIncrement(){ return 10 }
+  static get nightVerticalLeftDownIncrement(){ return -15 }
+  static get nightVerticalRightDownIncrement(){ return -17 }
+  static get nightHorizontalLeftDownIncrement(){ return -6 }
+  static get nightHorizontalRightDownIncrement(){ return -10 }
+  static get horizontalRightIncrement(){ return 1 }
+  static get horizontalLeftIncrement(){ return -1 }
 
 
-  static genericMovements(){
-    return {
-      verticalUp: function(){
-        let moveObject = new MoveObject({
+// TODO this is a movementType Factory
+  static genericMovements({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+    // let rangeLimit = args["rangeLimit"],
+    //   pieceNotation = args["pieceNotation"],
+    //   startPosition = args["startPosition"];
+    // TODO could slide in a rangeLimit on creation to save later iterations
+    switch(increment){
+      case MovesCalculator.verticalUpIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
           increment: "+8",
           boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition
             return MovesCalculator.boundaryChecks({endPosition: endPosition}).vertical()
           }
         })
-        return moveObject
-      },
-      verticalDown: function(){
-        let moveObject = new MoveObject({
+        return movementType
+        break
+      case MovesCalculator.verticalDownIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
           increment: "-8",
           boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition
             return MovesCalculator.boundaryChecks({endPosition: endPosition}).vertical()
           }
         })
-        return moveObject
-      },
-      forwardSlashUp: function(){
-        let moveObject = new MoveObject({
+        return movementType
+        break
+      case MovesCalculator.forwardSlashUpIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
           increment: "+9",
           boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition
             return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).diagonalRight()
           }
         })
-        return moveObject
-      },
-      forwardSlashDown: function(){
-        let moveObject = new MoveObject({
+        return movementType
+        break
+      case MovesCalculator.forwardSlashDownIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
           increment: "-9",
           boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition
             return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).diagonalLeft()
           }
         })
-        return moveObject
-      },
-      backSlashUp: function(){
-        let moveObject = new MoveObject({
+        return movementType
+        break
+      case MovesCalculator.backSlashUpIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
           increment: "+7",
           boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition
             return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).diagonalLeft()
           }
         })
-        return moveObject
-      },
-      backSlashDown: function(){
-        let moveObject = new MoveObject({
+        return movementType
+        break
+      case MovesCalculator.backSlashDownIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
           increment: "-7",
           boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition
             return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).diagonalRight()
           }
         })
-        return moveObject
-      },
-      nightVerticalLeftUp: function(){
-        let moveObject = new MoveObject({
-          increment: "+15",
-          boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
-            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightVertical()
-          }
-        })
-        return moveObject
-      },
-      nightVerticalRightUp: function(){
-        let moveObject = new MoveObject({
-          increment: "+17",
-          boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
-            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightVertical()
-          }
-        })
-        return moveObject
-      },
-      nightHorizontalLeftUp: function(){
-        let moveObject = new MoveObject({
-          increment: "+6",
-          boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
-            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightHorizontal()
-          }
-        })
-        return moveObject
-      },
-      nightHorizontalRightUp: function(){
-        let moveObject = new MoveObject({
-          increment: "+10",
-          boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
-            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightHorizontal()
-          }
-        })
-        return moveObject
-      },
-      nightVerticalLeftDown: function(){
-        let moveObject = new MoveObject({
-          increment: "-15",
-          boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
-            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightVertical()
-          }
-        })
-        return moveObject
-      },
-      nightVerticalRightDown: function(){
-        let moveObject = new MoveObject({
-          increment: "-17",
-          boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
-            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightVertical()
-          }
-        })
-        return moveObject
-      },
-      nightHorizontalLeftDown: function(){
-        let moveObject = new MoveObject({
-          increment: "-6",
-          boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
-            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightHorizontal()
-          }
-        })
-        return moveObject
-      },
-      nightHorizontalRightDown: function(){
-        let moveObject = new MoveObject({
-          increment: "-10",
-          boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
-            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightHorizontal()
-          }
-        })
-        return moveObject
-      },
-      horizontalRight: function(){
-        let moveObject = new MoveObject({
+        return movementType
+        break
+      case MovesCalculator.horizontalRightIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
           increment: "+1",
           boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition
             return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).horizontal()
           }
         })
-        return moveObject
-      },
-      horizontalLeft: function(){
-        let moveObject = new MoveObject({
+        return movementType
+        break
+      case MovesCalculator.horizontalLeftIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
           increment: "-1",
           boundaryCheck: function(i, increment, startPosition) {
-            let endPosition = i * increment + startPosition;
+            let endPosition = i * increment + startPosition
             return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).horizontal()
           }
         })
-        return moveObject
-      }
+        return movementType
+        break
+      case MovesCalculator.nightVerticalLeftUpIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
+          increment: "+15",
+          boundaryCheck: function(i, increment, startPosition) {
+            let endPosition = i * increment + startPosition
+            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightVertical()
+          }
+        })
+        return movementType
+        break
+      case MovesCalculator.nightVerticalRightUpIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
+          increment: "+17",
+          boundaryCheck: function(i, increment, startPosition) {
+            let endPosition = i * increment + startPosition
+            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightVertical()
+          }
+        })
+        return movementType
+        break
+      case MovesCalculator.nightHorizontalLeftUpIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
+          increment: "+6",
+          boundaryCheck: function(i, increment, startPosition) {
+            let endPosition = i * increment + startPosition
+            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightHorizontal()
+          }
+        })
+        return movementType
+        break
+      case MovesCalculator.nightHorizontalRightUpIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
+          increment: "+10",
+          boundaryCheck: function(i, increment, startPosition) {
+            let endPosition = i * increment + startPosition
+            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightHorizontal()
+          }
+        })
+        return movementType
+        break
+      case MovesCalculator.nightVerticalLeftDownIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
+          increment: "-15",
+          boundaryCheck: function(i, increment, startPosition) {
+            let endPosition = i * increment + startPosition
+            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightVertical()
+          }
+        })
+        return movementType
+        break
+      case MovesCalculator.nightVerticalRightDownIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
+          increment: "-17",
+          boundaryCheck: function(i, increment, startPosition) {
+            let endPosition = i * increment + startPosition
+            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightVertical()
+          }
+        })
+        return movementType
+        break
+      case MovesCalculator.nightHorizontalLeftDownIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
+          increment: "-6",
+          boundaryCheck: function(i, increment, startPosition) {
+            let endPosition = i * increment + startPosition
+            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightHorizontal()
+          }
+        })
+        return movementType
+        break
+      case MovesCalculator.nightHorizontalRightDownIncrement:
+        var movementType = new MovementType({
+          rangeLimit: rangeLimit,
+          pieceNotation: pieceNotation,
+          startPosition: startPosition,
+          increment: "-10",
+          boundaryCheck: function(i, increment, startPosition) {
+            let endPosition = i * increment + startPosition
+            return MovesCalculator.boundaryChecks({startPosition: startPosition, endPosition: endPosition}).nightHorizontal()
+          }
+        })
+        return movementType
+        break
     }
   }
 
@@ -242,170 +322,257 @@ class MovesCalculator {
     }
   }
 
-  static pieceSpecificMovements(){
-    return {
-      Night: function({board: board, startPosition: startPosition}){
-        let moveObjects = [MovesCalculator.genericMovements().nightHorizontalRightDown(), MovesCalculator.genericMovements().nightHorizontalLeftDown(), MovesCalculator.genericMovements().nightVerticalRightDown(),
-                    MovesCalculator.genericMovements().nightVerticalLeftDown(), MovesCalculator.genericMovements().nightHorizontalRightUp(), MovesCalculator.genericMovements().nightHorizontalLeftUp(),
-                    MovesCalculator.genericMovements().nightVerticalRightUp(), MovesCalculator.genericMovements().nightVerticalLeftUp()
-                  ];
-        for (let i = 0; i < moveObjects.length; i++ ) {
-            moveObjects[i].rangeLimit = 1;
-            moveObjects[i].pieceNotation = "N";;
-            moveObjects[i].startPosition = startPosition
-        };
-        return  moveObjects
-      },
-      Rook: function({board: board, startPosition: startPosition}){
-        let moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown()]
-        for (let i = 0; i < moveObjects.length; i++ ) {
-          moveObjects[i].rangeLimit = 7;
-          moveObjects[i].pieceNotation = "R";
-          moveObjects[i].startPosition = startPosition
-        };
-        return moveObjects
-      },
-      Bishop: function({board: board, startPosition: startPosition}){
-        let moveObjects = [MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()]
-        for (let i = 0; i < moveObjects.length; i++ ) {
-          moveObjects[i].rangeLimit = 7;
-          moveObjects[i].pieceNotation = "B";
-          moveObjects[i].startPosition = startPosition
-        };
-        return moveObjects
-      },
-      Queen: function({board: board, startPosition: startPosition}){
-        let moveObjects =  MovesCalculator.pieceSpecificMovements().Rook({startPosition: startPosition, board: board}).concat( MovesCalculator.pieceSpecificMovements().Bishop({startPosition: startPosition, board: board}) )
-        for (let i = 0; i < moveObjects.length; i++ ) {
-          moveObjects[i].rangeLimit = 7;
-          moveObjects[i].pieceNotation = "Q";
-          moveObjects[i].startPosition = startPosition
-        };
-        return moveObjects
-      },
-      King: function({board: board, startPosition: startPosition, ignoreCastles: ignoreCastles}){
-        let moveObjects = [MovesCalculator.genericMovements().horizontalRight(), MovesCalculator.genericMovements().horizontalLeft(), MovesCalculator.genericMovements().verticalUp(), MovesCalculator.genericMovements().verticalDown(),
-                    MovesCalculator.genericMovements().forwardSlashDown(), MovesCalculator.genericMovements().forwardSlashUp(), MovesCalculator.genericMovements().backSlashDown(), MovesCalculator.genericMovements().backSlashUp()
-                  ];
-        for (let i = 0; i < moveObjects.length; i++ ) {
-          moveObjects[i].rangeLimit = 1;
-          moveObjects[i].pieceNotation = "K";
-          moveObjects[i].startPosition = startPosition
-        };
-        if ( !ignoreCastles && board.kingSideCastleViableFrom(startPosition) ){
-          let moveObject = MovesCalculator.genericMovements().horizontalLeft()
-          moveObject.increment = + 2
-          moveObject.rangeLimit = 1
-          moveObject.fullNotation = "O-O";
-          moveObject.startPosition = startPosition;
-          moveObject.additionalActions = function(args){
-            let position = args["position"],
-                pieceObject = this.pieceObject( startPosition + 3 );
-            this._emptify( startPosition + 3)
-            this._placePiece({ position: (startPosition + 1), pieceObject: pieceObject })
-          }
-          moveObjects.push(moveObject)
-        };
-        if ( !ignoreCastles && board.queenSideCastleViableFrom(startPosition) ){
-          let moveObject = MovesCalculator.genericMovements().horizontalRight()
-          moveObject.increment = - 2
-          moveObject.rangeLimit = 1
-          moveObject.fullNotation = "O-O-O";
-          moveObject.startPosition = startPosition;
-          moveObject.additionalActions = function(args){
-            let position = args["position"],
-                pieceObject = this.pieceObject( startPosition - 4 );
-            this._emptify( startPosition - 4)
-            this._placePiece({ position: (startPosition - 1), pieceObject: pieceObject })
-          }
-          moveObjects.push(moveObject)
-        };
-        return moveObjects
-      },
-      Pawn: function({board: board, startPosition: startPosition}){
-        let moveObjects = [],
-          teamString = board.teamAt(startPosition),
-          colorVars = {
-            black: {
-              startRank: 7,
-              nonAttackMove: MovesCalculator.genericMovements().verticalDown(),
-              singleStepCheck: board._oneSpaceDownIsEmpty(startPosition),
-              doubleStepCheck: Board.isSeventhRank(startPosition) && board._twoSpacesDownIsEmpty(startPosition),
-              leftAttackCheck: board._downAndLeftIsAttackable(startPosition),
-              leftAttackMove: MovesCalculator.genericMovements().forwardSlashDown(),
-              rightAttackCheck: board._downAndRightIsAttackable(startPosition),
-              rightAttackMove: MovesCalculator.genericMovements().backSlashDown(),
-              rightEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition + 1) && board.whitePawnDoubleSteppedFrom(startPosition - 15),
-              leftEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition - 1) && board.whitePawnDoubleSteppedFrom(startPosition - 17),
-            },
-            white: {
-              startRank: 2,
-              nonAttackMove: MovesCalculator.genericMovements().verticalUp(),
-              singleStepCheck: board._oneSpaceUpIsEmpty(startPosition),
-              doubleStepCheck: Board.isSecondRank(startPosition) && board._twoSpacesUpIsEmpty( startPosition ),
-              leftAttackCheck: board._upAndLeftIsAttackable(startPosition),
-              leftAttackMove: MovesCalculator.genericMovements().backSlashUp(),
-              rightAttackCheck: board._upAndRightIsAttackable(startPosition ),
-              rightAttackMove: MovesCalculator.genericMovements().forwardSlashUp(),
-              leftEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition - 1) && board.blackPawnDoubleSteppedFrom(startPosition + 15),
-              rightEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition + 1) && board.blackPawnDoubleSteppedFrom(startPosition + 17),
-            }
-          },
-          pawnVars = colorVars[teamString];
-        if ( pawnVars.singleStepCheck ) {
-          let moveObject = pawnVars.nonAttackMove
-          moveObject.rangeLimit = 1
-          moveObject.pieceNotation = ""
-          moveObject.startPosition = startPosition
-          moveObjects = moveObjects.concat(moveObject)
+  static get allIncrements(){
+    return [MovesCalculator.verticalUpIncrement, MovesCalculator.verticalDownIncrement, MovesCalculator.forwardSlashUpIncrement, MovesCalculator.forwardSlashDownIncrement,
+      MovesCalculator.backSlashUpIncrement, MovesCalculator.backSlashDownIncrement, MovesCalculator.nightVerticalLeftUpIncrement, MovesCalculator.nightVerticalRightUpIncrement,
+      MovesCalculator.nightHorizontalLeftUpIncrement, MovesCalculator.nightHorizontalRightUpIncrement, MovesCalculator.nightVerticalLeftDownIncrement, MovesCalculator.nightVerticalRightDownIncrement,
+      MovesCalculator.nightHorizontalLeftDownIncrement, MovesCalculator.nightHorizontalRightDownIncrement, MovesCalculator.horizontalRightIncrement, MovesCalculator.horizontalLeftIncrement
+    ]
+  }
+
+  static getCommonMoveObjects(arr1, arr2){
+    let commons = []
+    for(let i = 0; i < arr1.length; i++){
+      for(let j = 0; j < arr2.length; j++){
+        if( arr1[i].increment === arr2[j].increment && !(commons.includes(arr1[i]) ) ){
+          commons.push(arr1[i])
         }
-        if ( pawnVars.doubleStepCheck ){
-            let moveObject = pawnVars.nonAttackMove
-          moveObject.rangeLimit = 2
-          moveObject.pieceNotation = ""
-          moveObject.startPosition = startPosition
-          moveObjects = moveObjects.concat(moveObject)
-        }
-        if ( pawnVars.leftAttackCheck ) {
-          let moveObject = pawnVars.leftAttackMove
-          moveObject.rangeLimit = 1
-          moveObject.startPosition = startPosition
-          moveObject.pieceNotation = Board.file(startPosition)
-          moveObjects = moveObjects.concat(moveObject)
-        }
-        if( pawnVars.rightAttackCheck ) {
-          let moveObject = pawnVars.rightAttackMove
-          moveObject.rangeLimit = 1
-          moveObject.startPosition = startPosition
-          moveObject.pieceNotation = Board.file(startPosition)
-          moveObjects = moveObjects.concat(moveObject)
-        };
-        if( pawnVars.rightEnPassantCheck ){
-          let moveObject = pawnVars.rightAttackMove
-          moveObject.rangeLimit = 1
-          moveObject.startPosition = startPosition
-          moveObject.pieceNotation = Board.file(startPosition)
-          moveObject.additionalActions = function(args){
-            let position = args["position"],
-              captureNotation = this._capture(startPosition + 1) + "e.p.";
-            return captureNotation
-          }
-          moveObjects = moveObjects.concat(moveObject)
-        }
-        if( pawnVars.leftEnPassantCheck ){
-          let moveObject = pawnVars.leftAttackMove
-          moveObject.rangeLimit = 1
-          moveObject.startPosition = startPosition
-          moveObject.pieceNotation = Board.file(startPosition)
-          moveObject.additionalActions = function(args){
-            let position = args["position"];
-            let captureNotation = this._capture(startPosition - 1) + "e.p.";
-            return captureNotation
-          }
-          moveObjects = moveObjects.concat(moveObject)
-        }
-      return moveObjects;
       }
+    }
+    return commons
+  }
+
+  static pieceSpecificMovements(species, differential){
+
+    // if( differential ){
+    //   var possibleMovesTowardsEndPosition = []
+    //   for( let i = 0; i < MovesCalculator.allIncrements.length; i++){
+    //     let increment = MovesCalculator.allIncrements[i]
+    //     if( differential % increment === 0 ){
+    //       possibleMovesTowardsEndPosition.push( MovesCalculator.genericMovements( increment ) )
+    //     }
+    //   }
+    // }
+
+    switch(species){
+      case "P":
+        return function({board: board, startPosition: startPosition}){
+          var movementTypes = [],
+            teamString = board.teamAt(startPosition),
+            colorVars = {
+              B: {
+                startRank: 7,
+                nonAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.verticalDownIncrement}),
+                singleStepCheck: board._oneSpaceDownIsEmpty(startPosition),
+                doubleStepCheck: Board.isSeventhRank(startPosition) && board._twoSpacesDownIsEmpty(startPosition) && board._oneSpaceDownIsEmpty(startPosition),
+                leftAttackCheck: board._downAndLeftIsAttackable(startPosition),
+                leftAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.forwardSlashDownIncrement}),
+                rightAttackCheck: board._downAndRightIsAttackable(startPosition),
+                rightAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.backSlashDownIncrement}),
+                rightEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition + 1) && board.whitePawnDoubleSteppedTo(startPosition + 1),//board.whitePawnDoubleSteppedFrom(startPosition - 15),
+                leftEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition - 1) && board.whitePawnDoubleSteppedTo(startPosition - 1)// board.whitePawnDoubleSteppedFrom(startPosition - 17),
+              },
+              W: {
+                startRank: 2,
+                nonAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.verticalUpIncrement}),
+                singleStepCheck: board._oneSpaceUpIsEmpty(startPosition),
+                doubleStepCheck: Board.isSecondRank(startPosition) && board._twoSpacesUpIsEmpty( startPosition ) && board._oneSpaceUpIsEmpty(startPosition),
+                leftAttackCheck: board._upAndLeftIsAttackable(startPosition),
+                leftAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.backSlashUpIncrement}),
+                rightAttackCheck: board._upAndRightIsAttackable(startPosition ),
+                rightAttackMove: MovesCalculator.genericMovements({increment: MovesCalculator.forwardSlashUpIncrement}),
+                leftEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition - 1) && board.blackPawnDoubleSteppedTo(startPosition - 1),//board.blackPawnDoubleSteppedFrom(startPosition + 15),
+                rightEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition + 1) && board.blackPawnDoubleSteppedTo(startPosition + 1)//board.blackPawnDoubleSteppedFrom(startPosition + 17),
+              }
+            },
+            pawnVars = colorVars[teamString]
+          if ( pawnVars.doubleStepCheck ){
+            let movementType = pawnVars.nonAttackMove
+            movementType.rangeLimit = 2
+            movementType.pieceNotation = ""
+            movementType.startPosition = startPosition
+            movementTypes.push(movementType)
+          } else if ( pawnVars.singleStepCheck ) {
+            let movementType = pawnVars.nonAttackMove
+            movementType.rangeLimit = 1
+            movementType.pieceNotation = ""
+            movementType.startPosition = startPosition
+            movementTypes.push(movementType)
+          }
+          if ( pawnVars.leftAttackCheck ) {
+            let movementType = pawnVars.leftAttackMove
+            movementType.rangeLimit = 1
+            movementType.startPosition = startPosition
+            movementType.pieceNotation = Board.file(startPosition)
+            movementTypes.push(movementType)
+          }
+          if( pawnVars.rightAttackCheck ) {
+            let movementType = pawnVars.rightAttackMove
+            movementType.rangeLimit = 1
+            movementType.startPosition = startPosition
+            movementType.pieceNotation = Board.file(startPosition)
+            movementTypes.push(movementType)
+          }
+          if( pawnVars.rightEnPassantCheck ){
+            let movementType = pawnVars.rightAttackMove
+            movementType.rangeLimit = 1
+            movementType.startPosition = startPosition
+            movementType.pieceNotation = Board.file(startPosition)// + "x"
+            movementType.captureNotation = "x" //might be quicker to assign a single hash at once
+            // let capture = board._capture.bind(board)
+            movementType.additionalActions = function(startPosition){
+              this._capture(startPosition + 1)
+              this._emptify(startPosition + 1)
+              return "e.p."
+            }
+            movementTypes.push(movementType)
+          }
+          if( pawnVars.leftEnPassantCheck ){
+            let movementType = pawnVars.leftAttackMove
+            movementType.rangeLimit = 1
+            movementType.startPosition = startPosition
+            movementType.pieceNotation = Board.file(startPosition)// + "x"
+            movementType.captureNotation = "x" //might be quicker to assign a single hash at once
+            // let capture = board._capture.bind(board)
+            movementType.additionalActions = function(startPosition){
+              this._capture(startPosition - 1)
+              this._emptify(startPosition - 1)
+              return "e.p."
+            }
+            movementTypes.push(movementType)
+          }
+          // debugger
+        return movementTypes
+      }
+      case "N":
+        return function({board: board, startPosition: startPosition}){
+          let pieceNotation = "N",
+            rangeLimit = 1
+          var movementTypes = [MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.nightHorizontalRightDownIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.nightHorizontalLeftDownIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.nightVerticalRightDownIncrement}),
+              MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.nightVerticalLeftDownIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.nightHorizontalRightUpIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.nightHorizontalLeftUpIncrement}),
+              MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.nightVerticalRightUpIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.nightVerticalLeftUpIncrement})
+            ]
+          // if( possibleMovesTowardsEndPosition ){
+          //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
+          // }
+          // for (let i = 0; i < movementTypes.length; i++ ) {
+          //     movementTypes[i].rangeLimit = 1
+          //     movementTypes[i].pieceNotation = "N";
+          //     movementTypes[i].startPosition = startPosition
+          // }
+          return  movementTypes
+        }
+        break
+      case "R":
+        return function({board: board, startPosition: startPosition}){
+          let pieceNotation = "R",
+            rangeLimit = 7;
+          var movementTypes = [MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalRightIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalLeftIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.verticalUpIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.verticalDownIncrement})]
+          // if( possibleMovesTowardsEndPosition ){
+          //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
+          // }
+          // for (let i = 0; i < movementTypes.length; i++ ) {
+          //   movementTypes[i].rangeLimit = 7
+          //   movementTypes[i].pieceNotation = "R"
+          //   movementTypes[i].startPosition = startPosition
+          // }
+          return movementTypes
+        }
+        break
+      case "B":
+        return function({board: board, startPosition: startPosition}){
+          let pieceNotation = "B",
+            rangeLimit = 7;
+          var movementTypes = [MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.forwardSlashDownIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.forwardSlashUpIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.backSlashDownIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.backSlashUpIncrement})]
+          // if( possibleMovesTowardsEndPosition ){
+          //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
+          // }
+          // for (let i = 0; i < movementTypes.length; i++ ) {
+          //   movementTypes[i].rangeLimit = 7
+          //   movementTypes[i].pieceNotation = "B"
+          //   movementTypes[i].startPosition = startPosition
+          // }
+          return movementTypes
+        }
+        break
+      case "Q":
+        return function({board: board, startPosition: startPosition}){
+          let pieceNotation = "Q",
+            rangeLimit = 7;
+          // var movementTypes =  MovesCalculator.pieceSpecificMovements("R", differential)({startPosition: startPosition, board: board}).concat( MovesCalculator.pieceSpecificMovements("B", differential)({startPosition: startPosition, board: board}) )
+          //
+          var movementTypes = [MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.forwardSlashDownIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.forwardSlashUpIncrement}),
+            MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.backSlashDownIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.backSlashUpIncrement}),
+            MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalRightIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalLeftIncrement}),
+            MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.verticalUpIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.verticalDownIncrement})
+          ]
+          // if( possibleMovesTowardsEndPosition ){
+          //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
+          // }
+          // for (let i = 0; i < movementTypes.length; i++ ) {
+          //   movementTypes[i].rangeLimit = 7
+          //   movementTypes[i].pieceNotation = "Q"
+          //   movementTypes[i].startPosition = startPosition
+          // }
+          return movementTypes
+        }
+        break
+      case "K":
+        return function({board: board, startPosition: startPosition, ignoreCastles: ignoreCastles}){
+          let pieceNotation = "K",
+            rangeLimit = 1;
+          var movementTypes = [MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalRightIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalLeftIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.verticalUpIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.verticalDownIncrement}),
+              MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.forwardSlashDownIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.forwardSlashUpIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.backSlashDownIncrement}), MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.backSlashUpIncrement})
+            ],
+            team = board.teamAt(startPosition)
+            //
+            // if( possibleMovesTowardsEndPosition ){
+            //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
+            // }
+
+          // for (let i = 0; i < movementTypes.length; i++ ) {
+          //   movementTypes[i].rangeLimit = 1
+          //   movementTypes[i].pieceNotation = "K"
+          //   movementTypes[i].startPosition = startPosition
+          // }
+          if ( !ignoreCastles && board.kingSideCastleViableFor(team, startPosition) ){
+            let movementType = MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalLeftIncrement})
+            movementType.increment = + 2
+            movementType.rangeLimit = 1
+            movementType.pieceNotation = "O-O"
+            movementType.startPosition = startPosition
+            // let _emptify = board._emptify.bind(board),
+            //   _placePiece = board._placePiece.bind(board),
+            //   pieceObject = board.pieceObject.bind(board)
+            movementType.additionalActions = function(startPosition){
+              let rook = this.pieceObject( startPosition + 3 )
+              this._placePiece({ position: (startPosition + 1), pieceObject: rook })
+              this._emptify( startPosition + 3)
+              return ""
+            }
+            movementTypes.push(movementType)
+          }
+          if ( !ignoreCastles && board.queenSideCastleViableFor(team, startPosition) ){
+            let movementType = MovesCalculator.genericMovements({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation, increment: MovesCalculator.horizontalRightIncrement})
+            movementType.increment = - 2
+            movementType.rangeLimit = 1
+            movementType.pieceNotation = "O-O-O"
+            movementType.startPosition = startPosition
+            // let _emptify = board._emptify.bind(board),
+            //   _placePiece = board._placePiece.bind(board),
+            //   pieceObject = board.pieceObject.bind(board)
+            movementType.additionalActions = function(startPosition){
+              let rook = this.pieceObject( startPosition - 4 )
+              this._placePiece({ position: (startPosition - 1), pieceObject: rook })
+              this._emptify( startPosition - 4)
+              return ""
+            }
+            movementTypes.push(movementType)
+          }
+          return movementTypes
+        }
+        break
+      // }the case causes a weird switch in the indentation. jarring right?
     }
   }
 

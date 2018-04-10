@@ -1,34 +1,23 @@
 class MoveObject {
-  constructor( options = {
-    boundaryCheck: undefined, endPosition: undefined,
-    additionalActions: undefined, rangeLimit: undefined, pieceNotation: undefined,
-    alerts: undefined, illegal: undefined, increment: undefined, fullNotation: undefined
+  constructor({endPosition: endPosition,
+    additionalActions: additionalActions, pieceNotation: pieceNotation,
+    illegal: illegal,
+    startPosition: startPosition, captureNotation: captureNotation
   }){
-    this.boundaryCheck = options["boundaryCheck"]
-    this.increment = options["increment"]
-    this.additionalActions = options["additionalActions"]
-    this.rangeLimit = options["rangeLimit"]
-    this._endPosition = options["endPosition"]
-    this.alerts = options["alerts"] || []
-    this.illegal = options["illegal"]
-    this.fullNotation = options["fullNotation"]
-    this.pieceNotation = options["pieceNotation"]
-    this.checkNotation = options["checkNotation"] || ""
-    this.captureNotation = options["captureNotation"] || ""
-    this.positionNotation = options["positionNotation"] || ""
-    this.promotionNotation = options["promotionNotation"] || ""
+    this.startPosition = startPosition
+    this.endPosition = endPosition
+    this.additionalActions = additionalActions
+    this.pieceNotation = pieceNotation
+    this.captureNotation = captureNotation
+    this.illegal = illegal
   }
-  set endPosition(newEndPosition){
-    this._endPosition = newEndPosition
-  }
-  get endPosition(){
-    return this._endPosition
-  }
-  set startPosition(newStartPosition){
-    this._startPosition = newStartPosition
-  }
-  get startPosition(){
-    return this._startPosition
+
+
+  notation(){
+    if( !/O-O/.exec(this.pieceNotation) ){
+      var positionNotation = Board.gridCalculator(this.endPosition);
+    }
+    return this.pieceNotation + (this.captureNotation || "") + (positionNotation || "")
   }
 
 }

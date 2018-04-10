@@ -1,61 +1,27 @@
 class Board {
-
-  constructor(layOut, options = { capturedPieces: [], gameOver: false, allowedToMove: Board.WHITE, movementNotation: [], previousLayouts: []}){
-    this.layOut = layOut || Board._defaultLayOut()
-    this.capturedPieces = options["capturedPieces"];
-    this.gameOver = options["gameOver"];
-    this.allowedToMove = options["allowedToMove"];
-    this.movementNotation = options["movementNotation"];
-    this.previousLayouts = options["previousLayouts"];
+  // TODO might be easier to store the moveObjects and recreate noatation on demand!!!
+  constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation, previousLayouts: previousLayouts}){
+    this.layOut = layOut|| Layout.approachingMate()
+    this.capturedPieces = capturedPieces || [];
+    this.gameOver = gameOver || false;
+    this.allowedToMove = allowedToMove || Board.WHITE;
+    this.movementNotation = movementNotation || [];
+    this.previousLayouts = previousLayouts || JSON.stringify([])
   }
 
-  static get WHITE()  { return "white" }
-  static get BLACK()  { return "black" }
-  static get EMPTY()  { return "empty" }
-  static get PAWN()   { return "Pawn" }
-  static get ROOK()   { return "Rook" }
-  static get NIGHT()  { return "Night" }
-  static get BISHOP() { return "Bishop" }
-  static get QUEEN()  { return "Queen" }
-  static get KING()   { return "King" }
+  static get WHITE()  { return "W" }
+  static get BLACK()  { return "B" }
+  static get EMPTY()  { return "e" }
+  static get PAWN()   { return "P" }
+  static get ROOK()   { return "R" }
+  static get NIGHT()  { return "N" }
+  static get BISHOP() { return "B" }
+  static get QUEEN()  { return "Q" }
+  static get KING()   { return "K" }
   static get DARK()   { return "dark" }
   static get LIGHT()  { return "light" }
   static get MINOR_PIECES() { return [Board.NIGHT, Board.BISHOP] }
   static get MAJOR_PIECES() { return [Board.ROOK, Board.QUEEN]}
-
-
-
-  static _defaultLayOut(){
-    // let layOut = [
-    //   {color: Board.WHITE, species: Board.ROOK}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.QUEEN}, {color: Board.WHITE, species: Board.KING}, {color: Board.WHITE, species: Board.BISHOP}, {color: Board.WHITE, species: Board.NIGHT}, {color: Board.WHITE, species: Board.ROOK},
-    //   {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN}, {color: Board.WHITE, species: Board.PAWN},
-    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-    //   {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY}, {color: Board.EMPTY, species: Board.EMPTY},
-    //   {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN}, {color: Board.BLACK, species: Board.PAWN},
-    //   {color: Board.BLACK, species: Board.ROOK}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.QUEEN}, {color: Board.BLACK, species: Board.KING}, {color: Board.BLACK, species: Board.BISHOP}, {color: Board.BLACK, species: Board.NIGHT}, {color: Board.BLACK, species: Board.ROOK}
-    // ];
-
-    let layOut = [{color: "white", species: "Rook"},{color: "empty", species: "empty"},{color: "white", species: "Bishop"},{color: "white", species: "Queen"},{color: "white", species: "King"},{color: "white", species: "Bishop"},
-      {color: "white", species: "Night"},{color: "white", species: "Rook"},{color: "white", species: "Pawn"},
-      {color: "white", species: "Pawn"},{color: "white", species: "Pawn"},{color: "white", species: "Pawn"},{color: "empty", species: "empty"},{color: "white", species: "Pawn"},{color: "white", species: "Pawn"},
-      {color: "white", species: "Pawn"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "white", species: "Night"},{color: "empty", species: "empty"},{color: "white", species: "Pawn"},
-      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-      {color: "empty", species: "empty"},{color: "black", species: "Night"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},
-      {color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},
-      {color: "black", species: "Pawn"},{color: "empty", species: "empty"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Pawn"},{color: "black", species: "Rook"},
-      {color: "empty", species: "empty"},{color: "black", species: "Bishop"},{color: "black", species: "Queen"},{color: "black", species: "King"},{color: "black", species: "Bishop"},{color: "black", species: "Night"},
-      {color: "black", species: "Rook"}]; //approachingMate used for training bot to seek mate
-
-    for(let i = 0; i < layOut.length; i ++){
-      let pieceObject = layOut[i]
-      layOut[i] = JSON.stringify(pieceObject)
-    }
-    return layOut
-  }
 
   static _boundaries(){
     return { upperLimit: 63, lowerLimit: 0 }
@@ -149,11 +115,11 @@ class Board {
   }
 
   static parseTeam(string){
-    return string.color
+    return string[0]
   }
 
   static parseSpecies(string){
-    return string.species
+    return string[1]
   }
 
   _nextTurn(){
@@ -173,8 +139,10 @@ class Board {
   }
 
   _undo(){
-    this.layOut = this.lastLayout()
-    this.previousLayouts.pop()
+    // this.layOut = this.lastLayout()
+    let parsedPrevious = JSON.parse(this.previousLayouts);
+    this.layOut = parsedPrevious.pop();
+    this.previousLayouts = JSON.stringify(parsedPrevious)
     let undoneNotation = this.movementNotation.pop(),
       captureNotationMatch = undoneNotation.match(/x/);
     if( captureNotationMatch ){
@@ -187,7 +155,7 @@ class Board {
     let subtractedValue = 0,
         captures = this.capturedPieces;
     for( let i = 0; i < captures.length; i++){
-      let piece = JSON.parse( captures[i] );
+      let piece = captures[i] ;
       if( Board.parseTeam( piece ) === team ){
         subtractedValue = subtractedValue + Board.pieceValues()[ Board.parseSpecies( piece ) ]
       }
@@ -248,16 +216,6 @@ class Board {
     }
   }
 
-  pieceObject(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
-    return JSON.parse(this.layOut[position])
-  }
-
-  pieceObjectFromLastLayout(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
-    return JSON.parse( this.lastLayout()[position] )
-  }
-
   _blackPawnAt(position){
     return Board.parseTeam( this.pieceObject(position) )=== Board.BLACK && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
@@ -266,30 +224,74 @@ class Board {
     return Board.parseTeam( this.pieceObject(position) )=== Board.WHITE && Board.parseSpecies( this.pieceObject(position) ) === Board.PAWN
   }
 
-  blackPawnDoubleSteppedFrom(position){
-    return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.BLACK && Board.parseSpecies( this.pieceObjectFromLastLayout(position) ) === Board.PAWN
+  blackPawnDoubleSteppedTo(position){// only to be called if already know the black pawn is at rank 4 and in "position"
+    var result;
+    let blackMoves = this.movesNotationFor(Board.BLACK),
+      square = Board.gridCalculator(position),
+      hypotheticalSingleStepSquare = square[0] + '6'; //e.g. if the double step would've been to a4, then the single step it may have taken would've been to a3
+    if( blackMoves[blackMoves.length -1] === square ){
+      result = true;
+    } else {
+      return false //this means that even if it did at some point double step, it wasn't the last move to occur
+    }
+    for(let i = 0; i < blackMoves; i < blackMoves.length){
+      if( blackMoves[i] === hypotheticalSingleStepSquare || blackMoves[i] === hypotheticalSingleStepSquare + "+" ){
+        result = false;
+        break
+      }
+    }
+    return result
   }
 
-  whitePawnDoubleSteppedFrom(position){
-    return this.previousLayouts.length && this.positionEmpty(position) && Board.parseTeam( this.pieceObjectFromLastLayout(position) ) === Board.WHITE && Board.parseSpecies( this.pieceObjectFromLastLayout(position) ) === Board.PAWN
+
+  whitePawnDoubleSteppedTo(position){// only to be called if already know the white pawn is at rank 4 and in "position"
+    var result;
+    let whiteMoves = this.movesNotationFor(Board.WHITE),
+      square = Board.gridCalculator(position),
+      hypotheticalSingleStepSquare = square[0] + '3'; //e.g. if the double step would've been to a4, then the single step it may have taken would've been to a3
+    if( whiteMoves[whiteMoves.length -1] === square ){
+      result = true;
+    } else {
+      return false //this means that even if it did at some point double step, it wasn't the last move to occur
+    }
+    for(let i = 0; i < whiteMoves; i < whiteMoves.length){
+      if( whiteMoves[i] === hypotheticalSingleStepSquare || whiteMoves[i] === hypotheticalSingleStepSquare + "+" ){
+        result = false;
+        break
+      }
+    }
+    return result
+  }
+
+  movesNotationFor(team){
+    let teamMoves = [];
+    if( team === Board.WHITE ){
+      var initialElement = 0
+    } else if (team === Board.BLACK ){
+      var initialElement = 1
+    } else {
+      alert( "bad input for board.movesNotationFor: " + team )
+    }
+    for(let i = initialElement; i < this.movementNotation.length; i = i + 2 ){
+      teamMoves.push( this.movementNotation[i] )
+    }
+    return teamMoves;
   }
 
   deepCopy(){
-    let newLayOut = Board._deepCopy(this.layOut),
-        newCapturedPieces = Board._deepCopy(this.capturedPieces),
+    let newLayout = Board._deepCopy(this.layOut),
+        newCaptures = Board._deepCopy(this.capturedPieces),
         newMovementNotation = Board._deepCopy(this.movementNotation),
-        newPreviousLayouts = Board._deepCopy(this.previousLayouts),
-
-        newBoard = new Board( newLayOut, {capturedPieces: newCapturedPieces, allowedToMove: this.allowedToMove, gameOver: this.gameOver, previousLayouts: newPreviousLayouts, movementNotation: newMovementNotation});
+        newBoard = new Board({layOut: newLayout, capturedPieces: newCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, movementNotation: newMovementNotation, previousLayouts: this.previousLayouts});
     return newBoard;
   }
 
   _reset(){
-    this.layOut = Board._defaultLayOut();
+    this.layOut = Layout.default();
     this.capturedPieces = [];
     this.gameOver = false;
     this.allowedToMove = Board.WHITE;
-    this.previousLayouts = [];
+    // this.previousLayouts = [];
     this.movementNotation = [];
   }
 
@@ -308,70 +310,62 @@ class Board {
     return teamNotMoving
   }
 
-  _recordNotationFrom(moveObject){
-    if( moveObject.fullNotation ){
-      var notation = moveObject.fullNotation + moveObject.captureNotation + moveObject.positionNotation + moveObject.promotionNotation + moveObject.checkNotation
-    } else {
-      moveObject.positionNotation = Board.gridCalculator(moveObject.endPosition);
-      var	notation = moveObject.pieceNotation + moveObject.captureNotation + moveObject.positionNotation + moveObject.promotionNotation + moveObject.checkNotation;
+  _recordNotationFrom({ moveObject: moveObject, epNotation: epNotation, notationSuffix:  notationSuffix }){
+    // if other pieces of same species from same team could move to the same place, attach clarifying file or rank
+    // for rooks, if Rb goes to a6, is there already a rook on 6? it could've done that too
+    // if it's a queen, is there another queen? if there is another queen, is it on the right rank, file, or square color?
+    // if its a bishop, is there another bishop on the right square color?
+    // if it it's a night, is there anot
+
+    // oooh! could you bump into your teammate from the position you just assumed!! take their rank and file, compare, apply the difference
+    let pieceNotation = moveObject.pieceNotation
+    if( /[QNBR]/.exec(pieceNotation) ){
+
     }
-    this.movementNotation.push(notation)
+
+    this.movementNotation.push( moveObject.notation() + (epNotation || "") + notationSuffix)
   }
 
-  _hypotheticallyMovePiece( moveObject ){
-    // there's a lot of space between _officiallyMovePiece and hypothetical. eg  not recording any data on hypothetical moves
+  _hypotheticallyMovePiece( moveObject ){ // ONLY USE THIS TO SEE IF A MOVE WOULD RESULT IN MATE. there's a lot of space between _officiallyMovePiece and hypothetical. eg  not recording any data on hypothetical moves
     let startPosition = moveObject.startPosition,
       endPosition = moveObject.endPosition,
-      additionalActions = moveObject.additionalActions,
-      pieceObject = this.pieceObject(startPosition);
+      additionalActions = moveObject.additionalActions;
+      let pieceObject = this.pieceObject(startPosition);
     this._emptify(startPosition)
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
-    if( additionalActions ){ additionalActions.call(this, {position: startPosition} ) }
+    if( additionalActions ){ additionalActions.call(this, startPosition) }
   }
 
   _officiallyMovePiece( moveObject ){
-    if( !MoveObject.prototype.isPrototypeOf( moveObject ) ){ throw new Error("missing params in movePiece") }
+    // if( !MoveObject.prototype.isPrototypeOf( moveObject ) ){ throw new Error("missing params in movePiece") }
     let startPosition = moveObject.startPosition,
       endPosition = moveObject.endPosition,
       additionalActions = moveObject.additionalActions,
       pieceObject = this.pieceObject(startPosition);
-    this._storeCurrentLayoutAsPrevious()
-    this._emptify(startPosition)
-    moveObject.captureNotation = this._capture(endPosition);
-    this._placePiece({ position: endPosition, pieceObject: pieceObject })
-    if( additionalActions ){ moveObject.captureNotation = additionalActions.call(this, {position: startPosition} ) }
-    Rules.pawnPromotionQuery({board: this, moveObject: moveObject} );
-		Rules.checkmateQuery({board: this, moveObject: moveObject})
-    if( !this.gameOver ){
-      var otherTeam = this.teamNotMoving(),
-        otherTeamsKingPosition = this._kingPosition(otherTeam);
-      Rules.checkQuery( {startPosition: otherTeamsKingPosition, endPosition: otherTeamsKingPosition, board: this, moveObject: moveObject} )
-      Rules.stalemateQuery({board: this, moveObject: moveObject});
+
+
+    let stringyLayOut = JSON.stringify(this.layOut)
+    if(/,/.exec(this.previousLayouts)){
+      this.previousLayouts = this.previousLayouts.replace(/]$/, "," + stringyLayOut + "]" )
+    } else {
+      this.previousLayouts = "[" + stringyLayOut + "]"
     }
-    this._recordNotationFrom(moveObject)
+
+    this._emptify(startPosition)
+    if( !this.positionEmpty(endPosition) ){ this._capture(endPosition); }
+    this._placePiece({ position: endPosition, pieceObject: pieceObject })
+    if( additionalActions ){ var epNotation = additionalActions.call(this, startPosition) }
+    // if( additionalActions ){ additionalActions({position: startPosition}) }
+    let prefixNotation = moveObject.notation()
+    let notationSuffix = Rules.postMoveQueries( this, prefixNotation )
+    // this.movementNotation.push( prefixNotation + (epNotation || "") + notationSuffix)
+    this._recordNotationFrom({ moveObject: moveObject, epNotation: (epNotation || ""), notationSuffix:  notationSuffix })
     if( !this.gameOver ){ this._nextTurn() }
   }
 
-  _storeCurrentLayoutAsPrevious(){
-    let layOutCopy = Board._deepCopy( this.layOut );
-    this.previousLayouts.push(layOutCopy)
-  }
-
   _capture(position){
-    let captureNotation = ""
-    if( !this.positionEmpty(position) ){
-      let pieceObject = this.layOut[position];
-      this.capturedPieces.push(pieceObject)
-      this._emptify(position)
-      captureNotation = "x"
-    } else {
-      return captureNotation
-    }
-      return captureNotation
-  }
-
-  lastLayout(){
-    return this.previousLayouts[this.previousLayouts.length - 1]
+    let pieceObject = this.layOut[position];
+    this.capturedPieces.push(pieceObject);
   }
 
   _oneSpaceDownIsEmpty(position){
@@ -434,24 +428,75 @@ class Board {
     }
   }
 
-  kingSideCastleViableFrom(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
-    return(
-      this.pieceHasNotMovedFrom(position) && this._kingSideCastleIsClear(position) && this._kingSideRookHasNotMoved(position)
-      && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
-      && !Rules.checkQuery({startPosition: (position), endPosition: (position + 1), board: this })
-    )
+  static backRankFor(team){
+    let rankArray = {
+      black: 8,
+      white: 1
+    }
+    return rankArray[team]
   }
 
-  queenSideCastleViableFrom(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
-    return(
-      this.pieceHasNotMovedFrom(position) && this._queenSideCastleIsClear(position) && this._queenSideRookHasNotMoved(position)
-      && !Rules.checkQuery({startPosition: position, endPosition: position, board: this })
-      && !Rules.checkQuery({startPosition: (position), endPosition: (position - 1), board: this })
-    )
+  kingSideCastleViableFor(team, startPosition){
+    if( this.pieceObject(startPosition + 3) !== team + Board.ROOK ){ return false }
+    if (Rules.checkQuery({board: this, teamString: this.allowedToMove}) ){ return false }
+    // thinks you can castle if rook was captured but never moved!
+    let moveNotations = this.movesNotationFor(team),
+      regexes = [/Rh/, /Rg/, /Rf/];
+    if(team === Board.WHITE){
+      if( startPosition !== 4 ){ return false }
+      var necessaryEmptyPositions = [5,6];
+      regexes.push(/Ke2/, /Kd1/, /Kd2/, /Kf1/, /Kf2/, /Kg1/, /Kc1/)
+    } else if( team === Board.BLACK){
+      if( startPosition !== 60 ){ return false }
+      var necessaryEmptyPositions = [61,62];
+        regexes.push(/Ke7/, /Kd8/, /Kd7/, /Kf8/, /Kf7/, /Kg8/, /Kc8/)
+    } else {
+      alert('bad input for board.kingSideCastleViableFor :' + team)
+    }
+    for( let i = 0; i < necessaryEmptyPositions.length; i++){
+      let necessaryEmptyPosition = necessaryEmptyPositions[i];
+      if( !this.positionEmpty( necessaryEmptyPosition ) ){ return false }
+    }
+    for(let j = 0; j < moveNotations.length; j++){
+      let notation = moveNotations[j];
+      for(let i = 0; i < regexes.length; i++){
+        let regex = regexes[i];
+        if( regex.exec(notation) ){ return false }
+      }
+    }
+    return true;
   }
 
+  queenSideCastleViableFor(team, startPosition){
+    if( this.pieceObject(startPosition - 4) !== team + Board.ROOK ){ return false }
+    if (Rules.checkQuery({board: this, teamString: this.allowedToMove}) ){ return false }
+    // thinks you can castle if rook was captured but never moved!
+    let moveNotations = this.movesNotationFor(team),
+      regexes = [/Ra/, /Rb/, /Rc/, /Rd/];
+    if(team === Board.WHITE){
+      if( startPosition !== 4 ){ return false }
+      var necessaryEmptyPositions = [1,2,3];
+        regexes.push(/Ke2/, /Kd1/, /Kd2/, /Kf1/, /Kf2/, /Kg1/, /Kc1/);
+    } else if( team === Board.BLACK){
+      if( startPosition !== 60 ){ return false }
+      var necessaryEmptyPositions = [59,58,57];
+        regexes.push(/Ke7/, /Kd8/, /Kd7/, /Kf8/, /Kf7/, /Kg8/, /Kc8/)
+    } else {
+      alert('bad input for board.kingSideCastleViableFor :' + team)
+    }
+    for( let i = 0; i < necessaryEmptyPositions.length; i++){
+      let necessaryEmptyPosition = necessaryEmptyPositions[i];
+      if( !this.positionEmpty( necessaryEmptyPosition ) ){ return false }
+    }
+    for(let j = 0; j < moveNotations.length; j++){
+      let notation = moveNotations[j];
+      for(let i = 0; i < regexes.length; i++){
+        let regex = regexes[i];
+        if( regex.exec(notation) ){ return false }
+      }
+    }
+    return true;
+  }
 
   _kingSideCastleIsClear(kingPosition){
     return this.positionEmpty(kingPosition + 1) && this.positionEmpty(kingPosition + 2 )
@@ -472,32 +517,22 @@ class Board {
     return (this.pieceTypeAt( queenSideRookStartPosition ) ===Board.ROOK) && this.pieceHasNotMovedFrom( queenSideRookStartPosition )
   }
 
-  pieceHasNotMovedFrom(position){
+  pieceObject(position){
     position = Board.convertPositionFromAlphaNumeric(position)
-    let pieceObject = this.layOut[position],
-      previousLayouts = this.previousLayouts,
-      pieceHasNotMoved = true;
-    for(let i = 0; i < previousLayouts.length; i++){
-      let oldLayout= previousLayouts[i];
-      if(oldLayout[position] !== pieceObject ){
-        pieceHasNotMoved = false
-        break;
-      };
-    };
-    return pieceHasNotMoved
+    return this.layOut[position]
   }
 
   _emptify(position){
-    this.layOut[position] = JSON.stringify({color: Board.EMPTY, species: Board.EMPTY})
+    this.layOut[position] = Board.EMPTY + Board.EMPTY
   }
 
   _placePiece({position: position, pieceObject: pieceObject}){
-    this.layOut[position] = JSON.stringify(pieceObject)
+    this.layOut[position] = pieceObject
   }
 
   _promotePawn(position){
     let teamString = this.teamAt(position);
-    this.layOut[position] = JSON.stringify({color: teamString , species: Board.QUEEN})
+    this.layOut[position] = teamString  + Board.QUEEN
   }
 
   teamAt(position){
@@ -526,7 +561,7 @@ class Board {
 
   _positionsOccupiedByTeam(teamString){
     let positions = [];
-    for( let i = 0; i < this.layOut.length; i++){
+    for( let i = 0; i < this.layOut.length && positions.length < 16; i++){
       let teamAt = this.teamAt(i);
       if(teamAt === teamString){
         positions.push(i)
