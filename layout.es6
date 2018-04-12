@@ -83,6 +83,20 @@ class Layout{
     return layOut
   }
 
+  static nWeights(){
+    let layOut = [
+      "WR", "WN", "WB", "WQ", "WK", "WB", "ee", "WR",
+      "WP", "WP", "WP", "ee", "WN", "ee", "WP", "WP",
+      "ee", "ee", "ee", "ee", "ee", "WP", "ee", "ee",
+      "ee", "ee", "ee", "ee", "BN", "ee", "ee", "ee",
+      "ee", "ee", "ee", "ee", "WP", "ee", "ee", "ee",
+      "ee", "ee", "BN", "ee", "ee", "ee", "ee", "ee",
+      "BP", "BP", "BP", "BP", "ee", "BP", "BP", "BP",
+      "BR", "ee", "BB", "BQ", "BK", "BB", "ee", "BR"
+    ]
+    return layOut
+  }
+
   static approachingMate(){
     let layOut = [
       Board.WHITE + Board.ROOK,  Board.EMPTY + Board.EMPTY, Board.WHITE + Board.BISHOP,  Board.WHITE + Board.QUEEN, Board.WHITE + Board.KING,  Board.EMPTY + Board.EMPTY,   Board.WHITE + Board.NIGHT, Board.WHITE + Board.ROOK,

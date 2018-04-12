@@ -3,6 +3,8 @@ class Bot {
     this.api = api;
     this.homeTeam = team;
     this.opponent = Board.opposingTeam(team)
+    this.castledHomeTeam = false
+    this.castledOpponent = false
   }
 
   teamModifier(team){
@@ -24,21 +26,42 @@ class Bot {
     this.homeTeamStartingControlValue = this.weightAccessibleSquares({board: this.baseBoard, team: this.homeTeam})
     this.opponentStartingControlValue = this.weightAccessibleSquares({board: this.baseBoard, team: this.opponent})
     this.baseCaseBranchDepth = 4
+    this.projectMoveForHomeTeam = this.pingHomeTeam
+    this.projectMoveForOpponent = this.pongOpponent
+    // it would make more sense for the funcs to return their chosen node at a given depth
+    // as opposed to just returning the value of all nodes at that depth and having the other team's func declare which one
+    // their opponent is better off choosing
+    // this could be accomplished by having pingPongMovesStart first iterate across all possible moves
+    // passing the new board into pongOpponent and letting pongOpponent determine the newpossible moves and pass them into
+    // ping homteam, etc.. etc..
+    // each function would then have the capacity to value it's own options, and return them to the prior function
+    // could even calculate gamePhase separately for opponent
   }
 
   determineMove(board){
     this.setInstanceVars(board);
-    let availableMoves = this.api.availableMovesDefault();
-        // gamePhase = this.calculateGamePhase({team: homeTeam, board: this.baseBoard}),
+    // this.calculateGamePhase({team: this.homeTeam, board: this.baseBoard})
+    // this.calculateGamePhase({team: this.opponent, board: this.baseBoard})
+    let availableMoves = this.api.availableMovesDefault(),
+      lastMoveNotation = this.baseBoard.movementNotation[this.baseBoard.movementNotation.length -1]
+    if(/0/.exec(lastMoveNotation)){this.castledOpponent = true }
         // weightMoves = this.gamePhasePriorities[gamePhase],
+        // start as opening
+        // switch to mid when back rank has no minors and castle has either occurred or isn't viable (king has moved, rook has moved, capture has occurred at a/h 1 or 8)
+        // declare endgame after piecevalue drops below x (13?)
+
     console.log(this.homeTeam)
     let  weightedMoves = this.pingPongMovesStart()
 
-        console.log(weightedMoves)
+    console.log(weightedMoves)
 
     let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 5)
+    console.log(moveIdeas);
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
     console.log(Board.gridCalculator(move.startPosition), Board.gridCalculator(move.endPosition), move.pieceNotation || 'p', move.captureNotation)
+    if(/0/.exec(move.pieceNotation)){
+      this.castledHomeTeam = true
+    }
     return move
 
   }
@@ -46,25 +69,25 @@ class Bot {
   pingPongMovesStart(){
     let startTime = Math.floor(Date.now() / 1000),
       moves = this.api.availableMovesDefault();
-      // weights = {};
     for(let  i = 0; i < moves.length; i++){
       let move = moves[i];
-      this.baseNode = move
-      // if( [Board.KING, Board.QUEEN, Board.ROOK].includes(move.pieceNotation) && !move.captureNotation ){ continue };
-      let weightsHash = this.pingHomeTeam({board: this.baseBoard, move: move}),
-        weight = weightsHash.us - weightsHash.them
-        weight = Math.round( weight * 100 )/100
+      let weightAndNotation = this.projectMoveForHomeTeam({board: this.baseBoard, move: move});
       if(!weights){
-        var weights = {};
-        weights[weight] = [move]
-        this.bestBranchValue = weight
-      } else if(weights[weight]){
-        weights[weight].push(move)
+        var weights = {},
+          notations = {};
+        weights[weightAndNotation.value] = [move]
+        notations[weightAndNotation.value] = [weightAndNotation.notation]
+        this.bestBranchValue = weightAndNotation.value
+      } else if(weights[weightAndNotation.value]){
+        weights[weightAndNotation.value].push(move)
+        notations[weightAndNotation.value].push(weightAndNotation.notation)
       } else {
-        weights[weight] = [move]
+        weights[weightAndNotation.value] = [move]
+        notations[weightAndNotation.value] = [weightAndNotation.notation]
       }
-      if( weight > this.bestBranchValue ){ this.bestBranchValue = weight}
+      if( weightAndNotation.value > this.bestBranchValue ){ this.bestBranchValue = weightAndNotation.value}
     }
+    console.log(notations);
     let endTime = Math.floor(Date.now() / 1000)
     console.log( endTime - startTime)
     return weights
@@ -75,49 +98,51 @@ class Bot {
       currentNotationLength = newBoard.movementNotation.length
     if( newBoard.gameOver){
       if(newBoard._winner === this.homeTeam){
-        return {them: undefined, us: 1000}
-      } else if (newBoard._winner === 0){
-        return {them: undefined, us: 0}
+        return {value: 1000, notation: newBoard.moveNotation}
+      } else if (newBoard._winner === undefined){
+        return {value: 0, notation: newBoard.moveNotation}
         // gotta determine whether we wanted to play for stale, maybe just return zero, and if the other options are all negative, that ain't so bad?
       }
     }
-    var value = 0
-    if( move.captureNotation ){
-      value =  value + (Board.pieceValues()[board.pieceTypeAt(move.endPosition)] || 1) //if there's a capture, but the endPosition value is undefined, it must've been en passant.. that or a bug ¯\_(ツ)_/¯
-    }
-    if( /O/.exec(move.pieceNotation) ){
-      value = value + 2
-    }
-    var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.opponent})
     let currentBranchDepth = currentNotationLength - this.startingNotationLength
     if( currentBranchDepth >= this.baseCaseBranchDepth ){
       // for( let i = 0; i < newMoves.length; i++){
       //   let newMove = newMoves[i];
       //   if( !move.captureNotation || newBoard.pieceTypeAt(newMove.endPosition) === Board.PAWN || currentBranchDepth === 7 ){
-          value = value + this.weightAccessibleSquares({board: newBoard, team: this.homeTeam}) - this.homeTeamStartingControlValue
-          // console.log(value, newBoard.movementNotation);
-          return {them: undefined, us: value}
+
+          var value = 0;
+          // if( /O/.exec(move.pieceNotation) ){
+          //   value = value + 2
+          // }//NEED TO RUN SOME REGEX ON THE INTERVENING NOTATIONS, SPLITTING THEM BASED ON TEAM
+          // MIGHT BE ABLE TO USE THAT TO ACCOUNT FOR PAWN PROMOTION AS WELL
+          let homeTeamPieceValueLoss = newBoard.pieceValue(this.homeTeam) - this.hometeamStartingPieceValue,
+          opponentPieceValueLoss = newBoard.pieceValue(this.opponent) - this.opponentStartingPieceValue,
+          homeTeamSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.homeTeam}) - this.homeTeamStartingControlValue,
+          opponSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.opponent}) - this.opponentStartingControlValue;
+          value = homeTeamPieceValueLoss - opponentPieceValueLoss + homeTeamSquareControlDifferential - opponSquareControlDifferential;
+          value = Math.round( value * 100 )/100
+
+          return {value: value, notation: newBoard.movementNotation}
       //   }
       // }
     }
+    var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.opponent})
     for( let i = 0; i < newMoves.length; i++){
       let newMove = newMoves[i];
-      var responseValueHash = this.pongOpponent({board: newBoard, move: newMove});
-      if ( !usThem ){
-        var usThem = responseValueHash
-      } else if( responseValueHash.them > usThem.them ){
-        var usThem = responseValueHash
+      var responseValue = this.projectMoveForOpponent({board: newBoard, move: newMove});
+      if ( !selectedValue ){
+        var selectedValue = responseValue
+      } else if( responseValue.value < selectedValue.value ){
+        var selectedValue = responseValue
       }
 
-      if( move === this.baseNode ){
-        let weight = usThem.us - usThem.them + value
-        weight = Math.round( weight * 100 )/100
-        if( weight + 2.5 < this.bestBranchValue ){ return {us: (usThem.us + value), them: usThem.them} }
+      if( this.bestBranchValue ){
+        if( selectedValue.value + 1.01 < this.bestBranchValue ){
+          return selectedValue
+        }
       }
     }
-    if( !usThem.us ){ usThem.us =  this.weightAccessibleSquares({board: newBoard, team: this.homeTeam}) - this.homeTeamStartingControlValue }
-    usThem.us = usThem.us + value
-    return usThem
+    return selectedValue
   }
 
   pongOpponent({board: board, move: move}){
@@ -125,44 +150,41 @@ class Bot {
       currentNotationLength = newBoard.movementNotation.length
     if( newBoard.gameOver){
       if(newBoard._winner === this.opponent){
-        return {them: 1000, us: undefined}
+        return {value: -1000, notation: newBoard.moveNotation}
       } else if (newBoard._winner === undefined){
-        return {them: 0, us: undefined}
+        return {value: 0, notation: newBoard.moveNotation}
         // gotta determine whether we wanted to allow opponent to get stale, but probably again, if we return zero, and other branches are higher, then cool.
       }
     }
-    var value = 0
-    if( move.captureNotation ){
-      value =  value + (Board.pieceValues()[board.pieceTypeAt(move.endPosition)] || 1) //if there's a capture, but the endPosition value is undefined, it must've been en passant.. that or a bug ¯\_(ツ)_/¯
-    }
-    if( /O/.exec(move.pieceNotation) ){
-      value = value + 2
-    }
-    var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.homeTeam});
     let currentBranchDepth = currentNotationLength - this.startingNotationLength
     if( currentBranchDepth >= this.baseCaseBranchDepth ){
       // for( let i = 0; i < newMoves.length; i++){
       //   let newMove = newMoves[i];
       //   if( !move.captureNotation || newBoard.pieceTypeAt(newMove.endPosition) === Board.PAWN || currentBranchDepth === 7 ){
-          value = value + this.weightAccessibleSquares({board: newBoard, team: this.opponent}) - this.opponentStartingControlValue
-          // console.log(value, newBoard.movementNotation);
-          return {them: value, us: undefined}
-      //   }
-      // }
+      var value = 0;
+      // if( /O/.exec(move.pieceNotation) ){
+      //   value = value + 2
+      // }//NEED TO RUN SOME REGEX ON THE INTERVENING NOTATIONS, SPLITTING THEM BASED ON TEAM
+      // MIGHT BE ABLE TO USE THAT TO ACCOUNT FOR PAWN PROMOTION AS WELL
+      let homeTeamPieceValueLoss = newBoard.pieceValue(this.homeTeam) - this.hometeamStartingPieceValue,
+      opponentPieceValueLoss = newBoard.pieceValue(this.opponent) - this.opponentStartingPieceValue,
+      homeTeamSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.homeTeam}) - this.homeTeamStartingControlValue,
+      opponSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.opponent}) - this.opponentStartingControlValue;
+      value = homeTeamPieceValueLoss- opponentPieceValueLoss + homeTeamSquareControlDifferential - opponSquareControlDifferential;
+      value = Math.round( value * 100 )/100
+      return {value: value, notation: newBoard.movementNotation}
     }
-
+    var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.homeTeam});
     for( let i = 0; i < newMoves.length; i++){
       let newMove = newMoves[i];
-      var responseValueHash = this.pingHomeTeam({board: newBoard, move: newMove});
-      if ( !usThem ){
-        var usThem = responseValueHash
-      } else if( responseValueHash.us > usThem.us ){
-        var usThem = responseValueHash
+      var responseValue = this.projectMoveForHomeTeam({board: newBoard, move: newMove});
+      if ( !selectedValue ){
+        var selectedValue = responseValue
+      } else if( responseValue.value > selectedValue.value ){
+        var selectedValue = responseValue
       }
     }
-    if( !usThem.them ){ usThem.them =  this.weightAccessibleSquares({board: newBoard, team: this.opponent}) - this.opponentStartingControlValue }
-    usThem.them = usThem.them + value
-    return usThem
+    return selectedValue
   }
 
   selectRandomMove(){
@@ -187,11 +209,30 @@ class Bot {
   calculateGamePhase({team: team, board: board}){
     let kingPosition = board.kingPosition(team);
     if ( board.pieceValue( Board.opposingTeam(team) ) <= 13 ) {
-      return "end";
+      if( team === this.homeTeam){
+        this.projectMoveForHomeTeam = this.endGameHomeTeam
+      } else if(team === this.opponent){
+        this.projectMoveForOpponent = this.endGameOpponent
+      } else {
+        alert("bad input for team in calculateGamePhase :", team)
+      }
     } else if ( !this.backRankHasMinorPieces({team: team, board: board})) {
-      return "middle";
+      if( team === this.homeTeam ){
+        this.projectMoveForHomeTeam = this.midGameHomeTeam
+      } else if( team === this.opponent ){
+        this.projectMoveForOpponent = this.midGameOpponent
+      } else {
+        alert("bad input for team in calculateGamePhase :", team)
+      }
     } else {
-      return "opening";
+      if( team === this.homeTeam){
+        this.projectMoveForHomeTeam = this.pingHomeTeam
+      } else if(team === this.opponent){
+        this.projectMoveForOpponent = this.pongOpponent
+      } else {
+        alert("bad input for team in calculateGamePhase :", team)
+      }
+
     }
     // } else if ( this.backRankHasMinorPieces({team: team, board: board}) && board.pieceHasNotMovedFrom(kingPosition) ){
     //   return "opening";
@@ -221,33 +262,6 @@ class Bot {
     }
     return backRankPieces
   }
-
-  // weightMovesForOpening({moves: moves, board: board, team: team}){
-  //   let weightedMoves = {}
-  //   for(let i = 0; i < moves.length; i++){
-  //     let move = moves[i],
-  //         weight = 0,
-  //         newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move}),
-  //         newlyAvailableMoves = this.api.availableMovesFor({movingTeam: team, board: newBoard}),
-  //         accessibleSquaresWeight = this.weightAccessibleSquares(newlyAvailableMoves) - this.weightAccessibleSquares(moves),
-  //         seekCheckMate = this.seekCheckMate(board, move, team),
-  //         avoidCheckMate = this.avoidCheckMate(board, move, team),// passing in newBoard seibnce we want to see the opponents possible responses
-  //         stackDeckForCastle = this.stackDeckForCastle( board, move, 20 ),
-  //         limitNonCastleKingMoves = this.limitNonCastleKingMoves( board, move ),
-  //         discourageEarlyQueenMovement = this.discourageEarlyQueenMovement( board, move );
-  //         // doubleMoveInOpeningPenalty = this. doubleMoveInOpeningPenalty( board, move );
-  //     weight = weight + accessibleSquaresWeight + stackDeckForCastle + limitNonCastleKingMoves + discourageEarlyQueenMovement + seekCheckMate// + doubleMoveInOpeningPenalty
-  //     weight = Math.round( weight * 100 )/100
-  //
-  //     if( weightedMoves[weight] ){
-  //       weightedMoves[weight].push( moves[i] )
-  //     } else {
-  //       weightedMoves[weight] = [moves[i]]
-  //     }
-  //   }
-  //   return weightedMoves
-  // }
-
 
   noNonPawnsUnderAttack({moves: moves, board: board}){
     for(let i = 0; i < moves.length; i++){
@@ -420,7 +434,7 @@ class Bot {
     for(let i = sortedWeights.length -1 ; i > -1 && nWeights.length < n; i--){
       let weight = sortedWeights[i],
         moves = weightedMoves[weight];
-      if((highestWeight - 2) < weight){
+      if((highestWeight - 1) < weight){
         for( let j = 0; j < moves.length; j++){
           nWeights.push(moves[j])
         }
