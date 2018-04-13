@@ -15,22 +15,28 @@ class MovementType {
     //   pieceNotation = args["pieceNotation"],
     //   startPosition = args["startPosition"];
     // TODO could slide in a rangeLimit on creation to save later iterations
-  static diagonalRightBoundaryCheck({startPosition: startPosition, endPosition: endPosition}){
+  static diagonalRightBoundaryCheck(i, increment, startPosition){
+    let endPosition = i * increment + startPosition;
     return (endPosition) % 8 > (startPosition % 8) && Board._inBounds(endPosition)
   }
-  static verticalBoundaryCheck({startPosition: startPosition, endPosition: endPosition}){
+  static verticalBoundaryCheck(i, increment, startPosition){
+    let endPosition = i * increment + startPosition;
     return Board._inBounds(endPosition)
   }
-  static diagonalLeftBoundaryCheck({startPosition: startPosition, endPosition: endPosition}){
+  static diagonalLeftBoundaryCheck(i, increment, startPosition){
+    let endPosition = i * increment + startPosition;
     return (endPosition) % 8 < (startPosition % 8) && Board._inBounds(endPosition)
   }
-  static nightVerticalBoundaryCheck({startPosition: startPosition, endPosition: endPosition}){
+  static nightVerticalBoundaryCheck(i, increment, startPosition){
+    let endPosition = i * increment + startPosition;
     return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 1 && Board._inBounds(endPosition)
   }
-  static nightHorizontalBoundaryCheck({startPosition: startPosition, endPosition: endPosition}){
+  static nightHorizontalBoundaryCheck(i, increment, startPosition){
+    let endPosition = i * increment + startPosition;
     return Math.abs( (endPosition) % 8 - startPosition % 8 ) === 2 && Board._inBounds(endPosition)
   }
-  static horizontalBoundaryCheck({startPosition: startPosition, endPosition: endPosition}){
+  static horizontalBoundaryCheck(i, increment, startPosition){
+    let endPosition = i * increment + startPosition;
     return Math.floor((endPosition) / 8) === Math.floor(startPosition / 8) && Board._inBounds(endPosition)
   }
 
@@ -40,10 +46,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "+8",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.verticalBoundaryCheck({endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.verticalBoundaryCheck
     })
     return movementType
   }
@@ -54,10 +57,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "-8",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.verticalBoundaryCheck({endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.verticalBoundaryCheck
     })
     return movementType
   }
@@ -68,10 +68,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "+9",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.diagonalRightBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.diagonalRightBoundaryCheck
     })
     return movementType
   }
@@ -82,10 +79,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "-9",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.diagonalLeftBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.diagonalLeftBoundaryCheck
     })
     return movementType
   }
@@ -96,10 +90,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "+7",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.diagonalLeftBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.diagonalLeftBoundaryCheck
     })
     return movementType
   }
@@ -110,10 +101,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "-7",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.diagonalRightBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.diagonalRightBoundaryCheck
     })
     return movementType
   }
@@ -124,10 +112,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "+1",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.horizontalBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.horizontalBoundaryCheck
     })
     return movementType
   }
@@ -138,10 +123,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "-1",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.horizontalBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.horizontalBoundaryCheck
     })
     return movementType
   }
@@ -152,10 +134,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "+15",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.nightVerticalBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.nightVerticalBoundaryCheck
     })
     return movementType
   }
@@ -166,10 +145,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "+17",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.nightVerticalBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.nightVerticalBoundaryCheck
     })
     return movementType
   }
@@ -180,10 +156,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "+6",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.nightHorizontalBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.nightHorizontalBoundaryCheck
     })
     return movementType
   }
@@ -194,10 +167,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "+10",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.nightHorizontalBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.nightHorizontalBoundaryCheck
     })
     return movementType
   }
@@ -208,10 +178,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "-15",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.nightVerticalBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.nightVerticalBoundaryCheck
     })
     return movementType
   }
@@ -222,10 +189,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "-17",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.nightVerticalBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.nightVerticalBoundaryCheck
     })
     return movementType
   }
@@ -236,10 +200,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "-6",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.nightHorizontalBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.nightHorizontalBoundaryCheck
     })
     return movementType
   }
@@ -250,10 +211,7 @@ class MovementType {
       pieceNotation: pieceNotation,
       startPosition: startPosition,
       increment: "-10",
-      boundaryCheck: function(i, increment, startPosition) {
-        let endPosition = i * increment + startPosition
-        return MovementType.nightHorizontalBoundaryCheck({startPosition: startPosition, endPosition: endPosition})
-      }
+      boundaryCheck: MovementType.nightHorizontalBoundaryCheck
     })
     return movementType
   }
