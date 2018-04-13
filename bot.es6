@@ -94,8 +94,7 @@ class Bot {
   }
 
   pingHomeTeam({board: board, move: move}){
-    let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move}),
-      currentNotationLength = newBoard.movementNotation.length
+    let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
     if( newBoard.gameOver){
       if(newBoard._winner === this.homeTeam){
         return {value: 1000, notation: newBoard.moveNotation}
@@ -104,32 +103,26 @@ class Bot {
         // gotta determine whether we wanted to play for stale, maybe just return zero, and if the other options are all negative, that ain't so bad?
       }
     }
-    let currentBranchDepth = currentNotationLength - this.startingNotationLength
-    if( currentBranchDepth >= this.baseCaseBranchDepth ){
+    if( (newBoard.movementNotation.length - this.startingNotationLength) >= this.baseCaseBranchDepth ){
       // for( let i = 0; i < newMoves.length; i++){
       //   let newMove = newMoves[i];
       //   if( !move.captureNotation || newBoard.pieceTypeAt(newMove.endPosition) === Board.PAWN || currentBranchDepth === 7 ){
 
-          var value = 0;
-          // if( /O/.exec(move.pieceNotation) ){
-          //   value = value + 2
-          // }//NEED TO RUN SOME REGEX ON THE INTERVENING NOTATIONS, SPLITTING THEM BASED ON TEAM
-          // MIGHT BE ABLE TO USE THAT TO ACCOUNT FOR PAWN PROMOTION AS WELL
-          let homeTeamPieceValueLoss = newBoard.pieceValue(this.homeTeam) - this.hometeamStartingPieceValue,
-          opponentPieceValueLoss = newBoard.pieceValue(this.opponent) - this.opponentStartingPieceValue,
-          homeTeamSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.homeTeam}) - this.homeTeamStartingControlValue,
-          opponSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.opponent}) - this.opponentStartingControlValue;
-          value = homeTeamPieceValueLoss - opponentPieceValueLoss + homeTeamSquareControlDifferential - opponSquareControlDifferential;
-          value = Math.round( value * 100 )/100
+      var value = 0;
+      // }//NEED TO RUN SOME REGEX ON THE INTERVENING NOTATIONS, SPLITTING THEM BASED ON TEAM
+      // MIGHT BE ABLE TO USE THAT TO ACCOUNT FOR PAWN PROMOTION AS WELL
+      let homeTeamPieceValueLoss = newBoard.pieceValue(this.homeTeam) - this.hometeamStartingPieceValue,
+      opponentPieceValueLoss = newBoard.pieceValue(this.opponent) - this.opponentStartingPieceValue,
+      homeTeamSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.homeTeam}) - this.homeTeamStartingControlValue,
+      opponSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.opponent}) - this.opponentStartingControlValue;
+      value = homeTeamPieceValueLoss - opponentPieceValueLoss + homeTeamSquareControlDifferential - opponSquareControlDifferential;
+      value = Math.round( value * 100 )/100
 
-          return {value: value, notation: newBoard.movementNotation}
-      //   }
-      // }
+      return {value: value, notation: newBoard.movementNotation}
     }
     var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.opponent})
     for( let i = 0; i < newMoves.length; i++){
-      let newMove = newMoves[i];
-      var responseValue = this.projectMoveForOpponent({board: newBoard, move: newMove});
+      let responseValue = this.projectMoveForOpponent({board: newBoard, move: newMoves[i]});
       if ( !selectedValue ){
         var selectedValue = responseValue
       } else if( responseValue.value < selectedValue.value ){
@@ -146,8 +139,7 @@ class Bot {
   }
 
   pongOpponent({board: board, move: move}){
-    let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move}),
-      currentNotationLength = newBoard.movementNotation.length
+    let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
     if( newBoard.gameOver){
       if(newBoard._winner === this.opponent){
         return {value: -1000, notation: newBoard.moveNotation}
@@ -156,16 +148,11 @@ class Bot {
         // gotta determine whether we wanted to allow opponent to get stale, but probably again, if we return zero, and other branches are higher, then cool.
       }
     }
-    let currentBranchDepth = currentNotationLength - this.startingNotationLength
-    if( currentBranchDepth >= this.baseCaseBranchDepth ){
+    if( (newBoard.movementNotation.length - this.startingNotationLength) >= this.baseCaseBranchDepth ){
       // for( let i = 0; i < newMoves.length; i++){
       //   let newMove = newMoves[i];
       //   if( !move.captureNotation || newBoard.pieceTypeAt(newMove.endPosition) === Board.PAWN || currentBranchDepth === 7 ){
       var value = 0;
-      // if( /O/.exec(move.pieceNotation) ){
-      //   value = value + 2
-      // }//NEED TO RUN SOME REGEX ON THE INTERVENING NOTATIONS, SPLITTING THEM BASED ON TEAM
-      // MIGHT BE ABLE TO USE THAT TO ACCOUNT FOR PAWN PROMOTION AS WELL
       let homeTeamPieceValueLoss = newBoard.pieceValue(this.homeTeam) - this.hometeamStartingPieceValue,
       opponentPieceValueLoss = newBoard.pieceValue(this.opponent) - this.opponentStartingPieceValue,
       homeTeamSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.homeTeam}) - this.homeTeamStartingControlValue,
@@ -176,8 +163,7 @@ class Bot {
     }
     var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.homeTeam});
     for( let i = 0; i < newMoves.length; i++){
-      let newMove = newMoves[i];
-      var responseValue = this.projectMoveForHomeTeam({board: newBoard, move: newMove});
+      let responseValue = this.projectMoveForHomeTeam({board: newBoard, move: newMoves[i]});
       if ( !selectedValue ){
         var selectedValue = responseValue
       } else if( responseValue.value > selectedValue.value ){
@@ -442,8 +428,5 @@ class Bot {
     }
     return nWeights
   }
-
-
-
 
 }

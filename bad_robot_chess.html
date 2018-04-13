@@ -3,15 +3,6 @@
   </head>
   <body>
     <link rel="stylesheet" type="text/css" href="css/chessboard.css">
-    <script src="movement_type.es6"></script>
-    <script src="Layout.es6"></script>
-    <script src="board.es6"></script>
-    <script src="view.es6"></script>
-    <script src="rules.es6"></script>
-    <script src="move.es6"></script>
-    <script src="moves_calculator.es6"></script>
-    <script src="api.es6"></script>
-    <script src="bot.es6"></script>
     <div id="arena">
       <div id="notifications"></div>
       <div id="turn-marker"><span id="team-allowed-to-move">white</span>'s turn</div>
@@ -161,7 +152,16 @@
       undo
     </button>
     <button id="pause-button">pause</button>
-
+    <script src="piece_movement_factory.es6"></script>
+    <script src="movement_type.es6"></script>
+    <script src="Layout.es6"></script>
+    <script src="board.es6"></script>
+    <script src="view.es6"></script>
+    <script src="rules.es6"></script>
+    <script src="move.es6"></script>
+    <script src="moves_calculator.es6"></script>
+    <script src="api.es6"></script>
+    <script src="bot.es6"></script>
     <script src="game_controller.es6"></script>
   </body>
 </html>

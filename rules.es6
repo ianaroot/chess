@@ -1,19 +1,13 @@
 class Rules {
 
   static getMoveObject(startPosition, endPosition, board){
-    // if(
-    //   !Board.prototype.isPrototypeOf( board ) || typeof startPosition !== "number" ||  typeof endPosition !== "number"
-    // ){
-    //   throw new Error("missing params in getMoveObject")
-    // }
     let layOut = board.layOut,
         team = board.teamAt(startPosition),
         moveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
     if( team === Board.EMPTY ){
       moveObject.alert = "that tile is empty"
       return moveObject
-    }
-    if( team !== board.allowedToMove ){
+    }else if( team !== board.allowedToMove ){
       moveObject.alert =  "other team's turn"
       return moveObject
     }
@@ -33,30 +27,19 @@ class Rules {
   }
 
   static checkQueryWithMove({board: board, moveObject: moveObject}){
-    // if(
-    //   !Board.prototype.isPrototypeOf( board ) || typeof startPosition !== "number" || !(typeof additionalActions === "function" || typeof additionalActions === "undefined") || !(typeof endPosition !== "number" || typeof endPosition !== "string") //not sure where this got turned into a string...
-    // ){
-    //   throw new Error("missing params in checkQuery")
-    // }
-    let startPosition = moveObject.startPosition,
-      teamString         = board.teamAt(startPosition),
-      newBoard = board.deepCopy();
+    let newBoard = board.deepCopy();
     newBoard._hypotheticallyMovePiece( moveObject )
-    return this.checkQuery({board: newBoard, teamString: teamString})
+    return this.checkQuery({board: newBoard, teamString: board.teamAt(moveObject.startPosition)})
   }
 
   static pieceWillBeAttackedAfterMove({board: board, moveObject: moveObject}){
-    let startPosition = moveObject.startPosition,
-      teamString         = board.teamAt(startPosition),
-      newBoard = board.deepCopy();
+    let newBoard = board.deepCopy();
     newBoard._hypotheticallyMovePiece( moveObject )
-    return this.checkQuery({board: newBoard, teamString: teamString})
+    return this.checkQuery({board: newBoard, teamString: board.teamAt(moveObject.startPosition)})
   }
 
   static checkQuery({board: board, teamString: teamString}){
-    // let opposingTeamString = Board.opposingTeam(teamString),
-      let kingPosition = board._kingPosition(teamString);
-      return this.pieceIsAttacked({board: board, defensePosition: kingPosition})
+    return this.pieceIsAttacked({board: board, defensePosition: board._kingPosition(teamString)})
   }
 
   static pieceIsAttacked({board: board, defensePosition: defensePosition}){ //doesn't care if the position is occupied
@@ -215,27 +198,15 @@ class Rules {
     if( teamOneDuplicates.length < 2 || teamTwoDuplicates.length < 2){//TODO setup more indicative three fold test to show why this is 2 not 3
       return false
     } else {
-      // console.log("threeFold triggered")
       let previousLayouts = JSON.parse(board.previousLayouts),
           repetitions = 0,
           threeFoldRepetition = false,
-          // currentLayOut = board.layOut;
           currentLayOut = JSON.stringify(board.layOut);
 
       for( let i = 0; i < previousLayouts.length; i++ ){
 
         let comparisonLayout = JSON.stringify(previousLayouts[i]);
         if(comparisonLayout === currentLayOut){ repetitions++ }
-
-      //   let comparisonLayout = previousLayouts[i],
-      //     different = false;
-      //   for( let j = 0; j < comparisonLayout.length; j++){
-      //     if( comparisonLayout[j] !== currentLayOut[j] ){
-      //       different = true
-      //       break
-      //     }
-      //   };
-      // if( !different ){ repetitions ++ }
       };
       if(repetitions >= 2){
         threeFoldRepetition = true
@@ -243,7 +214,6 @@ class Rules {
     return threeFoldRepetition
     }
   }
-
 
   static postMoveQueries(board, prefixNotation){
     let pawnPromotionNotation = Rules.pawnPromotionQuery(board),

@@ -1,7 +1,7 @@
 class Board {
   // TODO might be easier to store the moveObjects and recreate noatation on demand!!!
   constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation, previousLayouts: previousLayouts}){
-    this.layOut = layOut|| Layout.default()
+    this.layOut = layOut|| Layout.approachingMate()
     this.capturedPieces = capturedPieces || [];
     this.gameOver = gameOver || false;
     this.allowedToMove = allowedToMove || Board.WHITE;
