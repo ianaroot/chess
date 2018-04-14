@@ -1,35 +1,28 @@
 class MovesCalculator { //MOVES ARE NOT GUARANTEED TO BE LEGAL, MUST RUN CHECK QUERY
-  constructor({  startPosition: startPosition, board: board, moveObjects: moveObjects,
-    movementTypes: movementTypes, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly//, countDefense: countDefense//, endPosition: endPosition
-  }){
-    this.startPosition = startPosition
-    this.board = board
-    this.movementTypes = movementTypes || []
-    this.moveObjects = moveObjects || []
-    this.pieceType = this.board.pieceTypeAt(this.startPosition)
+  constructor({  startPosition: startPosition, board: board, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly//, countDefense: countDefense//, endPosition: endPosition
+  }){//TODO ALLOWS CASTLYING THROUGH CHECK!!!
+    this.moveObjects = []
     this.viablePositions = {}
-    this.ignoreCastles = ignoreCastles || false
-    this.attacksOnly = attacksOnly || false
+    this.ignoreCastles = ignoreCastles
+    this.attacksOnly = attacksOnly
+    this.endPositions = []
     // this.countDefense = countDefense
     // this.endPosition = endPosition
-    this.movementTypes = PieceMovementTypesFactory.factory({pieceType: this.pieceType, startPosition: this.startPosition, board: this.board, ignoreCastles: this.ignoreCastles, attacksOnly: this.attacksOnly})// , (this.endPosition - this.startPosition ) ); //TODO maybe shouldn't rely on Nan below when endPosition is undefined
-    this.calculateViablePositions()
+    let pieceType = board.pieceTypeAt(startPosition)
+    if( [Board.PAWN,Board.KING].includes(pieceType) ){
+      this.movementTypes = PieceMovementTypesFactory.complexFactory({pieceType: pieceType, startPosition: startPosition, board: board, ignoreCastles: this.ignoreCastles, attacksOnly: this.attacksOnly})// , (this.endPosition - startPosition ) ); //TODO maybe shouldn't rely on Nan below when endPosition is undefined
+    } else {
+      this.movementTypes = PieceMovementTypesFactory.simpleFactory(pieceType)// , (this.endPosition - startPosition ) ); //TODO maybe shouldn't rely on Nan below when endPosition is undefined
+    }
+    this.calculateViablePositions(board, startPosition)
   }
 // calculate form of motion by div modding start and end
 // check whether the piece at the start is in the list of pieces allowed to make such a movement
 // have some conditions under which pawns can move
 // also conditions for castling
 
-  endPositions(){
-    let positions = []
-    for(let i = 0; i < this.moveObjects.length; i++){
-      positions.push(this.moveObjects[i].endPosition)
-    }
-    return positions
-  }
-
-  calculateViablePositions(){
-    let teamString = this.board.teamAt(this.startPosition)
+  calculateViablePositions(board, startPosition){
+    let teamString = board.teamAt(startPosition)
     for(let i = 0; i < this.movementTypes.length; i++){
       let movementType = this.movementTypes[i],
           increment = movementType.increment,
@@ -37,66 +30,33 @@ class MovesCalculator { //MOVES ARE NOT GUARANTEED TO BE LEGAL, MUST RUN CHECK Q
           boundaryCheck = movementType.boundaryCheck,
           additionalActions = movementType.additionalActions
       for(let j = 1; j <= rangeLimit; j++){
-        let currentPosition = increment * j + this.startPosition
-        if ( !boundaryCheck(j, increment, this.startPosition) ){
+        let currentPosition = increment * j + startPosition
+        if ( !boundaryCheck(j, increment, startPosition) ){
           break
         }
-        if ( this.board.positionEmpty(currentPosition) ){
-          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: movementType.captureNotation}) )// illegal may change later
+        if ( board.positionEmpty(currentPosition) ){
+          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: startPosition, pieceNotation: movementType.pieceNotation, captureNotation: movementType.captureNotation}) )// illegal may change later
+          this.endPositions.push(currentPosition)
           // if( this.endPosition === currentPosition){
           //   return
           // }
-        } else if( this.board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
-          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )// illegal may change later
+        } else if( board.occupiedByOpponent({position: currentPosition, teamString: teamString} ) ){
+          this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )// illegal may change later
+          this.endPositions.push(currentPosition)
           // if( this.endPosition === currentPosition){
           //   return
           // }
           break
-        } else if( this.board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
+        } else if( board.occupiedByTeamMate({position: currentPosition, teamString: teamString} ) ){
           if(this.attacksOnly){
-            this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: this.startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )
+            this.moveObjects.push( new MoveObject({additionalActions: additionalActions, endPosition: currentPosition, startPosition: startPosition, pieceNotation: movementType.pieceNotation, captureNotation: "x"}) )
+            this.endPositions.push(currentPosition)
           }
           break
         }
       }
     }
   }
-
-  static get verticalUpIncrement(){ return 8 }
-  static get verticalDownIncrement(){ return -8 }
-  static get forwardSlashUpIncrement(){ return 9 }
-  static get forwardSlashDownIncrement(){ return -9 }
-  static get backSlashUpIncrement(){ return 7 }
-  static get backSlashDownIncrement(){ return -7 }
-  static get nightVerticalLeftUpIncrement(){ return 15 }
-  static get nightVerticalRightUpIncrement(){ return 17 }
-  static get nightHorizontalLeftUpIncrement(){ return 6 }
-  static get nightHorizontalRightUpIncrement(){ return 10 }
-  static get nightVerticalLeftDownIncrement(){ return -15 }
-  static get nightVerticalRightDownIncrement(){ return -17 }
-  static get nightHorizontalLeftDownIncrement(){ return -6 }
-  static get nightHorizontalRightDownIncrement(){ return -10 }
-  static get horizontalRightIncrement(){ return 1 }
-  static get horizontalLeftIncrement(){ return -1 }
-
-
-// TODO this is a movementType Factory
-
-  static boundaryChecks(args){
-    let startPosition = args["startPosition"],
-        endPosition = args["endPosition"]
-    return {
-
-    }
-  }
-
-  // static get allIncrements(){
-  //   return [MovesCalculator.verticalUpIncrement, MovesCalculator.verticalDownIncrement, MovesCalculator.forwardSlashUpIncrement, MovesCalculator.forwardSlashDownIncrement,
-  //     MovesCalculator.backSlashUpIncrement, MovesCalculator.backSlashDownIncrement, MovesCalculator.nightVerticalLeftUpIncrement, MovesCalculator.nightVerticalRightUpIncrement,
-  //     MovesCalculator.nightHorizontalLeftUpIncrement, MovesCalculator.nightHorizontalRightUpIncrement, MovesCalculator.nightVerticalLeftDownIncrement, MovesCalculator.nightVerticalRightDownIncrement,
-  //     MovesCalculator.nightHorizontalLeftDownIncrement, MovesCalculator.nightHorizontalRightDownIncrement, MovesCalculator.horizontalRightIncrement, MovesCalculator.horizontalLeftIncrement
-  //   ]
-  // }
 
   static getCommonMoveObjects(arr1, arr2){
     let commons = []

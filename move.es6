@@ -12,7 +12,6 @@ class MoveObject {
     this.illegal = illegal
   }
 
-
   notation(){
     if( !/O-O/.exec(this.pieceNotation) ){
       var positionNotation = Board.gridCalculator(this.endPosition);

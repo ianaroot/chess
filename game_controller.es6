@@ -4,7 +4,7 @@ class GameController {
 	constructor(){
 		this.board = new Board({});
     this.view = new View(this);
-		this._paused = true
+		this._paused = false
 		this.view.displayLayOut({board: this.board, alert: ""})
 		this.view.setTileClickListener()
 		this.view.setUndoClickListener(this)

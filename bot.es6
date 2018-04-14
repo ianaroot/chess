@@ -1,4 +1,7 @@
 class Bot {
+  // SHOULDN"T BE AB LE TO CASTLE OUT OF CHECK
+  // UNDO FROM MATE SEEMS BORKED. PROBABLY DIDN"T UNEND GAME
+  // test weird edge cases of check, like castling towards kings touching
   constructor(api, team){
     this.api = api;
     this.homeTeam = team;
@@ -42,23 +45,23 @@ class Bot {
     this.setInstanceVars(board);
     // this.calculateGamePhase({team: this.homeTeam, board: this.baseBoard})
     // this.calculateGamePhase({team: this.opponent, board: this.baseBoard})
-    let availableMoves = this.api.availableMovesDefault(),
-      lastMoveNotation = this.baseBoard.movementNotation[this.baseBoard.movementNotation.length -1]
+    let lastMoveNotation = this.baseBoard.movementNotation[this.baseBoard.movementNotation.length -1]
     if(/0/.exec(lastMoveNotation)){this.castledOpponent = true }
         // weightMoves = this.gamePhasePriorities[gamePhase],
         // start as opening
         // switch to mid when back rank has no minors and castle has either occurred or isn't viable (king has moved, rook has moved, capture has occurred at a/h 1 or 8)
         // declare endgame after piecevalue drops below x (13?)
 
-    console.log(this.homeTeam)
     let  weightedMoves = this.pingPongMovesStart()
 
-    console.log(weightedMoves)
 
     let moveIdeas = this.pickNweightiestMovesFrom(weightedMoves, 5)
-    console.log(moveIdeas);
     let move = moveIdeas[Math.floor(Math.random()*moveIdeas.length)];
-    console.log(Board.gridCalculator(move.startPosition), Board.gridCalculator(move.endPosition), move.pieceNotation || 'p', move.captureNotation)
+    // console.log(this.homeTeam)
+    // console.log(weightedMoves)
+    // console.log(moveIdeas);
+    // console.log(Board.gridCalculator(move.startPosition), Board.gridCalculator(move.endPosition), move.pieceNotation || 'p', move.captureNotation || 'no capt')
+    // console.log(move);
     if(/0/.exec(move.pieceNotation)){
       this.castledHomeTeam = true
     }
@@ -67,8 +70,8 @@ class Bot {
   }
 
   pingPongMovesStart(){
-    let startTime = Math.floor(Date.now() / 1000),
-      moves = this.api.availableMovesDefault();
+    let startTime = Math.floor(Date.now() / 1000);
+    let moves = this.api.availableMovesDefault();
     for(let  i = 0; i < moves.length; i++){
       let move = moves[i];
       let weightAndNotation = this.projectMoveForHomeTeam({board: this.baseBoard, move: move});
@@ -87,8 +90,8 @@ class Bot {
       }
       if( weightAndNotation.value > this.bestBranchValue ){ this.bestBranchValue = weightAndNotation.value}
     }
-    console.log(notations);
     let endTime = Math.floor(Date.now() / 1000)
+    // console.log(notations);
     console.log( endTime - startTime)
     return weights
   }
@@ -102,8 +105,7 @@ class Bot {
         return {value: 0, notation: newBoard.moveNotation}
         // gotta determine whether we wanted to play for stale, maybe just return zero, and if the other options are all negative, that ain't so bad?
       }
-    }
-    if( (newBoard.movementNotation.length - this.startingNotationLength) >= this.baseCaseBranchDepth ){
+    }else if( (newBoard.movementNotation.length - this.startingNotationLength) >= this.baseCaseBranchDepth ){
       // for( let i = 0; i < newMoves.length; i++){
       //   let newMove = newMoves[i];
       //   if( !move.captureNotation || newBoard.pieceTypeAt(newMove.endPosition) === Board.PAWN || currentBranchDepth === 7 ){
@@ -119,23 +121,24 @@ class Bot {
       value = Math.round( value * 100 )/100
 
       return {value: value, notation: newBoard.movementNotation}
-    }
-    var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.opponent})
-    for( let i = 0; i < newMoves.length; i++){
-      let responseValue = this.projectMoveForOpponent({board: newBoard, move: newMoves[i]});
-      if ( !selectedValue ){
-        var selectedValue = responseValue
-      } else if( responseValue.value < selectedValue.value ){
-        var selectedValue = responseValue
-      }
+    }else {
+      var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.opponent})
+      for( let i = 0; i < newMoves.length; i++){
+        let responseValue = this.projectMoveForOpponent({board: newBoard, move: newMoves[i]});
+        if ( !selectedValue ){
+          var selectedValue = responseValue
+        } else if( responseValue.value < selectedValue.value ){
+          selectedValue = responseValue
+        }
 
-      if( this.bestBranchValue ){
-        if( selectedValue.value + 1.01 < this.bestBranchValue ){
-          return selectedValue
+        if( this.bestBranchValue ){
+          if( selectedValue.value + 1.01 < this.bestBranchValue ){
+            return selectedValue
+          }
         }
       }
+      return selectedValue
     }
-    return selectedValue
   }
 
   pongOpponent({board: board, move: move}){
@@ -147,8 +150,7 @@ class Bot {
         return {value: 0, notation: newBoard.moveNotation}
         // gotta determine whether we wanted to allow opponent to get stale, but probably again, if we return zero, and other branches are higher, then cool.
       }
-    }
-    if( (newBoard.movementNotation.length - this.startingNotationLength) >= this.baseCaseBranchDepth ){
+    }else if( (newBoard.movementNotation.length - this.startingNotationLength) >= this.baseCaseBranchDepth ){
       // for( let i = 0; i < newMoves.length; i++){
       //   let newMove = newMoves[i];
       //   if( !move.captureNotation || newBoard.pieceTypeAt(newMove.endPosition) === Board.PAWN || currentBranchDepth === 7 ){
@@ -160,17 +162,18 @@ class Bot {
       value = homeTeamPieceValueLoss- opponentPieceValueLoss + homeTeamSquareControlDifferential - opponSquareControlDifferential;
       value = Math.round( value * 100 )/100
       return {value: value, notation: newBoard.movementNotation}
-    }
-    var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.homeTeam});
-    for( let i = 0; i < newMoves.length; i++){
-      let responseValue = this.projectMoveForHomeTeam({board: newBoard, move: newMoves[i]});
-      if ( !selectedValue ){
-        var selectedValue = responseValue
-      } else if( responseValue.value > selectedValue.value ){
-        var selectedValue = responseValue
+    } else {
+      var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.homeTeam});
+      for( let i = 0; i < newMoves.length; i++){
+        let responseValue = this.projectMoveForHomeTeam({board: newBoard, move: newMoves[i]});
+        if ( !selectedValue ){
+          var selectedValue = responseValue
+        } else if( responseValue.value > selectedValue.value ){
+          selectedValue = responseValue
+        }
       }
+      return selectedValue
     }
-    return selectedValue
   }
 
   selectRandomMove(){

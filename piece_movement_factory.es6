@@ -1,25 +1,30 @@
 class PieceMovementTypesFactory{
-  static factory({pieceType: pieceType, startPosition: startPosition, board: board, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly}){
+  static complexFactory({pieceType: pieceType, startPosition: startPosition, board: board, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly}){
     switch(pieceType){
       case "P":
         return PieceMovementTypesFactory.P({startPosition: startPosition, board: board, attacksOnly: attacksOnly})
-        break;
-      case "N":
-        return PieceMovementTypesFactory.N({startPosition: startPosition, board: board})
-        break;
-      case "R":
-        return PieceMovementTypesFactory.R({startPosition: startPosition, board: board})
-        break;
-      case "B":
-        return PieceMovementTypesFactory.B({startPosition: startPosition, board: board})
-        break;
-      case "Q":
-        return PieceMovementTypesFactory.Q({startPosition: startPosition, board: board})
         break;
       case "K":
         return PieceMovementTypesFactory.K({startPosition: startPosition, board: board, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly})
         break
     }
+  }
+  static simpleFactory(pieceType){
+    switch(pieceType){
+      case "N":
+        return PieceMovementTypesFactory.N()
+        break;
+      case "R":
+        return PieceMovementTypesFactory.R()
+        break;
+      case "B":
+        return PieceMovementTypesFactory.B()
+        break;
+      case "Q":
+        return PieceMovementTypesFactory.Q()
+        break;
+    }
+
   }
 
   static P({startPosition: startPosition, board: board, attacksOnly: attacksOnly}){
@@ -28,203 +33,134 @@ class PieceMovementTypesFactory{
     if( teamString === Board.BLACK ){
       var pawnVars = {
         startRank: 7,
-        nonAttackMove: MovementType.verticalDownIncrement({}),
+        nonAttackMove: MovementType.verticalDownIncrement,
         singleStepCheck: board._oneSpaceDownIsEmpty(startPosition),
         doubleStepCheck: Board.isSeventhRank(startPosition) && board._twoSpacesDownIsEmpty(startPosition) && board._oneSpaceDownIsEmpty(startPosition),
         leftAttackCheck: board._downAndLeftIsAttackable(startPosition),
-        leftAttackMove: MovementType.forwardSlashDownIncrement({}),
+        leftAttackMove: MovementType.forwardSlashDownIncrement,
         rightAttackCheck: board._downAndRightIsAttackable(startPosition),
-        rightAttackMove: MovementType.backSlashDownIncrement({}),
+        rightAttackMove: MovementType.backSlashDownIncrement,
         rightEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition + 1) && board.whitePawnDoubleSteppedTo(startPosition + 1),//board.whitePawnDoubleSteppedFrom(startPosition - 15),
         leftEnPassantCheck: Board.rank(startPosition) === 4 && board._whitePawnAt(startPosition - 1) && board.whitePawnDoubleSteppedTo(startPosition - 1)// board.whitePawnDoubleSteppedFrom(startPosition - 17),
       }
     } else if( teamString === Board.WHITE ){
       var pawnVars = {
         startRank: 2,
-        nonAttackMove: MovementType.verticalUpIncrement({}),
+        nonAttackMove: MovementType.verticalUpIncrement,
         singleStepCheck: board._oneSpaceUpIsEmpty(startPosition),
         doubleStepCheck: Board.isSecondRank(startPosition) && board._twoSpacesUpIsEmpty( startPosition ) && board._oneSpaceUpIsEmpty(startPosition),
         leftAttackCheck: board._upAndLeftIsAttackable(startPosition),
-        leftAttackMove: MovementType.backSlashUpIncrement({}),
+        leftAttackMove: MovementType.backSlashUpIncrement,
         rightAttackCheck: board._upAndRightIsAttackable(startPosition ),
-        rightAttackMove: MovementType.forwardSlashUpIncrement({}),
+        rightAttackMove: MovementType.forwardSlashUpIncrement,
         leftEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition - 1) && board.blackPawnDoubleSteppedTo(startPosition - 1),//board.blackPawnDoubleSteppedFrom(startPosition + 15),
         rightEnPassantCheck: Board.rank(startPosition) === 5 && board._blackPawnAt(startPosition + 1) && board.blackPawnDoubleSteppedTo(startPosition + 1)//board.blackPawnDoubleSteppedFrom(startPosition + 17),
       }
     }
     if ( pawnVars.doubleStepCheck && !attacksOnly ){
-      let movementType = pawnVars.nonAttackMove
-      movementType.rangeLimit = 2
-      movementType.pieceNotation = ""
-      movementType.startPosition = startPosition
+      let movementType = pawnVars.nonAttackMove({
+        rangeLimit: 2,
+        pieceNotation: "",
+      })
       movementTypes.push(movementType)
     } else if ( pawnVars.singleStepCheck && !attacksOnly ) {
-      let movementType = pawnVars.nonAttackMove
-      movementType.rangeLimit = 1
-      movementType.pieceNotation = ""
-      movementType.startPosition = startPosition
+      let movementType = pawnVars.nonAttackMove({
+        rangeLimit: 1,
+        pieceNotation: "",
+      })
       movementTypes.push(movementType)
     }
     if ( pawnVars.leftAttackCheck || attacksOnly) {
-      let movementType = pawnVars.leftAttackMove
-      movementType.rangeLimit = 1
-      movementType.startPosition = startPosition
-      movementType.pieceNotation = Board.file(startPosition)
+      let movementType = pawnVars.leftAttackMove({
+        rangeLimit: 1,
+        pieceNotation: Board.file(startPosition)
+      })
+      movementTypes.push(movementType)
+    }else if( pawnVars.leftEnPassantCheck ){
+      // let capture = board._capture.bind(board)
+      let movementType = pawnVars.leftAttackMove({
+        rangeLimit: 1, startPosition: startPosition, pieceNotation: Board.file(startPosition), captureNotation: "x",
+        additionalActions: function(startPosition){
+          this._capture(startPosition - 1)
+          this._emptify(startPosition - 1)
+          return "e.p."
+        }
+      })
       movementTypes.push(movementType)
     }
     if( pawnVars.rightAttackCheck || attacksOnly) {
-      let movementType = pawnVars.rightAttackMove
-      movementType.rangeLimit = 1
-      movementType.startPosition = startPosition
-      movementType.pieceNotation = Board.file(startPosition)
+      let movementType = pawnVars.rightAttackMove({
+        rangeLimit: 1,
+        pieceNotation: Board.file(startPosition)
+      })
       movementTypes.push(movementType)
-    }
-    if( pawnVars.rightEnPassantCheck ){
-      let movementType = pawnVars.rightAttackMove
-      movementType.rangeLimit = 1
-      movementType.startPosition = startPosition
-      movementType.pieceNotation = Board.file(startPosition)// + "x"
-      movementType.captureNotation = "x"
+    }else if( pawnVars.rightEnPassantCheck ){
       // let capture = board._capture.bind(board)
-      movementType.additionalActions = function(startPosition){
-        this._capture(startPosition + 1)
-        this._emptify(startPosition + 1)
-        return "e.p."
-      }
+      let movementType = pawnVars.rightAttackMove({
+        rangeLimit: 1, startPosition: startPosition, pieceNotation: Board.file(startPosition), captureNotation: "x",
+        additionalActions: function(startPosition){
+          this._capture(startPosition + 1)
+          this._emptify(startPosition + 1)
+          return "e.p."
+        }
+      })
       movementTypes.push(movementType)
     }
-    if( pawnVars.leftEnPassantCheck ){
-      let movementType = pawnVars.leftAttackMove
-      movementType.rangeLimit = 1
-      movementType.startPosition = startPosition
-      movementType.pieceNotation = Board.file(startPosition)// + "x"
-      movementType.captureNotation = "x"
-      // let capture = board._capture.bind(board)
-      movementType.additionalActions = function(startPosition){
-        this._capture(startPosition - 1)
-        this._emptify(startPosition - 1)
-        return "e.p."
-      }
-      movementTypes.push(movementType)
-    }
-      // debugger
     return movementTypes
   }
 
-  static N({startPosition: startPosition, board: board}){
-    let pieceNotation = "N",
-      rangeLimit = 1
-    var movementTypes = [MovementType.nightHorizontalRightDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.nightHorizontalLeftDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.nightVerticalRightDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }),
-        MovementType.nightVerticalLeftDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.nightHorizontalRightUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.nightHorizontalLeftUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }),
-        MovementType.nightVerticalRightUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.nightVerticalLeftUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation })
+  static N(){
+    var movementTypes = [MovementType.nightHorizontalRightDownIncrement(), MovementType.nightHorizontalLeftDownIncrement(), MovementType.nightVerticalRightDownIncrement(),
+        MovementType.nightVerticalLeftDownIncrement(), MovementType.nightHorizontalRightUpIncrement(), MovementType.nightHorizontalLeftUpIncrement(),
+        MovementType.nightVerticalRightUpIncrement(), MovementType.nightVerticalLeftUpIncrement()
       ]
-    // if( possibleMovesTowardsEndPosition ){
-    //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
-    // }
-    // for (let i = 0; i < movementTypes.length; i++ ) {
-    //     movementTypes[i].rangeLimit = 1
-    //     movementTypes[i].pieceNotation = "N";
-    //     movementTypes[i].startPosition = startPosition
-    // }
     return  movementTypes
   }
-  static R({startPosition: startPosition, board: board}){
-    let pieceNotation = "R",
-      rangeLimit = 7;
-    var movementTypes = [MovementType.horizontalRightIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.horizontalLeftIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.verticalUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.verticalDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation })]
-    // if( possibleMovesTowardsEndPosition ){
-    //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
-    // }
-    // for (let i = 0; i < movementTypes.length; i++ ) {
-    //   movementTypes[i].rangeLimit = 7
-    //   movementTypes[i].pieceNotation = "R"
-    //   movementTypes[i].startPosition = startPosition
-    // }
+  static R(){
+    var movementTypes = [MovementType.horizontalRightIncrement({rangeLimit: 7, pieceNotation: "R" }), MovementType.horizontalLeftIncrement({rangeLimit: 7, pieceNotation: "R" }),
+    MovementType.verticalUpIncrement({rangeLimit: 7, pieceNotation: "R" }), MovementType.verticalDownIncrement({rangeLimit: 7, pieceNotation: "R" })]
     return movementTypes
   }
-  static B({startPosition: startPosition, board: board}){
-    let pieceNotation = "B",
-      rangeLimit = 7;
-    var movementTypes = [MovementType.forwardSlashDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.forwardSlashUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.backSlashDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.backSlashUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation })]
-    // if( possibleMovesTowardsEndPosition ){
-    //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
-    // }
-    // for (let i = 0; i < movementTypes.length; i++ ) {
-    //   movementTypes[i].rangeLimit = 7
-    //   movementTypes[i].pieceNotation = "B"
-    //   movementTypes[i].startPosition = startPosition
-    // }
+  static B(){
+    var movementTypes = [MovementType.forwardSlashDownIncrement({rangeLimit: 7, pieceNotation: "B" }), MovementType.forwardSlashUpIncrement({rangeLimit: 7, pieceNotation: "B" }),
+    MovementType.backSlashDownIncrement({rangeLimit: 7, pieceNotation: "B" }), MovementType.backSlashUpIncrement({rangeLimit: 7, pieceNotation: "B" })]
     return movementTypes
   }
-  static Q({startPosition: startPosition, board: board}){
-    let pieceNotation = "Q",
-      rangeLimit = 7;
-    // var movementTypes =  MovesCalculator.pieceSpecificMovements("R", differential)({startPosition: startPosition, board: board}).concat( MovesCalculator.pieceSpecificMovements("B", differential)({startPosition: startPosition, board: board}) )
-    //
-    var movementTypes = [MovementType.forwardSlashDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.forwardSlashUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }),
-      MovementType.backSlashDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.backSlashUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }),
-      MovementType.horizontalRightIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.horizontalLeftIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }),
-      MovementType.verticalUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.verticalDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation })
+  static Q(){
+    var movementTypes = [MovementType.forwardSlashDownIncrement({rangeLimit: 7, pieceNotation: "Q" }), MovementType.forwardSlashUpIncrement({rangeLimit: 7, pieceNotation: "Q" }),
+      MovementType.backSlashDownIncrement({rangeLimit: 7, pieceNotation: "Q" }), MovementType.backSlashUpIncrement({rangeLimit: 7, pieceNotation: "Q" }),
+      MovementType.horizontalRightIncrement({rangeLimit: 7, pieceNotation: "Q" }), MovementType.horizontalLeftIncrement({rangeLimit: 7, pieceNotation: "Q" }),
+      MovementType.verticalUpIncrement({rangeLimit: 7, pieceNotation: "Q" }), MovementType.verticalDownIncrement({rangeLimit: 7, pieceNotation: "Q" })
     ]
-    // if( possibleMovesTowardsEndPosition ){
-    //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
-    // }
-    // for (let i = 0; i < movementTypes.length; i++ ) {
-    //   movementTypes[i].rangeLimit = 7
-    //   movementTypes[i].pieceNotation = "Q"
-    //   movementTypes[i].startPosition = startPosition
-    // }
     return movementTypes
   }
   static K({startPosition: startPosition, board: board, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly}){
-    let pieceNotation = "K",
-      rangeLimit = 1;
-    var movementTypes = [MovementType.horizontalRightIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.horizontalLeftIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.verticalUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.verticalDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }),
-        MovementType.forwardSlashDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.forwardSlashUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.backSlashDownIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation }), MovementType.backSlashUpIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation })
+    var movementTypes = [MovementType.horizontalRightIncrement({rangeLimit: 1, pieceNotation: "K" }), MovementType.horizontalLeftIncrement({rangeLimit: 1, pieceNotation: "K" }), MovementType.verticalUpIncrement({rangeLimit: 1, pieceNotation: "K" }), MovementType.verticalDownIncrement({rangeLimit: 1, pieceNotation: "K" }),
+        MovementType.forwardSlashDownIncrement({rangeLimit: 1, pieceNotation: "K" }), MovementType.forwardSlashUpIncrement({rangeLimit: 1, pieceNotation: "K" }), MovementType.backSlashDownIncrement({rangeLimit: 1, pieceNotation: "K" }), MovementType.backSlashUpIncrement({rangeLimit: 1, pieceNotation: "K" })
       ],
       team = board.teamAt(startPosition)
-      //
-      // if( possibleMovesTowardsEndPosition ){
-      //   movementTypes = MovesCalculator.getCommonMoveObjects(movementTypes, possibleMovesTowardsEndPosition)
-      // }
-
-    // for (let i = 0; i < movementTypes.length; i++ ) {
-    //   movementTypes[i].rangeLimit = 1
-    //   movementTypes[i].pieceNotation = "K"
-    //   movementTypes[i].startPosition = startPosition
-    // }
     if ( !ignoreCastles && board.kingSideCastleViableFor(team, startPosition) && !attacksOnly){
-      let movementType = MovementType.horizontalLeftIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation })
-      movementType.increment = + 2
-      movementType.rangeLimit = 1
-      movementType.pieceNotation = "O-O"
-      movementType.startPosition = startPosition
-      // let _emptify = board._emptify.bind(board),
-      //   _placePiece = board._placePiece.bind(board),
-      //   pieceObject = board.pieceObject.bind(board)
-      movementType.additionalActions = function(startPosition){
-        let rook = this.pieceObject( startPosition + 3 )
-        this._placePiece({ position: (startPosition + 1), pieceObject: rook })
-        this._emptify( startPosition + 3)
-        return ""
-      }
+      let movementType = MovementType.horizontalLeftIncrement({
+        increment: 2, rangeLimit: 1, pieceNotation: "O-O",
+        additionalActions: function(startPosition){
+          let rook = this.pieceObject( startPosition + 3 )
+          this._placePiece({ position: (startPosition + 1), pieceObject: rook })
+          this._emptify( startPosition + 3)
+          return ""
+        }
+      })
       movementTypes.push(movementType)
     }
     if ( !ignoreCastles && board.queenSideCastleViableFor(team, startPosition) && !attacksOnly){
-      let movementType = MovementType.horizontalRightIncrement({startPosition: startPosition, rangeLimit: rangeLimit, pieceNotation: pieceNotation })
-      movementType.increment = - 2
-      movementType.rangeLimit = 1
-      movementType.pieceNotation = "O-O-O"
-      movementType.startPosition = startPosition
-      // let _emptify = board._emptify.bind(board),
-      //   _placePiece = board._placePiece.bind(board),
-      //   pieceObject = board.pieceObject.bind(board)
-      movementType.additionalActions = function(startPosition){
-        let rook = this.pieceObject( startPosition - 4 )
-        this._placePiece({ position: (startPosition - 1), pieceObject: rook })
-        this._emptify( startPosition - 4)
-        return ""
-      }
+      let movementType = MovementType.horizontalRightIncrement({
+        increment: -2, rangeLimit: 1, pieceNotation: "O-O-O",
+        additionalActions: function(startPosition){
+          let rook = this.pieceObject( startPosition - 4 )
+          this._placePiece({ position: (startPosition - 1), pieceObject: rook })
+          this._emptify( startPosition - 4)
+          return ""
+        }
+      })
       movementTypes.push(movementType)
     }
     return movementTypes

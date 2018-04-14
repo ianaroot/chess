@@ -36,12 +36,10 @@ class Board {
   }
 
   static isSeventhRank(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
     return Math.floor(position / 8) === 6
   }
 
   static isSecondRank(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
     return Math.floor(position / 8) === 1
   }
 
@@ -55,7 +53,6 @@ class Board {
   }
 
   static squareColor(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
     let div = Math.floor(position / 8),
       mod   = position % 8,
       sum   = div + mod,
@@ -311,7 +308,7 @@ class Board {
     return teamNotMoving
   }
 
-  _recordNotationFrom({ moveObject: moveObject, epNotation: epNotation, notationSuffix:  notationSuffix }){
+  _recordNotationFrom({ notationPrefix: notationPrefix, epNotation: epNotation, notationSuffix:  notationSuffix }){
     // if other pieces of same species from same team could move to the same place, attach clarifying file or rank
     // for rooks, if Rb goes to a6, is there already a rook on 6? it could've done that too
     // if it's a queen, is there another queen? if there is another queen, is it on the right rank, file, or square color?
@@ -319,12 +316,11 @@ class Board {
     // if it it's a night, is there anot
 
     // oooh! could you bump into your teammate from the position you just assumed!! take their rank and file, compare, apply the difference
-    let pieceNotation = moveObject.pieceNotation
-    if( /[QNBR]/.exec(pieceNotation) ){
+    if( /[QNBR]/.exec(notationPrefix) ){
 
     }
 
-    this.movementNotation.push( moveObject.notation() + (epNotation || "") + notationSuffix)
+    this.movementNotation.push( notationPrefix + (epNotation || "") + notationSuffix)
   }
 
   _hypotheticallyMovePiece( moveObject ){ // ONLY USE THIS TO SEE IF A MOVE WOULD RESULT IN MATE. there's a lot of space between _officiallyMovePiece and hypothetical. eg  not recording any data on hypothetical moves
@@ -356,11 +352,10 @@ class Board {
     if( !this.positionEmpty(endPosition) ){ this._capture(endPosition); }
     this._placePiece({ position: endPosition, pieceObject: pieceObject })
     if( additionalActions ){ var epNotation = additionalActions.call(this, startPosition) }
-    // if( additionalActions ){ additionalActions({position: startPosition}) }
-    let prefixNotation = moveObject.notation()
-    let notationSuffix = Rules.postMoveQueries( this, prefixNotation )
+    let notationPrefix = moveObject.notation()
+    let notationSuffix = Rules.postMoveQueries( this, notationPrefix )
     // this.movementNotation.push( prefixNotation + (epNotation || "") + notationSuffix)
-    this._recordNotationFrom({ moveObject: moveObject, epNotation: (epNotation || ""), notationSuffix:  notationSuffix })
+    this._recordNotationFrom({ notationPrefix: notationPrefix, epNotation: (epNotation || ""), notationSuffix:  notationSuffix })
     if( !this.gameOver ){ this._nextTurn() }
   }
 
@@ -519,7 +514,6 @@ class Board {
   }
 
   pieceObject(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
     return this.layOut[position]
   }
 
@@ -537,7 +531,6 @@ class Board {
   }
 
   teamAt(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
     if( !Board._inBounds(position) ){
       return Board.EMPTY
     };
@@ -572,25 +565,21 @@ class Board {
   }
 
   occupiedByTeamMate({position: position, teamString: teamString}){
-    position = Board.convertPositionFromAlphaNumeric(position)
     let occupantTeam = this.teamAt(position);
     return teamString === occupantTeam
   }
 
   occupiedByOpponent({position: position, teamString: teamString}){
-    position = Board.convertPositionFromAlphaNumeric(position)
     let occupantTeam = this.teamAt(position);
     return !this.positionEmpty(position) && teamString !== occupantTeam
   }
 
   positionEmpty(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
     let pieceObject = this.pieceObject(position)
     return Board.parseTeam( pieceObject ) === Board.EMPTY
   }
 
   pieceTypeAt(position){
-    position = Board.convertPositionFromAlphaNumeric(position)
     let pieceObject = this.pieceObject(position),
       pieceType = Board.parseSpecies( pieceObject );
     return pieceType

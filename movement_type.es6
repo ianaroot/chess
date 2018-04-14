@@ -1,14 +1,14 @@
 class MovementType {
   constructor({
     boundaryCheck: boundaryCheck, rangeLimit: rangeLimit, increment: increment, additionalActions: additionalActions,
-    pieceNotation: pieceNotation//, captureNotation: captureNotation
+    pieceNotation: pieceNotation, captureNotation: captureNotation
   }){
     this.boundaryCheck = boundaryCheck
     this.increment = increment
     this.additionalActions = additionalActions
     this.rangeLimit = rangeLimit
     this.pieceNotation = pieceNotation || ""
-    // this.captureNotation = captureNotation
+    this.captureNotation = captureNotation
   }
 
     // let rangeLimit = args["rangeLimit"],
@@ -40,176 +40,166 @@ class MovementType {
     return Math.floor((endPosition) / 8) === Math.floor(startPosition / 8) && Board._inBounds(endPosition)
   }
 
-  static verticalUpIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static verticalUpIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation}){
     var movementType = new MovementType({
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
-      startPosition: startPosition,
       increment: "+8",
       boundaryCheck: MovementType.verticalBoundaryCheck
     })
     return movementType
   }
 
-  static verticalDownIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static verticalDownIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation}){
     var movementType = new MovementType({
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
-      startPosition: startPosition,
       increment: "-8",
       boundaryCheck: MovementType.verticalBoundaryCheck
     })
     return movementType
   }
 
-  static forwardSlashUpIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static forwardSlashUpIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation}){
     var movementType = new MovementType({
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      captureNotation: captureNotation,
       increment: "+9",
       boundaryCheck: MovementType.diagonalRightBoundaryCheck
     })
     return movementType
   }
 
-  static forwardSlashDownIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static forwardSlashDownIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation}){
     var movementType = new MovementType({
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      captureNotation: captureNotation,
       increment: "-9",
       boundaryCheck: MovementType.diagonalLeftBoundaryCheck
     })
     return movementType
   }
 
-  static backSlashUpIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static backSlashUpIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation}){
     var movementType = new MovementType({
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      captureNotation: captureNotation,
       increment: "+7",
       boundaryCheck: MovementType.diagonalLeftBoundaryCheck
     })
     return movementType
   }
 
-  static backSlashDownIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static backSlashDownIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation}){
     var movementType = new MovementType({
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      captureNotation: captureNotation,
       increment: "-7",
       boundaryCheck: MovementType.diagonalRightBoundaryCheck
     })
     return movementType
   }
 
-  static horizontalRightIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static horizontalRightIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, additionalActions: additionalActions}){
     var movementType = new MovementType({
+      additionalActions: additionalActions,
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
-      startPosition: startPosition,
-      increment: "+1",
+      increment: increment || "+1",
       boundaryCheck: MovementType.horizontalBoundaryCheck
     })
     return movementType
   }
 
-  static horizontalLeftIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static horizontalLeftIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, additionalActions: additionalActions}){
     var movementType = new MovementType({
+      additionalActions: additionalActions,
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
-      startPosition: startPosition,
-      increment: "-1",
+      increment: increment || "-1",
       boundaryCheck: MovementType.horizontalBoundaryCheck
     })
     return movementType
   }
 
-  static nightVerticalLeftUpIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static nightVerticalLeftUpIncrement(){
     var movementType = new MovementType({
-      rangeLimit: rangeLimit,
-      pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      rangeLimit: 1,
+      pieceNotation: "N",
       increment: "+15",
       boundaryCheck: MovementType.nightVerticalBoundaryCheck
     })
     return movementType
   }
 
-  static nightVerticalRightUpIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static nightVerticalRightUpIncrement(){
     var movementType = new MovementType({
-      rangeLimit: rangeLimit,
-      pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      rangeLimit: 1,
+      pieceNotation: "N",
       increment: "+17",
       boundaryCheck: MovementType.nightVerticalBoundaryCheck
     })
     return movementType
   }
 
-  static nightHorizontalLeftUpIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static nightHorizontalLeftUpIncrement(){
     var movementType = new MovementType({
-      rangeLimit: rangeLimit,
-      pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      rangeLimit: 1,
+      pieceNotation: "N",
       increment: "+6",
       boundaryCheck: MovementType.nightHorizontalBoundaryCheck
     })
     return movementType
   }
 
-  static nightHorizontalRightUpIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static nightHorizontalRightUpIncrement(){
     var movementType = new MovementType({
-      rangeLimit: rangeLimit,
-      pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      rangeLimit: 1,
+      pieceNotation: "N",
       increment: "+10",
       boundaryCheck: MovementType.nightHorizontalBoundaryCheck
     })
     return movementType
   }
 
-  static nightVerticalLeftDownIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static nightVerticalLeftDownIncrement(){
     var movementType = new MovementType({
-      rangeLimit: rangeLimit,
-      pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      rangeLimit: 1,
+      pieceNotation: "N",
       increment: "-15",
       boundaryCheck: MovementType.nightVerticalBoundaryCheck
     })
     return movementType
   }
 
-  static nightVerticalRightDownIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static nightVerticalRightDownIncrement(){
     var movementType = new MovementType({
-      rangeLimit: rangeLimit,
-      pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      rangeLimit: 1,
+      pieceNotation: "N",
       increment: "-17",
       boundaryCheck: MovementType.nightVerticalBoundaryCheck
     })
     return movementType
   }
 
-  static nightHorizontalLeftDownIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static nightHorizontalLeftDownIncrement(){
     var movementType = new MovementType({
-      rangeLimit: rangeLimit,
-      pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      rangeLimit: 1,
+      pieceNotation: "N",
       increment: "-6",
       boundaryCheck: MovementType.nightHorizontalBoundaryCheck
     })
     return movementType
   }
 
-  static nightHorizontalRightDownIncrement({increment: increment, rangeLimit: rangeLimit, pieceNotation: pieceNotation, startPosition: startPosition}){
+  static nightHorizontalRightDownIncrement(){
     var movementType = new MovementType({
-      rangeLimit: rangeLimit,
-      pieceNotation: pieceNotation,
-      startPosition: startPosition,
+      rangeLimit: 1,
+      pieceNotation: "N",
       increment: "-10",
       boundaryCheck: MovementType.nightHorizontalBoundaryCheck
     })

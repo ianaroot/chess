@@ -32,11 +32,11 @@ class Rules {
     return this.checkQuery({board: newBoard, teamString: board.teamAt(moveObject.startPosition)})
   }
 
-  static pieceWillBeAttackedAfterMove({board: board, moveObject: moveObject}){
-    let newBoard = board.deepCopy();
-    newBoard._hypotheticallyMovePiece( moveObject )
-    return this.checkQuery({board: newBoard, teamString: board.teamAt(moveObject.startPosition)})
-  }
+  // static pieceWillBeAttackedAfterMove({board: board, moveObject: moveObject}){
+  //   let newBoard = board.deepCopy();
+  //   newBoard._hypotheticallyMovePiece( moveObject )
+  //   return this.checkQuery({board: newBoard, teamString: board.teamAt(moveObject.startPosition)})
+  // }
 
   static checkQuery({board: board, teamString: teamString}){
     return this.pieceIsAttacked({board: board, defensePosition: board._kingPosition(teamString)})
@@ -50,33 +50,34 @@ class Rules {
       let enemyPosition = enemyPositions[i],
       enemyPieceType = board.pieceTypeAt( enemyPosition ),
       differential = defensePosition - enemyPosition;
-      if( !( differential % 10 === 0 || differential % 8 === 0 || differential % 6 === 0 || differential % 7 === 0 || differential % 9 === 0 || differential % 15 === 0 || differential % 17 === 0 || Math.abs(differential) < 8 ) ){ continue}
-      let movesCalculator = new MovesCalculator({board: board, startPosition: enemyPosition, ignoreCastles: true}),//, endPosition: defensePosition}),
-      responseMoveObject = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
-      for(let i = 0; i < movesCalculator.moveObjects.length; i++){
-        let currentMoveObject = movesCalculator.moveObjects[i],
-        endPosition = currentMoveObject.endPosition;
+      if( !( differential % 10 === 0 || differential % 8 === 0 || differential % 6 === 0 || differential % 7 === 0 || differential % 9 === 0 || differential % 15 === 0 || differential % 17 === 0 || Math.abs(differential) < 8 ) ){ continue }
+      if( (enemyPieceType === Board.PAWN || enemyPieceType === Board.BISHOP) && !(differential % 9 === 0 || differential % 7 === 0) ){
+        continue
+      }else if( enemyPieceType === Board.ROOK && !(differential % 8 === 0 || Math.abs(differential) < 8) ){
+        continue
+      }else if( enemyPieceType === Board.NIGHT && ![10,-10,6,-6,15,-15,17,-17].includes(differential)){
+        continue
+      }else if( enemyPieceType === Board.QUEEN && !(differential % 9 === 0 || differential % 7 === 0 || differential % 8 === 0 || Math.abs(differential) < 8)){
+        continue
+      }
+      let endPositions = new MovesCalculator({board: board, startPosition: enemyPosition, ignoreCastles: true}).endPositions,
+        responseMove = new MoveObject({illegal: true}); //defaulting to illegal, will be overridden if it's not
+      for(let i = 0; i < endPositions.length; i++){
+        let endPosition = endPositions[i];
         if( endPosition === defensePosition ){
-          responseMoveObject = currentMoveObject
-          // console.log(responseMoveObject)
-          break;
+          return true;
         }
       }
-      if( !responseMoveObject.illegal ){
-        return true
-      }
     };
-
   }
 
   static positionsControlledByTeam({board: board, team: team, exemptions: exemptions}){
-
     let controlledPositions = [],
       occcupiedPositions = board._positionsOccupiedByTeam(team);
     exemptions = exemptions || [];
     for (let i = 0; i < occcupiedPositions.length; i++){
       if (exemptions.includes(board.pieceTypeAt(occcupiedPositions[i]) )){ continue }
-      controlledPositions = controlledPositions.concat( new MovesCalculator({board: board, startPosition: occcupiedPositions[i], attacksOnly: true}).endPositions() )
+      controlledPositions = controlledPositions.concat( new MovesCalculator({board: board, startPosition: occcupiedPositions[i], attacksOnly: true}).endPositions )
     }
     return controlledPositions
   }
@@ -92,12 +93,8 @@ class Rules {
     }
     return safeMoves
   }
+
   static viablePositionsFromKeysOnly({board: board, startPosition: startPosition}){
-    // if(
-    //   !Board.prototype.isPrototypeOf( board ) ||  typeof startPosition !== "number"
-    // ){
-    //   throw new Error("missing params in viablePositionsFromKeysOnly")
-    // }
     let movesCalculator = new MovesCalculator({board: board, startPosition: startPosition}),
         keysOnly = [];
     for (let i = 0; i < movesCalculator.moveObjects.length; i++){
@@ -110,24 +107,20 @@ class Rules {
     return keysOnly
   }
 
-  static pawnPromotionQuery(board){
-    for(let i = 0; i < 8; i++){
-      if ( board._blackPawnAt(i) ){
-        board._promotePawn(i)
-        return "=Q"
-      }
+  static pawnPromotionQuery(board, notationPrefix){
+    if( /[RNBQK]/.exec(notationPrefix) ){
+      return ""
+    }else if( /[81]/.exec(notationPrefix) ){
+    let square = notationPrefix.substring(notationPrefix.length - 2, notationPrefix.length),
+      position = Board.gridCalculatorReverse(square)
+      // board._promotePawn(position)
+      return "=Q"
+    } else {
+      return ""
     }
-    for(let i = 56; i < 64; i++){
-      if( board._whitePawnAt(i) ){
-        board._promotePawn(i)
-        return "=Q"
-      }
-    }
-    return ""
   }
 
   static noLegalMoves(board){
-    // debugger
     let movingTeamString = board.allowedToMove,
       noLegalMoves = true;
     if(movingTeamString === Board.BLACK){
@@ -138,10 +131,9 @@ class Rules {
     let occcupiedPositions = board._positionsOccupiedByTeam(onDeckTeamString);
     for(let i = 0; i < occcupiedPositions.length && noLegalMoves; i++){
       let startPosition = occcupiedPositions[i],
-        movesCalculator = new MovesCalculator({board: board, startPosition: startPosition});
-      for (let i = 0; i < movesCalculator.moveObjects.length; i++){
-        let moveObject = movesCalculator.moveObjects[i];
-           // endPosition = moveObject.endPosition;
+        moves = new MovesCalculator({board: board, startPosition: startPosition}).moveObjects;
+      for (let i = 0; i < moves.length; i++){
+        let moveObject = moves[i];
          if( !this.checkQueryWithMove( {moveObject: moveObject, board: board}) ){
            noLegalMoves = false
            break
@@ -171,10 +163,10 @@ class Rules {
   }
 
 
-  static threeFoldRepetition(board, prefixNotation){
+  static threeFoldRepetition(board, notationPrefix){
     let notations = Board._deepCopy(board.movementNotation),
       notationsSinceCaptureOrPromotion = [];
-      notations.push(prefixNotation); //have to start with this one, don't want to skip the latest move
+      notations.push(notationPrefix); //have to start with this one, don't want to skip the latest move
     for(let i = notations.length -1; i >= 0; i --){
       let notation = notations[i];
       notationsSinceCaptureOrPromotion.push( notation )
@@ -202,9 +194,7 @@ class Rules {
           repetitions = 0,
           threeFoldRepetition = false,
           currentLayOut = JSON.stringify(board.layOut);
-
       for( let i = 0; i < previousLayouts.length; i++ ){
-
         let comparisonLayout = JSON.stringify(previousLayouts[i]);
         if(comparisonLayout === currentLayOut){ repetitions++ }
       };
@@ -215,16 +205,19 @@ class Rules {
     }
   }
 
-  static postMoveQueries(board, prefixNotation){
-    let pawnPromotionNotation = Rules.pawnPromotionQuery(board),
+  static postMoveQueries(board, notationPrefix){
+    let pawnPromotionNotation = Rules.pawnPromotionQuery(board, notationPrefix),
         otherTeam = board.teamNotMoving(),
-        attackingTeam = Board.opposingTeam(otherTeam),
-        kingPosition = board._kingPosition(otherTeam),
         inCheck = this.checkQuery({board: board, teamString: otherTeam}),
-        noMoves = this.noLegalMoves(board),
-        threeFold = this.threeFoldRepetition(board, prefixNotation);
-    if( inCheck && noMoves ){ board._endGame(attackingTeam); return pawnPromotionNotation + "#" }
+        noMoves = this.noLegalMoves(board);
+    if( pawnPromotionNotation ){ board._promotePawn(position) }
+    if( inCheck && noMoves ){
+      let attackingTeam = board.allowedToMove;
+      board._endGame(attackingTeam);
+      return pawnPromotionNotation + "#"
+    }
     if( inCheck ){ return pawnPromotionNotation + "+" }
+    let threeFold = this.threeFoldRepetition(board, notationPrefix);
     if( noMoves || threeFold ){ board._endGame(); return pawnPromotionNotation }
     return pawnPromotionNotation
   }
