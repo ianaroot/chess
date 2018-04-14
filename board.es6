@@ -434,8 +434,6 @@ class Board {
 
   kingSideCastleViableFor(team, startPosition){
     if( this.pieceObject(startPosition + 3) !== team + Board.ROOK ){ return false }
-    if (Rules.checkQuery({board: this, teamString: this.allowedToMove}) ){ return false }
-    // thinks you can castle if rook was captured but never moved!
     let moveNotations = this.movesNotationFor(team),
       regexes = [/Rh/, /Rg/, /Rf/];
     if(team === Board.WHITE){
@@ -460,12 +458,13 @@ class Board {
         if( regex.exec(notation) ){ return false }
       }
     }
+    if (Rules.checkQuery({board: this, teamString: this.allowedToMove}) ){ return false }
+    if (Rules.pieceWillBeAttackedAfterMove({board: this, moveObject: {startPosition: startPosition, endPosition: startPosition + 1 }}) ){ return false }
     return true;
   }
 
   queenSideCastleViableFor(team, startPosition){
     if( this.pieceObject(startPosition - 4) !== team + Board.ROOK ){ return false }
-    if (Rules.checkQuery({board: this, teamString: this.allowedToMove}) ){ return false }
     // thinks you can castle if rook was captured but never moved!
     let moveNotations = this.movesNotationFor(team),
       regexes = [/Ra/, /Rb/, /Rc/, /Rd/];
@@ -491,6 +490,8 @@ class Board {
         if( regex.exec(notation) ){ return false }
       }
     }
+    if (Rules.checkQuery({board: this, teamString: this.allowedToMove}) ){ return false }
+    if (Rules.pieceWillBeAttackedAfterMove({board: this, moveObject: {startPosition: startPosition, endPosition: startPosition - 1 }}) ){ return false }
     return true;
   }
 

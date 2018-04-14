@@ -1,5 +1,4 @@
 class Bot {
-  // SHOULDN"T BE AB LE TO CASTLE OUT OF CHECK
   // UNDO FROM MATE SEEMS BORKED. PROBABLY DIDN"T UNEND GAME
   // test weird edge cases of check, like castling towards kings touching
   constructor(api, team){

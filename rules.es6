@@ -32,11 +32,11 @@ class Rules {
     return this.checkQuery({board: newBoard, teamString: board.teamAt(moveObject.startPosition)})
   }
 
-  // static pieceWillBeAttackedAfterMove({board: board, moveObject: moveObject}){
-  //   let newBoard = board.deepCopy();
-  //   newBoard._hypotheticallyMovePiece( moveObject )
-  //   return this.checkQuery({board: newBoard, teamString: board.teamAt(moveObject.startPosition)})
-  // }
+  static pieceWillBeAttackedAfterMove({board: board, moveObject: moveObject}){
+    let newBoard = board.deepCopy();
+    newBoard._hypotheticallyMovePiece( moveObject )
+    return this.pieceIsAttacked({board: newBoard, defensePosition: board._kingPosition(board.teamAt(moveObject.startPosition)) } )
+  }
 
   static checkQuery({board: board, teamString: teamString}){
     return this.pieceIsAttacked({board: board, defensePosition: board._kingPosition(teamString)})
@@ -107,7 +107,7 @@ class Rules {
     return keysOnly
   }
 
-  static pawnPromotionQuery(board, notationPrefix){
+  static pawnPromotionQuery(notationPrefix){
     if( /[RNBQK]/.exec(notationPrefix) ){
       return ""
     }else if( /[81]/.exec(notationPrefix) ){
@@ -206,7 +206,7 @@ class Rules {
   }
 
   static postMoveQueries(board, notationPrefix){
-    let pawnPromotionNotation = Rules.pawnPromotionQuery(board, notationPrefix),
+    let pawnPromotionNotation = Rules.pawnPromotionQuery(notationPrefix),
         otherTeam = board.teamNotMoving(),
         inCheck = this.checkQuery({board: board, teamString: otherTeam}),
         noMoves = this.noLegalMoves(board);
