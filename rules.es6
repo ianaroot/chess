@@ -35,7 +35,7 @@ class Rules {
   static pieceWillBeAttackedAfterMove({board: board, moveObject: moveObject}){
     let newBoard = board.deepCopy();
     newBoard._hypotheticallyMovePiece( moveObject )
-    return this.pieceIsAttacked({board: newBoard, defensePosition: board._kingPosition(board.teamAt(moveObject.startPosition)) } )
+    return this.pieceIsAttacked({board: newBoard, defensePosition: newBoard._kingPosition(board.teamAt(moveObject.startPosition)) } )
   }
 
   static checkQuery({board: board, teamString: teamString}){
@@ -107,13 +107,13 @@ class Rules {
     return keysOnly
   }
 
-  static pawnPromotionQuery(notationPrefix){
+  static pawnPromotionQuery(board, notationPrefix){
     if( /[RNBQK]/.exec(notationPrefix) ){
       return ""
     }else if( /[81]/.exec(notationPrefix) ){
     let square = notationPrefix.substring(notationPrefix.length - 2, notationPrefix.length),
       position = Board.gridCalculatorReverse(square)
-      // board._promotePawn(position)
+      board._promotePawn(position)
       return "=Q"
     } else {
       return ""
@@ -206,11 +206,10 @@ class Rules {
   }
 
   static postMoveQueries(board, notationPrefix){
-    let pawnPromotionNotation = Rules.pawnPromotionQuery(notationPrefix),
+    let pawnPromotionNotation = Rules.pawnPromotionQuery(board, notationPrefix),
         otherTeam = board.teamNotMoving(),
         inCheck = this.checkQuery({board: board, teamString: otherTeam}),
         noMoves = this.noLegalMoves(board);
-    if( pawnPromotionNotation ){ board._promotePawn(position) }
     if( inCheck && noMoves ){
       let attackingTeam = board.allowedToMove;
       board._endGame(attackingTeam);

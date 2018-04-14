@@ -51,7 +51,7 @@ class GameController {
 		this.view.displayLayOut({board: board, alert: alert, startPosition: startPosition})
 		if(this.movingTeamHasBot() && !this._paused && !this.board.gameOver){
 			let queryMove = this.queryNextBotMove.bind(this)
-			setTimeout( function(){  queryMove() }, 800)
+			setTimeout( function(){  queryMove() }, 400)
 		}
 	}
 

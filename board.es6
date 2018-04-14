@@ -491,7 +491,7 @@ class Board {
       }
     }
     if (Rules.checkQuery({board: this, teamString: this.allowedToMove}) ){ return false }
-    if (Rules.pieceWillBeAttackedAfterMove({board: this, moveObject: {startPosition: startPosition, endPosition: startPosition - 1 }}) ){ return false }
+    if (Rules.pieceWillBeAttackedAfterMove({board: this, moveObject: {startPosition: startPosition, endPosition: startPosition - 1 } }) ){ return false }
     return true;
   }
 
