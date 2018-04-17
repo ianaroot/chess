@@ -1,12 +1,11 @@
 class Api {
-  constructor (args){
-    this._board = args["board"]
-    this._gameController = args["gameController"];
+  constructor (gameController){
+    this._gameController = gameController;
   }
 
   availableMovesDefault(){
-    let movingTeam = this._board.allowedToMove;
-    return this.availableMovesFor({movingTeam: movingTeam, board: this._board})
+    let movingTeam = this._gameController.board.allowedToMove;
+    return this.availableMovesFor({movingTeam: movingTeam, board: this._gameController.board})
   }
 
   availableMovesFor({movingTeam: movingTeam, board: board}){
