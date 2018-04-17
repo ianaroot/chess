@@ -537,19 +537,19 @@ class Board {
     return teamString
   }
 
-  positionsOccupiedByTeam(teamString){
-    let positions = this._positionsOccupiedByTeam(teamString),
-    alphaNumericPositions = [];
-    for (let i = 0; i < positions.length; i++){
-      alphaNumericPositions.push( Board.gridCalculator( positions[i] ))
-    }
-    return alphaNumericPositions;
-  }
-
-  _positionsOccupiedByOpponentOf(teamString){
-    let opposingTeam = Board.opposingTeam(teamString);
-    return this._positionsOccupiedByTeam(opposingTeam)
-  }
+  // positionsOccupiedByTeam(teamString){
+  //   let positions = this._positionsOccupiedByTeam(teamString),
+  //   alphaNumericPositions = [];
+  //   for (let i = 0; i < positions.length; i++){
+  //     alphaNumericPositions.push( Board.gridCalculator( positions[i] ))
+  //   }
+  //   return alphaNumericPositions;
+  // }
+  //
+  // _positionsOccupiedByOpponentOf(teamString){
+  //   let opposingTeam = Board.opposingTeam(teamString);
+  //   return this._positionsOccupiedByTeam(opposingTeam)
+  // }
 
   _positionsOccupiedByTeam(teamString){
     let positions = [];

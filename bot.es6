@@ -48,10 +48,10 @@ class Bot {
 
   determineMove(board){
     this.setInstanceVars(board);
-    // this.calculateGamePhase({team: this.homeTeam, board: this.baseBoard})
-    // this.calculateGamePhase({team: this.opponent, board: this.baseBoard})
+    this.calculateGamePhase({team: this.homeTeam, board: this.baseBoard})
+    this.calculateGamePhase({team: this.opponent, board: this.baseBoard})
     let lastMoveNotation = this.baseBoard.movementNotation[this.baseBoard.movementNotation.length -1]
-    if(/0/.exec(lastMoveNotation)){this.castledOpponent = true }
+    if(/O/.exec(lastMoveNotation)){this.castledOpponent = true }
         // weightMoves = this.gamePhasePriorities[gamePhase],
         // start as opening
         // switch to mid when back rank has no minors and castle has either occurred or isn't viable (king has moved, rook has moved, capture has occurred at a/h 1 or 8)
@@ -67,7 +67,7 @@ class Bot {
     // console.log(moveIdeas);
     // console.log(Board.gridCalculator(move.startPosition), Board.gridCalculator(move.endPosition), move.pieceNotation || 'p', move.captureNotation || 'no capt')
     // console.log(move);
-    if(/0/.exec(move.pieceNotation)){
+    if(/O/.exec(move.pieceNotation)){
       this.castledHomeTeam = true
     }
     return move
@@ -96,7 +96,7 @@ class Bot {
       if( weightAndNotation.value > this.bestBranchValue ){ this.bestBranchValue = weightAndNotation.value}
     }
     let endTime = Math.floor(Date.now() / 1000)
-    // console.log(notations);
+    console.log(notations);
     console.log( endTime - startTime)
     return weights
   }
@@ -110,22 +110,6 @@ class Bot {
         return {value: 0, notation: newBoard.moveNotation}
         // gotta determine whether we wanted to play for stale, maybe just return zero, and if the other options are all negative, that ain't so bad?
       }
-    }else if( (newBoard.movementNotation.length - this.startingNotationLength) >= this.baseCaseBranchDepth ){
-      // for( let i = 0; i < newMoves.length; i++){
-      //   let newMove = newMoves[i];
-      //   if( !move.captureNotation || newBoard.pieceTypeAt(newMove.endPosition) === Board.PAWN || currentBranchDepth === 7 ){
-
-      var value = 0;
-      // }//NEED TO RUN SOME REGEX ON THE INTERVENING NOTATIONS, SPLITTING THEM BASED ON TEAM
-      // MIGHT BE ABLE TO USE THAT TO ACCOUNT FOR PAWN PROMOTION AS WELL
-      let homeTeamPieceValueLoss = newBoard.pieceValue(this.homeTeam) - this.hometeamStartingPieceValue,
-      opponentPieceValueLoss = newBoard.pieceValue(this.opponent) - this.opponentStartingPieceValue,
-      homeTeamSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.homeTeam}) - this.homeTeamStartingControlValue,
-      opponSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.opponent}) - this.opponentStartingControlValue;
-      value = homeTeamPieceValueLoss - opponentPieceValueLoss + homeTeamSquareControlDifferential - opponSquareControlDifferential;
-      value = Math.round( value * 100 )/100
-
-      return {value: value, notation: newBoard.movementNotation}
     }else {
       var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.opponent})
       for( let i = 0; i < newMoves.length; i++){
@@ -162,23 +146,108 @@ class Bot {
       var value = 0;
       let newNotations = newBoard.movementNotation.slice([this.startingNotationLength],newBoard.movementNotation.length)
       for(let i = 0; i < newNotations.length; i++){
-        if(/0/.exec(newNotations[i])){
-          if(i % 2 === 0){//homeTeam
-            console.log("encouraging castling");
-            // homeTeamNotations.push(newNotations[i])
-            value = value + 2.5
-          } else {//opponent
-            console.log("devaluing enemy castles")
-            // opponentNotations.push(newNotations[i])
-            value = value - 2.3
+        if(i % 2 === 0){ //homeTeam
+          if(/O/.exec(newNotations[i])){
+            value = value + 2
+          } else if( /[KQ]/.exec(newNotations[i]) ){
+            value = value - 1
+          }
+        } else {//opponent
+          if(/O/.exec(newNotations[i])){
+            value = value - 2
+          } else if( /[KQ]/.exec(newNotations[i]) ){
+            value = value + 1
           }
         }
       }
+      if(newBoard.kingSideCastleViableFor({team: this.homeTeam, startPosition: newBoard._kingPosition(this.homeTeam) }) || newBoard.queenSideCastleViableFor({team: this.homeTeam, startPosition: newBoard._kingPosition(this.homeTeam) }) ){
+        value = value + 1
+      }
+      if(newBoard.kingSideCastleViableFor({team: this.opponent, startPosition: newBoard._kingPosition(this.opponent) }) || newBoard.queenSideCastleViableFor({team: this.opponent, startPosition: newBoard._kingPosition(this.opponent) }) ){
+        value = value - 1
+      }
+
       let homeTeamPieceValueLoss = newBoard.pieceValue(this.homeTeam) - this.hometeamStartingPieceValue,
       opponentPieceValueLoss = newBoard.pieceValue(this.opponent) - this.opponentStartingPieceValue,
       homeTeamSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.homeTeam}) - this.homeTeamStartingControlValue,
       opponSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.opponent}) - this.opponentStartingControlValue;
       value = homeTeamPieceValueLoss- opponentPieceValueLoss + homeTeamSquareControlDifferential - opponSquareControlDifferential;
+      value = Math.round( value * 100 )/100
+      return {value: value, notation: newNotations}
+    } else {
+      var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.homeTeam});
+      for( let i = 0; i < newMoves.length; i++){
+        let responseValue = this.projectMoveForHomeTeam({board: newBoard, move: newMoves[i]});
+        if ( !selectedValue ){
+          var selectedValue = responseValue
+        } else if( responseValue.value > selectedValue.value ){
+          selectedValue = responseValue
+        }
+      }
+      return selectedValue
+    }
+  }
+
+  midGameHomeTeam({board: board, move: move}){
+    let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
+    if( newBoard.gameOver){
+      if(newBoard._winner === this.homeTeam){
+        return {value: 1000, notation: newBoard.moveNotation}
+      } else if (newBoard._winner === undefined){
+        return {value: 0, notation: newBoard.moveNotation}
+        // gotta determine whether we wanted to play for stale, maybe just return zero, and if the other options are all negative, that ain't so bad?
+      }
+    }else {
+      var newMoves = this.api.availableMovesFor({board: newBoard, movingTeam: this.opponent})
+      for( let i = 0; i < newMoves.length; i++){
+        let responseValue = this.projectMoveForOpponent({board: newBoard, move: newMoves[i]});
+        if ( !selectedValue ){
+          var selectedValue = responseValue
+        } else if( responseValue.value < selectedValue.value ){
+          selectedValue = responseValue
+        }
+
+        if( this.bestBranchValue ){
+          if( selectedValue.value + 1.01 < this.bestBranchValue ){
+            return selectedValue
+          }
+        }
+      }
+      return selectedValue
+    }
+  }
+
+  midGameOpponent({board: board, move: move}){
+    let newBoard = this.api.resultOfHypotheticalMove({board: board, moveObject: move});
+    if( newBoard.gameOver){
+      if(newBoard._winner === this.opponent){
+        return {value: -1000, notation: newBoard.moveNotation}
+      } else if (newBoard._winner === undefined){
+        return {value: 0, notation: newBoard.moveNotation}
+        // gotta determine whether we wanted to allow opponent to get stale, but probably again, if we return zero, and other branches are higher, then cool.
+      }
+    }else if( (newBoard.movementNotation.length - this.startingNotationLength) >= this.baseCaseBranchDepth ){
+      // for( let i = 0; i < newMoves.length; i++){
+      //   let newMove = newMoves[i];
+      //   if( !move.captureNotation || newBoard.pieceTypeAt(newMove.endPosition) === Board.PAWN || currentBranchDepth === 7 ){
+      var value = 0;
+      let newNotations = newBoard.movementNotation.slice([this.startingNotationLength],newBoard.movementNotation.length)
+      for(let i = 0; i < newNotations.length; i++){
+        if(i % 2 === 0){ //homeTeam
+          if(/O/.exec(newNotations[i])){
+            value = value + 2.5
+          }
+        } else {//opponent
+          if(/O/.exec(newNotations[i])){
+            value = value - 2.5
+          }
+        }
+      }
+      let homeTeamPieceValueLoss = newBoard.pieceValue(this.homeTeam) - this.hometeamStartingPieceValue,
+        opponentPieceValueLoss = newBoard.pieceValue(this.opponent) - this.opponentStartingPieceValue,
+        homeTeamKingControl = this.kingControl(newBoard, this.homeTeam),
+        opponentKingControl = this.kingControl(newBoard, this.opponent);
+      value = homeTeamPieceValueLoss- opponentPieceValueLoss + homeTeamKingControl - opponentKingControl;
       value = Math.round( value * 100 )/100
       return {value: value, notation: newBoard.movementNotation}
     } else {
@@ -193,6 +262,33 @@ class Bot {
       }
       return selectedValue
     }
+  }
+
+  kingControl(board, team){
+    let occcupiedPositions = board._positionsOccupiedByTeam(team),
+      otherTeam = Board.opposingTeam(team),
+      kingAdjacentSquares = this.kingAdjacentSquares(board, otherTeam),
+      kingControl = 0;
+    for( let i = 0; i < occcupiedPositions.length; i++ ){
+      let position = occcupiedPositions[i],
+        controlledPositions = new MovesCalculator({board: board, startPosition: occcupiedPositions[i], attacksOnly: true}).endPositions,
+        controlledKingAdjacentPositionCount = controlledPositions.filter(function(n) { return kingAdjacentSquares.indexOf(n) !== -1; }).length;
+      kingControl = kingControl + .1 * controlledKingAdjacentPositionCount
+    }
+    return kingControl
+  }
+
+  kingAdjacentSquares(board, team){
+    let kingPosition = board._kingPosition(team),
+      squares = [kingPosition],
+      adjacencies = [-7,-8,-9,-1,1,7,8,9];
+    for( let i = 0; i < adjacencies.length; i++ ){
+      let adjacency = adjacencies[i]
+      if( kingPosition + adjacency >= 0 && kingPosition + adjacency <= 63 ){
+        squares.push(kingPosition + adjacency)
+      }
+    }
+    return squares
   }
 
   selectRandomMove(){
@@ -258,10 +354,10 @@ class Bot {
 
   backRank({team: team, board: board}){
     if( team === Board.WHITE){
-      var squares = ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"]
+      var squares = [0,1,2,3,4,5,6,7]
     } else {
       // do i want to reverse this to mimic looking at the board from black's perspective? computer doesn't care, but human user might appreciate? that's me.. this is my bot not the api
-      var squares = ["a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"]
+      var squares = [63,62,61,60,59,58,57,56]
     }
     let backRankPieces =  []
     for(let i = 0; i < squares.length; i ++){
@@ -270,6 +366,24 @@ class Bot {
     }
     return backRankPieces
   }
+
+  backRankMinorPositions({team: team, board: board}){
+    if( team === Board.WHITE){
+      var squares = [0,1,2,3,4,5,6,7]
+    } else {
+      // do i want to reverse this to mimic looking at the board from black's perspective? computer doesn't care, but human user might appreciate? that's me.. this is my bot not the api
+      var squares = [63,62,61,60,59,58,57,56]
+    }
+    let backRankMinorPositions =  []
+    for(let i = 0; i < squares.length; i ++){
+      let square = squares[i],
+        pieceObject = board.pieceObject(square);
+      if( Board.pieceValues()[Board.parseTeam(pieceObject)] )
+      backRankMinorPositions.push( square  )
+    }
+    return backRankMinorPositions
+  }
+
 
   noNonPawnsUnderAttack({moves: moves, board: board}){
     for(let i = 0; i < moves.length; i++){
