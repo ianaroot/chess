@@ -18,6 +18,12 @@ class Bot {
       alert("bad input at bot.teamModifier :" + team)
     }
   }
+  // var iterations = 100;
+  // console.time("bench")
+  // for(var i = 0; i < iterations; i++ ){
+  // 	gameController._whiteBot.determineMove(gameController.board)
+  // }
+  // console.timeEnd("bench")
 
   setInstanceVars(board){
     this.baseBoard = board;
@@ -154,6 +160,20 @@ class Bot {
       //   let newMove = newMoves[i];
       //   if( !move.captureNotation || newBoard.pieceTypeAt(newMove.endPosition) === Board.PAWN || currentBranchDepth === 7 ){
       var value = 0;
+      let newNotations = newBoard.movementNotation.slice([this.startingNotationLength],newBoard.movementNotation.length)
+      for(let i = 0; i < newNotations.length; i++){
+        if(/0/.exec(newNotations[i])){
+          if(i % 2 === 0){//homeTeam
+            console.log("encouraging castling");
+            // homeTeamNotations.push(newNotations[i])
+            value = value + 2.5
+          } else {//opponent
+            console.log("devaluing enemy castles")
+            // opponentNotations.push(newNotations[i])
+            value = value - 2.3
+          }
+        }
+      }
       let homeTeamPieceValueLoss = newBoard.pieceValue(this.homeTeam) - this.hometeamStartingPieceValue,
       opponentPieceValueLoss = newBoard.pieceValue(this.opponent) - this.opponentStartingPieceValue,
       homeTeamSquareControlDifferential = this.weightAccessibleSquares({board: newBoard, team: this.homeTeam}) - this.homeTeamStartingControlValue,
@@ -313,6 +333,12 @@ class Bot {
   //     return 0
   //   }
   // }
+
+  valueSquareWeightDifferential({board: board}){
+    let homeTeamSquareControlDifferential = this.weightAccessibleSquares({board: board, team: this.homeTeam}) - this.homeTeamStartingControlValue,
+    opponSquareControlDifferential = this.weightAccessibleSquares({board: board, team: this.opponent}) - this.opponentStartingControlValue;
+    return homeTeamSquareControlDifferential - opponSquareControlDifferential
+  }
 
   weightAccessibleSquares({board: board, team: team}){
     let squareValues = 0,

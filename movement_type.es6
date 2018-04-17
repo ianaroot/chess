@@ -60,8 +60,9 @@ class MovementType {
     return movementType
   }
 
-  static forwardSlashUpIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation}){
+  static forwardSlashUpIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation, additionalActions: additionalActions}){
     var movementType = new MovementType({
+      additionalActions: additionalActions,
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
       captureNotation: captureNotation,
@@ -71,8 +72,9 @@ class MovementType {
     return movementType
   }
 
-  static forwardSlashDownIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation}){
+  static forwardSlashDownIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation, additionalActions: additionalActions}){
     var movementType = new MovementType({
+      additionalActions: additionalActions,
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
       captureNotation: captureNotation,
@@ -82,8 +84,9 @@ class MovementType {
     return movementType
   }
 
-  static backSlashUpIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation}){
+  static backSlashUpIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation, additionalActions: additionalActions}){
     var movementType = new MovementType({
+      additionalActions: additionalActions,
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
       captureNotation: captureNotation,
@@ -93,8 +96,9 @@ class MovementType {
     return movementType
   }
 
-  static backSlashDownIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation}){
+  static backSlashDownIncrement({rangeLimit: rangeLimit, pieceNotation: pieceNotation, captureNotation: captureNotation, additionalActions: additionalActions}){
     var movementType = new MovementType({
+      additionalActions: additionalActions,
       rangeLimit: rangeLimit,
       pieceNotation: pieceNotation,
       captureNotation: captureNotation,

@@ -1,12 +1,13 @@
 class Board {
   // TODO might be easier to store the moveObjects and recreate noatation on demand!!!
-  constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation, previousLayouts: previousLayouts}){
-    this.layOut = layOut|| Layout.approachingMate()
+  constructor({layOut: layOut, capturedPieces: capturedPieces, gameOver: gameOver, allowedToMove: allowedToMove, movementNotation: movementNotation, previousLayouts: previousLayouts, teamValues: teamValues}){
+    this.layOut = layOut|| Layout.default()
     this.capturedPieces = capturedPieces || [];
     this.gameOver = gameOver || false;
     this.allowedToMove = allowedToMove || Board.WHITE;
     this.movementNotation = movementNotation || [];
     this.previousLayouts = previousLayouts || JSON.stringify([])
+    this.teamValues = teamValues || {B: 39, W: 39}
   }
 
   static get WHITE()  { return "W" }
@@ -149,15 +150,7 @@ class Board {
   }
 
   pieceValue(team){
-    let subtractedValue = 0,
-        captures = this.capturedPieces;
-    for( let i = 0; i < captures.length; i++){
-      let piece = captures[i] ;
-      if( Board.parseTeam( piece ) === team ){
-        subtractedValue = subtractedValue + Board.pieceValues()[ Board.parseSpecies( piece ) ]
-      }
-    }
-    return 39 - subtractedValue;
+    return this.teamValues[team]
   }
 
   static pieceValues(){
@@ -280,7 +273,7 @@ class Board {
     let newLayout = Board._deepCopy(this.layOut),
         newCaptures = Board._deepCopy(this.capturedPieces),
         newMovementNotation = Board._deepCopy(this.movementNotation),
-        newBoard = new Board({layOut: newLayout, capturedPieces: newCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, movementNotation: newMovementNotation, previousLayouts: this.previousLayouts});
+        newBoard = new Board({layOut: newLayout, capturedPieces: newCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, movementNotation: newMovementNotation, previousLayouts: this.previousLayouts, teamValues: {"W": this.teamValues["W"], "B": this.teamValues["B"]}});
     return newBoard;
   }
 
@@ -360,8 +353,11 @@ class Board {
   }
 
   _capture(position){
-    let pieceObject = this.layOut[position];
+    let pieceObject = this.layOut[position],
+      team = Board.parseTeam(pieceObject),
+      species = Board.parseSpecies(pieceObject);
     this.capturedPieces.push(pieceObject);
+    this.teamValues[team] = this.teamValues[team] -  Board.pieceValues()[species]
   }
 
   _oneSpaceDownIsEmpty(position){
@@ -529,6 +525,7 @@ class Board {
   _promotePawn(position){
     let teamString = this.teamAt(position);
     this.layOut[position] = teamString  + Board.QUEEN
+    this.teamValues[teamString] = this.teamValues[teamString] + 8
   }
 
   teamAt(position){

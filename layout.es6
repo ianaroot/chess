@@ -13,6 +13,20 @@ class Layout{
     return layOut
   }
 
+  static thinksQueenh4plusWontBeMetWithRxh4(){
+    let layOut = [
+      "WR", "ee", "WB", "WQ", "WK", "WB", "WN", "WR",
+      "WP", "ee", "WP", "WP", "ee", "ee", "WP", "ee",
+      "ee", "ee", "WN", "ee", "WP", "ee", "ee", "ee",
+      "ee", "WP", "ee", "ee", "ee", "WP", "ee", "ee",
+      "ee", "ee", "ee", "ee", "ee", "ee", "ee", "WP",
+      "ee", "BN", "ee", "BP", "BP", "ee", "ee", "ee",
+      "BP", "BP", "BP", "ee", "ee", "BP", "BP", "BP",
+      "BR", "BN", "BB", "BQ", "BK", "BB", "ee", "BR"
+    ]
+    return layOut
+  }
+
   static approachingStale(){
     let layOut = [
       "ee", "ee", "ee", "ee", "WK", "ee", "ee", "ee",
@@ -23,6 +37,20 @@ class Layout{
       "ee", "ee", "ee", "ee", "BP", "ee", "ee", "ee",
       "ee", "ee", "ee", "ee", "ee", "BK", "ee", "ee",
       "ee", "ee", "ee", "ee", "ee", "ee", "ee", "WR"
+    ]
+    return layOut
+  }
+
+  static blackEndGamePractice(){
+    let layOut = [
+      "ee", "ee", "ee", "ee", "ee", "ee","ee", "ee",
+      "ee", "ee", "ee", "ee", "ee", "ee", "ee", "ee",
+      "ee", "WK", "ee", "ee", "ee", "ee", "ee", "ee",
+      "ee", "BP", "ee", "ee", "ee", "ee", "ee", "BR",
+      "ee", "ee", "ee", "ee", "BP", "ee", "ee", "BK",
+      "ee", "ee", "ee", "ee", "ee", "ee", "ee", "ee",
+      "ee", "ee", "ee", "ee", "ee", "ee", "ee", "ee",
+      "BB", "ee", "ee", "ee", "ee", "ee", "ee", "ee"
     ]
     return layOut
   }
