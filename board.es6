@@ -144,7 +144,12 @@ class Board {
     let undoneNotation = this.movementNotation.pop(),
       captureNotationMatch = undoneNotation.match(/x/);
     if( captureNotationMatch ){
-      this.capturedPieces.pop()
+      let uncapturedPiece = this.capturedPieces.pop(),
+      team = Board.parseTeam(uncapturedPiece),
+      species = Board.parseSpecies(uncapturedPiece),
+      value = Board.pieceValues()[species];
+      this.teamValues[team] = this.teamValues[team] + value
+      this.gameOver = false
     }
     this._nextTurn()
   }
