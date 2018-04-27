@@ -48,6 +48,7 @@ class View{
         this.displayPiece({pieceInitials: pieceInitials, gridPosition: gridPosition})
       };
     };
+    this.unhighlLighTiles();
     this.setTileClickListener();
     this.blackCaptureDivNeedsExpanding(board);
     this.whiteCaptureDivNeedsExpanding(board);
