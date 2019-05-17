@@ -10,19 +10,70 @@ class Board {
     this.teamValues = teamValues || {B: 39, W: 39}
   }
 
-  static get WHITE()  { return "W" }
-  static get BLACK()  { return "B" }
-  static get EMPTY()  { return "e" }
-  static get PAWN()   { return "P" }
-  static get ROOK()   { return "R" }
-  static get NIGHT()  { return "N" }
-  static get BISHOP() { return "B" }
-  static get QUEEN()  { return "Q" }
-  static get KING()   { return "K" }
-  static get DARK()   { return "dark" }
-  static get LIGHT()  { return "light" }
-  static get MINOR_PIECES() { return [Board.NIGHT, Board.BISHOP] }
+  bit_test(num, bit){
+    return ((num>>bit) % 2 != 0)
+  }
+
+  bit_set(num, bit){
+      return num | 1<<bit;
+  }
+
+  bit_clear(num, bit){
+      return num & ~(1<<bit);
+  }
+
+  bit_toggle(num, bit){
+      return bit_test(num, bit) ? bit_clear(num, bit) : bit_set(num, bit);
+  }
+
+  static get PIECE_AND_COLOR_MASK()  { return 15 }
+  static get PIECE_COLOR_BIT()      { return 3 }
+  static get EMPTY_BIT()            { return 5 }
+//   empty?   moved?   white?    piecetype
+//   0        0        0         000
+
+
+
+
+                                          // WHITE QUEEN    //1110
+  // static get EMPTY()  { return "e" }      // 0000
+  static get PAWN()   { return 0b001 }      // 0001
+  static get ROOK()   { return 0b010 }      // 0010
+  static get KNIGHT() { return 0b011 }      // 0011
+  static get BISHOP() { return 0b100 }      // 0100
+  static get KING()   { return 0b101 }      // 0101
+  static get QUEEN()  { return 0b110 }      // 0110
+  static get DARK()   { return "dark" }   // 0111
+  static get LIGHT()  { return "light" }  // 1000
+  static get WHITE()  { return "W" }      // 1001
+  static get BLACK()  { return "B" }      // 1010
+
+  static get WHITE()                { return 0b001000 }
+  static get BLACK()                { return 0b000000 }
+
+  static get EMPTY()                { return 0b100000 }
+  static get UNMOVED_WHITE_PAWN()   { return 0b001001 }
+  static get UNMOVED_WHITE_ROOK()   { return 0b001010 }
+  static get UNMOVED_WHITE_KNIGHT() { return 0b001011 }
+  static get UNMOVED_WHITE_BISHOP() { return 0b001100 }
+  static get UNMOVED_WHITE_KING()   { return 0b001101 }
+  static get UNMOVED_WHITE_QUEEN()  { return 0b001110 }
+
+  static get UNMOVED_BLACK_PAWN()   { return 0b000001 }
+  static get UNMOVED_BLACK_ROOK()   { return 0b000010 }
+  static get UNMOVED_BLACK_KNIGHT() { return 0b000011 }
+  static get UNMOVED_BLACK_BISHOP() { return 0b000100 }
+  static get UNMOVED_BLACK_KING()   { return 0b000101 }
+  static get UNMOVED_BLACK_QUEEN()  { return 0b000110 }
+
+
+
+  static get MINOR_PIECES() { return [Board.KNIGHT, Board.BISHOP] }
   static get MAJOR_PIECES() { return [Board.ROOK, Board.QUEEN]}
+
+  static pieceAndColorBits(bits){
+    return (bits & Board.PIECE_AND_COLOR_MASK)
+  }
 
   static _boundaries(){
     return { upperLimit: 63, lowerLimit: 0 }
@@ -112,12 +163,13 @@ class Board {
     return position <= this._boundaries().upperLimit && position >= this._boundaries().lowerLimit
   }
 
-  static parseTeam(string){
-    return string[0]
+  static parseTeam( bits ){
+    return ( bits >> Board.PIECE_COLOR_BIT ) % 2
   }
 
-  static parseSpecies(string){
-    return string[1]
+  static parseSpecies( bits ){
+    // return string[1]
+    return bits & 7
   }
 
   _nextTurn(){
@@ -162,7 +214,7 @@ class Board {
     let values = {};
     values[Board.EMPTY] = 0;
     values[Board.PAWN] = 1;
-    values[Board.NIGHT] = 3;
+    values[Board.KNIGHT] = 3;
     values[Board.BISHOP] = 3;
     values[Board.ROOK] = 5;
     values[Board.QUEEN] = 9;
@@ -515,6 +567,7 @@ class Board {
     return (this.pieceTypeAt( queenSideRookStartPosition ) ===Board.ROOK) && this.pieceHasNotMovedFrom( queenSideRookStartPosition )
   }
 
+// TODO this is very bad name, maybe pieceBits ??
   pieceObject(position){
     return this.layOut[position]
   }
@@ -533,8 +586,13 @@ class Board {
     this.teamValues[teamString] = this.teamValues[teamString] + 8
   }
 
+  empty(position){
+    var bits = this.layOut[position];
+    return this.bit_test(bits, Board.EMPTY_BIT)
+  }
+
   teamAt(position){
-    if( !Board._inBounds(position) ){
+    if( !Board._inBounds(position) || this.empty(position) ){
       return Board.EMPTY
     };
     let pieceObject = this.pieceObject(position),
@@ -585,6 +643,9 @@ class Board {
   pieceTypeAt(position){
     let pieceObject = this.pieceObject(position),
       pieceType = Board.parseSpecies( pieceObject );
+      console.log("position: " + position)
+      console.log("pieceObject: " + pieceObject)
+      console.log("pieceType: " + pieceType)
     return pieceType
   }
 

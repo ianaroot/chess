@@ -1,26 +1,26 @@
 class PieceMovementTypesFactory{
   static complexFactory({pieceType: pieceType, startPosition: startPosition, board: board, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly}){
     switch(pieceType){
-      case "P":
+      case Board.PAWN:
         return PieceMovementTypesFactory.P({startPosition: startPosition, board: board, attacksOnly: attacksOnly})
         break;
-      case "K":
+      case Board.KING:
         return PieceMovementTypesFactory.K({startPosition: startPosition, board: board, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly})
         break
     }
   }
   static simpleFactory(pieceType){
     switch(pieceType){
-      case "N":
+      case Board.KNIGHT:
         return PieceMovementTypesFactory.N()
         break;
-      case "R":
+      case Board.ROOK:
         return PieceMovementTypesFactory.R()
         break;
-      case "B":
+      case Board.BISHOP:
         return PieceMovementTypesFactory.B()
         break;
-      case "Q":
+      case Board.QUEEN:
         return PieceMovementTypesFactory.Q()
         break;
     }

@@ -55,7 +55,7 @@ class Rules {
         continue
       }else if( enemyPieceType === Board.ROOK && !(differential % 8 === 0 || Math.abs(differential) < 8) ){
         continue
-      }else if( enemyPieceType === Board.NIGHT && ![10,-10,6,-6,15,-15,17,-17].includes(differential)){
+      }else if( enemyPieceType === Board.KNIGHT && ![10,-10,6,-6,15,-15,17,-17].includes(differential)){
         continue
       }else if( enemyPieceType === Board.QUEEN && !(differential % 9 === 0 || differential % 7 === 0 || differential % 8 === 0 || Math.abs(differential) < 8)){
         continue

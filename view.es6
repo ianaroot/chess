@@ -41,10 +41,10 @@ class View{
         layOut = board.layOut;
     for( let i = 0; i < layOut.length; i++){
       let gridPosition = Board.gridCalculator(i),
-          pieceInitials = this.pieceInitials(layOut[i]);
+          pieceInitials = this.bitsToInitials(layOut[i]);
       this.undisplayPiece(gridPosition);
       let pieceObject = board.pieceObject( i )
-      if( Board.parseTeam( pieceObject) !== Board.EMPTY ){
+      if( !board.empty( i) ){
         this.displayPiece({pieceInitials: pieceInitials, gridPosition: gridPosition})
       };
     };
@@ -58,8 +58,52 @@ class View{
     this.displayAlerts(alert)
   };
   pieceImgSrc(pieceInitials){
+    // var pieceBits = Board.pieceAndColorBits(bits),
+    //   pieceInitials = this.bitsToInitials(pieceBits);
     return "img/chesspieces/wikipedia/" + pieceInitials + ".png"
   };
+  bitsToInitials(bits){
+    switch(bits){
+
+    case Board.UNMOVED_WHITE_PAWN:
+      return "WP"
+      break;
+    case Board.UNMOVED_WHITE_ROOK:
+      return "WR"
+      break;
+    case Board.UNMOVED_WHITE_KNIGHT:
+      return "WN"
+      break;
+    case Board.UNMOVED_WHITE_BISHOP:
+      return "WB"
+      break;
+    case Board.UNMOVED_WHITE_KING:
+      return "WK"
+      break;
+    case Board.UNMOVED_WHITE_QUEEN:
+      return "WQ"
+      break;
+    case Board.UNMOVED_BLACK_PAWN:
+      return "BP"
+      break;
+    case Board.UNMOVED_BLACK_ROOK:
+      return "BR"
+      break;
+    case Board.UNMOVED_BLACK_KNIGHT:
+      return "BN"
+      break;
+    case Board.UNMOVED_BLACK_BISHOP:
+      return "BB"
+      break;
+    case Board.UNMOVED_BLACK_KING:
+      return "BK"
+      break;
+    case Board.UNMOVED_BLACK_QUEEN:
+      return "BQ"
+      break;
+    }
+  }
+
   pieceInitials(pieceObject){
     let firstInitial = Board.parseTeam( pieceObject ),
       secondInitial = Board.parseSpecies(pieceObject);
