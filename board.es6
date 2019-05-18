@@ -79,6 +79,7 @@ class Board {
     return { upperLimit: 63, lowerLimit: 0 }
   }
 
+// i know this isn't really making a deep copy
   static _deepCopy(originalObject){
     let newObject = [];
     for( let i = 0; i < originalObject.length; i ++){
@@ -163,7 +164,20 @@ class Board {
     return position <= this._boundaries().upperLimit && position >= this._boundaries().lowerLimit
   }
 
+  static emptyBitOn(bits){
+    return ( bits >> Board.EMPTY_BIT ) % 2
+  }
+
   static parseTeam( bits ){
+    // return ( bits >> Board.PIECE_COLOR_BIT ) % 2
+    if (Board.whiteBitOn( bits ) ){
+      return Board.WHITE
+    } else {
+      return Board.BLACK
+    }
+  }
+
+  static whiteBitOn(bits){
     return ( bits >> Board.PIECE_COLOR_BIT ) % 2
   }
 
@@ -643,9 +657,6 @@ class Board {
   pieceTypeAt(position){
     let pieceObject = this.pieceObject(position),
       pieceType = Board.parseSpecies( pieceObject );
-      console.log("position: " + position)
-      console.log("pieceObject: " + pieceObject)
-      console.log("pieceType: " + pieceType)
     return pieceType
   }
 
@@ -665,6 +676,7 @@ class Board {
         break
       }
     }
+    console.log("king at: " + position)
     return position
   }
 }

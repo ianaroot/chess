@@ -2,20 +2,18 @@ class MovesCalculator { //MOVES ARE NOT GUARANTEED TO BE LEGAL, MUST RUN CHECK Q
   constructor({  startPosition: startPosition, board: board, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly//, countDefense: countDefense//, endPosition: endPosition
   }){//TODO ALLOWS CASTLYING THROUGH CHECK!!!
     this.moveObjects = []
-    this.viablePositions = {}
+    // this.viablePositions = {}
     this.ignoreCastles = ignoreCastles
     this.attacksOnly = attacksOnly
     this.endPositions = []
     // this.countDefense = countDefense
     // this.endPosition = endPosition
     let pieceType = board.pieceTypeAt(startPosition)
-    console.log("piecetype: " + pieceType)
     if( [Board.PAWN,Board.KING].includes(pieceType) ){
       this.movementTypes = PieceMovementTypesFactory.complexFactory({pieceType: pieceType, startPosition: startPosition, board: board, ignoreCastles: this.ignoreCastles, attacksOnly: this.attacksOnly})// , (this.endPosition - startPosition ) ); //TODO maybe shouldn't rely on Nan below when endPosition is undefined
     } else {
       this.movementTypes = PieceMovementTypesFactory.simpleFactory(pieceType)// , (this.endPosition - startPosition ) ); //TODO maybe shouldn't rely on Nan below when endPosition is undefined
     }
-    // debugger
     this.calculateViablePositions(board, startPosition)
   }
 // calculate form of motion by div modding start and end

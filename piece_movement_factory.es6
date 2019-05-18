@@ -1,5 +1,6 @@
 class PieceMovementTypesFactory{
   static complexFactory({pieceType: pieceType, startPosition: startPosition, board: board, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly}){
+    console.log("complex")
     switch(pieceType){
       case Board.PAWN:
         return PieceMovementTypesFactory.P({startPosition: startPosition, board: board, attacksOnly: attacksOnly})
@@ -10,6 +11,16 @@ class PieceMovementTypesFactory{
     }
   }
   static simpleFactory(pieceType){
+    console.log(pieceType)
+    // THIS IS GETTING CALLED FROM EMPTY
+    // through this chain
+    //     at MovesCalculator.calculateViablePositions (moves_calculator.es6:26)
+    // at new MovesCalculator (moves_calculator.es6:17)
+    // at Function.pieceIsAttacked (rules.es6:63)
+    // at Function.checkQuery (rules.es6:42)
+    // at Function.checkQueryWithMove (rules.es6:32)
+    // at Function.viablePositionsFromKeysOnly (rules.es6:103)
+    // at View.highlightTile (view.es6:123)
     switch(pieceType){
       case Board.KNIGHT:
         return PieceMovementTypesFactory.N()
