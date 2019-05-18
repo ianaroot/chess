@@ -587,7 +587,7 @@ class Board {
   }
 
   _emptify(position){
-    this.layOut[position] = Board.EMPTY + Board.EMPTY
+    this.layOut[position] = Board.EMPTY
   }
 
   _placePiece({position: position, pieceObject: pieceObject}){
@@ -651,7 +651,7 @@ class Board {
 
   positionEmpty(position){
     let pieceObject = this.pieceObject(position)
-    return Board.parseTeam( pieceObject ) === Board.EMPTY
+    return pieceObject === Board.EMPTY
   }
 
   pieceTypeAt(position){
