@@ -7,7 +7,8 @@ class Board {
     this.allowedToMove = allowedToMove || Board.WHITE;
     this.movementNotation = movementNotation || [];
     this.previousLayouts = previousLayouts || JSON.stringify([])
-    this.teamValues = teamValues || {B: 39, W: 39}
+    // TODO MAGIC STRING
+    this.teamValues = teamValues || {0b000000: 39, 0b001000: 39}
   }
 
   bit_test(num, bit){
@@ -45,8 +46,8 @@ class Board {
   static get QUEEN()  { return 0b110 }      // 0110
   static get DARK()   { return "dark" }   // 0111
   static get LIGHT()  { return "light" }  // 1000
-  static get WHITE()  { return "W" }      // 1001
-  static get BLACK()  { return "B" }      // 1010
+  // static get WHITE()  { return "W" }      // 1001
+  // static get BLACK()  { return "B" }      // 1010
 
   static get WHITE()                { return 0b001000 }
   static get BLACK()                { return 0b000000 }
@@ -344,7 +345,8 @@ class Board {
     let newLayout = Board._deepCopy(this.layOut),
         newCaptures = Board._deepCopy(this.capturedPieces),
         newMovementNotation = Board._deepCopy(this.movementNotation),
-        newBoard = new Board({layOut: newLayout, capturedPieces: newCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, movementNotation: newMovementNotation, previousLayouts: this.previousLayouts, teamValues: {"W": this.teamValues["W"], "B": this.teamValues["B"]}});
+        // TODO FIX MAGIC STRING
+        newBoard = new Board({layOut: newLayout, capturedPieces: newCaptures, allowedToMove: this.allowedToMove, gameOver: this.gameOver, movementNotation: newMovementNotation, previousLayouts: this.previousLayouts, teamValues: {0b001000: this.teamValues[0b001000], 0b000000: this.teamValues[0b000000]}});
     return newBoard;
   }
 
@@ -624,7 +626,8 @@ class Board {
   // }
   //
   // _positionsOccupiedByOpponentOf(teamString){
-  //   let opposingTeam = Board.opposingTeam(teamString);
+  //   let opposingTeam = Board.opposingTeam(teamString); //this was removed and i'm not sure it wasn't a mistake but it's in a commented oput function anyways...
+  //   let pieceValue = Board.opposingTeam(teamString);
   //   return this._positionsOccupiedByTeam(opposingTeam)
   // }
 
@@ -676,7 +679,6 @@ class Board {
         break
       }
     }
-    console.log("king at: " + position)
     return position
   }
 }

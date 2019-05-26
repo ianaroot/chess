@@ -1,6 +1,5 @@
 class PieceMovementTypesFactory{
   static complexFactory({pieceType: pieceType, startPosition: startPosition, board: board, ignoreCastles: ignoreCastles, attacksOnly: attacksOnly}){
-    console.log("complex")
     switch(pieceType){
       case Board.PAWN:
         return PieceMovementTypesFactory.P({startPosition: startPosition, board: board, attacksOnly: attacksOnly})
@@ -11,7 +10,6 @@ class PieceMovementTypesFactory{
     }
   }
   static simpleFactory(pieceType){
-    console.log(pieceType)
     // THIS IS GETTING CALLED FROM EMPTY
     // through this chain
     //     at MovesCalculator.calculateViablePositions (moves_calculator.es6:26)
