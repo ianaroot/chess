@@ -1,4 +1,5 @@
 // TOO newPossibility s are all really just moveObjects
+//JUST ADDING A COMMENT TO TEST SOME GIT ISSUES
 class MovesCalculator {
   constructor(options = {  startPosition: undefined, board: undefined, moveObjects: [],
   }){
