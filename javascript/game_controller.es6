@@ -3,14 +3,16 @@ const throwIfMissing = p => { throw new Error(`Missing parameter: ${p}`) }
 class GameController {
 	constructor(){
 		this.board = new Board({});
-    this.view = new View(this);
-		this._paused = true
+		this.view = new View(this);
+		this._paused = false
+		// all of these should just get handled by the view when it generates?
 		this.view.displayLayOut({board: this.board, alert: ""})
 		this.view.setTileClickListener()
 		this.view.setUndoClickListener(this)
 		this.view.setPauseClickListener(this)
+
 		this.api = new Api({board: this.board, gameController: this});
-		this._whiteBot = new Bot(this.api, Board.WHITE)
+		// this._whiteBot = new Bot(this.api, Board.WHITE)
 		this._blackBot = new Bot(this.api, Board.BLACK)
 		if(this._whiteBot && !this._paused){ this.queryNextBotMove()}
 	}
@@ -25,6 +27,7 @@ class GameController {
 		if( board.gameOver ){
 			return
 		}
+	// shouldn't the board be making sure neither of these happens?
     if ( !Board._inBounds(endPosition) ){
       alert = 'stay on the board, fool'
     } else if( board.occupiedByTeamMate({position: endPosition, teamString: board.allowedToMove}) ){
@@ -34,6 +37,7 @@ class GameController {
 			var moveObject = Rules.getMoveObject(startPosition, endPosition, board);
 			if( moveObject.illegal ){
 				alert = "illegal move attempted"
+				// what next?
 			} else {
 
 				board._officiallyMovePiece( moveObject )
@@ -81,6 +85,8 @@ class GameController {
 			this.view.displayLayOut({board: this.board})
 		}
 	}
+
+	// THIS FUNCTION NOT CURRENTLY IN USE, STILL HAS GHOST COMMENTED OUT BELOW
 	runMoves(moveArray){
 		var func = this.runMoves.bind(this)
 		if (moveArray.length > 1 ) {
