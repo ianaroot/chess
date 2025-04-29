@@ -7,12 +7,12 @@ class View{
 
   static get TILE_HEIGHT() { return "49" }
 
-  displayAlerts(messages){
-    if(messages){
-      for (let i = 0; i < messages.length; i++){
-        document.getElementById( 'notifications' ).innerHTML = messages[i];
-      };
-    }
+  displayAlerts(message){
+    // if(messages){
+    //   for (let i = 0; i < messages.length; i++){
+        document.getElementById( 'notifications' ).innerHTML = message//s[i];
+    //   };
+    // }
   };
   clearAlerts(){
     document.getElementById( 'notifications' ).innerHTML = "";
@@ -37,7 +37,7 @@ class View{
   displayLayOut(args){
 
     let board = args["board"],
-        alerts = args["alerts"],
+        alert = args["alert"] || "",
         layOut = board.layOut;
     for( let i = 0; i < layOut.length; i++){
       let gridPosition = Board.gridCalculator(i),
@@ -54,15 +54,14 @@ class View{
     this.updateCaptures(board);
     this.clearAlerts();
 		this.updateTeamAllowedToMove(board);
-    this.displayAlerts(alerts)
+    this.displayAlerts(alert)
   };
   pieceImgSrc(pieceInitials){
     return "img/chesspieces/wikipedia/" + pieceInitials + ".png"
   };
   pieceInitials(pieceObject){
-    pieceObject = JSON.parse(pieceObject);
-    let firstInitial = Board.parseTeam( pieceObject )[0],
-      secondInitial = pieceObject.species[0];
+    let firstInitial = Board.parseTeam( pieceObject ),
+      secondInitial = Board.parseSpecies(pieceObject);
     return firstInitial + secondInitial
   };
   highlightTile(){
@@ -97,9 +96,9 @@ class View{
   teamSet(src){
     let regex = /(\w)[A-Z]\.png$/,
       teamInitial = src.match(regex)[1];
-    if( teamInitial === "b"){
+    if( teamInitial === "B"){
       return Board.BLACK;
-    }else if (teamInitial === "w") {
+    }else if (teamInitial === "W") {
       return Board.WHITE;
     }else {
       throw new Error("error in teamSet")
@@ -121,14 +120,14 @@ class View{
     span.innerText = board.allowedToMove
   }
   updateCaptures(board){
-    let blackCaptureDiv = document.getElementById("black-captures"),
-      whiteCaptureDiv = document.getElementById("white-captures"),
+    let blackCaptureDiv = document.getElementById("B-captures"),
+      whiteCaptureDiv = document.getElementById("W-captures"),
       capturedPieces = board.capturedPieces;
     blackCaptureDiv.innerHTML = "";
     whiteCaptureDiv.innerHTML = "";
     for (let i = 0; i < capturedPieces.length; i++){
       let pieceObject = capturedPieces[i],
-        team = Board.parseTeam( JSON.parse(pieceObject ) ),
+        team = Board.parseTeam( pieceObject ),
         pieceInitials = this.pieceInitials(pieceObject);
       this.displayPiece({pieceInitials: pieceInitials, gridPosition: team + "-captures"})
     }
@@ -153,7 +152,7 @@ class View{
     let capturedPieces = board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
-      if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.BLACK) { total++ }
+      if ( Board.parseTeam( capturedPieces[i] ) === Board.BLACK) { total++ }
     }
     if( total === 11 ){ this.expandBlackCaptureDiv() }
   }
@@ -162,16 +161,16 @@ class View{
     let capturedPieces = board.capturedPieces,
       total = 0;
     for(let i = 0; i < capturedPieces.length; i++){
-      if ( Board.parseTeam( JSON.parse(capturedPieces[i]) ) === Board.WHITE) { total++ }
+      if ( Board.parseTeam( capturedPieces[i] ) === Board.WHITE) { total++ }
     }
     if( total === 11 ){ this.expandWhiteCaptureDiv() }
   }
   expandWhiteCaptureDiv(){
-    let div = document.getElementById("white-captures")
+    let div = document.getElementById("W-captures")
     div.style.height = 98
   }
   expandBlackCaptureDiv(){
-    let div = document.getElementById("black-captures")
+    let div = document.getElementById("B-captures")
     div.style.height = 98
   }
   setUndoClickListener(gameController){
