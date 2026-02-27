@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_27_031100) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_27_173049) do
   create_table "bots", force: :cascade do |t|
     t.string "author_name"
     t.json "config"
@@ -20,7 +20,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_031100) do
     t.integer "losses", default: 0
     t.string "name"
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.integer "wins", default: 0
+    t.index ["user_id"], name: "index_bots_on_user_id"
   end
 
   create_table "match_moves", force: :cascade do |t|
@@ -48,6 +50,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_031100) do
     t.index ["white_bot_id"], name: "index_matches_on_white_bot_id"
   end
 
+  create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at"
+    t.string "reset_password_token"
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  add_foreign_key "bots", "users"
   add_foreign_key "match_moves", "matches"
   add_foreign_key "matches", "bots", column: "black_bot_id"
   add_foreign_key "matches", "bots", column: "white_bot_id"

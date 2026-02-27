@@ -1,4 +1,5 @@
 class Bot < ApplicationRecord
+  belongs_to :user, optional: true
   has_many :white_matches, class_name: "Match", foreign_key: :white_bot_id, dependent: :destroy
   has_many :black_matches, class_name: "Match", foreign_key: :black_bot_id, dependent: :destroy
 
