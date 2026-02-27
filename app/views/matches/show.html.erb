@@ -1,0 +1,77 @@
+<div class="flex items-start justify-between mb-6">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-200">
+      <%= @match.white_bot.name %>
+      <span class="text-gray-500">vs</span>
+      <%= @match.black_bot.name %>
+    </h1>
+    <div class="flex items-center gap-4 mt-2 text-sm">
+      <% if @match.complete? %>
+        <span class="text-amber-400 font-bold"><%= @match.result %></span>
+        <span class="text-gray-500"><%= @match.termination %></span>
+        <span class="text-gray-500"><%= @match.move_count %> moves</span>
+      <% else %>
+        <span class="text-gray-500">Awaiting execution...</span>
+      <% end %>
+    </div>
+  </div>
+  <%= link_to "Back to Arena", root_path, class: "text-gray-400 hover:text-white text-sm" %>
+</div>
+
+<% if @moves.any? %>
+  <div data-controller="match-replay"
+       data-match-replay-moves-value="<%= @moves.map { |m| { from_square: m.from_square, to_square: m.to_square, notation: m.notation } }.to_json %>">
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2">
+        <div data-match-replay-target="board"></div>
+        <div class="flex items-center gap-3 mt-3">
+          <button type="button" data-action="click->match-replay#jumpToStart" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">|&lt;</button>
+          <button type="button" data-action="click->match-replay#stepBackward" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">&lt;</button>
+          <button type="button" data-action="click->match-replay#stepForward" class="bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold px-4 py-1 rounded text-sm">&gt;</button>
+          <button type="button" data-action="click->match-replay#jumpToEnd" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">&gt;|</button>
+          <span data-match-replay-target="moveIndex" class="text-sm text-gray-400 ml-2"></span>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-gray-300 mb-2">Moves</h3>
+        <div data-match-replay-target="moveList" class="space-y-1 max-h-96 overflow-y-auto">
+          <% @moves.each_with_index do |move, idx| %>
+            <div data-move-index="<%= idx %>" class="flex items-center gap-2 text-sm px-2 py-1 rounded border border-transparent">
+              <span class="w-8 text-gray-500"><%= move.move_number %>.</span>
+              <span class="w-12 text-<%= move.side == 'white' ? 'white' : 'gray-400' %>"><%= move.side == 'white' ? 'W' : 'B' %></span>
+              <span class="text-gray-300 font-mono"><%= move.notation %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <!-- Match Runner: execute in browser -->
+  <div data-controller="match-runner"
+       data-match-runner-white-config-value="<%= @match.white_bot.config.to_json %>"
+       data-match-runner-black-config-value="<%= @match.black_bot.config.to_json %>"
+       data-match-runner-match-id-value="<%= @match.id %>"
+       data-match-runner-save-url-value="<%= match_path(@match) %>">
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2">
+        <div data-match-runner-target="board"></div>
+        <div class="flex items-center gap-3 mt-3">
+          <button type="button" data-match-runner-target="runButton" data-action="click->match-runner#run"
+                  class="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-2 rounded-lg">
+            Start Match!
+          </button>
+          <span data-match-runner-target="status" class="text-sm text-gray-400 ml-2"></span>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-bold text-gray-300 mb-2">Live Moves</h3>
+        <div data-match-runner-target="log" class="space-y-1 max-h-96 overflow-y-auto text-sm font-mono"></div>
+      </div>
+    </div>
+  </div>
+<% end %>
