@@ -1,8 +1,11 @@
 #!/usr/bin/env sh
 
-if gem list foreman -i --silent 2>/dev/null; then
-  exec foreman start -f Procfile.dev "$@"
-else
+GEM_BIN="$(ruby -e 'puts Gem.user_dir')/bin"
+export PATH="$GEM_BIN:$PATH"
+
+if ! command -v foreman >/dev/null 2>&1; then
   echo "Installing foreman..."
-  gem install foreman --user-install && exec foreman start -f Procfile.dev "$@"
+  gem install foreman --user-install --no-document
 fi
+
+exec foreman start -f Procfile.dev "$@"
