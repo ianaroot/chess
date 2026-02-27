@@ -1,5 +1,5 @@
-import Board from "./board.js"
-import Api from "./api.js"
+import Board from "engine/board"
+import Api from "engine/api"
 
 export default class HeadlessGame {
   constructor() {

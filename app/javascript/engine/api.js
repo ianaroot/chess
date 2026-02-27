@@ -1,5 +1,5 @@
-import Board from "./board.js"
-import Rules from "./rules.js"
+import Board from "engine/board"
+import Rules from "engine/rules"
 
 export default class Api {
   constructor(board) {

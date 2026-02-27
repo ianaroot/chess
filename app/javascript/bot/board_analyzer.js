@@ -1,5 +1,5 @@
-import Board from "../engine/board.js"
-import Rules from "../engine/rules.js"
+import Board from "engine/board"
+import Rules from "engine/rules"
 
 // Piece value defaults used for material counting
 const DEFAULT_PIECE_VALUES = {

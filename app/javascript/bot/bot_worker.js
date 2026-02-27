@@ -1,9 +1,9 @@
 // Web Worker entry point for bot decision engine
 // Runs in a separate thread so UI stays responsive
 
-import Board from "../engine/board.js"
-import DecisionEngine from "./decision_engine.js"
-import SwarmRunner from "./swarm_runner.js"
+import Board from "engine/board"
+import DecisionEngine from "bot/decision_engine"
+import SwarmRunner from "bot/swarm_runner"
 
 let engine = null
 let config = null

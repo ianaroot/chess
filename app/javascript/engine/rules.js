@@ -1,6 +1,6 @@
-import Board from "./board.js"
-import MoveObject from "./move_object.js"
-import MovesCalculator from "./moves_calculator.js"
+import Board from "engine/board"
+import MoveObject from "engine/move_object"
+import MovesCalculator from "engine/moves_calculator"
 
 export default class Rules {
 

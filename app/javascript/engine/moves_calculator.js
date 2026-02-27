@@ -1,5 +1,5 @@
-import MoveObject from "./move_object.js"
-import Board from "./board.js"
+import MoveObject from "engine/move_object"
+import Board from "engine/board"
 
 export default class MovesCalculator {
   // kingInCheckFn is optional — pass it when you need castling validation

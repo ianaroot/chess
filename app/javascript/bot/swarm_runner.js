@@ -1,4 +1,4 @@
-import DecisionEngine from "./decision_engine.js"
+import DecisionEngine from "bot/decision_engine"
 
 export default class SwarmRunner {
   constructor(config, iterations = 50) {

@@ -1,5 +1,5 @@
-import Board from "../engine/board.js"
-import BoardAnalyzer from "./board_analyzer.js"
+import Board from "engine/board"
+import BoardAnalyzer from "bot/board_analyzer"
 
 export default class MoveScorer {
   constructor(config) {

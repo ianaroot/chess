@@ -1,8 +1,8 @@
-import Board from "../engine/board.js"
-import Api from "../engine/api.js"
-import MoveScorer from "./move_scorer.js"
-import TriggerEvaluator from "./trigger_evaluator.js"
-import BoardAnalyzer, { EDGE_SQUARES } from "./board_analyzer.js"
+import Board from "engine/board"
+import Api from "engine/api"
+import MoveScorer from "bot/move_scorer"
+import TriggerEvaluator from "bot/trigger_evaluator"
+import BoardAnalyzer, { EDGE_SQUARES } from "bot/board_analyzer"
 
 export default class DecisionEngine {
   constructor(config) {
