@@ -1,0 +1,30 @@
+# Rails
+/log/*
+/tmp/*
+/storage/*
+!/log/.keep
+!/tmp/.keep
+!/storage/.keep
+
+# Dependencies
+/vendor/bundle
+/.bundle
+
+# Database
+/db/*.sqlite3
+/db/*.sqlite3-journal
+/db/*.sqlite3-shm
+/db/*.sqlite3-wal
+
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+
+# Bootsnap cache
+/tmp/cache/bootsnap
+
+# Node (if ever used)
+/node_modules

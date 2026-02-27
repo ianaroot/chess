@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  config: 
+  author_name: MyString
+  wins: 1
+  losses: 1
+  draws: 1
+
+two:
+  name: MyString
+  description: MyText
+  config: 
+  author_name: MyString
+  wins: 1
+  losses: 1
+  draws: 1

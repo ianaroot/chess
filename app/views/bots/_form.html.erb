@@ -1,0 +1,133 @@
+<%= form_with(model: bot, class: "space-y-6") do |f| %>
+  <% if bot.errors.any? %>
+    <div class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg">
+      <% bot.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Bot Name</label>
+      <%= f.text_field :name, class: "w-full bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:border-amber-500 focus:outline-none", placeholder: "e.g. The Aggressor" %>
+    </div>
+    <div>
+      <label class="block text-sm text-gray-400 mb-1">Author</label>
+      <%= f.text_field :author_name, class: "w-full bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:border-amber-500 focus:outline-none", placeholder: "Your name" %>
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-sm text-gray-400 mb-1">Description</label>
+    <%= f.text_area :description, rows: 2, class: "w-full bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:border-amber-500 focus:outline-none", placeholder: "What's this bot's strategy?" %>
+  </div>
+
+  <!-- Tabbed sections -->
+  <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden" data-controller="tabs">
+    <div class="flex border-b border-gray-700">
+      <button type="button" data-action="click->tabs#show" data-tabs-target="tab" data-tab="weights" class="px-4 py-2 text-sm font-medium text-amber-400 border-b-2 border-amber-400">Weights</button>
+      <button type="button" data-action="click->tabs#show" data-tabs-target="tab" data-tab="triggers" class="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border-b-2 border-transparent">Triggers</button>
+      <button type="button" data-action="click->tabs#show" data-tabs-target="tab" data-tab="pieces" class="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border-b-2 border-transparent">Piece Values</button>
+      <button type="button" data-action="click->tabs#show" data-tabs-target="tab" data-tab="quirks" class="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border-b-2 border-transparent">Quirks</button>
+    </div>
+
+    <!-- Weights Tab -->
+    <div data-tabs-target="panel" data-tab="weights" class="p-4" data-controller="weight-slider">
+      <p class="text-sm text-gray-400 mb-4">How much your bot cares about each factor when choosing moves.</p>
+      <div class="space-y-4">
+        <% { material: "Material", centerControl: "Center Control", kingSafety: "King Safety", pieceActivity: "Piece Activity", pawnStructure: "Pawn Structure" }.each do |key, label| %>
+          <div class="flex items-center gap-4">
+            <label class="w-36 text-sm text-gray-300"><%= label %></label>
+            <input type="range" name="bot[weights][<%= key %>]" min="0" max="100"
+                   value="<%= bot.config&.dig("weights", key.to_s) || Bot.default_config["weights"][key.to_s] %>"
+                   class="flex-1 accent-amber-500"
+                   data-weight-slider-target="slider" data-weight-name="<%= key %>"
+                   data-action="input->weight-slider#update">
+            <span class="w-8 text-right text-amber-400 font-mono text-sm" data-weight-name="<%= key %>">
+              <%= bot.config&.dig("weights", key.to_s) || Bot.default_config["weights"][key.to_s] %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="mt-6 border-t border-gray-700 pt-4">
+        <div class="flex items-center gap-4">
+          <label class="w-36 text-sm text-gray-300">Randomness</label>
+          <input type="range" name="bot[randomness]" min="0" max="100"
+                 value="<%= bot.config&.dig("randomness") || 15 %>"
+                 class="flex-1 accent-amber-500"
+                 data-weight-slider-target="slider" data-weight-name="randomness"
+                 data-action="input->weight-slider#update">
+          <span class="w-8 text-right text-amber-400 font-mono text-sm" data-weight-name="randomness">
+            <%= bot.config&.dig("randomness") || 15 %>
+          </span>
+        </div>
+        <p class="text-xs text-gray-500 mt-1 ml-40">0 = always pick best move. 100 = very unpredictable.</p>
+      </div>
+    </div>
+
+    <!-- Triggers Tab -->
+    <div data-tabs-target="panel" data-tab="triggers" class="p-4 hidden" data-controller="rule-builder">
+      <p class="text-sm text-gray-400 mb-4">Behavioral triggers: when a condition is met, the bot adjusts its play style.</p>
+      <div data-rule-builder-target="triggerList" class="space-y-3 mb-4"></div>
+      <input type="hidden" name="bot[triggers_json]" data-rule-builder-target="triggersJson"
+             value="<%= (bot.config&.dig("triggers") || []).to_json %>">
+      <button type="button" class="bg-gray-700 hover:bg-gray-600 text-gray-300 px-4 py-2 rounded text-sm border border-gray-600"
+              data-action="click->rule-builder#addTrigger">
+        + Add Trigger
+      </button>
+    </div>
+
+    <!-- Piece Values Tab -->
+    <div data-tabs-target="panel" data-tab="pieces" class="p-4 hidden">
+      <p class="text-sm text-gray-400 mb-4">How your bot values each piece type. Affects material calculations.</p>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <% { Pawn: 1, Night: 3, Bishop: 3, Rook: 5, Queen: 9 }.each do |piece, default_val| %>
+          <div class="text-center">
+            <label class="block text-sm text-gray-300 mb-1"><%= piece %></label>
+            <input type="number" name="bot[piece_values][<%= piece %>]" min="0" max="20"
+                   value="<%= bot.config&.dig("pieceValues", piece.to_s) || default_val %>"
+                   class="w-full bg-gray-700 text-white text-center px-3 py-2 rounded border border-gray-600 focus:border-amber-500 focus:outline-none">
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Quirks Tab -->
+    <div data-tabs-target="panel" data-tab="quirks" class="p-4 hidden" data-controller="quirk-toggle">
+      <p class="text-sm text-gray-400 mb-4">Fun personality traits that make your bot unique.</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <% {
+          "lovesKnights" => ["Loves Knights", "Bonus to all knight moves"],
+          "edgePhobic" => ["Edge Phobic", "Avoids the rim of the board"],
+          "castleASAP" => ["Castle ASAP", "Huge bonus for castling early"],
+          "aggressivePawns" => ["Aggressive Pawns", "Push those pawns forward"],
+          "tradeHappy" => ["Trade Happy", "Loves exchanging pieces"],
+          "tradeAverse" => ["Trade Averse", "Avoids exchanges"],
+          "centerMagnet" => ["Center Magnet", "Gravitates pieces toward center"],
+          "chaotic" => ["Chaotic", "High randomness, wild play"]
+        }.each do |key, (label, desc)| %>
+          <label class="flex items-start gap-2 p-3 rounded-lg border cursor-pointer transition-colors
+                        <%= bot.config&.dig("quirks", key) ? "bg-amber-900/50 border-amber-500" : "border-gray-600" %>">
+            <input type="hidden" name="bot[quirks][<%= key %>]" value="0">
+            <input type="checkbox" name="bot[quirks][<%= key %>]" value="1"
+                   <%= "checked" if bot.config&.dig("quirks", key) %>
+                   class="mt-0.5 accent-amber-500"
+                   data-quirk-toggle-target="toggle"
+                   data-action="change->quirk-toggle#toggle">
+            <div>
+              <div class="text-sm font-medium text-gray-200"><%= label %></div>
+              <div class="text-xs text-gray-500"><%= desc %></div>
+            </div>
+          </label>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3">
+    <%= link_to "Cancel", bots_path, class: "text-gray-400 hover:text-white px-4 py-2" %>
+    <%= f.submit bot.persisted? ? "Update Bot" : "Create Bot", class: "bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold px-6 py-2 rounded-lg cursor-pointer" %>
+  </div>
+<% end %>

@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  match: one
+  move_number: 1
+  side: MyString
+  from_square: MyString
+  to_square: MyString
+  notation: MyString
+  scores: 
+
+two:
+  match: two
+  move_number: 1
+  side: MyString
+  from_square: MyString
+  to_square: MyString
+  notation: MyString
+  scores: 

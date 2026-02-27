@@ -1,0 +1,85 @@
+<div class="text-center mb-12">
+  <h1 class="text-5xl font-bold text-amber-400 mb-4">IANchess Bot Arena</h1>
+  <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+    Build chess bot personalities with visual behavioral triggers.
+    Same gears and levers for everyone &mdash; the fun is in the tuning.
+  </p>
+  <div class="mt-6">
+    <%= link_to "Create a Bot", new_bot_path, class: "bg-amber-500 hover:bg-amber-400 text-gray-900 font-bold px-6 py-3 rounded-lg text-lg" %>
+  </div>
+</div>
+
+<% if @bots.any? %>
+  <div class="mb-12">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-bold text-gray-200">Bot Gallery</h2>
+      <%= link_to "View All", bots_path, class: "text-amber-400 hover:text-amber-300 text-sm" %>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <% @bots.limit(6).each do |bot| %>
+        <%= link_to bot_path(bot), class: "block bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-amber-500 transition-colors" do %>
+          <h3 class="text-lg font-bold text-amber-400"><%= bot.name %></h3>
+          <p class="text-gray-400 text-sm mt-1"><%= bot.description.present? ? truncate(bot.description, length: 80) : "No description" %></p>
+          <div class="flex items-center justify-between mt-3">
+            <span class="text-xs text-gray-500">by <%= bot.author_name.present? ? bot.author_name : "Anonymous" %></span>
+            <span class="text-xs text-gray-500"><%= bot.record %></span>
+          </div>
+          <div class="flex gap-2 mt-2 flex-wrap">
+            <% if bot.config && bot.config["quirks"] %>
+              <% bot.config["quirks"].select { |_, v| v }.each do |quirk, _| %>
+                <span class="bg-gray-700 text-amber-300 text-xs px-2 py-0.5 rounded-full"><%= quirk.underscore.humanize %></span>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @bots.count >= 2 %>
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h2 class="text-2xl font-bold text-gray-200 mb-4">Start a Match</h2>
+      <%= form_tag matches_path, method: :post, class: "flex items-end gap-4" do %>
+        <div class="flex-1">
+          <label class="block text-sm text-gray-400 mb-1">White</label>
+          <%= select_tag :white_bot_id, options_from_collection_for_select(@bots, :id, :name), class: "w-full bg-gray-700 text-white px-3 py-2 rounded border border-gray-600" %>
+        </div>
+        <div class="text-2xl text-gray-500 pb-2">vs</div>
+        <div class="flex-1">
+          <label class="block text-sm text-gray-400 mb-1">Black</label>
+          <%= select_tag :black_bot_id, options_from_collection_for_select(@bots, :id, :name), class: "w-full bg-gray-700 text-white px-3 py-2 rounded border border-gray-600" %>
+        </div>
+        <button type="submit" class="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-2 rounded-lg">
+          Fight!
+        </button>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+
+<% if @recent_matches.any? %>
+  <div class="mt-8">
+    <h2 class="text-2xl font-bold text-gray-200 mb-4">Recent Matches</h2>
+    <div class="space-y-2">
+      <% @recent_matches.each do |match| %>
+        <%= link_to match_path(match), class: "block bg-gray-800 rounded-lg p-3 border border-gray-700 hover:border-gray-500 transition-colors" do %>
+          <div class="flex items-center justify-between">
+            <span>
+              <span class="text-white font-medium"><%= match.white_bot.name %></span>
+              <span class="text-gray-500">vs</span>
+              <span class="text-white font-medium"><%= match.black_bot.name %></span>
+            </span>
+            <span class="text-sm">
+              <% if match.complete? %>
+                <span class="text-amber-400"><%= match.result %></span>
+                <span class="text-gray-500">(<%= match.termination %>)</span>
+              <% else %>
+                <span class="text-gray-500">In progress...</span>
+              <% end %>
+            </span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

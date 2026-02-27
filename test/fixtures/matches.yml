@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  white_bot: one
+  black_bot: one
+  result: MyString
+  termination: MyString
+  move_count: 1
+
+two:
+  white_bot: two
+  black_bot: two
+  result: MyString
+  termination: MyString
+  move_count: 1
